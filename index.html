@@ -30,189 +30,62 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.screen{display:none;flex-direction:column;min-height:100vh}
-.screen.active{display:flex}
-.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:12px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:16px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.back{font-size:22px;color:#666;background:none;border:none;cursor:pointer;padding:0 4px;line-height:1}
-.content{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:24px}
-input,select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
-input:focus,select:focus{outline:none;border-color:#185FA5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center}
+input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+input:focus{outline:none;border-color:#185FA5}
 label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:16px}
-.btn{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit}
-.btn:active{transform:scale(.97)}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;padding:24px}
+.btn{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit;transition:opacity .15s}
+.btn:active{opacity:.75}
 .btn.primary{background:#185FA5;border-color:#185FA5;color:#fff}
-.btn.success{background:#0F6E56;border-color:#0F6E56;color:#fff}
-.btn.danger{background:#A32D2D;border-color:#A32D2D;color:#fff}
-.btn.sm{padding:8px 14px;font-size:13px;width:auto}
-.btn.outline-blue{border-color:#185FA5;color:#185FA5;background:#fff}
-.btn.outline-green{border-color:#0F6E56;color:#0F6E56;background:#fff}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.tabs{display:flex;border-bottom:1px solid #eee;background:#fff}
-.tab{flex:1;padding:11px;font-size:13px;font-weight:600;color:#888;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit}
-.tab.active{color:#185FA5;border-bottom-color:#185FA5}
-.feed-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:0.5px solid #f0f0f0}
-.feed-item:last-child{border-bottom:none}
-.feed-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:100px;background:#E6F1FB;color:#0C447C;white-space:nowrap}
-.feed-who{font-size:10px;font-weight:600;padding:2px 6px;border-radius:100px;background:#f0f0f0;color:#666;white-space:nowrap}
-.feed-del{background:none;border:none;cursor:pointer;color:#bbb;font-size:18px;padding:0 4px;flex-shrink:0}
+.ig{margin-bottom:12px}
+.auth-toggle{text-align:center;font-size:14px;color:#888;margin-top:12px}
+.auth-toggle button{background:none;border:none;color:#185FA5;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#aaa;font-size:13px}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:#e0e0e0}
+.btn-google{width:100%;padding:12px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s}
+.btn-google:active{background:#f5f5f5}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.err{background:#A32D2D}
-.empty{text-align:center;padding:20px 0;color:#aaa;font-size:14px}
-.sl{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
-.divider{height:0.5px;background:#eee;margin:14px 0}
-.pal-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pal-row input{flex:1;padding:8px 10px;font-size:14px}
-.ctx-info{background:#f7f7f7;border-radius:8px;padding:8px 12px;font-size:13px;color:#666;text-align:center}
-.ctx-info strong{color:#111}
-.overwrite-warn{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:8px;padding:8px 12px;font-size:12px;color:#633806;text-align:center;display:none}
-.overwrite-warn.show{display:block}
-
-/* ── SLTimer logotipo ── */
-.slt-logo{display:flex;align-items:baseline;line-height:1}
-.slt-big{
-font-family:'Bebas Neue',sans-serif;
-font-size:80px;
-color:#1B3A5C;
-display:inline-block;
-position:relative;
-transform:skewX(-18deg);
-transform-origin:bottom center;
-}
-.slt-big::before{
-content:attr(data-l);
-position:absolute;
-top:0;left:-12px;
-color:inherit;
-opacity:.18;
-filter:blur(2px);
-transform:skewX(-6deg);
-pointer-events:none;
-}
-.slt-big::after{
-content:attr(data-l);
-position:absolute;
-top:0;left:-22px;
-color:inherit;
-opacity:.07;
-filter:blur(4px);
-transform:skewX(-10deg);
-pointer-events:none;
-}
-.slt-small{
-font-family:'Bebas Neue',sans-serif;
-font-size:42px;
-color:#1B3A5C;
-display:inline-block;
-transform:skewX(-18deg);
-transform-origin:bottom center;
-align-self:flex-end;
-padding-bottom:4px;
-}
-/* Topbar variant */
-.slt-logo-sm .slt-big{font-size:30px}
-.slt-logo-sm .slt-big::before{left:-5px}
-.slt-logo-sm .slt-big::after{left:-9px}
-.slt-logo-sm .slt-small{font-size:16px;padding-bottom:2px}
-
-/* Spinner/Loading */
-.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 .overlay.show{display:flex}
-.overlay p{font-size:14px;color:#666;margin-top:4px}
-/* Auth */
-.auth-logo{font-size:44px;text-align:center;margin:8px 0 2px}
-.auth-title{font-size:24px;font-weight:700;text-align:center;color:#111;margin-bottom:4px}
-.auth-sub{font-size:14px;color:#888;text-align:center;margin-bottom:20px}
-.auth-toggle{text-align:center;font-size:14px;color:#888;margin-top:12px}
-.auth-toggle button{background:none;border:none;color:#185FA5;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}
-.ig{margin-bottom:12px}
-/* Room code */
-.room-code{font-size:40px;font-weight:700;letter-spacing:8px;text-align:center;color:#185FA5;padding:12px 0;font-variant-numeric:tabular-nums}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#1E6B3C;display:inline-block;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.trainer-chip{display:inline-flex;align-items:center;gap:4px;background:#f0f0f0;border-radius:100px;padding:4px 10px;font-size:12px;font-weight:600;color:#444;margin:2px}
-/* Crono */
-.chrono-time{font-size:56px;font-weight:300;color:#111;text-align:center;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}
-.chrono-pen{font-size:14px;font-weight:600;text-align:center;margin-top:4px;min-height:20px;color:#993556}
-.chrono-main-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px}
-.c-start{width:80px;height:80px;border-radius:50%;background:#1E6B3C;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
-.c-start.running{background:#A32D2D}
-.c-start.overwrite:not(.running){background:#C55A11}
-.c-start svg{width:32px;height:32px;fill:white}
-.c-aux{width:48px;height:48px;border-radius:50%;background:#f2f2f2;border:1px solid #ddd;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.c-aux svg{width:20px;height:20px;fill:#666}
-.c-save{width:48px;height:48px;border-radius:50%;background:#E1F5EE;border:1px solid #9FE1CB;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;pointer-events:none;transition:opacity .15s}
-.c-save.visible{opacity:1;pointer-events:auto}
-.c-save svg{width:20px;height:20px;fill:#085041}
-.clbl{font-size:10px;color:#aaa;text-align:center;margin-top:5px}
-.pen-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.pen-btn{height:44px;border-radius:8px;border:1px solid;cursor:pointer;font-family:inherit;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;width:100%}
-.pen-btn:active{transform:scale(.96)}
-.pen-btn.a2{border-color:#F5C4B3;background:#FAECE7;color:#993C1D}
-.pen-btn.a50{border-color:#F7C1C1;background:#FCEBEB;color:#A32D2D}
-.pen-btn.s2{border-color:#C0DD97;background:#EAF3DE;color:#3B6D11}
-.pen-btn.s50{border-color:#9FE1CB;background:#E1F5EE;color:#085041}
-.psl{font-size:11px;color:#aaa;text-align:center;margin-bottom:4px}
-/* Resumen */
-.rpt{font-size:16px;font-weight:600;color:#111;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid #eee}
-.rmb{margin-bottom:14px}
-.rml{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.rtr{display:flex;justify-content:space-between;align-items:center;padding:6px 0 6px 10px;border-bottom:0.5px solid #f0f0f0}
-.rtr:last-child{border-bottom:none}
-.rtn{font-size:13px;color:#888}
-.rtv{font-size:13px;font-weight:600;color:#111}
-.rtv.best{color:#1E6B3C}
-.rpr{display:flex;justify-content:space-between;padding:5px 10px 0;font-size:12px;color:#993C1D}
-.rto{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f7f7f7;border-radius:8px;margin-top:4px}
-.rto span:first-child{font-size:13px;color:#888}
-.rto span:last-child{font-size:14px;font-weight:600;color:#111}
-.tbox{border-radius:8px;padding:12px 14px;margin-top:4px}
-.tbox.real{background:#E1F5EE}
-.tbox.teo{background:#E6F1FB}
-.tbox .tl{font-size:12px;font-weight:600;margin-bottom:2px}
-.tbox .tv{font-size:22px;font-weight:600}
-.tbox.real .tl{color:#085041}.tbox.real .tv{color:#0F6E56}
-.tbox.teo .tl{color:#0C447C}.tbox.teo .tv{color:#185FA5}
-.mr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;margin-top:4px}
-.mr span:first-child{font-size:13px;color:#888}
-.mr span:last-child{font-size:14px;font-weight:600;color:#A32D2D}
-.toggle{width:44px;height:26px;border-radius:13px;background:#ddd;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
-.toggle.on{background:#185FA5}
-.toggle::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s}
-.toggle.on::after{left:21px}
-.share-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
-.share-row span{font-size:14px;color:#111}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.wrap{width:100%;max-width:380px;padding:24px 16px}
 </style>
 </head>
 <body>
 
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
 
-<!-- AUTH -->
-<div id="s-auth" class="screen active">
-  <div class="content" style="justify-content:center;max-width:420px;margin:0 auto;width:100%">
-    <div style="text-align:center;margin-bottom:0px;position:relative;display:inline-block">
-      <img src="logo.png" style="width:400px;height:400px;object-fit:contain;display:inline-block;
-      filter:
-        drop-shadow(-12px 0px 2px rgba(27,58,92,0.18))
-        drop-shadow(-22px 0px 4px rgba(27,58,92,0.07));" alt="SLTimer">
-    </div>
-    <div class="auth-sub" id="auth-sub">Inicia sesión para continuar</div>
-    <div class="card">
-      <div class="ig"><label>Email</label><input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email"></div>
-      <div class="ig"><label>Contraseña</label><input id="auth-pass" type="password" placeholder="••••••••"></div>
-      <div class="ig" id="auth-p2w" style="display:none"><label>Repite la contraseña</label><input id="auth-pass2" type="password" placeholder="••••••••"></div>
-      <button class="btn primary" id="auth-btn" onclick="doAuth()">Entrar</button>
-      <div class="auth-toggle">
-        <span id="auth-ttxt">¿No tienes cuenta?</span>
-        <button onclick="toggleAuthMode()">Regístrate</button>
-      </div>
+<div class="wrap">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:24px">
+    <img src="icons/icon-192x192.png" style="width:90px;height:90px;border-radius:20px" alt="SLTimer">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#1B3A5C;letter-spacing:1px;margin-top:8px">SLTimer</div>
+    <div style="font-size:14px;color:#888;margin-top:2px" id="auth-sub">Inicia sesión para continuar</div>
+  </div>
+
+  <div class="card">
+    <!-- Botón Google -->
+    <button class="btn-google" id="btn-google" onclick="loginGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+
+    <div class="divider">o con email</div>
+
+    <!-- Email + contraseña -->
+    <div class="ig"><label>Email</label><input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+    <div class="ig"><label>Contraseña</label><input id="auth-pass" type="password" placeholder="••••••••"></div>
+    <div class="ig" id="auth-p2w" style="display:none"><label>Repite la contraseña</label><input id="auth-pass2" type="password" placeholder="••••••••"></div>
+    <button class="btn primary" id="auth-btn" onclick="doAuth()">Entrar</button>
+    <div class="auth-toggle">
+      <span id="auth-ttxt">¿No tienes cuenta?</span>
+      <button onclick="toggleAuthMode()">Regístrate</button>
     </div>
   </div>
 </div>
@@ -220,8 +93,20 @@ padding-bottom:4px;
 <div class="toast" id="toast"></div>
 
 <script>
-const SB = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+const $ = id => document.getElementById(id);
+
+function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+let _tTimer;
+function toast(msg,err=false){
+  const el=$('toast');el.textContent=msg;
+  el.classList.toggle('err',err);el.classList.add('show');
+  clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
 
 async function api(path, opts={}){
   const h={'apikey':KEY,'Content-Type':'application/json',...(opts.headers||{})};
@@ -232,27 +117,92 @@ async function api(path, opts={}){
   return j;
 }
 
-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
-function hideLoad(){$('overlay').classList.remove('show');}
-
-let _tTimer;
-function toast(msg,err=false){
-  const el=$('toast');el.textContent=msg;
-  el.classList.toggle('err',err);el.classList.add('show');
-  clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2500);
+// ── Guardar sesión ────────────────────────────────────────────────────────────
+function saveSession(d){
+  localStorage.setItem('slt_tok', d.access_token);
+  localStorage.setItem('slt_ref', d.refresh_token);
+  localStorage.setItem('slt_uid', d.user?.id);
+  localStorage.setItem('slt_email', d.user?.email);
+  // Guardar cuándo expira (en ms)
+  const expiresIn = d.expires_in || 3600;
+  localStorage.setItem('slt_exp', Date.now() + expiresIn * 1000);
 }
 
-const $=id=>document.getElementById(id);
+// ── Refrescar token si está próximo a expirar ─────────────────────────────────
+async function refreshIfNeeded(){
+  const exp = parseInt(localStorage.getItem('slt_exp')||'0');
+  const ref = localStorage.getItem('slt_ref');
+  if(!ref) return false;
+  // Refrescar si quedan menos de 10 minutos
+  if(Date.now() < exp - 10*60*1000) return true;
+  try{
+    const d = await api('/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      body:JSON.stringify({refresh_token: ref})
+    });
+    saveSession(d);
+    return true;
+  }catch{
+    // Token de refresco inválido, limpiar sesión
+    clearSession();
+    return false;
+  }
+}
 
-let _mode='login';
+function clearSession(){
+  ['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));
+}
+
+// ── Google OAuth ──────────────────────────────────────────────────────────────
+function loginGoogle(){
+  $('btn-google').disabled=true;
+  showLoad('Redirigiendo a Google...');
+  const redirectTo = encodeURIComponent(window.location.origin + '/app.html');
+  window.location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
+}
+
+// ── Manejar callback OAuth (cuando Google redirige de vuelta) ─────────────────
+async function handleOAuthCallback(){
+  // Supabase devuelve el token en el hash de la URL: #access_token=...
+  const hash = window.location.hash.substring(1);
+  if(!hash) return false;
+  const params = new URLSearchParams(hash);
+  const access_token = params.get('access_token');
+  const refresh_token = params.get('refresh_token');
+  if(!access_token) return false;
+
+  showLoad('Iniciando sesión...');
+  try{
+    // Obtener datos del usuario con el token
+    const user = await fetch(`${SB}/auth/v1/user`,{
+      headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
+    }).then(r=>r.json());
+
+    saveSession({
+      access_token,
+      refresh_token,
+      expires_in: parseInt(params.get('expires_in')||'3600'),
+      user
+    });
+    window.location.href = 'app.html';
+    return true;
+  }catch(e){
+    hideLoad();
+    toast('Error al iniciar sesión con Google', true);
+    return false;
+  }
+}
+
+// ── Email + contraseña ────────────────────────────────────────────────────────
+let _mode = 'login';
 function toggleAuthMode(){
-  _mode=_mode==='login'?'register':'login';
-  const r=_mode==='register';
-  $('auth-sub').textContent=r?'Crea tu cuenta':'Inicia sesión para continuar';
-  $('auth-btn').textContent=r?'Registrarse':'Entrar';
-  $('auth-ttxt').textContent=r?'¿Ya tienes cuenta?':'¿No tienes cuenta?';
-  $('auth-p2w').style.display=r?'block':'none';
-  document.querySelector('.auth-toggle button').textContent=r?'Inicia sesión':'Regístrate';
+  _mode = _mode==='login' ? 'register' : 'login';
+  const r = _mode==='register';
+  $('auth-sub').textContent = r ? 'Crea tu cuenta' : 'Inicia sesión para continuar';
+  $('auth-btn').textContent = r ? 'Registrarse' : 'Entrar';
+  $('auth-ttxt').textContent = r ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
+  $('auth-p2w').style.display = r ? 'block' : 'none';
+  document.querySelector('.auth-toggle button').textContent = r ? 'Inicia sesión' : 'Regístrate';
 }
 
 async function doAuth(){
@@ -262,24 +212,32 @@ async function doAuth(){
   showLoad(_mode==='login'?'Iniciando sesión...':'Creando cuenta...');
   $('auth-btn').disabled=true;
   try{
-    const ep=_mode==='login'?'/token?grant_type=password':'/signup';
-    const d=await api('/auth/v1'+ep,{method:'POST',body:JSON.stringify({email,password:pass})});
+    const ep = _mode==='login' ? '/token?grant_type=password' : '/signup';
+    const d = await api('/auth/v1'+ep,{method:'POST',body:JSON.stringify({email,password:pass})});
     if(_mode==='register'&&!d.access_token){
       hideLoad();$('auth-btn').disabled=false;
       toast('Cuenta creada. Revisa tu email y luego inicia sesión.');
       toggleAuthMode();return;
     }
-    localStorage.setItem('slt_tok', d.access_token);
-    localStorage.setItem('slt_uid', d.user?.id);
-    localStorage.setItem('slt_email', d.user?.email);
+    saveSession(d);
     hideLoad();
     window.location.href = 'app.html';
   }catch(e){hideLoad();$('auth-btn').disabled=false;toast(e.message,true);}
 }
 
-window.addEventListener('DOMContentLoaded', ()=>{
+// ── Init ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async ()=>{
+  // 1. ¿Viene de un callback OAuth de Google?
+  if(window.location.hash.includes('access_token')){
+    await handleOAuthCallback();
+    return;
+  }
+  // 2. ¿Hay sesión guardada? Intentar refrescarla
   if(localStorage.getItem('slt_tok')){
-    window.location.href = 'app.html';
+    showLoad('Comprobando sesión...');
+    const ok = await refreshIfNeeded();
+    if(ok){ window.location.href='app.html'; return; }
+    hideLoad();
   }
 });
 
@@ -288,7 +246,7 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Enter')doAuth();});
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
 </script>
 
 </body>
