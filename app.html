@@ -1177,17 +1177,45 @@ async function refreshToken(){
 }
 
 async function initApp(){
-  _tok=localStorage.getItem('slt_tok');
-  _uid=localStorage.getItem('slt_uid');
-  _email=localStorage.getItem('slt_email');
+  // 1. ¿Viene de un callback OAuth de Google? (token en el hash)
+  const hash=window.location.hash.substring(1);
+  if(hash.includes('access_token')){
+    const params=new URLSearchParams(hash);
+    const access_token=params.get('access_token');
+    const refresh_token=params.get('refresh_token');
+    if(access_token){
+      try{
+        const user=await fetch(`${SB}/auth/v1/user`,{
+          headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
+        }).then(r=>r.json());
+        _tok=access_token;
+        _uid=user.id;
+        _email=user.email;
+        localStorage.setItem('slt_tok',access_token);
+        localStorage.setItem('slt_ref',refresh_token||'');
+        localStorage.setItem('slt_uid',user.id);
+        localStorage.setItem('slt_email',user.email);
+        localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
+        // Limpiar el hash de la URL sin recargar
+        history.replaceState(null,'',window.location.pathname);
+      }catch(e){
+        window.location.href='index.html';return;
+      }
+    }
+  } else {
+    // 2. Sesión normal guardada
+    _tok=localStorage.getItem('slt_tok');
+    _uid=localStorage.getItem('slt_uid');
+    _email=localStorage.getItem('slt_email');
 
-  if(!_tok){ window.location.href='index.html'; return; }
+    if(!_tok){ window.location.href='index.html'; return; }
 
-  // Refrescar token si quedan menos de 10 minutos
-  const exp=parseInt(localStorage.getItem('slt_exp')||'0');
-  if(Date.now() > exp - 10*60*1000){
-    const ok=await refreshToken();
-    if(!ok){ window.location.href='index.html'; return; }
+    // Refrescar token si quedan menos de 10 minutos
+    const exp=parseInt(localStorage.getItem('slt_exp')||'0');
+    if(Date.now() > exp - 10*60*1000){
+      const ok=await refreshToken();
+      if(!ok){ window.location.href='index.html'; return; }
+    }
   }
 
   // Refrescar automáticamente cada 45 minutos mientras la app está abierta
