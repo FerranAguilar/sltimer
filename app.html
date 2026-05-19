@@ -450,9 +450,7 @@ function toast(msg,err=false){
 async function doLogout(){
   try{await api('/auth/v1/logout',{method:'POST'});}catch{}
   _tok=null;_uid=null;_email=null;
-  localStorage.removeItem('slt_tok');
-  localStorage.removeItem('slt_uid');
-  localStorage.removeItem('slt_email');
+  ['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));
   leaveRealtime();
   window.location.href='index.html';
 }
@@ -1004,10 +1002,11 @@ async function confirmEnd(finish=false){
       hideLoad();
       // Si el token expiró, limpiar y redirigir al login
       if(e.message&&(e.message.includes('JWT')||e.message.includes('401')||e.message.includes('token'))){
+        // Intentar refrescar antes de rendirse
+        const ok=await refreshToken();
+        if(ok){ alert('Sesión renovada. Por favor repite la acción.'); return; }
         alert('Tu sesión ha expirado. Por favor vuelve a iniciar sesión.');
-        localStorage.removeItem('slt_tok');
-        localStorage.removeItem('slt_uid');
-        localStorage.removeItem('slt_email');
+        ['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));
         window.location.href='index.html';
         return;
       }
@@ -1157,21 +1156,54 @@ function vibe(pattern){
 }
 
 
-// Recuperar sesión de localStorage
-_tok=localStorage.getItem('slt_tok');
-_uid=localStorage.getItem('slt_uid');
-_email=localStorage.getItem('slt_email');
+// ── Refresco automático de token ──────────────────────────────────────────────
+async function refreshToken(){
+  const ref=localStorage.getItem('slt_ref');
+  if(!ref) return false;
+  try{
+    const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      headers:{'apikey':KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:ref})
+    });
+    if(!r.ok) return false;
+    const d=await r.json();
+    _tok=d.access_token;
+    localStorage.setItem('slt_tok',d.access_token);
+    localStorage.setItem('slt_ref',d.refresh_token);
+    localStorage.setItem('slt_exp',Date.now()+(d.expires_in||3600)*1000);
+    return true;
+  }catch{ return false; }
+}
 
-if(!_tok){
-  // No hay sesión, redirigir al login
-  window.location.href='index.html';
-} else {
-  // Sesión activa, arrancar la app
+async function initApp(){
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+
+  if(!_tok){ window.location.href='index.html'; return; }
+
+  // Refrescar token si quedan menos de 10 minutos
+  const exp=parseInt(localStorage.getItem('slt_exp')||'0');
+  if(Date.now() > exp - 10*60*1000){
+    const ok=await refreshToken();
+    if(!ok){ window.location.href='index.html'; return; }
+  }
+
+  // Refrescar automáticamente cada 45 minutos mientras la app está abierta
+  setInterval(async()=>{
+    const exp2=parseInt(localStorage.getItem('slt_exp')||'0');
+    if(Date.now() > exp2 - 10*60*1000) await refreshToken();
+  }, 45*60*1000);
+
+  // Arrancar la app
   $('u-email').textContent=_email;
   $('cfg-date').value=new Date().toISOString().slice(0,10);
   updatePalInputs();
   goTo('s-home');
 }
+
+initApp();
 
 </script>
 
