@@ -297,10 +297,24 @@ padding-bottom:4px;
       </button>
     </div>
     <div style="text-align:center">
-      <button class="c-save" id="c-save" onclick="saveChronoTime()">
+      <button class="c-save" id="c-save" onclick="openSavePanel()">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
       </button>
       <div class="clbl" id="save-lbl" style="opacity:0">Guardar</div>
+    </div>
+  </div>
+  <!-- Panel de confirmación de guardado -->
+  <div id="save-panel" style="display:none;margin-top:14px;background:#E1F5EE;border:1px solid #9FE1CB;border-radius:10px;padding:12px 14px">
+    <div style="font-size:12px;font-weight:600;color:#085041;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">¿Guardar tiempo para…?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div><label style="color:#085041">Palista</label><select id="save-pal" onchange="onSavePalChange()"></select></div>
+      <div><label style="color:#085041">Manga</label><select id="save-man" onchange="updateSavePanelWarn()"></select></div>
+      <div><label style="color:#085041">Tramo</label><select id="save-tra" onchange="rebuildSaveMangaSelector()"></select></div>
+    </div>
+    <div id="save-ow-warn" class="overwrite-warn" style="margin-bottom:8px">⚠️ Esta manga ya tiene un tiempo. Se sobreescribirá.</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn success" style="flex:1" onclick="confirmSaveChronoTime()">✓ Confirmar</button>
+      <button class="btn" style="flex:1" onclick="closeSavePanel()">Cancelar</button>
     </div>
   </div>
   <div style="margin-top:14px">
@@ -702,6 +716,7 @@ function stopChrono(){
   const b=$('c-btn');b.classList.remove('running');b.classList.toggle('overwrite',willOW());
   $('c-icon').innerHTML='<polygon points="6,4 20,12 6,20"/>';
   $('c-save').classList.add('visible');$('save-lbl').style.opacity='1';
+  $('save-panel').style.display='none';
 }
 
 function resetChrono(){
@@ -710,6 +725,7 @@ function resetChrono(){
   $('c-btn').classList.remove('running');
   $('c-icon').innerHTML='<polygon points="6,4 20,12 6,20"/>';
   $('c-save').classList.remove('visible');$('save-lbl').style.opacity='0';
+  $('save-panel').style.display='none';
   updateBtn();
 }
 
@@ -726,9 +742,69 @@ function addPM(s){
   toast((s>0?'+':'')+s+'s');
 }
 
-function saveChronoTime(){
+function openSavePanel(){
+  // Poblar los selectores del panel con el estado actual
+  const pi=getPi(), ti=getTi();
+  $('save-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+  $('save-pal').value=pi;
+  $('save-tra').innerHTML=Array.from({length:_sessData.nTra},(_,i)=>`<option value="${i}">Tramo ${i+1}</option>`).join('');
+  $('save-tra').value=ti;
+  rebuildSaveMangaSelector();
+  updateSavePanelWarn();
+  $('save-panel').style.display='block';
+}
+
+function closeSavePanel(){
+  $('save-panel').style.display='none';
+}
+
+function onSavePalChange(){
+  rebuildSaveMangaSelector();
+  updateSavePanelWarn();
+}
+
+function rebuildSaveMangaSelector(){
+  const pi=parseInt($('save-pal').value);
+  const ti=parseInt($('save-tra').value);
+  const tra=_sessData.palistas[pi].tramos[ti];
+  const nRegistradas=tra.mangas.length;
+  const n=nRegistradas+1;
+  let html='';
+  for(let i=0;i<n;i++){
+    const registrada=tra.mangas[i]!==undefined&&tra.mangas[i]!==null;
+    html+=`<option value="${i}">Manga ${i+1}${registrada?' ✓':' (nueva)'}</option>`;
+  }
+  $('save-man').innerHTML=html;
+  let primerLibre=tra.mangas.findIndex(m=>m===null||m===undefined);
+  if(primerLibre===-1) primerLibre=tra.mangas.length;
+  $('save-man').value=Math.min(primerLibre, n-1);
+  updateSavePanelWarn();
+}
+
+function updateSavePanelWarn(){
+  const pi=parseInt($('save-pal').value);
+  const ti=parseInt($('save-tra').value);
+  const mi=parseInt($('save-man').value);
+  const tra=_sessData.palistas[pi].tramos[ti];
+  const val=tra.mangas[mi];
+  const ow=val!==null&&val!==undefined;
+  $('save-ow-warn').classList.toggle('show',ow);
+}
+
+function confirmSaveChronoTime(){
+  const pi=parseInt($('save-pal').value);
+  const mi=parseInt($('save-man').value);
+  const ti=parseInt($('save-tra').value);
   const total=parseFloat(((_chrono.elapsed/1000)+_chrono.penalty).toFixed(2));
-  recordTime(total,_chrono.penalty);resetChrono();
+  const pen=_chrono.penalty;
+  closeSavePanel();
+  resetChrono();
+  recordTimeAt(total, pen, pi, mi, ti);
+}
+
+function saveChronoTime(){
+  // Mantener por compatibilidad (ya no se llama desde el botón, pero por si acaso)
+  openSavePanel();
 }
 
 function saveManual(){
@@ -756,7 +832,10 @@ function markDNF(){
 }
 
 async function recordTime(t,pen){
-  const pi=getPi(),mi=getMi(),ti=getTi();
+  recordTimeAt(t, pen, getPi(), getMi(), getTi());
+}
+
+async function recordTimeAt(t, pen, pi, mi, ti){
   const pal=_sessData.palistas[pi];
   const tra=pal.tramos[ti];
   const overwrite=tra.mangas[mi]!==null&&tra.mangas[mi]!==undefined;
