@@ -2,7 +2,7 @@
   "name": "SLTimer",
   "short_name": "SLTimer",
   "description": "Cronómetro para entrenamientos de eslalom en kayak",
-  "start_url": "/app.html",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
