@@ -227,15 +227,36 @@ async function doAuth(){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async ()=>{
-  // 1. ¿Viene de un callback OAuth de Google?
-  if(window.location.hash.includes('access_token')){
-    await handleOAuthCallback();
-    return;
+  // 1. ¿Viene de un callback OAuth de Google? (hash con access_token)
+  const hash=window.location.hash.substring(1);
+  if(hash.includes('access_token')){
+    showLoad('Iniciando sesión...');
+    const params=new URLSearchParams(hash);
+    const access_token=params.get('access_token');
+    const refresh_token=params.get('refresh_token');
+    if(access_token){
+      try{
+        const user=await fetch(`${SB}/auth/v1/user`,{
+          headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
+        }).then(r=>r.json());
+        localStorage.setItem('slt_tok',access_token);
+        localStorage.setItem('slt_ref',refresh_token||'');
+        localStorage.setItem('slt_uid',user.id);
+        localStorage.setItem('slt_email',user.email);
+        localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
+        window.location.href='app.html';
+        return;
+      }catch(e){
+        hideLoad();
+        toast('Error al iniciar sesión con Google',true);
+        return;
+      }
+    }
   }
   // 2. ¿Hay sesión guardada? Intentar refrescarla
   if(localStorage.getItem('slt_tok')){
     showLoad('Comprobando sesión...');
-    const ok = await refreshIfNeeded();
+    const ok=await refreshIfNeeded();
     if(ok){ window.location.href='app.html'; return; }
     hideLoad();
   }
