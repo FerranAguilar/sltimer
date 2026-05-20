@@ -1090,8 +1090,8 @@ function renderHistList(rows,cont,isShared){
       <div style="font-size:13px;color:#888;margin-bottom:4px">${sess.date} · ${sess.trainer}</div>
       <div style="font-size:13px;color:#888;margin-bottom:10px">${sess.palistas.map(p=>p.name).join(', ')} · ${maxMan} manga${maxMan!==1?'s':''}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${!isShared?`<button class="btn sm outline-green" onclick="editSession('${row.id}',this)">Editar sesión</button>`:''}
         <button class="btn sm outline-blue" onclick='buildCSV(${JSON.stringify(sess)})'>Exportar CSV</button>
-        ${!isShared?`<button class="btn sm outline-green" onclick="editSession('${row.id}',this)">✏️ Editar</button>`:''}
         ${!isShared?`<button class="btn sm danger" onclick="delSess('${row.id}',this)">Borrar</button>`:''}
       </div>`;
     cont.appendChild(d);
