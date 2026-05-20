@@ -986,7 +986,7 @@ async function confirmEnd(finish=false){
         await api('/rest/v1/sessions?id=eq.'+_sessId,{
           method:'PATCH',
           headers:{'Prefer':'return=minimal'},
-          body:JSON.stringify({data:_sessData,is_live:false,shared:true})
+          body:JSON.stringify({data:_sessData,is_live:false,shared:_isCollab})
         });
       } else {
         await api('/rest/v1/sessions',{
@@ -1016,6 +1016,8 @@ async function confirmEnd(finish=false){
     if(guardado){
       try{ buildCSV(_sessData); }catch(e){ console.error('Error CSV:',e); }
       leaveRealtime();resetChrono();
+      // Restaurar botón "Finalizar" por si venía de edición
+      document.querySelector('#s-session .btn.success').textContent='Finalizar';
       _sessId=null;_sessData=null;_isCollab=false;_roomCode=null;
       goTo('s-home');
       toast('Sesión guardada ☁️');
@@ -1023,6 +1025,8 @@ async function confirmEnd(finish=false){
   } else {
     // Salir sin guardar
     leaveRealtime();resetChrono();
+    // Restaurar botón "Finalizar" por si venía de edición
+    document.querySelector('#s-session .btn.success').textContent='Finalizar';
     _sessId=null;_sessData=null;_isCollab=false;_roomCode=null;
     goTo('s-home');
   }
@@ -1062,10 +1066,66 @@ function renderHistList(rows,cont,isShared){
       <div style="font-size:13px;color:#888;margin-bottom:10px">${sess.palistas.map(p=>p.name).join(', ')} · ${maxMan} manga${maxMan!==1?'s':''}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn sm outline-blue" onclick='buildCSV(${JSON.stringify(sess)})'>Exportar CSV</button>
+        ${!isShared?`<button class="btn sm outline-green" onclick="editSession('${row.id}',this)">✏️ Editar</button>`:''}
         ${!isShared?`<button class="btn sm danger" onclick="delSess('${row.id}',this)">Borrar</button>`:''}
       </div>`;
     cont.appendChild(d);
   });
+}
+
+// ── Editar sesión del historial ───────────────────────────────────────────────
+async function editSession(id, btn){
+  if(!confirm('¿Abrir esta sesión para continuar registrando tiempos?\n\nPodrás usar el cronómetro y añadir mangas como si fuera una sesión nueva.')) return;
+  btn.disabled=true;
+  showLoad('Cargando sesión...');
+  try{
+    const rows=await api('/rest/v1/sessions?id=eq.'+id+'&select=*');
+    if(!rows||!rows.length) throw new Error('Sesión no encontrada');
+    const row=rows[0];
+    let sess=row.data;
+
+    // Normalizar estructura antigua si fuera necesario
+    if(sess.palistas[0]&&!sess.palistas[0].tramos){
+      const nTra=sess.nTra||4;
+      sess.palistas=sess.palistas.map(p=>({
+        name:p.name,
+        tramos:Array.from({length:nTra},(_,ti)=>({
+          mangas: (p.mangas||[]).map(m=>m?.times?.[ti]??null),
+          pens:   (p.mangas||[]).map(m=>m?.pens?.[ti]??0)
+        }))
+      }));
+      sess.nTra=nTra;
+      sess.nPal=sess.palistas.length;
+    }
+
+    _sessId=row.id;
+    _sessData=sess;
+    _isCollab=false;
+    _roomCode=null;
+    _feed=[];
+    _manPen=0;
+
+    hideLoad();
+    btn.disabled=false;
+
+    // Mostrar indicador de que es una sesión editada
+    $('sess-title').textContent='✏️ '+_sessData.sessionName;
+    $('collab-bar').style.display='none';
+
+    buildSelectors();
+    renderFeed();
+    resetChrono();
+
+    // Cambiar el botón "Finalizar" para que sepa que guardará encima
+    document.querySelector('#s-session .btn.success').textContent='Guardar cambios';
+
+    goTo('s-session');
+    toast('✏️ Sesión cargada para edición');
+  }catch(e){
+    hideLoad();
+    btn.disabled=false;
+    toast('Error al cargar la sesión: '+e.message, true);
+  }
 }
 
 async function delSess(id,btn){
