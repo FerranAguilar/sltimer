@@ -721,7 +721,7 @@ function updateCtxInfo(){
 function toggleChrono(){_chrono.running?stopChrono():startChrono();}
 
 function startChrono(){
-  vibe(80);
+  vibe(80); beep(880, 0.06);
   _chrono.running=true;_chrono.start=Date.now()-_chrono.elapsed;
   _chrono.iv=setInterval(()=>{$('c-display').textContent=(((Date.now()-_chrono.start)/1000)).toFixed(2);},33);
   const b=$('c-btn');b.classList.add('running');b.classList.remove('overwrite');
@@ -732,7 +732,7 @@ function startChrono(){
 function stopChrono(){
   if(!_chrono.running) return;
   clearInterval(_chrono.iv);_chrono.running=false;_chrono.elapsed=Date.now()-_chrono.start;
-  vibe(80); // vibración corta al parar
+  vibe(80); beep(660, 0.1);
   const b=$('c-btn');b.classList.remove('running');b.classList.toggle('overwrite',willOW());
   $('c-icon').innerHTML='<polygon points="6,4 20,12 6,20"/>';
   $('c-save').classList.add('visible');$('save-lbl').style.opacity='1';
@@ -1148,9 +1148,26 @@ if('serviceWorker' in navigator){
   });
 }
 
-// ── Vibración ─────────────────────────────────────────────────────────────────
+// ── Feedback (vibración + sonido) ─────────────────────────────────────────────
 function vibe(pattern){
   if(navigator.vibrate) navigator.vibrate(pattern);
+}
+
+let _audioCtx=null;
+function beep(freq=880, dur=0.06, vol=0.3){
+  try{
+    if(!_audioCtx) _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const ctx=_audioCtx;
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='sine';
+    osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    gain.gain.setValueAtTime(vol,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+dur);
+  }catch(e){}
 }
 
 
