@@ -293,13 +293,13 @@ padding-bottom:4px;
 
   <div id="tab-0" class="content">
     <div class="card" style="padding:12px">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div><label>Palista</label><select id="sel-pal" onchange="onPalChange()"></select></div>
-        <div><label>Manga</label><select id="sel-man" onchange="onManChange()"></select></div>
-        <div><label>Tramo</label><select id="sel-tra" onchange="onTraChange()"></select></div>
+      <div class="ctx-info" id="ctx-info">—</div>
+      <!-- Selectores ocultos para mantener estado interno -->
+      <div style="display:none">
+        <select id="sel-pal" onchange="onPalChange()"></select>
+        <select id="sel-man" onchange="onManChange()"></select>
+        <select id="sel-tra" onchange="onTraChange()"></select>
       </div>
-      <div class="overwrite-warn" id="ow-warn">⚠️ Esta manga ya tiene un tiempo. Se sobreescribirá.</div>
-      <div class="ctx-info" id="ctx-info" style="margin-top:8px">—</div>
     </div>
 
 <div class="card" style="padding:20px 16px 16px">
@@ -700,7 +700,6 @@ function willOW(){
 
 function updateBtn(){
   const ow=willOW();
-  $('ow-warn').classList.toggle('show',ow);
   const btn=$('c-btn');
   if(!_chrono.running){btn.classList.remove('running');btn.classList.toggle('overwrite',ow);}
 }
