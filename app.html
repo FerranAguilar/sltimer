@@ -721,6 +721,7 @@ function updateCtxInfo(){
 function toggleChrono(){_chrono.running?stopChrono():startChrono();}
 
 function startChrono(){
+  vibe(80);
   _chrono.running=true;_chrono.start=Date.now()-_chrono.elapsed;
   _chrono.iv=setInterval(()=>{$('c-display').textContent=(((Date.now()-_chrono.start)/1000)).toFixed(2);},33);
   const b=$('c-btn');b.classList.add('running');b.classList.remove('overwrite');
@@ -816,7 +817,6 @@ function confirmSaveChronoTime(){
   const ti=parseInt($('save-tra').value);
   const total=parseFloat(((_chrono.elapsed/1000)+_chrono.penalty).toFixed(2));
   const pen=_chrono.penalty;
-  vibe([40, 30, 40]); // doble toque: confirmación de guardado
   closeSavePanel();
   resetChrono();
   recordTimeAt(total, pen, pi, mi, ti);
@@ -837,7 +837,6 @@ function saveManual(){
 function markDNF(){
   if(_chrono.running) stopChrono();
   resetChrono();
-  vibe([100, 50, 100, 50, 100]); // patrón DNF
   const pi=getPi(), mi=getMi(), ti=getTi();
   const pal=_sessData.palistas[pi];
   const tra=pal.tramos[ti];
