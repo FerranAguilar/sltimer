@@ -164,12 +164,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <span class="list-arrow">›</span>
       </button>
       <button class="list-item" onclick="goToApp('palistas')">
-  <div class="list-icon" style="background:#EAF3DE;color:#3B6D11">
-    <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
-  </div>
-  <span class="list-title">Mis palistas</span>
-  <span class="list-arrow">›</span>
-</button>
+        <div class="list-icon" style="background:#EAF3DE">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#3B6D11;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+        </div>
+        <span class="list-title">Mis palistas <span class="list-badge" id="athletes-badge" style="display:none"></span></span>
+        <span class="list-arrow">›</span>
+      </button>
       <button class="list-item" onclick="goToApp('estadisticas')">
         <div class="list-icon teal">
           <!-- Icono gráfica barras -->
@@ -219,19 +219,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 // ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
 // ⚠️ Copia estos valores desde tu proyecto en supabase.com → Project Settings → API
-const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co/rest/v1/';   // <-- CAMBIAR
-const KEY = 'TeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';                   // <-- CAMBIAR
+const SB  = 'https://TU_PROJECT_ID.supabase.co';   // <-- CAMBIAR
+const KEY = 'TU_ANON_PUBLIC_KEY';                   // <-- CAMBIAR
 
 // ── Rutas de navegación ───────────────────────────────────────────────────────
 // Ajusta estos valores según la estructura de tu proyecto
 const ROUTES = {
-  'nueva-sesion':   'app.html',
-  'historial':      'app.html#historial',
-  'estadisticas':   'app.html#stats',
-  'ajustes':        'app.html#ajustes',
-  'notificaciones': 'app.html#notif',
-  'ayuda':          'app.html#ayuda',
-  'palistas':       'athletes.html',   // ← añadir esto
+  'nueva-sesion':   'app.html',          // Pantalla de creación de sesión
+  'historial':      'app.html#historial',// Pantalla de historial
+  'palistas':       'athletes.html',     // Lista de palistas
+  'estadisticas':   'app.html#stats',    // Estadísticas (adaptar si existe)
+  'ajustes':        'app.html#ajustes',  // Pantalla de ajustes (adaptar si existe)
+  'notificaciones': 'app.html#notif',    // Notificaciones (adaptar si existe)
+  'ayuda':          'app.html#ayuda',    // Ayuda (adaptar si existe)
 };
 
 // ── Estado ────────────────────────────────────────────────────────────────────
@@ -335,6 +335,20 @@ async function loadHistCount() {
   } catch { /* silencioso */ }
 }
 
+// ── Cargar conteo de palistas ─────────────────────────────────────────────────
+async function loadAthletesCount() {
+  try {
+    const owned  = await api('/rest/v1/athletes?owner_id=eq.' + _uid + '&select=id');
+    const shared = await api('/rest/v1/athlete_access?trainer_id=eq.' + _uid + '&select=id');
+    const total  = (owned?.length || 0) + (shared?.length || 0);
+    const badge  = $('athletes-badge');
+    if (total > 0) {
+      badge.textContent = total;
+      badge.style.display = 'inline';
+    }
+  } catch { /* silencioso */ }
+}
+
 // ── Renderizar UI de usuario ──────────────────────────────────────────────────
 function renderUser(email) {
   const ini = initials(email);
@@ -395,6 +409,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   hideLoad();
   renderUser(_email);
   loadHistCount();
+  loadAthletesCount();
 });
 
 // PWA: Service Worker
