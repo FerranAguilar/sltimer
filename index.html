@@ -157,7 +157,7 @@ function clearSession(){
 function loginGoogle(){
   $('btn-google').disabled=true;
   showLoad('Redirigiendo a Google...');
-  const redirectTo = encodeURIComponent(window.location.origin + '/app.html');
+  const redirectTo = encodeURIComponent(window.location.origin + '/menu.html');
   window.location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
 }
 
