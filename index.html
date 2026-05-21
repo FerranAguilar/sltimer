@@ -257,7 +257,7 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   if(localStorage.getItem('slt_tok')){
     showLoad('Comprobando sesión...');
     const ok=await refreshIfNeeded();
-    if(ok){ window.location.href='app.html'; return; }
+    if(ok){ window.location.href='menu.html'; return; }
     hideLoad();
   }
 });
