@@ -163,6 +163,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <span class="list-title">Historial de Sesiones <span class="list-badge" id="hist-badge" style="display:none"></span></span>
         <span class="list-arrow">›</span>
       </button>
+      <button class="list-item" onclick="goToApp('palistas')">
+  <div class="list-icon" style="background:#EAF3DE;color:#3B6D11">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+  </div>
+  <span class="list-title">Mis palistas</span>
+  <span class="list-arrow">›</span>
+</button>
       <button class="list-item" onclick="goToApp('estadisticas')">
         <div class="list-icon teal">
           <!-- Icono gráfica barras -->
@@ -218,12 +225,13 @@ const KEY = 'TeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 // ── Rutas de navegación ───────────────────────────────────────────────────────
 // Ajusta estos valores según la estructura de tu proyecto
 const ROUTES = {
-  'nueva-sesion':   'app.html',          // Pantalla de creación de sesión
-  'historial':      'app.html#historial',// Pantalla de historial
-  'estadisticas':   'app.html#stats',    // Estadísticas (adaptar si existe)
-  'ajustes':        'app.html#ajustes',  // Pantalla de ajustes (adaptar si existe)
-  'notificaciones': 'app.html#notif',    // Notificaciones (adaptar si existe)
-  'ayuda':          'app.html#ayuda',    // Ayuda (adaptar si existe)
+  'nueva-sesion':   'app.html',
+  'historial':      'app.html#historial',
+  'estadisticas':   'app.html#stats',
+  'ajustes':        'app.html#ajustes',
+  'notificaciones': 'app.html#notif',
+  'ayuda':          'app.html#ayuda',
+  'palistas':       'athletes.html',   // ← añadir esto
 };
 
 // ── Estado ────────────────────────────────────────────────────────────────────
