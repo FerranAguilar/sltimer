@@ -117,23 +117,19 @@ async function api(path, opts={}){
   return j;
 }
 
-// ── Guardar sesión ────────────────────────────────────────────────────────────
 function saveSession(d){
   localStorage.setItem('slt_tok', d.access_token);
   localStorage.setItem('slt_ref', d.refresh_token);
   localStorage.setItem('slt_uid', d.user?.id);
   localStorage.setItem('slt_email', d.user?.email);
-  // Guardar cuándo expira (en ms)
   const expiresIn = d.expires_in || 3600;
   localStorage.setItem('slt_exp', Date.now() + expiresIn * 1000);
 }
 
-// ── Refrescar token si está próximo a expirar ─────────────────────────────────
 async function refreshIfNeeded(){
   const exp = parseInt(localStorage.getItem('slt_exp')||'0');
   const ref = localStorage.getItem('slt_ref');
   if(!ref) return false;
-  // Refrescar si quedan menos de 10 minutos
   if(Date.now() < exp - 10*60*1000) return true;
   try{
     const d = await api('/auth/v1/token?grant_type=refresh_token',{
@@ -143,7 +139,6 @@ async function refreshIfNeeded(){
     saveSession(d);
     return true;
   }catch{
-    // Token de refresco inválido, limpiar sesión
     clearSession();
     return false;
   }
@@ -153,7 +148,6 @@ function clearSession(){
   ['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));
 }
 
-// ── Google OAuth ──────────────────────────────────────────────────────────────
 function loginGoogle(){
   $('btn-google').disabled=true;
   showLoad('Redirigiendo a Google...');
@@ -161,39 +155,6 @@ function loginGoogle(){
   window.location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
 }
 
-// ── Manejar callback OAuth (cuando Google redirige de vuelta) ─────────────────
-async function handleOAuthCallback(){
-  // Supabase devuelve el token en el hash de la URL: #access_token=...
-  const hash = window.location.hash.substring(1);
-  if(!hash) return false;
-  const params = new URLSearchParams(hash);
-  const access_token = params.get('access_token');
-  const refresh_token = params.get('refresh_token');
-  if(!access_token) return false;
-
-  showLoad('Iniciando sesión...');
-  try{
-    // Obtener datos del usuario con el token
-    const user = await fetch(`${SB}/auth/v1/user`,{
-      headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
-    }).then(r=>r.json());
-
-    saveSession({
-      access_token,
-      refresh_token,
-      expires_in: parseInt(params.get('expires_in')||'3600'),
-      user
-    });
-    window.location.href = 'menu.html';
-    return true;
-  }catch(e){
-    hideLoad();
-    toast('Error al iniciar sesión con Google', true);
-    return false;
-  }
-}
-
-// ── Email + contraseña ────────────────────────────────────────────────────────
 let _mode = 'login';
 function toggleAuthMode(){
   _mode = _mode==='login' ? 'register' : 'login';
@@ -225,9 +186,7 @@ async function doAuth(){
   }catch(e){hideLoad();$('auth-btn').disabled=false;toast(e.message,true);}
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async ()=>{
-  // 1. ¿Viene de un callback OAuth de Google? (hash con access_token)
   const hash=window.location.hash.substring(1);
   if(hash.includes('access_token')){
     showLoad('Iniciando sesión...');
@@ -244,7 +203,7 @@ window.addEventListener('DOMContentLoaded', async ()=>{
         localStorage.setItem('slt_uid',user.id);
         localStorage.setItem('slt_email',user.email);
         localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
-        window.location.href='app.html';
+        window.location.href='menu.html';
         return;
       }catch(e){
         hideLoad();
@@ -253,7 +212,6 @@ window.addEventListener('DOMContentLoaded', async ()=>{
       }
     }
   }
-  // 2. ¿Hay sesión guardada? Intentar refrescarla
   if(localStorage.getItem('slt_tok')){
     showLoad('Comprobando sesión...');
     const ok=await refreshIfNeeded();
@@ -262,7 +220,6 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   }
 });
 
-// PWA: Service Worker
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
