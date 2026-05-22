@@ -144,10 +144,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <input class="field-input" id="inp-surname" type="text" placeholder="Ej: García" autocomplete="family-name" oninput="updateAvatar()">
     </div>
     <div class="field-row">
-      <div class="field-label">Fecha de nacimiento <span class="opt">(opcional)</span></div>
-      <input class="field-input" id="inp-dob" type="date">
-    </div>
-    <div class="field-row">
       <div class="field-label">Sexo</div>
       <div class="sex-row">
         <button class="sex-btn" onclick="setSex(this,'M')">Masculino</button>
@@ -351,7 +347,7 @@ async function savePalista() {
   const payload = {
     name,
     surname:    $('inp-surname').value.trim() || null,
-    birth_date: $('inp-dob').value || null,
+    birth_date: null,
     sex:        _sex,
     categories: [..._cats],
     owner_id:   _uid
@@ -468,7 +464,6 @@ async function loadAthlete(id) {
     $('page-title').textContent = a.name + (a.surname ? ' ' + a.surname : '');
     $('inp-name').value    = a.name || '';
     $('inp-surname').value = a.surname || '';
-    $('inp-dob').value     = a.birth_date || '';
     updateAvatar();
 
     if (a.sex) {
