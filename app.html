@@ -256,6 +256,7 @@ padding-bottom:4px;
         <span class="slt-big" data-l="T">T</span>
         <span class="slt-small">imer</span>
       </div>
+      <button class="back" onclick="window.location.href='menu.html'" title="Menú">☰</button>
     </h1>
     <button class="btn sm" onclick="goTo('s-hist')" style="width:auto">Historial</button>
     <button class="btn sm" onclick="doLogout()" style="width:auto;color:#A32D2D;border-color:#A32D2D">Salir</button>
@@ -428,7 +429,10 @@ padding-bottom:4px;
 <!-- HISTORIAL -->
 
 <div id="s-hist" class="screen">
-  <div class="topbar"><button class="back" onclick="goTo('s-home')">&#8592;</button><h1>Historial</h1></div>
+  <div class="topbar">
+  <button class="back" onclick="window.location.href='menu.html'">&#8592;</button>
+  <h1>Historial</h1>
+</div>
   <div class="tabs">
     <button class="tab active" id="htb0" onclick="switchHistTab(0)">Mis sesiones</button>
     <button class="tab" id="htb1" onclick="switchHistTab(1)">Compartidas</button>
