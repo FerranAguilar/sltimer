@@ -1683,7 +1683,15 @@ async function initApp(){
   $('u-email').textContent=_email;
   $('cfg-date').value=new Date().toISOString().slice(0,10);
   updatePalInputs();
-  goTo('s-home');
+
+  // Navegar a la pantalla indicada por ?screen= (viene de menu.html)
+  const screenParam = new URLSearchParams(window.location.search).get('screen');
+  const VALID_SCREENS = ['s-home', 's-hist', 's-session'];
+  if (screenParam && VALID_SCREENS.includes(screenParam)) {
+    goTo(screenParam);
+  } else {
+    goTo('s-home');
+  }
 }
 
 initApp();
