@@ -64,9 +64,21 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
 .empty{text-align:center;padding:20px 0;color:#aaa;font-size:14px}
 .sl{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
 .divider{height:0.5px;background:#eee;margin:14px 0}
-.pal-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pal-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;background:#fff;border:0.5px solid #eee;border-radius:12px;padding:10px 12px}
+.pal-row-top{display:flex;align-items:center;gap:8px}
 .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pal-row input{flex:1;padding:8px 10px;font-size:14px}
+.pal-cats{display:flex;gap:6px}
+.pal-cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:12px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;letter-spacing:0.03em;text-align:center}
+.pal-cat-btn:active{opacity:.75}
+.pal-cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.pal-cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+.pal-cat-btn.KXC.active{background:#FAEEDA;border-color:#854F0B;color:#633806}
+/* Badge de categoría en el selector de palista de sesión */
+.cat-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;margin-left:4px;vertical-align:middle}
+.cat-tag.K1{background:#E6F1FB;color:#0C447C}
+.cat-tag.C1{background:#E1F5EE;color:#085041}
+.cat-tag.KXC{background:#FAEEDA;color:#633806}
 .ctx-info{background:#f7f7f7;border-radius:8px;padding:8px 12px;font-size:13px;color:#666;text-align:center}
 .ctx-info strong{color:#111}
 .overwrite-warn{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:8px;padding:8px 12px;font-size:12px;color:#633806;text-align:center;display:none}
@@ -523,13 +535,36 @@ function getVal(id, fallback){
 function updatePalInputs(){
   const n=Math.min(15,Math.max(1,getVal('cfg-pal',1)));
   const cont=$('pal-inputs');
-  const prev=Array.from(cont.querySelectorAll('input')).map(i=>i.value);
+  // Preserve existing names and categories
+  const prevNames=Array.from(cont.querySelectorAll('input')).map(i=>i.value);
+  const prevCats=Array.from(cont.querySelectorAll('.pal-row')).map(row=>{
+    const active=row.querySelector('.pal-cat-btn.active');
+    return active?active.dataset.cat:null;
+  });
   cont.innerHTML='';
   for(let i=0;i<n;i++){
     const row=document.createElement('div');row.className='pal-row';
-    row.innerHTML=`<div class="pal-num">${i+1}</div><input type="text" placeholder="Palista ${i+1}" value="${prev[i]||''}">`;
+    row.innerHTML=`
+      <div class="pal-row-top">
+        <div class="pal-num">${i+1}</div>
+        <input type="text" placeholder="Palista ${i+1}" value="${prevNames[i]||''}">
+      </div>
+      <div class="pal-cats">
+        <button class="pal-cat-btn K1${prevCats[i]==='K1'?' active':''}" data-cat="K1" onclick="togglePalCat(this,'K1',${i})">K1</button>
+        <button class="pal-cat-btn C1${prevCats[i]==='C1'?' active':''}" data-cat="C1" onclick="togglePalCat(this,'C1',${i})">C1</button>
+        <button class="pal-cat-btn KXC${prevCats[i]==='KXC'?' active':''}" data-cat="KXC" onclick="togglePalCat(this,'KXC',${i})">KXC</button>
+      </div>`;
     cont.appendChild(row);
   }
+}
+
+function togglePalCat(btn, cat, rowIdx){
+  const row=btn.closest('.pal-row');
+  const wasActive=btn.classList.contains('active');
+  // Deselect all in this row
+  row.querySelectorAll('.pal-cat-btn').forEach(b=>b.classList.remove('active'));
+  // Toggle: if was not active, activate it
+  if(!wasActive) btn.classList.add('active');
 }
 
 // ── Código de sala ────────────────────────────────────────────────────────────
@@ -547,7 +582,12 @@ async function createSession(){
   const nPal=Math.min(15,Math.max(1,getVal('cfg-pal',3)));
   const nTra=Math.min(12,Math.max(1,getVal('cfg-tra',4)));
   const nameInputs=$('pal-inputs').querySelectorAll('input');
+  const palRows=Array.from($('pal-inputs').querySelectorAll('.pal-row'));
   const palNames=Array.from({length:nPal},(_,i)=>nameInputs[i]?.value.trim()||'Palista '+(i+1));
+  const palCats=palRows.map(row=>{
+    const active=row.querySelector('.pal-cat-btn.active');
+    return active?active.dataset.cat:null;
+  });
   const isCollab=$('cfg-collab').classList.contains('on');
   const code=isCollab?genCode():null;
 
@@ -556,7 +596,7 @@ async function createSession(){
     trainer:$('cfg-trainer').value.trim()||_email,
     date:$('cfg-date').value||new Date().toISOString().slice(0,10),
     nPal,nTra,
-    palistas:palNames.map(name=>({name,tramos:Array.from({length:nTra},()=>({mangas:[],pens:[]}))}))
+    palistas:palNames.map((name,i)=>({name,category:palCats[i]||null,tramos:Array.from({length:nTra},()=>({mangas:[],pens:[]}))}))
   };
 
   showLoad('Creando sesión...');
@@ -689,15 +729,14 @@ async function refreshFromDB(){
 
 // ── Selectores ────────────────────────────────────────────────────────────────
 function buildSelectors(){
-  $('sel-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+  $('sel-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}${p.category?' ['+p.category+']':''}</option>`).join('');
   $('sel-tra').innerHTML=Array.from({length:_sessData.nTra},(_,i)=>`<option value="${i}">Tramo ${i+1}</option>`).join('');
   rebuildMangaSelector();updateCtxInfo();updateBtn();
 }
 
 function rebuildSelectors(){
   const pi=getPi();
-  $('sel-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
-  $('sel-pal').value=pi;
+  $('sel-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}${p.category?' ['+p.category+']':''}</option>`).join('');
   rebuildMangaSelector();updateCtxInfo();
 }
 
@@ -747,7 +786,8 @@ function updateCtxInfo(){
       ?' · Anterior: <strong style="color:#6A1B9A">DNF</strong>'
       :` · Anterior: <strong>${val.toFixed(2)}s</strong>`;
   }
-  $('ctx-info').innerHTML=`<strong>${pal.name}</strong> · Tramo ${ti+1} · Manga ${mi+1}${exS}`;
+  const catTag=pal.category?`<span class="cat-tag ${pal.category}">${pal.category}</span>`:'';
+  $('ctx-info').innerHTML=`<strong>${pal.name}</strong>${catTag} · Tramo ${ti+1} · Manga ${mi+1}${exS}`;
 }
 
 // ── Cronómetro ────────────────────────────────────────────────────────────────
