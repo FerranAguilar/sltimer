@@ -34,7 +34,7 @@
     .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
 
-    /* ── Layout / pantallas ─────────────────────────────────── */
+    /* ── Pantallas ────────────────────────────────────────────── */
     .screen{display:none}
     .screen.active{display:block}
     .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
@@ -53,7 +53,7 @@
     .counter-btn:active{background:#f0f0f0}
     .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:6px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
 
-    /* ── Palista rows (config) ───────────────────────────────── */
+    /* ── Filas palistas (config) ──────────────────────────────── */
     .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
     .pal-row-top{display:flex;align-items:center;gap:10px}
     .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -79,46 +79,39 @@
     .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
     .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
     .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
-
-    /* ── Botones genéricos ──────────────────────────────────── */
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit}
     .btn-primary:active{opacity:.85}
-    .btn-primary:disabled{opacity:.4;cursor:not-allowed}
 
     /* ═══════════════════════════════════════════════════════════
-       PANTALLA SESIÓN
+       SESIÓN
     ═══════════════════════════════════════════════════════════ */
     .ses-content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
-
-    /* Cabecera sesión */
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
 
-    /* ── Selector Palista / Tramo / Manga ───────────────────── */
+    /* Selector PTM */
     .sel-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px}
     .sel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
     .sel-col{display:flex;flex-direction:column;gap:5px}
     .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em}
-
-    /* scroll horizontal de tabs dentro de sel-col */
     .sel-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
     .sel-tabs::-webkit-scrollbar{display:none}
     .sel-tab{flex-shrink:0;min-width:36px;padding:6px 10px;border-radius:8px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;text-align:center;white-space:nowrap;transition:background .1s,color .1s,border-color .1s}
     .sel-tab.active{background:#1B3A5C;border-color:#1B3A5C;color:#fff}
     .sel-tab:active{opacity:.75}
-    /* Manga: sólo muestra el valor actual + +/- */
     .manga-row{display:flex;align-items:center;gap:6px}
     .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:5px 0;line-height:1}
     .manga-btn{width:32px;height:32px;border-radius:7px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
     .manga-btn:active{background:#f0f0f0}
 
-    /* ── Display cronómetro ─────────────────────────────────── */
-    .chrono-display{background:#1B3A5C;border-radius:20px;padding:24px 20px 20px;display:flex;flex-direction:column;align-items:center;gap:3px}
+    /* Cronómetro display */
+    .chrono-display{background:#1B3A5C;border-radius:20px;padding:22px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:3px}
     .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.50);text-transform:uppercase;letter-spacing:0.08em;min-height:16px;text-align:center}
     .chrono-time{font-family:'Bebas Neue',sans-serif;font-size:76px;color:#fff;letter-spacing:2px;line-height:1}
-    .chrono-manga{font-size:11px;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.06em;margin-top:2px}
+    .chrono-pen{font-size:13px;font-weight:700;color:#F97316;letter-spacing:0.04em;min-height:18px;margin-top:1px}
+    .chrono-manga{font-size:11px;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.06em}
 
-    /* Controles */
+    /* Controles principales */
     .chrono-controls{display:flex;gap:10px}
     .btn-start{flex:1;padding:16px;border-radius:14px;border:none;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;background:#22C55E;color:#fff;transition:opacity .12s}
     .btn-start:active{opacity:.82}
@@ -126,7 +119,20 @@
     .btn-reset{width:54px;height:54px;border-radius:14px;border:none;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:#666;border:0.5px solid rgba(0,0,0,0.10)}
     .btn-reset:active{background:#f0f0f0}
 
-    /* ── Tabla de tiempos ───────────────────────────────────── */
+    /* ── Penalizaciones ───────────────────────────────────────── */
+    .pen-row{display:flex;gap:10px;align-items:center}
+    .pen-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+    .btn-pen{flex:1;padding:12px 6px;border-radius:12px;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:opacity .12s}
+    .btn-pen:active{opacity:.75}
+    .btn-pen.p2{background:#FEF3C7;color:#92400E;border:0.5px solid #FDE68A}
+    .btn-pen.p50{background:#FEE2E2;color:#991B1B;border:0.5px solid #FECACA}
+    .btn-pen.p2.active-pen{background:#F59E0B;color:#fff;border-color:#F59E0B}
+    .btn-pen.p50.active-pen{background:#EF4444;color:#fff;border-color:#EF4444}
+    .btn-pen-sec{font-size:10px;font-weight:600;opacity:.75}
+    .btn-pen-undo{width:40px;height:40px;border-radius:10px;border:0.5px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;color:#888;flex-shrink:0}
+    .btn-pen-undo:active{background:#f5f5f5}
+
+    /* Tabla de tiempos */
     .times-section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
     .times-table{width:100%;border-collapse:collapse;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
     .times-table th{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:0.5px solid #f0f0f0;text-align:left;background:#fafafa}
@@ -135,19 +141,18 @@
     .time-cell{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.5px;color:#1B3A5C;display:block}
     .time-cell.best{color:#0F6E56}
     .time-cell.empty{color:#ddd;font-family:inherit;font-size:12px;font-weight:400}
+    .time-pen-badge{display:inline-block;font-size:9px;font-weight:700;background:#FEE2E2;color:#991B1B;border-radius:4px;padding:1px 4px;margin-left:3px;vertical-align:middle}
     .time-manga-lbl{font-size:9px;color:#bbb;font-weight:600;display:block;margin-top:1px}
     .pal-name-cell{font-weight:600;font-size:13px;max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
     .cat-chip{font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;display:inline-block;margin-top:2px}
     .cat-chip.K1{background:#E6F1FB;color:#0C447C}
     .cat-chip.C1{background:#E1F5EE;color:#085041}
 
-    /* Toast */
+    /* Toast / Overlay */
     .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
     .toast.show{opacity:1}
     .toast.ok{background:#0F6E56}
     .toast.err{background:#A32D2D}
-
-    /* Overlay */
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
     .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
@@ -160,9 +165,7 @@
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     TOPBAR
-═══════════════════════════════════════════════════════════ -->
+<!-- TOPBAR -->
 <div class="topbar">
   <button class="topbar-back" onclick="handleBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -171,33 +174,18 @@
   </a>
   <div class="topbar-divider" id="topbar-div" style="display:none"></div>
   <span class="topbar-title" id="topbar-title" style="display:none"></span>
-  <div class="topbar-right">
-    <div class="avatar" id="top-avatar"></div>
-  </div>
+  <div class="topbar-right"><div class="avatar" id="top-avatar"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     PANTALLA 1 — CONFIGURACIÓN
-═══════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════ PANTALLA 1 — CONFIGURACIÓN ═════════════════════════ -->
 <div class="screen active" id="screen-config">
   <div class="content">
-
     <div class="section-label">Configuración de la sesión</div>
     <div class="card">
-      <div>
-        <label>Nombre de la sesión</label>
-        <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla">
-      </div>
-      <div>
-        <label>Lugar</label>
-        <input id="cfg-lugar" type="text" placeholder="Ej: Canal olímpico de Sevilla">
-      </div>
-      <div>
-        <label>Fecha</label>
-        <input id="cfg-fecha" type="date">
-      </div>
+      <div><label>Nombre de la sesión</label><input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla"></div>
+      <div><label>Lugar</label><input id="cfg-lugar" type="text" placeholder="Ej: Canal olímpico de Sevilla"></div>
+      <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
     </div>
-
     <div class="section-label">Estructura</div>
     <div class="counter-grid">
       <div class="counter-box">
@@ -217,43 +205,33 @@
         </div>
       </div>
     </div>
-
     <div class="section-label">Palistas</div>
     <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
-
     <button class="btn-primary" onclick="goToSession()">Iniciar sesión →</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     PANTALLA 2 — CRONÓMETRO
-═══════════════════════════════════════════════════════════ -->
+<!-- ═════════════════════════ PANTALLA 2 — CRONÓMETRO ═════════════════════════ -->
 <div class="screen" id="screen-session">
   <div class="ses-content">
 
-    <!-- Cabecera sesión -->
+    <!-- Cabecera -->
     <div>
       <div class="ses-title" id="ses-title"></div>
       <div class="ses-meta" id="ses-meta"></div>
     </div>
 
-    <!-- ── Selector Palista / Tramo / Manga ──────────────── -->
+    <!-- Selector Palista / Tramo / Manga -->
     <div class="sel-card">
       <div class="sel-grid">
-
-        <!-- Palista -->
         <div class="sel-col">
           <div class="sel-label">Palista</div>
           <div class="sel-tabs" id="sel-pal"></div>
         </div>
-
-        <!-- Tramo -->
         <div class="sel-col">
           <div class="sel-label">Tramo</div>
           <div class="sel-tabs" id="sel-tra"></div>
         </div>
-
-        <!-- Manga -->
         <div class="sel-col">
           <div class="sel-label">Manga</div>
           <div class="manga-row">
@@ -262,22 +240,40 @@
             <button class="manga-btn" onclick="adjManga(1)">+</button>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- ── Display cronómetro ──────────────────────────────── -->
+    <!-- Display cronómetro -->
     <div class="chrono-display">
       <div class="chrono-ctx" id="chrono-ctx"></div>
       <div class="chrono-time" id="chrono-time">00:00.0</div>
+      <div class="chrono-pen" id="chrono-pen"></div>
       <div class="chrono-manga" id="chrono-manga"></div>
     </div>
+
+    <!-- Botones Iniciar / Reset -->
     <div class="chrono-controls">
       <button class="btn-start" id="btn-start" onclick="toggleTimer()">&#9654; Iniciar</button>
       <button class="btn-reset" onclick="resetTimer()" title="Reiniciar">&#8635;</button>
     </div>
 
-    <!-- ── Tabla de tiempos ────────────────────────────────── -->
+    <!-- Penalizaciones -->
+    <div class="pen-row">
+      <span class="pen-label">Pen.</span>
+      <button class="btn-pen p2" id="btn-p2" onclick="togglePen(2)">
+        <span>+2 seg</span>
+        <span class="btn-pen-sec">Toque puerta</span>
+      </button>
+      <button class="btn-pen p50" id="btn-p50" onclick="togglePen(50)">
+        <span>+50 seg</span>
+        <span class="btn-pen-sec">Puerta errada</span>
+      </button>
+      <button class="btn-pen-undo" onclick="undoPen()" title="Quitar última pen.">&#8630;</button>
+    </div>
+    <!-- Indicador penas activas -->
+    <div id="pen-summary" style="display:none;padding:6px 10px;background:#FEF3C7;border-radius:10px;font-size:12px;font-weight:600;color:#92400E"></div>
+
+    <!-- Tabla de tiempos -->
     <div>
       <div class="times-section-label">Tiempos registrados</div>
       <table class="times-table" id="times-table">
@@ -299,28 +295,28 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 /* ================================================================
    ESTADO GLOBAL
 ================================================================ */
-const CFG = { pal:3, tra:3 };
-const MIN = { pal:1, tra:1 };
-const MAX = { pal:15, tra:12 };
+const CFG = {pal:3,tra:3};
+const MIN = {pal:1,tra:1};
+const MAX = {pal:15,tra:12};
 
-let _tok=null, _uid=null, _email=null;
-let _athletes = [];
-let _palState = [];  // [{id,name,category,isTemp}]
+let _tok=null,_uid=null,_email=null;
+let _athletes=[];
+let _palState=[];
 
 // Cronómetro
-let _timerInterval = null;
-let _timerStart    = 0;
-let _timerElapsed  = 0;
-let _timerRunning  = false;
+let _timerInterval=null,_timerStart=0,_timerElapsed=0,_timerRunning=false;
 
 // Selector activo
-let _selPal   = 0;  // índice de palista
-let _selTramo = 0;  // índice de tramo (0-based)
+let _selPal=0,_selTramo=0;
 
-// _mangas[palIdx][tramoIdx] = número de la siguiente manga a registrar (empieza en 1)
-let _mangas = [];
-// _times[palIdx][tramoIdx]  = [ {manga, ms}, ... ]
-let _times  = [];
+// Matrices
+let _mangas=[];   // [palIdx][tramoIdx] = número siguiente manga
+let _times=[];    // [palIdx][tramoIdx] = [{manga, ms, pen}]  pen = ms penalización (0 si ninguna)
+
+// Penalización acumulada para el tiempo actual (ms)
+let _penMs = 0;
+// Array de penalizaciones individuales para deshacer [{seg}]
+let _penStack = [];
 
 const $ = id => document.getElementById(id);
 
@@ -329,16 +325,14 @@ const $ = id => document.getElementById(id);
 ================================================================ */
 function initials(str){
   if(!str) return '?';
-  const p = str.trim().split(/[\s._\-]+/);
-  return (p.length>=2 ? p[0][0]+p[1][0] : str.slice(0,2)).toUpperCase();
+  const p=str.trim().split(/[\s._\-]+/);
+  return (p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();
 }
 
 function fmtTime(ms){
   if(ms==null) return '—';
-  const total = Math.floor(ms/100);
-  const dec   = total%10;
-  const secs  = Math.floor(total/10)%60;
-  const mins  = Math.floor(total/600);
+  const total=Math.floor(ms/100);
+  const dec=total%10, secs=Math.floor(total/10)%60, mins=Math.floor(total/600);
   return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
 }
 
@@ -369,7 +363,7 @@ function adjust(key,delta){
 }
 
 /* ================================================================
-   CONFIG — filas de palistas
+   CONFIG — filas palistas
 ================================================================ */
 function buildPalList(){
   const n=CFG.pal;
@@ -378,7 +372,6 @@ function buildPalList(){
   const c=$('pal-list'); c.innerHTML='';
   for(let i=0;i<n;i++) renderPalRow(i,c);
 }
-
 function renderPalRow(i,container){
   const s=_palState[i];
   const row=document.createElement('div');
@@ -403,7 +396,6 @@ function renderPalRow(i,container){
     </div>`;
   container.appendChild(row);
 }
-
 function onPalInput(i){
   const val=$('pal-input-'+i).value;
   _palState[i].name=val; _palState[i].id=null; _palState[i].isTemp=true;
@@ -451,33 +443,25 @@ function setCatUI(i,cat){
 function goToSession(){
   const name=$('cfg-name').value.trim();
   if(!name){toast('Introduce un nombre para la sesión','err');return;}
-  const lugar=$('cfg-lugar').value.trim();
-  const fecha=$('cfg-fecha').value;
-  const palistas=_palState.map((s,i)=>({
-    name:s.name.trim()||'Palista '+(i+1),
-    category:s.category, id:s.id||null, isTemp:s.isTemp
-  }));
+  const lugar=$('cfg-lugar').value.trim(), fecha=$('cfg-fecha').value;
+  const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));
   const cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
   sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
   initSession(cfg);
 }
-
 function handleBack(){
   if($('screen-session').classList.contains('active')){
     if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}
     if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.')) return;
     showScreen('config');
-  } else {
-    window.location.href='app.html';
-  }
+  } else { window.location.href='app.html'; }
 }
-
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $('screen-'+name).classList.add('active');
   const isSes=name==='session';
-  $('topbar-div').style.display  = isSes?'block':'none';
-  $('topbar-title').style.display= isSes?'block':'none';
+  $('topbar-div').style.display=isSes?'block':'none';
+  $('topbar-title').style.display=isSes?'block':'none';
   window.scrollTo(0,0);
 }
 
@@ -492,11 +476,10 @@ function initSession(cfg){
   if(cfg.fecha) parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
   $('ses-meta').textContent=parts.join(' · ');
 
-  // Matrices
   _times  = Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));
   _mangas = Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
-
   _selPal=0; _selTramo=0;
+  clearPenState();
 
   buildSelPal(cfg);
   buildSelTramo(cfg);
@@ -508,30 +491,24 @@ function initSession(cfg){
 }
 
 /* ================================================================
-   SELECTOR PALISTA
+   SELECTORES
 ================================================================ */
 function buildSelPal(cfg){
   const el=$('sel-pal'); el.innerHTML='';
   cfg.palistas.forEach((p,i)=>{
     const b=document.createElement('button');
     b.className='sel-tab'+(i===0?' active':'');
-    b.textContent=p.name.split(' ')[0];  // primer nombre para que quepa
+    b.textContent=p.name.split(' ')[0];
     b.title=p.name+(p.category?' · '+p.category:'');
     b.onclick=()=>{
       if(_timerRunning){toast('Para el cronómetro primero','err');return;}
       _selPal=i;
       el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
-      syncMangaVal();
-      updateChronoCtx(cfg);
-      resetTimer();
+      syncMangaVal(); updateChronoCtx(cfg); resetTimer(); clearPenState();
     };
     el.appendChild(b);
   });
 }
-
-/* ================================================================
-   SELECTOR TRAMO
-================================================================ */
 function buildSelTramo(cfg){
   const el=$('sel-tra'); el.innerHTML='';
   for(let i=0;i<cfg.nTra;i++){
@@ -542,21 +519,12 @@ function buildSelTramo(cfg){
       if(_timerRunning){toast('Para el cronómetro primero','err');return;}
       _selTramo=idx;
       el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===idx));
-      syncMangaVal();
-      updateChronoCtx(cfg);
-      resetTimer();
+      syncMangaVal(); updateChronoCtx(cfg); resetTimer(); clearPenState();
     })(i);
     el.appendChild(b);
   }
 }
-
-/* ================================================================
-   MANGA
-================================================================ */
-function syncMangaVal(){
-  $('manga-val').textContent = _mangas[_selPal][_selTramo];
-}
-
+function syncMangaVal(){$('manga-val').textContent=_mangas[_selPal][_selTramo];}
 function adjManga(d){
   if(_timerRunning){toast('Para el cronómetro primero','err');return;}
   const v=_mangas[_selPal][_selTramo]+d;
@@ -567,23 +535,67 @@ function adjManga(d){
 }
 
 /* ================================================================
-   CRONÓMETRO — contexto (texto en display)
+   PENALIZACIONES
 ================================================================ */
-function updateChronoCtx(cfg){
-  const p=cfg.palistas[_selPal];
-  const label=(p.name+(p.category?' · '+p.category:'')).toUpperCase();
-  $('chrono-ctx').textContent=label;
-  const m=_mangas[_selPal][_selTramo];
-  $('chrono-manga').textContent='Tramo '+((_selTramo)+1)+' · Manga '+m;
+function clearPenState(){
+  _penMs=0; _penStack=[];
+  $('btn-p2').classList.remove('active-pen');
+  $('btn-p50').classList.remove('active-pen');
+  updatePenDisplay();
+}
+
+function togglePen(seg){
+  // Cada clic añade una penalización acumulativa (no es toggle on/off)
+  const ms=seg*1000;
+  _penMs+=ms;
+  _penStack.push(seg);
+  // Iluminar botón brevemente
+  const btnId=seg===2?'btn-p2':'btn-p50';
+  const btn=$(btnId);
+  btn.classList.add('active-pen');
+  setTimeout(()=>btn.classList.remove('active-pen'),300);
+  updatePenDisplay();
+  toast('+'+(seg===2?'2 seg':'50 seg')+' pen.');
+}
+
+function undoPen(){
+  if(!_penStack.length){toast('Sin penalizaciones','err');return;}
+  const last=_penStack.pop();
+  _penMs-=last*1000;
+  if(_penMs<0)_penMs=0;
+  updatePenDisplay();
+  toast('Penalización +'+last+'s eliminada');
+}
+
+function updatePenDisplay(){
+  const el=$('chrono-pen');
+  const summary=$('pen-summary');
+  if(!_penStack.length){
+    el.textContent='';
+    summary.style.display='none';
+    return;
+  }
+  // Agrupa: {2: n, 50: n}
+  const cnt2 =_penStack.filter(s=>s===2).length;
+  const cnt50=_penStack.filter(s=>s===50).length;
+  const parts=[];
+  if(cnt2)  parts.push(cnt2+'x +2s');
+  if(cnt50) parts.push(cnt50+'x +50s');
+  const totalSeg=_penMs/1000;
+  el.textContent='+'+totalSeg+'s pen.';
+  summary.textContent='⚠️ Penalización acumulada: '+parts.join(' + ')+' = +'+totalSeg+' seg';
+  summary.style.display='block';
 }
 
 /* ================================================================
-   CRONÓMETRO — controles
+   CRONÓMETRO
 ================================================================ */
-function toggleTimer(){
-  _timerRunning ? stopAndRecord() : startTimer();
+function updateChronoCtx(cfg){
+  const p=cfg.palistas[_selPal];
+  $('chrono-ctx').textContent=(p.name+(p.category?' · '+p.category:'')).toUpperCase();
+  $('chrono-manga').textContent='Tramo '+(_selTramo+1)+' · Manga '+_mangas[_selPal][_selTramo];
 }
-
+function toggleTimer(){_timerRunning?stopAndRecord():startTimer();}
 function startTimer(){
   _timerStart=performance.now()-_timerElapsed;
   _timerRunning=true;
@@ -591,12 +603,10 @@ function startTimer(){
   $('btn-start').classList.add('running');
   _timerInterval=setInterval(tickTimer,50);
 }
-
 function tickTimer(){
   _timerElapsed=performance.now()-_timerStart;
   $('chrono-time').textContent=fmtTime(_timerElapsed);
 }
-
 function stopAndRecord(){
   clearInterval(_timerInterval);
   _timerRunning=false;
@@ -606,20 +616,28 @@ function stopAndRecord(){
   const cfg=JSON.parse(sessionStorage.getItem('slalom_cfg'));
   const pi=_selPal, ti=_selTramo;
   const manga=_mangas[pi][ti];
+  const ms=Math.round(_timerElapsed);
+  const pen=_penMs;  // ms de penalización
 
-  _times[pi][ti].push({manga, ms:Math.round(_timerElapsed)});
-  // Auto-incrementar manga
+  _times[pi][ti].push({manga, ms, pen});
   _mangas[pi][ti]=manga+1;
   $('manga-val').textContent=_mangas[pi][ti];
 
   renderTimesTable(cfg);
-  toast(fmtTime(Math.round(_timerElapsed))+'  ✓','ok');
+
+  // Toast: tiempo + penalización si hay
+  const penSeg=pen/1000;
+  const total=ms+pen;
+  const toastMsg=pen>0
+    ? `${fmtTime(ms)} +${penSeg}s pen. = ${fmtTime(total)}`
+    : `${fmtTime(ms)}  ✓`;
+  toast(toastMsg,'ok');
 
   _timerElapsed=0;
   $('chrono-time').textContent='00:00.0';
+  clearPenState();
   updateChronoCtx(cfg);
 }
-
 function resetTimer(){
   clearInterval(_timerInterval);
   _timerRunning=false; _timerElapsed=0;
@@ -630,34 +648,34 @@ function resetTimer(){
 
 /* ================================================================
    TABLA DE TIEMPOS
-   Cabecera: Palista | T1 | T2 | …
-   Cada celda de tramo muestra todas las mangas registradas
+   Guarda ms (tiempo neto) + pen (ms) por separado
+   Muestra: tiempo neto [+Xs] etiqueta si hay pen
+   El mejor tiempo se calcula sobre tiempo total (neto + pen)
 ================================================================ */
 function buildTimesTable(cfg){
-  $('times-head').innerHTML=
-    '<th>Palista</th>'+
-    Array.from({length:cfg.nTra},(_,i)=>`<th>T${i+1}</th>`).join('');
+  $('times-head').innerHTML='<th>Palista</th>'+Array.from({length:cfg.nTra},(_,i)=>`<th>T${i+1}</th>`).join('');
   renderTimesTable(cfg);
 }
-
 function renderTimesTable(cfg){
   const body=$('times-body'); body.innerHTML='';
   cfg.palistas.forEach((p,pi)=>{
     const tr=document.createElement('tr');
-    // Celda nombre
     const cat=p.category?`<span class="cat-chip ${p.category}">${p.category}</span>`:'';
     let html=`<td><span class="pal-name-cell">${p.name.split(' ')[0]}</span>${cat}</td>`;
-    // Celdas tramos
     for(let ti=0;ti<cfg.nTra;ti++){
       const entries=_times[pi][ti];
       if(!entries.length){
         html+=`<td><span class="time-cell empty">—</span></td>`;
       } else {
-        const bestMs=Math.min(...entries.map(e=>e.ms));
+        // Mejor = mínimo tiempo total (neto + pen)
+        const bestTotal=Math.min(...entries.map(e=>e.ms+e.pen));
         const cells=entries.map(e=>{
-          const isBest=e.ms===bestMs;
-          return `<span class="time-cell${isBest?' best':''}">${fmtTime(e.ms)}</span>`+
-                 `<span class="time-manga-lbl">M${e.manga}</span>`;
+          const total=e.ms+e.pen;
+          const isBest=total===bestTotal;
+          const penSeg=e.pen/1000;
+          const penBadge=e.pen>0?`<span class="time-pen-badge">+${penSeg}s</span>`:'';
+          return `<span class="time-cell${isBest?' best':''}">${fmtTime(e.ms)}${penBadge}</span>`+
+                 `<span class="time-manga-lbl">M${e.manga}${e.pen>0?' • total '+fmtTime(total):''}</span>`;
         }).join('');
         html+=`<td>${cells}</td>`;
       }
@@ -682,7 +700,7 @@ async function loadAthletes(){
       if(ids.length) shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
     }catch{}
     _athletes=[...(owned||[]),...(shared||[])];
-  }catch{ _athletes=[]; }
+  }catch{_athletes=[];}
   $('overlay').classList.remove('show');
   buildPalList();
 }
@@ -694,10 +712,8 @@ _tok  =localStorage.getItem('slt_tok');
 _uid  =localStorage.getItem('slt_uid');
 _email=localStorage.getItem('slt_email');
 if(!_tok){window.location.href='index.html';}
-
 $('top-avatar').textContent=initials(_email?.split('@')[0]||'');
 $('cfg-fecha').value=new Date().toISOString().slice(0,10);
-
 const prev=sessionStorage.getItem('slalom_cfg');
 if(prev){
   try{
@@ -710,7 +726,6 @@ if(prev){
     if(p.palistas) _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
   }catch{}
 }
-
 loadAthletes();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
