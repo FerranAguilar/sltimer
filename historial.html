@@ -28,13 +28,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
 
-/* Lista de sesiones */
+/* Lista */
 .ses-wrap{position:relative;margin-bottom:10px;border-radius:14px;overflow:hidden}
-.ses-delete-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#EF4444;display:flex;align-items:center;justify-content:center;border-radius:14px}
+.ses-delete-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#EF4444;display:flex;align-items:center;justify-content:center;border-radius:14px;cursor:pointer}
 .ses-delete-bg span{color:#fff;font-size:20px}
 .ses-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .22s cubic-bezier(.32,1,.6,1),background .1s;position:relative;z-index:1;-webkit-tap-highlight-color:transparent}
 .ses-card:active{background:#f7f7f7}
-.ses-card.swiped{transform:translateX(-80px)}
 .ses-icon{width:40px;height:40px;border-radius:11px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ses-icon svg{width:20px;height:20px;fill:none;stroke:#085041;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ses-info{flex:1;min-width:0}
@@ -42,10 +41,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ses-sub{font-size:12px;color:#aaa;margin-top:2px}
 .ses-arrow{color:#ccc;font-size:18px;flex-shrink:0}
 .empty-state{text-align:center;padding:48px 24px;color:#bbb}
-.empty-state svg{width:48px;height:48px;stroke:#ddd;margin-bottom:12px}
 .empty-state p{font-size:14px;font-weight:600;color:#bbb}
 
-/* Detalle sesion */
+/* Detalle */
 .det-header{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px}
 .det-name{font-size:18px;font-weight:700;color:#1B3A5C}
 .det-sub{font-size:13px;color:#aaa;margin-top:3px}
@@ -56,16 +54,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* Acciones */
 .export-row{display:flex;gap:8px}
-.btn-export{flex:1;padding:12px 6px;border-radius:12px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .12s}
+.btn-export{flex:1;padding:12px 6px;border-radius:12px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .btn-export:active{opacity:.8}
 .btn-pdf{background:#FCEBEB;color:#A32D2D}
 .btn-xls{background:#E1F5EE;color:#085041}
-.btn-edit-ses{flex:2;padding:12px 6px;border-radius:12px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .12s}
+.btn-edit-ses{flex:2;padding:12px 6px;border-radius:12px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;gap:5px}
 .btn-edit-ses:active{opacity:.8}
-.btn-del-ses{padding:12px 14px;border-radius:12px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:#FCEBEB;color:#A32D2D;display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .12s;flex-shrink:0}
+.btn-del-ses{padding:12px 14px;border-radius:12px;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;background:#FCEBEB;color:#A32D2D;display:flex;align-items:center;justify-content:center}
 .btn-del-ses:active{opacity:.8}
 
-/* Tabla tiempos */
+/* Tabla */
 .times-table{width:100%;border-collapse:collapse;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
 .times-table th{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:0.5px solid #f0f0f0;text-align:left;background:#fafafa}
 .times-table td{padding:9px 12px;font-size:13px;color:#111;border-bottom:0.5px solid #f5f5f5;vertical-align:top}
@@ -83,11 +81,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* Modo edicion */
 .edit-mode-bar{background:#185FA5;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;text-align:center;border-radius:12px;display:none}
 .edit-mode-bar.show{display:block}
-.btn-add-time{width:100%;padding:13px;border-radius:12px;border:2px dashed #185FA5;background:transparent;color:#185FA5;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .12s}
+.btn-add-time{width:100%;padding:13px;border-radius:12px;border:2px dashed #185FA5;background:transparent;color:#185FA5;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 .btn-add-time:active{background:#EBF3FC}
-.btn-save-changes{width:100%;padding:14px;border-radius:12px;border:none;background:#0F6E56;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:none}
-.btn-save-changes.show{display:block}
-.btn-save-changes:active{opacity:.85}
 
 /* Sheet */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
@@ -113,10 +108,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sheet-dsq-btn{width:100%;padding:12px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:8px}
 .sheet-dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
 .sheet-actions{display:flex;gap:10px;margin-top:16px}
-.sheet-btn-save{flex:1;padding:14px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.sheet-btn-save{flex:1;padding:14px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
 .sheet-btn-save:active{opacity:.85}
+.sheet-btn-save:disabled{opacity:.6;cursor:not-allowed}
 .sheet-btn-del{width:48px;height:48px;border-radius:12px;border:0.5px solid #FECACA;background:#FEF2F2;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .sheet-btn-del:active{background:#FEE2E2}
+.sheet-btn-del:disabled{opacity:.5;cursor:not-allowed}
+.sh-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
@@ -172,7 +170,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </button>
   <div class="sheet-actions">
     <button class="sheet-btn-del" id="sh-del-btn" onclick="shDelete()" title="Eliminar">&#128465;</button>
-    <button class="sheet-btn-save" onclick="shSave()">Guardar</button>
+    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()">Guardar</button>
   </div>
 </div>
 
@@ -235,26 +233,21 @@ function showScreen(name){
 function handleBack(){
   if($('screen-detail').classList.contains('active')){
     _editMode=false;_curSes=null;
-    showScreen('list');
-    $('topbar-title').textContent='';
-  } else {
-    window.location.href='menu.html';
-  }
+    showScreen('list');$('topbar-title').textContent='';
+  } else {window.location.href='menu.html';}
 }
 
 /* ── LISTA ── */
 async function loadSessions(){
   showLoad();
-  try{
-    _sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,fecha,n_pal,n_tra,created_at');
-  }catch(e){_sessions=[];toast('Error al cargar sesiones','err');}
-  hideLoad();
-  renderList();
+  try{_sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,fecha,n_pal,n_tra,created_at');}
+  catch(e){_sessions=[];toast('Error al cargar sesiones','err');}
+  hideLoad();renderList();
 }
 function renderList(){
   const c=$('ses-list');
   if(!_sessions.length){
-    c.innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg><p>Aún no tienes sesiones guardadas</p><p style="font-size:12px;margin-top:6px;font-weight:400">Crea una sesión y pulsa «Finalizar y guardar»</p></div>`;
+    c.innerHTML=`<div class="empty-state"><p>Aún no tienes sesiones guardadas</p><p style="font-size:12px;margin-top:6px;font-weight:400">Crea una sesión y pulsa «Finalizar y guardar»</p></div>`;
     return;
   }
   c.innerHTML=_sessions.map(s=>{
@@ -278,98 +271,56 @@ function renderList(){
 
 /* Swipe to delete */
 let _touchStartX=0,_touchStartY=0,_swipedId=null;
-function onTouchStart(e,id){
-  _touchStartX=e.touches[0].clientX;
-  _touchStartY=e.touches[0].clientY;
-  // cerrar cualquier otro card abierto
-  if(_swipedId&&_swipedId!==id)closeSwipe(_swipedId);
-}
+function onTouchStart(e,id){_touchStartX=e.touches[0].clientX;_touchStartY=e.touches[0].clientY;if(_swipedId&&_swipedId!==id)closeSwipe(_swipedId);}
 function onTouchMove(e,id){
-  const dx=e.touches[0].clientX-_touchStartX;
-  const dy=e.touches[0].clientY-_touchStartY;
-  if(Math.abs(dy)>Math.abs(dx))return; // scroll vertical
-  if(dx<-20){
-    e.preventDefault();
-    const card=$('card-'+id);
-    const offset=Math.min(0,Math.max(-80,dx));
-    card.style.transform='translateX('+offset+'px)';
-    card.style.transition='none';
-  } else if(dx>10&&_swipedId===id){
-    closeSwipe(id);
-  }
+  const dx=e.touches[0].clientX-_touchStartX,dy=e.touches[0].clientY-_touchStartY;
+  if(Math.abs(dy)>Math.abs(dx))return;
+  if(dx<-20){e.preventDefault();const card=$('card-'+id);const offset=Math.min(0,Math.max(-80,dx));card.style.transform='translateX('+offset+'px)';card.style.transition='none';}
+  else if(dx>10&&_swipedId===id){closeSwipe(id);}
 }
 function onTouchEnd(e,id){
   const dx=e.changedTouches[0].clientX-_touchStartX;
-  const card=$('card-'+id);
-  card.style.transition='';
-  if(dx<-50){
-    card.style.transform='translateX(-80px)';
-    _swipedId=id;
-  } else {
-    closeSwipe(id);
-  }
+  const card=$('card-'+id);card.style.transition='';
+  if(dx<-50){card.style.transform='translateX(-80px)';_swipedId=id;}else{closeSwipe(id);}
 }
-function closeSwipe(id){
-  const card=$('card-'+id);
-  if(card){card.style.transform='';}
-  if(_swipedId===id)_swipedId=null;
-}
-function onCardClick(e,id){
-  if(_swipedId===id){closeSwipe(id);return;}
-  openSession(id);
-}
+function closeSwipe(id){const card=$('card-'+id);if(card)card.style.transform='';if(_swipedId===id)_swipedId=null;}
+function onCardClick(e,id){if(_swipedId===id){closeSwipe(id);return;}openSession(id);}
 
 /* ── ELIMINAR SESIÓN ── */
 async function confirmDeleteSession(id){
   const s=_sessions.find(x=>x.id===id);
-  if(!confirm('\u00bfEliminar la sesi\u00f3n "'+(s?s.name:id)+'"?\nSe borrar\u00e1n todos los tiempos. Esta acci\u00f3n no se puede deshacer.')){
+  if(!confirm('\u00bfEliminar "'+(s?s.name:id)+'"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.')){
     closeSwipe(id);return;
   }
   showLoad('Eliminando...');
   try{
-    // ON DELETE CASCADE en session_entries borra las entradas
     await api('/rest/v1/sessions?id=eq.'+id,{method:'DELETE'});
     _sessions=_sessions.filter(x=>x.id!==id);
-    hideLoad();
-    renderList();
-    toast('Sesi\u00f3n eliminada','ok');
-  }catch(err){
-    hideLoad();
-    toast('Error al eliminar: '+err.message,'err');
-    closeSwipe(id);
-  }
+    hideLoad();renderList();toast('Sesi\u00f3n eliminada','ok');
+  }catch(err){hideLoad();toast('Error: '+err.message,'err');closeSwipe(id);}
 }
 async function deleteCurrentSession(){
   if(!_curSes)return;
-  if(!confirm('\u00bfEliminar la sesi\u00f3n "'+_curSes.name+'"?\nSe borrar\u00e1n todos los tiempos. Esta acci\u00f3n no se puede deshacer.'))return;
+  if(!confirm('\u00bfEliminar "'+_curSes.name+'"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.'))return;
   showLoad('Eliminando...');
   try{
     await api('/rest/v1/sessions?id=eq.'+_curSes.id,{method:'DELETE'});
     _sessions=_sessions.filter(x=>x.id!==_curSes.id);
     _curSes=null;_entries=[];_editMode=false;
-    hideLoad();
-    showScreen('list');
-    $('topbar-title').textContent='';
-    renderList();
+    hideLoad();showScreen('list');$('topbar-title').textContent='';renderList();
     toast('Sesi\u00f3n eliminada','ok');
-  }catch(err){
-    hideLoad();
-    toast('Error al eliminar: '+err.message,'err');
-  }
+  }catch(err){hideLoad();toast('Error: '+err.message,'err');}
 }
 
 /* ── DETALLE ── */
 async function openSession(id){
   showLoad('Cargando sesión...');
   _curSes=_sessions.find(s=>s.id===id);
-  try{
-    _entries=await api('/rest/v1/session_entries?session_id=eq.'+id+'&order=pal_index.asc,tramo.asc,manga.asc&select=*');
-  }catch(e){_entries=[];toast('Error al cargar tiempos','err');}
-  _editMode=false;
-  hideLoad();
+  try{_entries=await api('/rest/v1/session_entries?session_id=eq.'+id+'&order=pal_index.asc,tramo.asc,manga.asc&select=*');}
+  catch(e){_entries=[];toast('Error al cargar tiempos','err');}
+  _editMode=false;hideLoad();
   $('topbar-title').textContent=_curSes.name;
-  renderDetail();
-  showScreen('detail');
+  renderDetail();showScreen('detail');
 }
 function renderDetail(){
   const s=_curSes;
@@ -408,9 +359,6 @@ function renderDetail(){
   }
   tableHTML+=`</tbody></table>`;
 
-  const addBtn=_editMode?`<button class="btn-add-time" onclick="openNewEntrySheet()">+ Añadir tiempo</button>`:''
-  const saveBtn=_editMode?`<button class="btn-save-changes show" onclick="syncEntriesToDB()">💾 Guardar cambios en historial</button>`:'';
-
   $('detail-content').innerHTML=`
     <div class="det-header">
       <div class="det-name">${s.name}</div>
@@ -424,19 +372,18 @@ function renderDetail(){
     <div class="export-row">
       <button class="btn-export btn-pdf" onclick="exportPDF()">📄 PDF</button>
       <button class="btn-export btn-xls" onclick="exportXLS()">📊 Excel</button>
-      <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edición':'Editar'}</button>
+      <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edición':'Editar sesión'}</button>
       <button class="btn-del-ses" onclick="deleteCurrentSession()">🗑️</button>
     </div>
-    <div class="edit-mode-bar${_editMode?' show':''}">✏️ Modo edición activo — toca un tiempo para modificarlo</div>
+    <div class="edit-mode-bar${_editMode?' show':''}">✏️ Modo edición — los cambios se guardan al instante</div>
     <div class="section-label">Tiempos</div>
     ${tableHTML}
-    ${addBtn}
-    ${saveBtn}
+    ${_editMode?'<button class="btn-add-time" onclick="openNewEntrySheet()">+ Añadir tiempo</button>':''}
   `;
 }
-function toggleEditMode(){_editMode=!_editMode;renderDetail();if(_editMode)toast('Modo edición activado');}
+function toggleEditMode(){_editMode=!_editMode;renderDetail();if(_editMode)toast('Edición activa — cambios instantáneos');}
 
-/* ── SHEET ENTRADA ── */
+/* ── SHEET ── */
 function buildSheetSelectors(curPi,curTi){
   const sp=$('sh-pal');sp.innerHTML='';
   let palNames={};
@@ -479,46 +426,87 @@ function shAdjPen(seg,d){if(_shDsq)return;if(seg===2){_shCnt2=Math.max(0,_shCnt2
 function shToggleDsq(){_shDsq=!_shDsq;updateShDsqBtn();updateShPenEnabled();if(_shDsq){_shCnt2=0;_shCnt50=0;$('sh-cnt2').textContent=0;$('sh-cnt50').textContent=0;}}
 function updateShDsqBtn(){const btn=$('sh-dsq-btn');btn.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'⛔':'□';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
 function updateShPenEnabled(){document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=_shDsq);[$('sh-cnt2'),$('sh-cnt50')].forEach(el=>el.style.opacity=_shDsq?'0.35':'1');}
-function shDelete(){if(!confirm('¿Eliminar este tiempo?'))return;_entries=_entries.filter(e=>e.id!==_shEntryId);closeSheet();renderDetail();toast('Tiempo eliminado');}
-function shSave(){
+
+function shSetLoading(on){
+  const saveBtn=$('sh-save-btn'),delBtn=$('sh-del-btn');
+  if(on){
+    saveBtn.disabled=true;
+    saveBtn.innerHTML='<div class="sh-spinner"></div> Guardando...';
+    if(delBtn)delBtn.disabled=true;
+  } else {
+    saveBtn.disabled=false;
+    saveBtn.textContent='Guardar';
+    if(delBtn)delBtn.disabled=false;
+  }
+}
+
+/* DELETE inmediato */
+async function shDelete(){
+  if(!confirm('¿Eliminar este tiempo?'))return;
+  shSetLoading(true);
+  try{
+    // Si tiene ID real (no temp) borramos en BD
+    if(_shEntryId&&!String(_shEntryId).startsWith('new_')){
+      await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
+    }
+    _entries=_entries.filter(e=>e.id!==_shEntryId);
+    closeSheet();renderDetail();
+    toast('Tiempo eliminado','ok');
+  }catch(err){
+    shSetLoading(false);
+    toast('Error al eliminar: '+err.message,'err');
+  }
+}
+
+/* SAVE inmediato */
+async function shSave(){
   const newPi=parseInt($('sh-pal').value);
   const newTi=parseInt($('sh-tra').value);
   const timeStr=$('sh-time').value.trim();
   const newPen=(_shCnt2*2+_shCnt50*50)*1000;
   let newMs=0;
-  if(!_shDsq){newMs=msFromStr(timeStr);if(newMs===null){toast('Formato inválido. Usa MM:SS.d','err');return;}}
+  if(!_shDsq){
+    newMs=msFromStr(timeStr);
+    if(newMs===null){toast('Formato inválido. Usa MM:SS.d','err');return;}
+  }
   let palNames={};
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat,aid:e.athlete_id};});
   const pInfo=palNames[newPi]||{name:'Palista '+(newPi+1),cat:null,aid:null};
-  if(_shMode==='edit'){
-    const idx=_entries.findIndex(e=>e.id===_shEntryId);
-    if(idx!==-1){const old=_entries[idx];_entries[idx]={...old,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,tramo:newTi,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50,_dirty:true};}
-  } else {
-    const existing=_entries.filter(e=>e.pal_index===newPi&&e.tramo===newTi);
-    const maxManga=existing.length?Math.max(...existing.map(e=>e.manga)):0;
-    _entries.push({id:'new_'+Date.now(),session_id:_curSes.id,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,athlete_id:pInfo.aid||null,tramo:newTi,manga:maxManga+1,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50,_new:true});
-  }
-  closeSheet();renderDetail();toast(_shMode==='edit'?'Tiempo actualizado ✓':'Tiempo añadido ✓','ok');
-}
 
-/* ── SYNC A SUPABASE ── */
-async function syncEntriesToDB(){
-  showLoad('Guardando...');
+  shSetLoading(true);
   try{
-    const newOnes=_entries.filter(e=>e._new);
-    if(newOnes.length){
-      const rows=newOnes.map(({_new,_dirty,...rest})=>rest);
-      const inserted=await api('/rest/v1/session_entries?select=id,pal_index,tramo,manga',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(rows)});
-      inserted.forEach((ins,i)=>{const localIdx=_entries.findIndex(e=>e.id===newOnes[i].id);if(localIdx!==-1){_entries[localIdx].id=ins.id;delete _entries[localIdx]._new;}});
+    if(_shMode==='edit'){
+      const idx=_entries.findIndex(e=>e.id===_shEntryId);
+      if(idx===-1)throw new Error('Entrada no encontrada');
+      const old=_entries[idx];
+      const updated={...old,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,tramo:newTi,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50};
+      // PATCH en BD
+      await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{
+        method:'PATCH',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,tramo:newTi,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50})
+      });
+      _entries[idx]=updated;
+      toast('Guardado ✓','ok');
+    } else {
+      // nueva entrada
+      const existing=_entries.filter(e=>e.pal_index===newPi&&e.tramo===newTi);
+      const maxManga=existing.length?Math.max(...existing.map(e=>e.manga)):0;
+      const newRow={session_id:_curSes.id,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,athlete_id:pInfo.aid||null,tramo:newTi,manga:maxManga+1,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50};
+      const inserted=await api('/rest/v1/session_entries?select=id',{
+        method:'POST',
+        headers:{'Prefer':'return=representation'},
+        body:JSON.stringify([newRow])
+      });
+      const realId=Array.isArray(inserted)?inserted[0].id:inserted.id;
+      _entries.push({...newRow,id:realId});
+      toast('Tiempo añadido ✓','ok');
     }
-    const dirty=_entries.filter(e=>e._dirty&&!e._new);
-    for(const e of dirty){
-      await api('/rest/v1/session_entries?id=eq.'+e.id,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({pal_index:e.pal_index,pal_name:e.pal_name,pal_cat:e.pal_cat,tramo:e.tramo,ms:e.ms,pen:e.pen,dsq:e.dsq,cnt2:e.cnt2,cnt50:e.cnt50})});
-      delete e._dirty;
-    }
-    hideLoad();toast('Cambios guardados ✓','ok');
-    _editMode=false;renderDetail();
-  }catch(err){hideLoad();toast('Error: '+err.message,'err');}
+    closeSheet();renderDetail();
+  }catch(err){
+    shSetLoading(false);
+    toast('Error al guardar: '+err.message,'err');
+  }
 }
 
 /* ── EXPORTAR PDF ── */
@@ -536,7 +524,7 @@ async function exportPDF(){
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(27,58,92);
   doc.text(s.name,14,18);
   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(120,120,120);
-  doc.text([s.lugar,fecha].filter(Boolean).join('  ·  '),14,25);
+  doc.text([s.lugar,fecha].filter(Boolean).join('  ·  ')||' ',14,25);
   doc.text('Generado con SLTimer — '+new Date().toLocaleDateString('es-ES'),14,30);
   const nTra=s.n_tra,nPal=s.n_pal;
   let palNames={};
