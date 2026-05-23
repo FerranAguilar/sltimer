@@ -11,13 +11,11 @@
 <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-<title>SLTimer — Palista</title>
+<title>SLTimer &#8212; Palista</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
-
-/* ── Topbar ── */
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
 .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
 .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
@@ -30,8 +28,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn-save{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;font-family:inherit;transition:opacity .12s;flex-shrink:0}
 .btn-save:active{opacity:.8}
 .btn-save:disabled{opacity:.4;cursor:not-allowed}
-
-/* ── Layout ── */
 .content{padding:16px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto;padding-bottom:40px}
 .avatar-wrap{display:flex;justify-content:center;padding:8px 0 4px}
 .avatar{width:76px;height:76px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;letter-spacing:-1px;transition:background .2s}
@@ -55,6 +51,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cat-btn.kxc.active{background:#FAEEDA;border-color:#854F0B;color:#633806}
 .cat-desc{font-size:12px;color:#bbb;margin-top:6px}
 .cat-desc span{font-weight:600}
+
+/* Acceso */
 .access-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
 .access-row+.access-row,.share-input-area,.shared-item{border-top:0.5px solid #f2f2f2}
 .mini-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;text-transform:uppercase}
@@ -66,16 +64,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .badge-owner{font-size:11px;font-weight:700;background:#E6F1FB;color:#0C447C;padding:3px 9px;border-radius:100px;white-space:nowrap}
 .btn-add{background:none;border:0.5px solid #185FA5;color:#185FA5;font-size:13px;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-add:active{background:#E6F1FB}
+
+/* Input compartir */
 .share-input-area{padding:12px 16px;display:none}
 .share-input-inner{display:flex;gap:8px}
-.share-email-input{flex:1;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;color:#111;font-family:inherit;outline:none;background:#fff;-webkit-appearance:none}
-.share-email-input:focus{border-color:#185FA5}
-.share-email-input::placeholder{color:#ccc}
-.btn-share-confirm{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.share-text-input{flex:1;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;color:#111;font-family:inherit;outline:none;background:#fff;-webkit-appearance:none}
+.share-text-input:focus{border-color:#185FA5}
+.share-text-input::placeholder{color:#ccc}
+.share-hint{font-size:11px;color:#bbb;margin-top:6px;line-height:1.5}
+.share-hint b{color:#888;font-weight:600}
+.share-spinner{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;align-self:center}
+.share-spinner.show{display:block}
+.btn-share-confirm{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .btn-share-confirm:active{opacity:.8}
+.btn-share-confirm:disabled{opacity:.5;cursor:not-allowed}
+
 .shared-item{display:flex;align-items:center;gap:12px;padding:11px 16px}
 .btn-revoke{background:none;border:none;color:#A32D2D;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;padding:5px 8px;border-radius:6px;white-space:nowrap}
 .btn-revoke:active{background:#FCEBEB}
+
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.err{background:#A32D2D}
@@ -90,10 +97,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </style>
 </head>
 <body>
-
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Guardando...</p></div>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <a class="topbar-brand" href="athletes.html">
     <img src="icons/icon-192x192.png" alt="SLTimer">
@@ -106,26 +111,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- CONTENIDO -->
 <div class="content">
   <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
+
   <div class="section-label">Datos personales</div>
   <div class="card">
     <div class="field-row"><div class="field-label">Nombre</div><input class="field-input" id="inp-name" type="text" placeholder="Ej: Carlos" autocomplete="given-name" oninput="updateAvatar()"></div>
     <div class="field-row"><div class="field-label">Apellido <span class="opt">(opcional)</span></div><input class="field-input" id="inp-surname" type="text" placeholder="Ej: García" autocomplete="family-name" oninput="updateAvatar()"></div>
     <div class="field-row"><div class="field-label">Sexo</div><div class="sex-row"><button class="sex-btn" onclick="setSex(this,'M')">Masculino</button><button class="sex-btn" onclick="setSex(this,'F')">Femenino</button><button class="sex-btn" onclick="setSex(this,'O')">Otro</button></div></div>
   </div>
+
   <div class="section-label">Categorías</div>
   <div class="card">
-    <div class="field-row"><div class="field-label">Modalidades en las que compite</div><div class="cat-row"><button class="cat-btn k1" onclick="toggleCat(this,'K1')">K1</button><button class="cat-btn c1" onclick="toggleCat(this,'C1')">C1</button><button class="cat-btn kxc" onclick="toggleCat(this,'KXC')">KXC</button></div><div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div></div>
+    <div class="field-row">
+      <div class="field-label">Modalidades en las que compite</div>
+      <div class="cat-row">
+        <button class="cat-btn k1" onclick="toggleCat(this,'K1')">K1</button>
+        <button class="cat-btn c1" onclick="toggleCat(this,'C1')">C1</button>
+        <button class="cat-btn kxc" onclick="toggleCat(this,'KXC')">KXC</button>
+      </div>
+      <div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div>
+    </div>
   </div>
+
   <div class="section-label">Acceso</div>
   <div class="card" id="access-card">
-    <div class="access-row"><div class="mini-avatar owner" id="owner-avatar"></div><div class="access-info"><div class="access-name" id="owner-name">Tú</div><div class="access-sub" id="owner-email"></div></div><span class="badge-owner">Propietario</span></div>
-    <div class="access-row"><div class="access-info"><div class="access-name">Compartir con entrenador</div><div class="access-sub">Busca por dirección de email</div></div><button class="btn-add" onclick="toggleShareInput()">+ Añadir</button></div>
-    <div class="share-input-area" id="share-input-area"><div class="share-input-inner"><input class="share-email-input" id="share-email" type="email" placeholder="email@entrenador.com"><button class="btn-share-confirm" onclick="addShared()">Añadir</button></div></div>
+    <div class="access-row">
+      <div class="mini-avatar owner" id="owner-avatar"></div>
+      <div class="access-info"><div class="access-name" id="owner-name">Tú</div><div class="access-sub" id="owner-email"></div></div>
+      <span class="badge-owner">Propietario</span>
+    </div>
+    <div class="access-row">
+      <div class="access-info">
+        <div class="access-name">Compartir con entrenador</div>
+        <div class="access-sub">Por email o usuario @</div>
+      </div>
+      <button class="btn-add" onclick="toggleShareInput()">+ Añadir</button>
+    </div>
+    <div class="share-input-area" id="share-input-area">
+      <div class="share-input-inner">
+        <input class="share-text-input" id="share-input" type="text" placeholder="email@ejemplo.com o @usuario" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')addShared()">
+        <div class="share-spinner" id="share-spinner"></div>
+        <button class="btn-share-confirm" id="btn-share-confirm" onclick="addShared()">Añadir</button>
+      </div>
+      <div class="share-hint"><b>Email</b>: carlos@club.es &nbsp;&middot;&nbsp; <b>Usuario</b>: @carlos o carlos</div>
+    </div>
     <div id="shared-list"></div>
   </div>
+
   <button class="btn-delete" id="btn-delete" style="display:none" onclick="confirmDelete()">Eliminar palista</button>
 </div>
 
@@ -146,16 +179,192 @@ function setSex(btn,val){_sex=val;document.querySelectorAll('.sex-btn').forEach(
 const CAT_LABELS={K1:'Kayak',C1:'Canoa',KXC:'Kayak Cross'};
 function toggleCat(btn,cat){if(_cats.has(cat)){_cats.delete(cat);btn.classList.remove('active');}else{_cats.add(cat);btn.classList.add('active');}updateCatDesc();}
 function updateCatDesc(){const desc=$('cat-desc');if(_cats.size===0){desc.textContent='Selecciona al menos una modalidad';desc.style.color='#bbb';}else{desc.textContent=[..._cats].map(c=>`${c} — ${CAT_LABELS[c]}`).join('  ·  ');desc.style.color='#888';}}
-function toggleShareInput(){const area=$('share-input-area');const open=area.style.display==='block';area.style.display=open?'none':'block';if(!open)$('share-email').focus();}
-function addShared(){const email=$('share-email').value.trim().toLowerCase();if(!email||!email.includes('@')){toast('Email no válido','err');return;}if(email===_email){toast('Eres el propietario','err');return;}if(_shared.find(s=>s.email===email)){toast('Ya tiene acceso','err');return;}_shared.push({email,id:null});$('share-email').value='';$('share-input-area').style.display='none';renderShared();}
-function removeShared(email){_shared=_shared.filter(s=>s.email!==email);renderShared();}
-function renderShared(){const list=$('shared-list');if(_shared.length===0){list.innerHTML='';return;}list.innerHTML=_shared.map(s=>`<div class="shared-item"><div class="mini-avatar shared">${s.email.slice(0,2).toUpperCase()}</div><div class="access-info"><div class="access-name">${s.email}</div><div class="access-sub">Puede usar en sesiones · Puede compartir</div></div><button class="btn-revoke" onclick="removeShared('${s.email}')">Quitar</button></div>`).join('');}
+function toggleShareInput(){const area=$('share-input-area');const open=area.style.display==='block';area.style.display=open?'none':'block';if(!open)$('share-input').focus();}
+
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));return j;}
-async function savePalista(){const name=$('inp-name').value.trim();if(!name){toast('El nombre es obligatorio','err');return;}if(_cats.size===0){toast('Selecciona al menos una categoría','err');return;}const payload={name,surname:$('inp-surname').value.trim()||null,sex:_sex,categories:[..._cats],owner_id:_uid};showLoad(_athleteId?'Guardando cambios...':'Creando palista...');$('btn-save').disabled=true;try{let athleteId=_athleteId;if(!athleteId){const res=await api('/rest/v1/athletes',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(payload)});athleteId=res[0].id;}else{await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});}await syncSharedAccess(athleteId);hideLoad();toast(_athleteId?'Cambios guardados':'Palista creado','ok');setTimeout(()=>window.location.href='athletes.html',1200);}catch(e){hideLoad();$('btn-save').disabled=false;toast(e.message,'err');}}
-async function syncSharedAccess(athleteId){let existing=[];try{existing=await api(`/rest/v1/athlete_access?athlete_id=eq.${athleteId}&select=id,trainer_id`);}catch{}for(const s of _shared){if(s.id)continue;try{const users=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:s.email})});if(!users?.user_id)continue;await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:users.user_id,granted_by:_uid,can_share:true})});}catch{}}for(const ex of existing){const stillPresent=_shared.find(s=>s.id===ex.id);if(!stillPresent){try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}}}}
-async function confirmDelete(){if(!confirm('¿Eliminar este palista? Los tiempos registrados se conservarán en las sesiones.'))return;showLoad('Eliminando...');try{await api(`/rest/v1/athletes?id=eq.${_athleteId}`,{method:'DELETE'});hideLoad();toast('Palista eliminado','ok');setTimeout(()=>window.location.href='athletes.html',1000);}catch(e){hideLoad();toast(e.message,'err');}}
-async function loadAthlete(id){showLoad('Cargando...');try{const rows=await api(`/rest/v1/athletes?id=eq.${id}&select=*`);if(!rows||rows.length===0)throw new Error('Palista no encontrado');const a=rows[0];$('page-title').textContent=a.name+(a.surname?' '+a.surname:'');$('inp-name').value=a.name||'';$('inp-surname').value=a.surname||'';updateAvatar();if(a.sex){const map={M:0,F:1,O:2};const btns=document.querySelectorAll('.sex-btn');if(btns[map[a.sex]])setSex(btns[map[a.sex]],a.sex);}if(a.categories){a.categories.forEach(cat=>{const btn=document.querySelector(`.cat-btn.${cat.toLowerCase()}`);if(btn)toggleCat(btn,cat);});}const accesses=await api(`/rest/v1/athlete_access?athlete_id=eq.${id}&select=id,trainer_id`);for(const ac of accesses){if(ac.trainer_id===_uid)continue;try{const res=await api('/rest/v1/rpc/get_email_by_user_id',{method:'POST',body:JSON.stringify({p_user_id:ac.trainer_id})});if(res?.email)_shared.push({email:res.email,id:ac.id});}catch{}}renderShared();$('btn-delete').style.display='block';hideLoad();}catch(e){hideLoad();toast(e.message,'err');}}
-window.addEventListener('DOMContentLoaded',async()=>{_tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');_email=localStorage.getItem('slt_email');if(!_tok){window.location.href='index.html';return;}const ini=_email?_email.slice(0,2).toUpperCase():'YO';$('owner-avatar').textContent=ini;$('owner-email').textContent=_email||'';const params=new URLSearchParams(window.location.search);_athleteId=params.get('id')||null;if(_athleteId){$('page-title').textContent='Editar palista';await loadAthlete(_athleteId);}});
+
+/* Resuelve un email o @username → {user_id, display} */
+async function resolveIdentifier(raw){
+  const val=raw.trim();
+  if(!val)return null;
+
+  // Es un email si contiene @ Y hay algo antes y después
+  const emailRx=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  if(emailRx.test(val)){
+    // Buscar por email via RPC
+    try{
+      const res=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:val.toLowerCase()})});
+      if(res?.user_id)return{user_id:res.user_id,display:val.toLowerCase(),type:'email'};
+    }catch{}
+    return null;
+  }
+
+  // Es un username (con o sin @)
+  const username=val.startsWith('@')?val.slice(1):val;
+  if(!username)return null;
+  try{
+    const rows=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=owner_id,username,name');
+    if(rows&&rows.length>0){
+      const r=rows[0];
+      return{user_id:r.owner_id,display:'@'+r.username,displayName:r.name||null,type:'username'};
+    }
+  }catch{}
+  return null;
+}
+
+async function addShared(){
+  const raw=$('share-input').value.trim();
+  if(!raw){toast('Introduce un email o usuario @','err');return;}
+
+  // Comprobar duplicado en lista local (comparando display o valor raw)
+  const lowerRaw=raw.toLowerCase().replace(/^@/,'');
+  if(_shared.find(s=>s.display.toLowerCase().replace(/^@/,'')=== lowerRaw||(s.user_id&&s.user_id===_uid))){
+    toast('Ya está en la lista','err');return;
+  }
+
+  // Spinner
+  $('share-spinner').classList.add('show');
+  $('btn-share-confirm').disabled=true;
+  let resolved=null;
+  try{
+    resolved=await resolveIdentifier(raw);
+  }finally{
+    $('share-spinner').classList.remove('show');
+    $('btn-share-confirm').disabled=false;
+  }
+
+  if(!resolved){toast('No se encontró ningún usuario con ese dato','err');return;}
+  if(resolved.user_id===_uid){toast('Eres el propietario','err');return;}
+  if(_shared.find(s=>s.user_id===resolved.user_id)){toast('Ya tiene acceso','err');return;}
+
+  _shared.push({user_id:resolved.user_id,display:resolved.display,displayName:resolved.displayName||null,id:null});
+  $('share-input').value='';
+  $('share-input-area').style.display='none';
+  renderShared();
+  toast(resolved.display+' añadido ✓','ok');
+}
+
+function removeShared(userId){
+  _shared=_shared.filter(s=>s.user_id!==userId);renderShared();
+}
+function renderShared(){
+  const list=$('shared-list');
+  if(_shared.length===0){list.innerHTML='';return;}
+  list.innerHTML=_shared.map(s=>{
+    const label=s.displayName?`${s.displayName} <span style="color:#aaa;font-weight:400">${s.display}</span>`:s.display;
+    const ini=s.display.replace('@','').slice(0,2).toUpperCase();
+    return`<div class="shared-item">
+      <div class="mini-avatar shared">${ini}</div>
+      <div class="access-info"><div class="access-name">${label}</div><div class="access-sub">Puede ver y usar en sesiones</div></div>
+      <button class="btn-revoke" onclick="removeShared('${s.user_id}')">Quitar</button>
+    </div>`;
+  }).join('');
+}
+
+async function savePalista(){
+  const name=$('inp-name').value.trim();
+  if(!name){toast('El nombre es obligatorio','err');return;}
+  if(_cats.size===0){toast('Selecciona al menos una categoría','err');return;}
+  const payload={name,surname:$('inp-surname').value.trim()||null,sex:_sex,categories:[..._cats],owner_id:_uid};
+  showLoad(_athleteId?'Guardando cambios...':'Creando palista...');
+  $('btn-save').disabled=true;
+  try{
+    let athleteId=_athleteId;
+    if(!athleteId){
+      const res=await api('/rest/v1/athletes',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(payload)});
+      athleteId=res[0].id;
+    }else{
+      await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});
+    }
+    await syncSharedAccess(athleteId);
+    hideLoad();
+    toast(_athleteId?'Cambios guardados':'Palista creado','ok');
+    setTimeout(()=>window.location.href='athletes.html',1200);
+  }catch(e){
+    hideLoad();
+    $('btn-save').disabled=false;
+    toast(e.message,'err');
+  }
+}
+
+async function syncSharedAccess(athleteId){
+  let existing=[];
+  try{existing=await api(`/rest/v1/athlete_access?athlete_id=eq.${athleteId}&select=id,trainer_id`);}catch{}
+  // Añadir los nuevos (sin id)
+  for(const s of _shared){
+    if(s.id)continue; // ya existía
+    if(!s.user_id)continue;
+    try{
+      await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});
+    }catch{}
+  }
+  // Revocar los que ya no están
+  for(const ex of existing){
+    if(ex.trainer_id===_uid)continue;
+    const stillPresent=_shared.find(s=>s.user_id===ex.trainer_id);
+    if(!stillPresent){
+      try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}
+    }
+  }
+}
+
+async function confirmDelete(){
+  if(!confirm('¿Eliminar este palista? Los tiempos registrados se conservarán en las sesiones.'))return;
+  showLoad('Eliminando...');
+  try{
+    await api(`/rest/v1/athletes?id=eq.${_athleteId}`,{method:'DELETE'});
+    hideLoad();toast('Palista eliminado','ok');
+    setTimeout(()=>window.location.href='athletes.html',1000);
+  }catch(e){hideLoad();toast(e.message,'err');}
+}
+
+async function loadAthlete(id){
+  showLoad('Cargando...');
+  try{
+    const rows=await api(`/rest/v1/athletes?id=eq.${id}&select=*`);
+    if(!rows||rows.length===0)throw new Error('Palista no encontrado');
+    const a=rows[0];
+    $('page-title').textContent=a.name+(a.surname?' '+a.surname:'');
+    $('inp-name').value=a.name||'';
+    $('inp-surname').value=a.surname||'';
+    updateAvatar();
+    if(a.sex){const map={M:0,F:1,O:2};const btns=document.querySelectorAll('.sex-btn');if(btns[map[a.sex]])setSex(btns[map[a.sex]],a.sex);}
+    if(a.categories){a.categories.forEach(cat=>{const btn=document.querySelector(`.cat-btn.${cat.toLowerCase()}`);if(btn)toggleCat(btn,cat);});}
+    const accesses=await api(`/rest/v1/athlete_access?athlete_id=eq.${id}&select=id,trainer_id`);
+    for(const ac of accesses){
+      if(ac.trainer_id===_uid)continue;
+      // Intentar obtener username del coach primero
+      try{
+        const coaches=await api(`/rest/v1/coaches?owner_id=eq.${ac.trainer_id}&select=username,name&limit=1`);
+        if(coaches&&coaches.length>0){
+          _shared.push({user_id:ac.trainer_id,display:'@'+coaches[0].username,displayName:coaches[0].name||null,id:ac.id});
+          continue;
+        }
+      }catch{}
+      // Fallback: email via RPC
+      try{
+        const res=await api('/rest/v1/rpc/get_email_by_user_id',{method:'POST',body:JSON.stringify({p_user_id:ac.trainer_id})});
+        if(res?.email)_shared.push({user_id:ac.trainer_id,display:res.email,displayName:null,id:ac.id});
+      }catch{}
+    }
+    renderShared();
+    $('btn-delete').style.display='block';
+    hideLoad();
+  }catch(e){hideLoad();toast(e.message,'err');}
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok){window.location.href='index.html';return;}
+  const ini=_email?_email.slice(0,2).toUpperCase():'YO';
+  $('owner-avatar').textContent=ini;
+  $('owner-email').textContent=_email||'';
+  const params=new URLSearchParams(window.location.search);
+  _athleteId=params.get('id')||null;
+  if(_athleteId){$('page-title').textContent='Editar palista';await loadAthlete(_athleteId);}
+});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
 </body>
