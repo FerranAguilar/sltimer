@@ -17,15 +17,15 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
 
 /* ── Topbar ── */
-.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:12px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:10}
-.back{font-size:24px;color:#666;background:none;border:none;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0}
-.back:active{opacity:.6}
-.topbar h1{font-size:16px;font-weight:600;color:#111;flex:1}
+.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+.topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
 
 /* ── Layout ── */
 .content{padding:16px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto;padding-bottom:48px}
-
-/* ── Section label ── */
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
 
 /* ── KPI grid ── */
@@ -62,7 +62,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .athlete-chip.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
 .athlete-chip:active{opacity:.75}
 
-/* ── Tabla palista ── */
+/* ── Stats palista ── */
 .athlete-stats-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
 .stat-row{padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .stat-row+.stat-row{border-top:0.5px solid #f2f2f2}
@@ -72,21 +72,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .stat-val.orange{color:#854F0B}
 .stat-val.red{color:#A32D2D}
 
-/* ── Empty state ── */
 .empty{text-align:center;padding:40px 20px;color:#bbb;font-size:14px}
-
-/* ── Skeleton ── */
-.skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px;height:20px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* ── Loading overlay ── */
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 .overlay.show{display:flex}
 .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .overlay p{font-size:14px;color:#666}
-
-/* ── Toast ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.err{background:#A32D2D}
@@ -96,319 +87,59 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="overlay" id="overlay"><div class="spinner"></div><p>Cargando...</p></div>
 
-<!-- ══ TOPBAR ══ -->
+<!-- TOPBAR -->
 <div class="topbar">
-  <button class="back" onclick="goBack()">←</button>
-  <h1>Estadísticas</h1>
+  <a class="topbar-brand" href="menu.html">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Estadísticas</span>
 </div>
 
-<!-- ══ CONTENIDO ══ -->
+<!-- CONTENIDO -->
 <div class="content">
-
-  <!-- ── GENERALES ── -->
   <div class="section-label">Resumen general</div>
-
   <div class="kpi-grid" id="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Sesiones totales</div>
-      <div class="kpi-value kpi-accent" id="kpi-sessions">—</div>
-      <div class="kpi-sub" id="kpi-sessions-sub"></div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Mangas totales</div>
-      <div class="kpi-value kpi-accent" id="kpi-mangas">—</div>
-      <div class="kpi-sub" id="kpi-mangas-sub"></div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Mangas / semana</div>
-      <div class="kpi-value" id="kpi-mangas-week">—</div>
-      <div class="kpi-sub">media del equipo</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Palistas activos</div>
-      <div class="kpi-value" id="kpi-athletes">—</div>
-      <div class="kpi-sub" id="kpi-athletes-sub"></div>
-    </div>
-    <div class="kpi-card wide">
-      <div class="kpi-label">Penalización media por manga</div>
-      <div class="kpi-value" id="kpi-avg-penalty">—</div>
-      <div class="kpi-sub">segundos de media en todas las mangas</div>
-    </div>
+    <div class="kpi-card"><div class="kpi-label">Sesiones totales</div><div class="kpi-value kpi-accent" id="kpi-sessions">—</div><div class="kpi-sub" id="kpi-sessions-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Mangas totales</div><div class="kpi-value kpi-accent" id="kpi-mangas">—</div><div class="kpi-sub" id="kpi-mangas-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Mangas / semana</div><div class="kpi-value" id="kpi-mangas-week">—</div><div class="kpi-sub">media del equipo</div></div>
+    <div class="kpi-card"><div class="kpi-label">Palistas activos</div><div class="kpi-value" id="kpi-athletes">—</div><div class="kpi-sub" id="kpi-athletes-sub"></div></div>
+    <div class="kpi-card wide"><div class="kpi-label">Penalización media por manga</div><div class="kpi-value" id="kpi-avg-penalty">—</div><div class="kpi-sub">segundos de media en todas las mangas</div></div>
   </div>
-
-  <!-- ── DISTRIBUCIÓN TRAMOS ── -->
   <div class="section-label">Distribución por tramos</div>
-  <div class="card" id="tramos-card">
-    <div class="empty" id="tramos-empty" style="display:none">Sin datos de tramos</div>
-  </div>
-
-  <!-- ── POR PALISTA ── -->
+  <div class="card" id="tramos-card"></div>
   <div class="section-label">Estadísticas por palista</div>
   <div class="athlete-selector" id="athlete-selector"></div>
-  <div class="athlete-stats-card" id="athlete-stats-card">
-    <div class="empty">Selecciona un palista</div>
-  </div>
-
+  <div class="athlete-stats-card" id="athlete-stats-card"><div class="empty">Selecciona un palista</div></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
-
-let _tok = null, _uid = null;
-let _sessions = [], _times = [], _athletes = [];
-let _selectedAthlete = null;
-
-const $ = id => document.getElementById(id);
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function fmt(n, dec = 1) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  return Number(n).toFixed(dec);
-}
-function pct(a, b) {
-  if (!b) return 0;
-  return Math.round((a / b) * 100);
-}
-function weeksBetween(d1, d2) {
-  const ms = Math.abs(new Date(d2) - new Date(d1));
-  return Math.max(ms / (1000 * 60 * 60 * 24 * 7), 1);
-}
-
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null,_uid=null,_sessions=[],_times=[],_athletes=[],_selectedAthlete=null;
+const $=id=>document.getElementById(id);
+function fmt(n,dec=1){if(n===null||n===undefined||isNaN(n))return'—';return Number(n).toFixed(dec);}
+function pct(a,b){if(!b)return 0;return Math.round((a/b)*100);}
+function weeksBetween(d1,d2){const ms=Math.abs(new Date(d2)-new Date(d1));return Math.max(ms/(1000*60*60*24*7),1);}
 let _tTimer;
-function toast(msg, err = false) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.classList.toggle('err', err);
-  el.classList.add('show');
-  clearTimeout(_tTimer);
-  _tTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
+function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+async function api(path){const r=await fetch(SB+path,{headers:{'apikey':KEY,'Authorization':'Bearer '+_tok,'Content-Type':'application/json'}});if(!r.ok)throw new Error(await r.text());return r.json();}
 
-// ── API helper ────────────────────────────────────────────────────────────────
-async function api(path) {
-  const r = await fetch(SB + path, {
-    headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + _tok, 'Content-Type': 'application/json' }
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
+function renderGlobal(){const totalSessions=_sessions.length;const totalMangas=_times.length>0?[...new Set(_times.map(t=>t.athlete_id+'_'+t.session_id+'_'+t.manga_idx))].length:0;const dates=_sessions.map(s=>s.created_at).sort();const weeks=dates.length>=2?weeksBetween(dates[0],dates[dates.length-1]):1;const mangasPerWeek=totalMangas/weeks;const activeAthletes=new Set(_times.map(t=>t.athlete_id)).size;const mangaKeys=[...new Set(_times.map(t=>t.athlete_id+'_'+t.session_id+'_'+t.manga_idx))];let totalPenalty=0;for(const key of mangaKeys){const parts=_times.filter(t=>t.athlete_id+'_'+t.session_id+'_'+t.manga_idx===key);totalPenalty+=parts.reduce((s,t)=>s+(t.penalty||0),0);}const avgPenalty=mangaKeys.length?totalPenalty/mangaKeys.length:0;$('kpi-sessions').textContent=totalSessions;$('kpi-sessions-sub').textContent=totalSessions===1?'1 sesión registrada':totalSessions+' sesiones registradas';$('kpi-mangas').textContent=totalMangas;$('kpi-mangas-sub').textContent=totalMangas===1?'manga completada':'mangas completadas';$('kpi-mangas-week').textContent=fmt(mangasPerWeek);$('kpi-athletes').textContent=activeAthletes;$('kpi-athletes-sub').textContent='con mangas registradas';$('kpi-avg-penalty').textContent=fmt(avgPenalty)+'s';const penColor=avgPenalty===0?'kpi-green':avgPenalty<5?'kpi-accent':avgPenalty<15?'kpi-orange':'kpi-red';$('kpi-avg-penalty').className='kpi-value '+penColor;}
 
-// ── Calcular estadísticas generales ───────────────────────────────────────────────
-function renderGlobal() {
-  const totalSessions = _sessions.length;
-  const totalMangas   = _times.length > 0
-    ? [...new Set(_times.map(t => t.athlete_id + '_' + t.session_id + '_' + t.manga_idx))].length
-    : 0;
+function renderTramos(){const card=$('tramos-card');if(_times.length===0){card.innerHTML='<div class="empty">Sin datos de tramos</div>';return;}const totalRegistros=_times.length;const tramoMap={};for(const t of _times){const k=t.tramo_idx;if(!(k in tramoMap))tramoMap[k]=0;tramoMap[k]++;}const sorted=Object.entries(tramoMap).sort((a,b)=>Number(a[0])-Number(b[0]));const colors=['','green','orange','red',''];let html='';for(const[idx,count]of sorted){const p=pct(count,totalRegistros);const color=colors[Number(idx)%colors.length]||'';html+=`<div class="progress-row"><div class="progress-header"><span class="progress-title">Tramo ${Number(idx)+1}</span><span class="progress-pct">${p}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${color}" style="width:${p}%"></div></div></div>`;}card.innerHTML=html;}
 
-  // Semanas desde la primera sesión
-  const dates = _sessions.map(s => s.created_at).sort();
-  const weeks = dates.length >= 2 ? weeksBetween(dates[0], dates[dates.length - 1]) : 1;
-  const mangasPerWeek = totalMangas / weeks;
+function renderSelector(){const sel=$('athlete-selector');if(_athletes.length===0){sel.innerHTML='<span style="font-size:13px;color:#bbb">Sin palistas</span>';return;}sel.innerHTML=_athletes.map(a=>`<button class="athlete-chip" data-id="${a.id}" onclick="selectAthlete('${a.id}')">${a.name}${a.surname?' '+a.surname:''}</button>`).join('');}
 
-  // Palistas con al menos una manga
-  const activeAthletes = new Set(_times.map(t => t.athlete_id)).size;
+function selectAthlete(id){_selectedAthlete=id;document.querySelectorAll('.athlete-chip').forEach(c=>c.classList.toggle('active',c.dataset.id===id));renderAthleteStat(id);}
 
-  // Penalización media por manga
-  const mangaKeys = [...new Set(_times.map(t => t.athlete_id + '_' + t.session_id + '_' + t.manga_idx))];
-  let totalPenalty = 0;
-  for (const key of mangaKeys) {
-    const parts = _times.filter(t => t.athlete_id + '_' + t.session_id + '_' + t.manga_idx === key);
-    totalPenalty += parts.reduce((s, t) => s + (t.penalty || 0), 0);
-  }
-  const avgPenalty = mangaKeys.length ? totalPenalty / mangaKeys.length : 0;
+function renderAthleteStat(athleteId){const card=$('athlete-stats-card');const myTimes=_times.filter(t=>t.athlete_id===athleteId);if(myTimes.length===0){card.innerHTML='<div class="empty">Este palista no tiene mangas registradas</div>';return;}const mangaSet=[...new Set(myTimes.map(t=>t.session_id+'_'+t.manga_idx))];const totalMangas=mangaSet.length;const sessionIds=[...new Set(myTimes.map(t=>t.session_id))];const sessDates=_sessions.filter(s=>sessionIds.includes(s.id)).map(s=>s.created_at).sort();const weeks=sessDates.length>=2?weeksBetween(sessDates[0],sessDates[sessDates.length-1]):1;const mangasPerWeek=totalMangas/weeks;let totalPenalty=0;for(const key of mangaSet){const[sid,midx]=key.split('_');const parts=myTimes.filter(t=>t.session_id===sid&&String(t.manga_idx)===midx);totalPenalty+=parts.reduce((s,t)=>s+(t.penalty||0),0);}const avgPenalty=totalMangas?totalPenalty/totalMangas:0;const dnfCount=mangaSet.filter(key=>{const[sid,midx]=key.split('_');const parts=myTimes.filter(t=>t.session_id===sid&&String(t.manga_idx)===midx);return parts.some(t=>t.time_value===null||Number(t.time_value)<=0);}).length;const dnfPct=pct(dnfCount,totalMangas);const tramosUsed=[...new Set(myTimes.map(t=>t.tramo_idx))].length;const penColor=avgPenalty===0?'green':avgPenalty<5?'':avgPenalty<15?'orange':'red';const dnfColor=dnfPct===0?'green':dnfPct<10?'':dnfPct<25?'orange':'red';card.innerHTML=`<div class="stat-row"><span class="stat-name">Mangas totales</span><span class="stat-val">${totalMangas}</span></div><div class="stat-row"><span class="stat-name">Mangas / semana</span><span class="stat-val">${fmt(mangasPerWeek)}</span></div><div class="stat-row"><span class="stat-name">Penalización media</span><span class="stat-val ${penColor}">${fmt(avgPenalty)}s</span></div><div class="stat-row"><span class="stat-name">Mangas con DNF</span><span class="stat-val ${dnfColor}">${dnfCount} <span style="font-size:12px;font-weight:500;color:#aaa">(${dnfPct}%)</span></span></div><div class="stat-row"><span class="stat-name">Tramos distintos</span><span class="stat-val">${tramosUsed}</span></div><div class="stat-row"><span class="stat-name">Sesiones participadas</span><span class="stat-val">${sessionIds.length}</span></div>`;}
 
-  $('kpi-sessions').textContent    = totalSessions;
-  $('kpi-sessions-sub').textContent = totalSessions === 1 ? '1 sesión registrada' : totalSessions + ' sesiones registradas';
-  $('kpi-mangas').textContent      = totalMangas;
-  $('kpi-mangas-sub').textContent  = totalMangas === 1 ? 'manga completada' : 'mangas completadas';
-  $('kpi-mangas-week').textContent = fmt(mangasPerWeek);
-  $('kpi-athletes').textContent    = activeAthletes;
-  $('kpi-athletes-sub').textContent = 'con mangas registradas';
-  $('kpi-avg-penalty').textContent = fmt(avgPenalty) + 's';
-  const penColor = avgPenalty === 0 ? 'kpi-green' : avgPenalty < 5 ? 'kpi-accent' : avgPenalty < 15 ? 'kpi-orange' : 'kpi-red';
-  $('kpi-avg-penalty').className = 'kpi-value ' + penColor;
-}
-
-// ── Tramos ──────────────────────────────────────────────────────────────────────
-function renderTramos() {
-  const card = $('tramos-card');
-  if (_times.length === 0) {
-    card.innerHTML = '<div class="empty">Sin datos de tramos</div>';
-    return;
-  }
-
-  // Total de registros individuales de tramo
-  const totalRegistros = _times.length;
-
-  // Agrupar por tramo_idx
-  const tramoMap = {};
-  for (const t of _times) {
-    const k = t.tramo_idx;
-    if (!(k in tramoMap)) tramoMap[k] = 0;
-    tramoMap[k]++;
-  }
-
-  const sorted = Object.entries(tramoMap).sort((a, b) => Number(a[0]) - Number(b[0]));
-  const colors = ['', 'green', 'orange', 'red', ''];
-
-  let html = '';
-  for (const [idx, count] of sorted) {
-    const p = pct(count, totalRegistros);
-    const color = colors[Number(idx) % colors.length] || '';
-    html += `
-      <div class="progress-row">
-        <div class="progress-header">
-          <span class="progress-title">Tramo ${Number(idx) + 1}</span>
-          <span class="progress-pct">${p}%</span>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill ${color}" style="width:${p}%"></div>
-        </div>
-      </div>`;
-  }
-  card.innerHTML = html;
-}
-
-// ── Selector de palistas ───────────────────────────────────────────────────────
-function renderSelector() {
-  const sel = $('athlete-selector');
-  if (_athletes.length === 0) {
-    sel.innerHTML = '<span style="font-size:13px;color:#bbb">Sin palistas</span>';
-    return;
-  }
-  sel.innerHTML = _athletes.map(a =>
-    `<button class="athlete-chip" data-id="${a.id}" onclick="selectAthlete('${a.id}')">${a.name}${a.surname ? ' ' + a.surname : ''}</button>`
-  ).join('');
-}
-
-// ── Seleccionar palista ─────────────────────────────────────────────────────────
-function selectAthlete(id) {
-  _selectedAthlete = id;
-  document.querySelectorAll('.athlete-chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.id === id);
-  });
-  renderAthleteStat(id);
-}
-
-// ── Estadísticas del palista seleccionado ───────────────────────────────────────
-function renderAthleteStat(athleteId) {
-  const card = $('athlete-stats-card');
-  const myTimes = _times.filter(t => t.athlete_id === athleteId);
-
-  if (myTimes.length === 0) {
-    card.innerHTML = '<div class="empty">Este palista no tiene mangas registradas</div>';
-    return;
-  }
-
-  // Mangas únicas del palista
-  const mangaSet = [...new Set(myTimes.map(t => t.session_id + '_' + t.manga_idx))];
-  const totalMangas = mangaSet.length;
-
-  // Semanas activas del palista
-  const sessionIds = [...new Set(myTimes.map(t => t.session_id))];
-  const sessDates = _sessions
-    .filter(s => sessionIds.includes(s.id))
-    .map(s => s.created_at)
-    .sort();
-  const weeks = sessDates.length >= 2 ? weeksBetween(sessDates[0], sessDates[sessDates.length - 1]) : 1;
-  const mangasPerWeek = totalMangas / weeks;
-
-  // Penalización media por manga
-  let totalPenalty = 0;
-  for (const key of mangaSet) {
-    const [sid, midx] = key.split('_');
-    const parts = myTimes.filter(t => t.session_id === sid && String(t.manga_idx) === midx);
-    totalPenalty += parts.reduce((s, t) => s + (t.penalty || 0), 0);
-  }
-  const avgPenalty = totalMangas ? totalPenalty / totalMangas : 0;
-
-  // Mangas con DNF (time_value = null o 0 o negativo)
-  const dnfCount = mangaSet.filter(key => {
-    const [sid, midx] = key.split('_');
-    const parts = myTimes.filter(t => t.session_id === sid && String(t.manga_idx) === midx);
-    return parts.some(t => t.time_value === null || Number(t.time_value) <= 0);
-  }).length;
-  const dnfPct = pct(dnfCount, totalMangas);
-
-  // Tramos distintos trabajados
-  const tramosUsed = [...new Set(myTimes.map(t => t.tramo_idx))].length;
-
-  // Penalización color
-  const penColor = avgPenalty === 0 ? 'green' : avgPenalty < 5 ? '' : avgPenalty < 15 ? 'orange' : 'red';
-  const dnfColor = dnfPct === 0 ? 'green' : dnfPct < 10 ? '' : dnfPct < 25 ? 'orange' : 'red';
-
-  card.innerHTML = `
-    <div class="stat-row">
-      <span class="stat-name">Mangas totales</span>
-      <span class="stat-val">${totalMangas}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-name">Mangas / semana</span>
-      <span class="stat-val">${fmt(mangasPerWeek)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-name">Penalización media</span>
-      <span class="stat-val ${penColor}">${fmt(avgPenalty)}s</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-name">Mangas con DNF</span>
-      <span class="stat-val ${dnfColor}">${dnfCount} <span style="font-size:12px;font-weight:500;color:#aaa">(${dnfPct}%)</span></span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-name">Tramos distintos</span>
-      <span class="stat-val">${tramosUsed}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-name">Sesiones participadas</span>
-      <span class="stat-val">${sessionIds.length}</span>
-    </div>
-  `;
-}
-
-// ── Navegación ────────────────────────────────────────────────────────────────
-function goBack() {
-  window.history.length > 1 ? window.history.back() : window.location.href = 'menu.html';
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  _tok = localStorage.getItem('slt_tok');
-  _uid = localStorage.getItem('slt_uid');
-  if (!_tok) { window.location.href = 'index.html'; return; }
-
-  $('overlay').classList.add('show');
-
-  try {
-    // Cargar en paralelo
-    const [sessions, times, athletes] = await Promise.all([
-      api(`/rest/v1/sessions?user_id=eq.${_uid}&is_live=eq.false&select=id,created_at&order=created_at.asc`),
-      api(`/rest/v1/athlete_times?trainer_id=eq.${_uid}&select=athlete_id,session_id,manga_idx,tramo_idx,time_value,penalty`),
-      api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=id,name,surname&order=name.asc`)
-    ]);
-
-    _sessions = sessions || [];
-    _times    = times    || [];
-    _athletes = athletes || [];
-
-    renderGlobal();
-    renderTramos();
-    renderSelector();
-
-    // Auto-seleccionar primer palista si existe
-    if (_athletes.length > 0) selectAthlete(_athletes[0].id);
-
-  } catch (e) {
-    toast('Error al cargar datos', true);
-  } finally {
-    $('overlay').classList.remove('show');
-  }
-});
-
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+window.addEventListener('DOMContentLoaded',async()=>{_tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');if(!_tok){window.location.href='index.html';return;}$('overlay').classList.add('show');try{const[sessions,times,athletes]=await Promise.all([api(`/rest/v1/sessions?user_id=eq.${_uid}&is_live=eq.false&select=id,created_at&order=created_at.asc`),api(`/rest/v1/athlete_times?trainer_id=eq.${_uid}&select=athlete_id,session_id,manga_idx,tramo_idx,time_value,penalty`),api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=id,name,surname&order=name.asc`)]);_sessions=sessions||[];_times=times||[];_athletes=athletes||[];renderGlobal();renderTramos();renderSelector();if(_athletes.length>0)selectAthlete(_athletes[0].id);}catch(e){toast('Error al cargar datos',true);}finally{$('overlay').classList.remove('show');}});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
-
 </body>
 </html>
