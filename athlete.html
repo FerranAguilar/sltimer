@@ -183,30 +183,26 @@ function toggleShareInput(){const area=$('share-input-area');const open=area.sty
 
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));return j;}
 
-/* Resuelve un email o @username → {user_id, display} */
+/* Resuelve un email o @username → {user_id, display, displayName} */
 async function resolveIdentifier(raw){
   const val=raw.trim();
   if(!val)return null;
-
-  // Es un email si contiene @ Y hay algo antes y después
   const emailRx=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   if(emailRx.test(val)){
-    // Buscar por email via RPC
     try{
       const res=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:val.toLowerCase()})});
       if(res?.user_id)return{user_id:res.user_id,display:val.toLowerCase(),type:'email'};
     }catch{}
     return null;
   }
-
-  // Es un username (con o sin @)
+  // Username (con o sin @)
   const username=val.startsWith('@')?val.slice(1):val;
   if(!username)return null;
   try{
-    const rows=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=owner_id,username,name');
+    const rows=await api('/rest/v1/profiles?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=id,username,name&limit=1');
     if(rows&&rows.length>0){
       const r=rows[0];
-      return{user_id:r.owner_id,display:'@'+r.username,displayName:r.name||null,type:'username'};
+      return{user_id:r.id,display:'@'+r.username,displayName:r.name||null,type:'username'};
     }
   }catch{}
   return null;
@@ -215,28 +211,16 @@ async function resolveIdentifier(raw){
 async function addShared(){
   const raw=$('share-input').value.trim();
   if(!raw){toast('Introduce un email o usuario @','err');return;}
-
-  // Comprobar duplicado en lista local (comparando display o valor raw)
   const lowerRaw=raw.toLowerCase().replace(/^@/,'');
-  if(_shared.find(s=>s.display.toLowerCase().replace(/^@/,'')=== lowerRaw||(s.user_id&&s.user_id===_uid))){
-    toast('Ya está en la lista','err');return;
-  }
-
-  // Spinner
+  if(_shared.find(s=>s.display.toLowerCase().replace(/^@/,'')===lowerRaw)){toast('Ya está en la lista','err');return;}
   $('share-spinner').classList.add('show');
   $('btn-share-confirm').disabled=true;
   let resolved=null;
-  try{
-    resolved=await resolveIdentifier(raw);
-  }finally{
-    $('share-spinner').classList.remove('show');
-    $('btn-share-confirm').disabled=false;
-  }
-
+  try{resolved=await resolveIdentifier(raw);}
+  finally{$('share-spinner').classList.remove('show');$('btn-share-confirm').disabled=false;}
   if(!resolved){toast('No se encontró ningún usuario con ese dato','err');return;}
   if(resolved.user_id===_uid){toast('Eres el propietario','err');return;}
   if(_shared.find(s=>s.user_id===resolved.user_id)){toast('Ya tiene acceso','err');return;}
-
   _shared.push({user_id:resolved.user_id,display:resolved.display,displayName:resolved.displayName||null,id:null});
   $('share-input').value='';
   $('share-input-area').style.display='none';
@@ -244,20 +228,14 @@ async function addShared(){
   toast(resolved.display+' añadido ✓','ok');
 }
 
-function removeShared(userId){
-  _shared=_shared.filter(s=>s.user_id!==userId);renderShared();
-}
+function removeShared(userId){_shared=_shared.filter(s=>s.user_id!==userId);renderShared();}
 function renderShared(){
   const list=$('shared-list');
   if(_shared.length===0){list.innerHTML='';return;}
   list.innerHTML=_shared.map(s=>{
     const label=s.displayName?`${s.displayName} <span style="color:#aaa;font-weight:400">${s.display}</span>`:s.display;
     const ini=s.display.replace('@','').slice(0,2).toUpperCase();
-    return`<div class="shared-item">
-      <div class="mini-avatar shared">${ini}</div>
-      <div class="access-info"><div class="access-name">${label}</div><div class="access-sub">Puede ver y usar en sesiones</div></div>
-      <button class="btn-revoke" onclick="removeShared('${s.user_id}')">Quitar</button>
-    </div>`;
+    return`<div class="shared-item"><div class="mini-avatar shared">${ini}</div><div class="access-info"><div class="access-name">${label}</div><div class="access-sub">Puede ver y usar en sesiones</div></div><button class="btn-revoke" onclick="removeShared('${s.user_id}')">Quitar</button></div>`;
   }).join('');
 }
 
@@ -280,42 +258,28 @@ async function savePalista(){
     hideLoad();
     toast(_athleteId?'Cambios guardados':'Palista creado','ok');
     setTimeout(()=>window.location.href='athletes.html',1200);
-  }catch(e){
-    hideLoad();
-    $('btn-save').disabled=false;
-    toast(e.message,'err');
-  }
+  }catch(e){hideLoad();$('btn-save').disabled=false;toast(e.message,'err');}
 }
 
 async function syncSharedAccess(athleteId){
   let existing=[];
   try{existing=await api(`/rest/v1/athlete_access?athlete_id=eq.${athleteId}&select=id,trainer_id`);}catch{}
-  // Añadir los nuevos (sin id)
   for(const s of _shared){
-    if(s.id)continue; // ya existía
-    if(!s.user_id)continue;
-    try{
-      await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});
-    }catch{}
+    if(s.id||!s.user_id)continue;
+    try{await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});}catch{}
   }
-  // Revocar los que ya no están
   for(const ex of existing){
     if(ex.trainer_id===_uid)continue;
     const stillPresent=_shared.find(s=>s.user_id===ex.trainer_id);
-    if(!stillPresent){
-      try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}
-    }
+    if(!stillPresent){try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}}
   }
 }
 
 async function confirmDelete(){
   if(!confirm('¿Eliminar este palista? Los tiempos registrados se conservarán en las sesiones.'))return;
   showLoad('Eliminando...');
-  try{
-    await api(`/rest/v1/athletes?id=eq.${_athleteId}`,{method:'DELETE'});
-    hideLoad();toast('Palista eliminado','ok');
-    setTimeout(()=>window.location.href='athletes.html',1000);
-  }catch(e){hideLoad();toast(e.message,'err');}
+  try{await api(`/rest/v1/athletes?id=eq.${_athleteId}`,{method:'DELETE'});hideLoad();toast('Palista eliminado','ok');setTimeout(()=>window.location.href='athletes.html',1000);}
+  catch(e){hideLoad();toast(e.message,'err');}
 }
 
 async function loadAthlete(id){
@@ -333,11 +297,12 @@ async function loadAthlete(id){
     const accesses=await api(`/rest/v1/athlete_access?athlete_id=eq.${id}&select=id,trainer_id`);
     for(const ac of accesses){
       if(ac.trainer_id===_uid)continue;
-      // Intentar obtener username del coach primero
+      // Buscar en profiles por id
       try{
-        const coaches=await api(`/rest/v1/coaches?owner_id=eq.${ac.trainer_id}&select=username,name&limit=1`);
-        if(coaches&&coaches.length>0){
-          _shared.push({user_id:ac.trainer_id,display:'@'+coaches[0].username,displayName:coaches[0].name||null,id:ac.id});
+        const profiles=await api(`/rest/v1/profiles?id=eq.${ac.trainer_id}&select=id,username,name&limit=1`);
+        if(profiles&&profiles.length>0){
+          const p=profiles[0];
+          _shared.push({user_id:ac.trainer_id,display:'@'+(p.username||ac.trainer_id),displayName:p.name||null,id:ac.id});
           continue;
         }
       }catch{}
@@ -358,8 +323,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   _uid=localStorage.getItem('slt_uid');
   _email=localStorage.getItem('slt_email');
   if(!_tok){window.location.href='index.html';return;}
-  const ini=_email?_email.slice(0,2).toUpperCase():'YO';
-  $('owner-avatar').textContent=ini;
+  $('owner-avatar').textContent=_email?_email.slice(0,2).toUpperCase():'YO';
   $('owner-email').textContent=_email||'';
   const params=new URLSearchParams(window.location.search);
   _athleteId=params.get('id')||null;
