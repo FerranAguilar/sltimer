@@ -68,6 +68,11 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
 .pal-row-top{display:flex;align-items:center;gap:8px}
 .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pal-row input{flex:1;padding:8px 10px;font-size:14px}
+.pal-mode-tabs{display:flex;gap:4px;margin-bottom:6px}
+.pal-mode-tab{flex:1;padding:5px 4px;border-radius:8px;border:0.5px solid #ddd;background:#f9f9f9;font-size:12px;font-weight:600;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+.pal-mode-tab.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.pal-select{flex:1;padding:8px 10px;font-size:14px;border:0.5px solid #ddd;border-radius:10px;background:#fff;color:#111;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.pal-select:disabled{background:#f5f5f5;color:#aaa}
 .pal-cats{display:flex;gap:6px}
 .pal-cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:12px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;letter-spacing:0.03em;text-align:center}
 .pal-cat-btn:active{opacity:.75}
@@ -461,6 +466,7 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 
 let _tok=null, _uid=null, _email=null;
 let _sessId=null, _sessData=null, _isCollab=false, _roomCode=null;
+let _athletesList = []; // caché de palistas cargados de BD
 let _realtimeCh=null;
 let _chrono={running:false,start:0,elapsed:0,penalty:0,iv:null};
 let _manPen=0, _feed=[];
@@ -531,31 +537,118 @@ function getVal(id, fallback){
   const el=$(id);
   return parseInt(el.getAttribute('data-val'))||parseInt(el.textContent)||fallback;
 }
-
+// ── Cargar lista de atletas para selector ─────────────────────────────────────
+async function loadAthletesList(){
+  if(!_uid||!_tok) return;
+  try{
+    const owned = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+    let sharedAthletes=[];
+    try{
+      const access=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+      const ids=(access||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
+      if(ids.length>0){
+        sharedAthletes=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
+      }
+    }catch{}
+    _athletesList=[...(owned||[]),...(sharedAthletes||[])];
+  }catch(e){
+    _athletesList=[];
+  }
+}
 function updatePalInputs(){
   const n=Math.min(15,Math.max(1,getVal('cfg-pal',1)));
   const cont=$('pal-inputs');
-  // Preserve existing names and categories
-  const prevNames=Array.from(cont.querySelectorAll('input')).map(i=>i.value);
+  // Preservar estado anterior
+  const prevModes=Array.from(cont.querySelectorAll('.pal-row')).map(row=>row.dataset.mode||'list');
+  const prevSelIds=Array.from(cont.querySelectorAll('.pal-select')).map(s=>s.value);
+  const prevNames=Array.from(cont.querySelectorAll('input[data-tmp]')).map(i=>i.value);
   const prevCats=Array.from(cont.querySelectorAll('.pal-row')).map(row=>{
     const active=row.querySelector('.pal-cat-btn.active');
     return active?active.dataset.cat:null;
   });
   cont.innerHTML='';
+
+  const opts=_athletesList.map(a=>{
+    const fullName=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).map(c=>`<span class="cat-tag ${c}">${c}</span>`).join('');
+    return `<option value="${a.id}" data-name="${fullName}" data-cat="${(a.categories||[])[0]||''}">${fullName}${a.categories?.length?' · '+(a.categories.join(', ')):''}${cats}</option>`;
+  }).join('');
+
   for(let i=0;i<n;i++){
-    const row=document.createElement('div');row.className='pal-row';
+    const mode=prevModes[i]||'list';
+    const row=document.createElement('div');
+    row.className='pal-row';
+    row.dataset.mode=mode;
+
+    // Determinar categoría a preseleccionar
+    const prevCat=prevCats[i]||'';
+
     row.innerHTML=`
-      <div class="pal-row-top">
+      <div class="pal-row-top" style="margin-bottom:6px">
         <div class="pal-num">${i+1}</div>
-        <input type="text" placeholder="Palista ${i+1}" value="${prevNames[i]||''}">
+        <div style="flex:1">
+          <!-- Pestañas modo -->
+          <div class="pal-mode-tabs">
+            <button class="pal-mode-tab${mode==='list'?' active':''}" onclick="setPalMode(this,${i},'list')">De la lista</button>
+            <button class="pal-mode-tab${mode==='tmp'?' active':''}" onclick="setPalMode(this,${i},'tmp')">Temporal</button>
+          </div>
+          <!-- Selector de lista -->
+          <div class="pal-list-wrap" style="display:${mode==='list'?'flex':'none'};gap:6px;align-items:center">
+            ${_athletesList.length===0
+              ? `<span style="flex:1;font-size:13px;color:#aaa;padding:8px 10px;background:#f9f9f9;border-radius:10px;border:0.5px solid #eee">Sin palistas en tu lista</span>`
+              : `<select class="pal-select" onchange="onPalSelect(this,${i})">${opts}</select>`
+            }
+          </div>
+          <!-- Input temporal -->
+          <div class="pal-tmp-wrap" style="display:${mode==='tmp'?'flex':'none'};gap:6px;align-items:center">
+            <input data-tmp="1" type="text" placeholder="Nombre temporal" value="${prevNames[i]||''}" style="flex:1;padding:8px 10px;font-size:14px">
+          </div>
+        </div>
       </div>
       <div class="pal-cats">
-        <button class="pal-cat-btn K1${prevCats[i]==='K1'?' active':''}" data-cat="K1" onclick="togglePalCat(this,'K1',${i})">K1</button>
-        <button class="pal-cat-btn C1${prevCats[i]==='C1'?' active':''}" data-cat="C1" onclick="togglePalCat(this,'C1',${i})">C1</button>
-        <button class="pal-cat-btn KXC${prevCats[i]==='KXC'?' active':''}" data-cat="KXC" onclick="togglePalCat(this,'KXC',${i})">KXC</button>
+        <button class="pal-cat-btn K1${prevCat==='K1'?' active':''}" data-cat="K1" onclick="togglePalCat(this,'K1',${i})">K1</button>
+        <button class="pal-cat-btn C1${prevCat==='C1'?' active':''}" data-cat="C1" onclick="togglePalCat(this,'C1',${i})">C1</button>
+        <button class="pal-cat-btn KXC${prevCat==='KXC'?' active':''}" data-cat="KXC" onclick="togglePalCat(this,'KXC',${i})">KXC</button>
       </div>`;
+
     cont.appendChild(row);
+
+    // Si hay un select, restaurar selección previa y preseleccionar categoría del palista
+    if(mode==='list'&&_athletesList.length>0){
+      const sel=row.querySelector('.pal-select');
+      if(prevSelIds[i]&&_athletesList.find(a=>a.id===prevSelIds[i])){
+        sel.value=prevSelIds[i];
+      }
+      // Sync categoría del atleta seleccionado
+      onPalSelect(sel,i);
+    }
   }
+}
+
+function setPalMode(btn,idx,mode){
+  const row=btn.closest('.pal-row');
+  row.dataset.mode=mode;
+  row.querySelectorAll('.pal-mode-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  row.querySelector('.pal-list-wrap').style.display=mode==='list'?'flex':'none';
+  row.querySelector('.pal-tmp-wrap').style.display=mode==='tmp'?'flex':'none';
+  // Al cambiar a lista, sincronizar categoría
+  if(mode==='list'){
+    const sel=row.querySelector('.pal-select');
+    if(sel) onPalSelect(sel,idx);
+  }
+}
+
+function onPalSelect(sel,idx){
+  if(!sel) return;
+  const opt=sel.options[sel.selectedIndex];
+  if(!opt) return;
+  const cat=opt.dataset.cat||'';
+  const row=sel.closest('.pal-row');
+  // Actualizar categoría automáticamente según el atleta
+  row.querySelectorAll('.pal-cat-btn').forEach(b=>{
+    b.classList.toggle('active',cat&&b.dataset.cat===cat);
+  });
 }
 
 function togglePalCat(btn, cat, rowIdx){
@@ -581,9 +674,18 @@ function copyCode(){
 async function createSession(){
   const nPal=Math.min(15,Math.max(1,getVal('cfg-pal',3)));
   const nTra=Math.min(12,Math.max(1,getVal('cfg-tra',4)));
-  const nameInputs=$('pal-inputs').querySelectorAll('input');
   const palRows=Array.from($('pal-inputs').querySelectorAll('.pal-row'));
-  const palNames=Array.from({length:nPal},(_,i)=>nameInputs[i]?.value.trim()||'Palista '+(i+1));
+  const palNames=palRows.map((row,i)=>{
+    const mode=row.dataset.mode||'list';
+    if(mode==='tmp'){
+      return row.querySelector('input[data-tmp]')?.value.trim()||'Palista '+(i+1);
+    } else {
+      const sel=row.querySelector('.pal-select');
+      if(!sel) return 'Palista '+(i+1);
+      const opt=sel.options[sel.selectedIndex];
+      return opt?.dataset.name||opt?.text?.split(' · ')[0]||'Palista '+(i+1);
+    }
+  });
   const palCats=palRows.map(row=>{
     const active=row.querySelector('.pal-cat-btn.active');
     return active?active.dataset.cat:null;
