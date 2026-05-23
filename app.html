@@ -79,7 +79,6 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
 .pal-cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
 .pal-cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
 .pal-cat-btn.KXC.active{background:#FAEEDA;border-color:#854F0B;color:#633806}
-/* Badge de categoría en el selector de palista de sesión */
 .cat-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;margin-left:4px;vertical-align:middle}
 .cat-tag.K1{background:#E6F1FB;color:#0C447C}
 .cat-tag.C1{background:#E1F5EE;color:#085041}
@@ -88,8 +87,6 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
 .ctx-info strong{color:#111}
 .overwrite-warn{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:8px;padding:8px 12px;font-size:12px;color:#633806;text-align:center;display:none}
 .overwrite-warn.show{display:block}
-
-/* ── Export modal ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .18s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal-box{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:500px;padding:28px 20px 32px;box-shadow:0 -6px 40px rgba(0,0,0,0.2);animation:slideUp .22s ease}
@@ -109,73 +106,30 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
 .export-info-sub{font-size:12px;color:#888;margin-top:3px;line-height:1.4}
 .export-cancel{width:100%;padding:14px;border-radius:14px;border:none;background:#f4f4f4;color:#666;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;font-family:inherit}
 .export-cancel:active{background:#eee}
-
-/* ── SLTimer logotipo ── */
 .slt-logo{display:flex;align-items:baseline;line-height:1}
-.slt-big{
-font-family:'Bebas Neue',sans-serif;
-font-size:80px;
-color:#1B3A5C;
-display:inline-block;
-position:relative;
-transform:skewX(-18deg);
-transform-origin:bottom center;
-}
-.slt-big::before{
-content:attr(data-l);
-position:absolute;
-top:0;left:-12px;
-color:inherit;
-opacity:.18;
-filter:blur(2px);
-transform:skewX(-6deg);
-pointer-events:none;
-}
-.slt-big::after{
-content:attr(data-l);
-position:absolute;
-top:0;left:-22px;
-color:inherit;
-opacity:.07;
-filter:blur(4px);
-transform:skewX(-10deg);
-pointer-events:none;
-}
-.slt-small{
-font-family:'Bebas Neue',sans-serif;
-font-size:42px;
-color:#1B3A5C;
-display:inline-block;
-transform:skewX(-18deg);
-transform-origin:bottom center;
-align-self:flex-end;
-padding-bottom:4px;
-}
-/* Topbar variant */
+.slt-big{font-family:'Bebas Neue',sans-serif;font-size:80px;color:#1B3A5C;display:inline-block;position:relative;transform:skewX(-18deg);transform-origin:bottom center;}
+.slt-big::before{content:attr(data-l);position:absolute;top:0;left:-12px;color:inherit;opacity:.18;filter:blur(2px);transform:skewX(-6deg);pointer-events:none;}
+.slt-big::after{content:attr(data-l);position:absolute;top:0;left:-22px;color:inherit;opacity:.07;filter:blur(4px);transform:skewX(-10deg);pointer-events:none;}
+.slt-small{font-family:'Bebas Neue',sans-serif;font-size:42px;color:#1B3A5C;display:inline-block;transform:skewX(-18deg);transform-origin:bottom center;align-self:flex-end;padding-bottom:4px;}
 .slt-logo-sm .slt-big{font-size:30px}
 .slt-logo-sm .slt-big::before{left:-5px}
 .slt-logo-sm .slt-big::after{left:-9px}
 .slt-logo-sm .slt-small{font-size:16px;padding-bottom:2px}
-
-/* Spinner/Loading */
 .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 .overlay.show{display:flex}
 .overlay p{font-size:14px;color:#666;margin-top:4px}
-/* Auth */
 .auth-logo{font-size:44px;text-align:center;margin:8px 0 2px}
 .auth-title{font-size:24px;font-weight:700;text-align:center;color:#111;margin-bottom:4px}
 .auth-sub{font-size:14px;color:#888;text-align:center;margin-bottom:20px}
 .auth-toggle{text-align:center;font-size:14px;color:#888;margin-top:12px}
 .auth-toggle button{background:none;border:none;color:#185FA5;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}
 .ig{margin-bottom:12px}
-/* Room code */
 .room-code{font-size:40px;font-weight:700;letter-spacing:8px;text-align:center;color:#185FA5;padding:12px 0;font-variant-numeric:tabular-nums}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#1E6B3C;display:inline-block;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .trainer-chip{display:inline-flex;align-items:center;gap:4px;background:#f0f0f0;border-radius:100px;padding:4px 10px;font-size:12px;font-weight:600;color:#444;margin:2px}
-/* Crono */
 .chrono-time{font-size:56px;font-weight:300;color:#111;text-align:center;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}
 .chrono-pen{font-size:14px;font-weight:600;text-align:center;margin-top:4px;min-height:20px;color:#993556}
 .chrono-main-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px}
@@ -199,7 +153,6 @@ padding-bottom:4px;
 .psl{font-size:11px;color:#aaa;text-align:center;margin-bottom:4px}
 .dnf-btn{width:100%;height:44px;border-radius:8px;border:1px solid #7B1FA2;background:#F3E5F5;color:#6A1B9A;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;margin-top:10px}
 .dnf-btn:active{transform:scale(.96)}
-/* Resumen */
 .rpt{font-size:16px;font-weight:600;color:#111;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid #eee}
 .rmb{margin-bottom:14px}
 .rml{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
@@ -228,7 +181,6 @@ padding-bottom:4px;
 .toggle.on::after{left:21px}
 .share-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 .share-row span{font-size:14px;color:#111}
-
 </style>
 </head>
 <body>
@@ -240,7 +192,6 @@ padding-bottom:4px;
   <div class="modal-box">
     <div class="modal-title">Exportar sesión</div>
     <div class="modal-sub" id="export-modal-sub">Elige el formato</div>
-
     <button class="export-btn xl" onclick="doExportExcel()">
       <div class="export-icon xl">📊</div>
       <div>
@@ -248,7 +199,6 @@ padding-bottom:4px;
         <div class="export-info-sub">Una hoja por palista · Tiempos, mejor marca y media · Fácil de editar</div>
       </div>
     </button>
-
     <button class="export-btn pdf" onclick="doExportPDF()">
       <div class="export-icon pdf">📄</div>
       <div>
@@ -256,7 +206,6 @@ padding-bottom:4px;
         <div class="export-info-sub">Informe visual listo para compartir con los deportistas</div>
       </div>
     </button>
-
     <button class="export-cancel" onclick="closeExportModal()">Cancelar</button>
   </div>
 </div>
@@ -341,7 +290,6 @@ padding-bottom:4px;
     <h1 id="sess-title">Sesión</h1>
     <button class="btn sm success" onclick="confirmEnd(true)" style="width:auto">Finalizar</button>
   </div>
-  <!-- Info sala colaborativa -->
   <div id="collab-bar" style="display:none;background:#E1F5EE;border-bottom:0.5px solid #9FE1CB;padding:8px 16px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
       <span class="live-dot"></span>
@@ -359,7 +307,6 @@ padding-bottom:4px;
   <div id="tab-0" class="content">
     <div class="card" style="padding:12px">
       <div class="ctx-info" id="ctx-info">—</div>
-      <!-- Selectores ocultos para mantener estado interno -->
       <div style="display:none">
         <select id="sel-pal" onchange="onPalChange()"></select>
         <select id="sel-man" onchange="onManChange()"></select>
@@ -389,7 +336,6 @@ padding-bottom:4px;
       <div class="clbl" id="save-lbl" style="opacity:0">Guardar</div>
     </div>
   </div>
-  <!-- Panel de confirmación de guardado -->
   <div id="save-panel" style="display:none;margin-top:14px;background:#E1F5EE;border:1px solid #9FE1CB;border-radius:10px;padding:12px 14px">
     <div style="font-size:12px;font-weight:600;color:#085041;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">¿Guardar tiempo para…?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
@@ -412,10 +358,8 @@ padding-bottom:4px;
       <button class="pen-btn s50" onclick="addPC(-50)">－50s rehús</button>
     </div>
     <button class="dnf-btn" onclick="markDNF()">🚫 DNF — No Finalizada</button>
-    <!-- Botón para abrir panel de tiempo manual -->
     <button class="dnf-btn" onclick="toggleManualPanel()" id="manual-toggle-btn" style="margin-top:8px;border-color:#185FA5;background:#E6F1FB;color:#185FA5;font-weight:600;letter-spacing:0">⌨️ Añadir tiempo manual</button>
   </div>
-  <!-- Panel de tiempo manual (colapsado por defecto) -->
   <div id="manual-panel" style="display:none;margin-top:14px;background:#f7f9fc;border:1px solid #B5D4F4;border-radius:10px;padding:12px 14px">
     <div style="font-size:12px;font-weight:600;color:#0C447C;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Tiempo manual (s)</div>
     <div style="display:flex;gap:8px;margin-bottom:10px">
@@ -447,9 +391,9 @@ padding-bottom:4px;
 
 <div id="s-hist" class="screen">
   <div class="topbar">
-  <button class="back" onclick="window.location.href='menu.html'">&#8592;</button>
-  <h1>Historial</h1>
-</div>
+    <button class="back" onclick="window.location.href='menu.html'">&#8592;</button>
+    <h1>Historial</h1>
+  </div>
   <div class="tabs">
     <button class="tab active" id="htb0" onclick="switchHistTab(0)">Mis sesiones</button>
     <button class="tab" id="htb1" onclick="switchHistTab(1)">Compartidas</button>
@@ -523,21 +467,7 @@ async function doLogout(){
   window.location.href='index.html';
 }
 
-// ── Palista inputs ────────────────────────────────────────────────────────────
-function adjustVal(id, delta, min, max){
-  const el=$(id);
-  const cur=parseInt(el.getAttribute('data-val'))||parseInt(el.textContent)||min;
-  const next=Math.min(max,Math.max(min,cur+delta));
-  el.setAttribute('data-val',next);
-  el.textContent=next;
-  if(id==='cfg-pal') updatePalInputs();
-}
-
-function getVal(id, fallback){
-  const el=$(id);
-  return parseInt(el.getAttribute('data-val'))||parseInt(el.textContent)||fallback;
-}
-// ── Cargar lista de atletas para selector ─────────────────────────────────────
+// ── Cargar lista de atletas para el selector ──────────────────────────────────
 async function loadAthletesList(){
   if(!_uid||!_tok) return;
   try{
@@ -555,6 +485,22 @@ async function loadAthletesList(){
     _athletesList=[];
   }
 }
+
+// ── Palista inputs ────────────────────────────────────────────────────────────
+function adjustVal(id, delta, min, max){
+  const el=$(id);
+  const cur=parseInt(el.getAttribute('data-val'))||parseInt(el.textContent)||min;
+  const next=Math.min(max,Math.max(min,cur+delta));
+  el.setAttribute('data-val',next);
+  el.textContent=next;
+  if(id==='cfg-pal') updatePalInputs();
+}
+
+function getVal(id, fallback){
+  const el=$(id);
+  return parseInt(el.getAttribute('data-val'))||parseInt(el.textContent)||fallback;
+}
+
 function updatePalInputs(){
   const n=Math.min(15,Math.max(1,getVal('cfg-pal',1)));
   const cont=$('pal-inputs');
@@ -570,8 +516,7 @@ function updatePalInputs(){
 
   const opts=_athletesList.map(a=>{
     const fullName=a.name+(a.surname?' '+a.surname:'');
-    const cats=(a.categories||[]).map(c=>`<span class="cat-tag ${c}">${c}</span>`).join('');
-    return `<option value="${a.id}" data-name="${fullName}" data-cat="${(a.categories||[])[0]||''}">${fullName}${a.categories?.length?' · '+(a.categories.join(', ')):''}${cats}</option>`;
+    return `<option value="${a.id}" data-name="${fullName}" data-cat="${(a.categories||[])[0]||''}">${fullName}${a.categories?.length?' · '+(a.categories.join(', ')):''}</option>`;
   }).join('');
 
   for(let i=0;i<n;i++){
@@ -579,27 +524,22 @@ function updatePalInputs(){
     const row=document.createElement('div');
     row.className='pal-row';
     row.dataset.mode=mode;
-
-    // Determinar categoría a preseleccionar
     const prevCat=prevCats[i]||'';
 
     row.innerHTML=`
       <div class="pal-row-top" style="margin-bottom:6px">
         <div class="pal-num">${i+1}</div>
         <div style="flex:1">
-          <!-- Pestañas modo -->
           <div class="pal-mode-tabs">
             <button class="pal-mode-tab${mode==='list'?' active':''}" onclick="setPalMode(this,${i},'list')">De la lista</button>
             <button class="pal-mode-tab${mode==='tmp'?' active':''}" onclick="setPalMode(this,${i},'tmp')">Temporal</button>
           </div>
-          <!-- Selector de lista -->
           <div class="pal-list-wrap" style="display:${mode==='list'?'flex':'none'};gap:6px;align-items:center">
             ${_athletesList.length===0
               ? `<span style="flex:1;font-size:13px;color:#aaa;padding:8px 10px;background:#f9f9f9;border-radius:10px;border:0.5px solid #eee">Sin palistas en tu lista</span>`
               : `<select class="pal-select" onchange="onPalSelect(this,${i})">${opts}</select>`
             }
           </div>
-          <!-- Input temporal -->
           <div class="pal-tmp-wrap" style="display:${mode==='tmp'?'flex':'none'};gap:6px;align-items:center">
             <input data-tmp="1" type="text" placeholder="Nombre temporal" value="${prevNames[i]||''}" style="flex:1;padding:8px 10px;font-size:14px">
           </div>
@@ -613,13 +553,11 @@ function updatePalInputs(){
 
     cont.appendChild(row);
 
-    // Si hay un select, restaurar selección previa y preseleccionar categoría del palista
     if(mode==='list'&&_athletesList.length>0){
       const sel=row.querySelector('.pal-select');
       if(prevSelIds[i]&&_athletesList.find(a=>a.id===prevSelIds[i])){
         sel.value=prevSelIds[i];
       }
-      // Sync categoría del atleta seleccionado
       onPalSelect(sel,i);
     }
   }
@@ -632,7 +570,6 @@ function setPalMode(btn,idx,mode){
   btn.classList.add('active');
   row.querySelector('.pal-list-wrap').style.display=mode==='list'?'flex':'none';
   row.querySelector('.pal-tmp-wrap').style.display=mode==='tmp'?'flex':'none';
-  // Al cambiar a lista, sincronizar categoría
   if(mode==='list'){
     const sel=row.querySelector('.pal-select');
     if(sel) onPalSelect(sel,idx);
@@ -645,7 +582,6 @@ function onPalSelect(sel,idx){
   if(!opt) return;
   const cat=opt.dataset.cat||'';
   const row=sel.closest('.pal-row');
-  // Actualizar categoría automáticamente según el atleta
   row.querySelectorAll('.pal-cat-btn').forEach(b=>{
     b.classList.toggle('active',cat&&b.dataset.cat===cat);
   });
@@ -654,9 +590,7 @@ function onPalSelect(sel,idx){
 function togglePalCat(btn, cat, rowIdx){
   const row=btn.closest('.pal-row');
   const wasActive=btn.classList.contains('active');
-  // Deselect all in this row
   row.querySelectorAll('.pal-cat-btn').forEach(b=>b.classList.remove('active'));
-  // Toggle: if was not active, activate it
   if(!wasActive) btn.classList.add('active');
 }
 
@@ -837,7 +771,6 @@ function buildSelectors(){
 }
 
 function rebuildSelectors(){
-  const pi=getPi();
   $('sel-pal').innerHTML=_sessData.palistas.map((p,i)=>`<option value="${i}">${p.name}${p.category?' ['+p.category+']':''}</option>`).join('');
   rebuildMangaSelector();updateCtxInfo();
 }
@@ -948,9 +881,7 @@ function openSavePanel(){
   $('save-panel').style.display='block';
 }
 
-function closeSavePanel(){
-  $('save-panel').style.display='none';
-}
+function closeSavePanel(){$('save-panel').style.display='none';}
 
 function onSavePalChange(){
   rebuildSaveMangaSelector();
@@ -1244,7 +1175,6 @@ function renderHistList(rows,cont,isShared){
   });
 }
 
-// ── Editar sesión del historial ───────────────────────────────────────────────
 async function editSession(id, btn){
   if(!confirm('¿Abrir esta sesión para continuar registrando tiempos?')) return;
   btn.disabled=true;
@@ -1266,25 +1196,16 @@ async function editSession(id, btn){
       sess.nTra=nTra;
       sess.nPal=sess.palistas.length;
     }
-    _sessId=row.id;
-    _sessData=sess;
-    _isCollab=false;
-    _roomCode=null;
-    _feed=[];
-    _manPen=0;
-    hideLoad();
-    btn.disabled=false;
+    _sessId=row.id;_sessData=sess;_isCollab=false;_roomCode=null;_feed=[];_manPen=0;
+    hideLoad();btn.disabled=false;
     $('sess-title').textContent='✏️ '+_sessData.sessionName;
     $('collab-bar').style.display='none';
-    buildSelectors();
-    renderFeed();
-    resetChrono();
+    buildSelectors();renderFeed();resetChrono();
     document.querySelector('#s-session .btn.success').textContent='Guardar cambios';
     goTo('s-session');
     toast('✏️ Sesión cargada para edición');
   }catch(e){
-    hideLoad();
-    btn.disabled=false;
+    hideLoad();btn.disabled=false;
     toast('Error al cargar la sesión: '+e.message, true);
   }
 }
@@ -1297,7 +1218,7 @@ async function delSess(id,btn){
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// ── EXPORTACIÓN: Modal + Excel + PDF ─────────────────────────────────────────
+// ── EXPORTACIÓN ───────────────────────────────────────────────────────────────
 // ══════════════════════════════════════════════════════════════════════════════
 
 let _exportSess = null;
@@ -1316,7 +1237,6 @@ function closeExportModal(e) {
   _exportSess = null;
 }
 
-// ── Normalizador de estructura ────────────────────────────────────────────────
 function normalizeSess(sess) {
   if (sess.palistas[0] && !sess.palistas[0].tramos) {
     const nTra = sess.nTra || 4;
@@ -1334,7 +1254,6 @@ function normalizeSess(sess) {
   return sess;
 }
 
-// Calcula metadatos por palista: best, avg, count
 function calcMeta(s) {
   return s.palistas.map(pal => {
     const times = [];
@@ -1354,20 +1273,14 @@ function calcMeta(s) {
   });
 }
 
-// ── EXCEL ─────────────────────────────────────────────────────────────────────
 async function doExportExcel() {
   const sess = _exportSess;
   $('export-modal').style.display = 'none';
   if (!sess) return;
   showLoad('Generando Excel...');
-  try {
-    await loadSheetJS();
-    buildExcel(sess);
-  } catch(e) {
-    toast('Error al generar Excel: ' + e.message, true);
-  } finally {
-    hideLoad();
-  }
+  try { await loadSheetJS(); buildExcel(sess); }
+  catch(e) { toast('Error al generar Excel: ' + e.message, true); }
+  finally { hideLoad(); }
 }
 
 function loadSheetJS() {
@@ -1387,104 +1300,62 @@ function buildExcel(rawSess) {
   const sess = normalizeSess(rawSess);
   const meta = calcMeta(sess);
 
-  // ── Hoja Resumen ──────────────────────────────────────────────────────────
   const resAOA = [
-    ['SLTimer — Informe de sesión'],
-    [],
-    ['Sesión',       sess.sessionName],
-    ['Fecha',        sess.date],
-    ['Entrenador/a', sess.trainer],
-    ['Nº palistas',  sess.palistas.length],
-    [],
+    ['SLTimer — Informe de sesión'],[],
+    ['Sesión', sess.sessionName],['Fecha', sess.date],
+    ['Entrenador/a', sess.trainer],['Nº palistas', sess.palistas.length],[],
     ['PALISTA', 'TIEMPOS', 'MEJOR (s)', 'MEDIA (s)'],
   ];
-  meta.forEach(m => {
-    resAOA.push([
-      m.name,
-      m.count,
-      m.best !== null ? +m.best.toFixed(2) : 'Sin datos',
-      m.avg  !== null ? +m.avg.toFixed(2)  : 'Sin datos',
-    ]);
-  });
-
+  meta.forEach(m => resAOA.push([m.name, m.count,
+    m.best !== null ? +m.best.toFixed(2) : 'Sin datos',
+    m.avg  !== null ? +m.avg.toFixed(2)  : 'Sin datos']));
   const wsRes = XLSX.utils.aoa_to_sheet(resAOA);
   wsRes['!cols'] = [{wch:26},{wch:12},{wch:14},{wch:14}];
   wsRes['!merges'] = [{s:{r:0,c:0}, e:{r:0,c:3}}];
   XLSX.utils.book_append_sheet(wb, wsRes, 'Resumen');
 
-  // ── Una hoja por palista ──────────────────────────────────────────────────
   sess.palistas.forEach((pal, pi) => {
     const nMan = Math.max(...pal.tramos.map(t => t.mangas.length), 0);
     if (nMan === 0) return;
-
-    const aoa = [];
-    // Título
-    aoa.push([pal.name]);
-    aoa.push([]);
-    // Cabecera
-    aoa.push(['Tramo', ...Array.from({length: nMan}, (_, i) => 'Manga ' + (i+1)), 'Mejor tramo', 'Media tramo']);
-
+    const aoa = [[pal.name],[],['Tramo',...Array.from({length:nMan},(_,i)=>'Manga '+(i+1)),'Mejor tramo','Media tramo']];
     pal.tramos.forEach((tra, ti) => {
-      const hayAlgo = tra.mangas.some(v => v !== null && v !== undefined);
-      if (!hayAlgo) return;
-
-      const row = ['Tramo ' + (ti+1)];
-      const tramNums = [];
+      if (!tra.mangas.some(v => v !== null && v !== undefined)) return;
+      const row = ['Tramo '+(ti+1)]; const tramNums = [];
       for (let mi = 0; mi < nMan; mi++) {
-        const v = tra.mangas[mi];
-        const pen = tra.pens?.[mi] || 0;
-        if (v === null || v === undefined) { row.push(''); }
-        else if (v === 'DNF') { row.push('DNF'); }
-        else {
-          const tot = +(v + pen).toFixed(2);
-          row.push(tot);
-          tramNums.push(tot);
-        }
+        const v = tra.mangas[mi]; const pen = tra.pens?.[mi] || 0;
+        if (v===null||v===undefined) row.push('');
+        else if (v==='DNF') row.push('DNF');
+        else { const tot=+(v+pen).toFixed(2); row.push(tot); tramNums.push(tot); }
       }
-      row.push(tramNums.length ? +Math.min(...tramNums).toFixed(2) : '');
-      row.push(tramNums.length ? +(tramNums.reduce((a,b)=>a+b,0)/tramNums.length).toFixed(2) : '');
+      row.push(tramNums.length?+Math.min(...tramNums).toFixed(2):'');
+      row.push(tramNums.length?+(tramNums.reduce((a,b)=>a+b,0)/tramNums.length).toFixed(2):'');
       aoa.push(row);
     });
-
-    // Fila resumen global
     aoa.push([]);
     const pm = meta[pi];
-    aoa.push(['Mejor global',  pm.best !== null ? +pm.best.toFixed(2) : 'Sin datos']);
-    aoa.push(['Media global',  pm.avg  !== null ? +pm.avg.toFixed(2)  : 'Sin datos']);
+    aoa.push(['Mejor global', pm.best!==null?+pm.best.toFixed(2):'Sin datos']);
+    aoa.push(['Media global', pm.avg!==null?+pm.avg.toFixed(2):'Sin datos']);
     aoa.push(['Total tiempos', pm.count]);
-
     const ws = XLSX.utils.aoa_to_sheet(aoa);
-    ws['!cols'] = [{wch:14}, ...Array.from({length: nMan+2}, () => ({wch:12}))];
-    ws['!merges'] = [{s:{r:0,c:0}, e:{r:0,c:nMan+2}}];
-
-    // Nombre de hoja (máx 31 chars, sin caracteres especiales)
-    const sheetName = pal.name
-      .replace(/[\\\/\?\*\[\]:]/g, '')
-      .substring(0, 28) || ('Pal' + (pi+1));
+    ws['!cols'] = [{wch:14},...Array.from({length:nMan+2},()=>({wch:12}))];
+    ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:nMan+2}}];
+    const sheetName = pal.name.replace(/[\\\/\?\*\[\]:]/g,'').substring(0,28)||('Pal'+(pi+1));
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
   });
 
-  const safeName = (sess.sessionName || 'sesion')
-    .replace(/\s+/g, '_')
-    .replace(/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑ]/g, '');
+  const safeName=(sess.sessionName||'sesion').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑ]/g,'');
   XLSX.writeFile(wb, `SLTimer_${sess.date}_${safeName}.xlsx`);
   toast('Excel descargado ✓');
 }
 
-// ── PDF ───────────────────────────────────────────────────────────────────────
 async function doExportPDF() {
   const sess = _exportSess;
   $('export-modal').style.display = 'none';
   if (!sess) return;
   showLoad('Generando PDF...');
-  try {
-    await loadJsPDF();
-    buildPDF(sess);
-  } catch(e) {
-    toast('Error al generar PDF: ' + e.message, true);
-  } finally {
-    hideLoad();
-  }
+  try { await loadJsPDF(); buildPDF(sess); }
+  catch(e) { toast('Error al generar PDF: ' + e.message, true); }
+  finally { hideLoad(); }
 }
 
 function loadJsPDF() {
@@ -1509,263 +1380,133 @@ function buildPDF(rawSess) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const sess = normalizeSess(rawSess);
   const meta = calcMeta(sess);
-
-  // Paleta de colores
   const C = {
-    primary:  [27, 95, 165],
-    green:    [15, 110, 86],
-    purple:   [106, 27, 154],
-    gray:     [110, 110, 120],
-    black:    [25, 25, 35],
-    white:    [255, 255, 255],
-    lightBlue:[230, 241, 251],
-    lightGreen:[225, 245, 238],
-    pageBg:   [248, 250, 253],
+    primary:[27,95,165],green:[15,110,86],purple:[106,27,154],
+    gray:[110,110,120],black:[25,25,35],white:[255,255,255],
+    lightBlue:[230,241,251],lightGreen:[225,245,238],pageBg:[248,250,253],
   };
+  const PAGE_W=210, PAGE_H=297, M=14;
+  let y=0;
 
-  const PAGE_W = 210, PAGE_H = 297, M = 14;
-  let y = 0;
-
-  // ── Cabecera de página ──
-  function pageHeader() {
-    doc.setFillColor(...C.primary);
-    doc.rect(0, 0, PAGE_W, 24, 'F');
-    // Logo texto
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(...C.white);
-    doc.text('SLTimer', M, 13);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8.5);
-    doc.setTextColor(200, 225, 248);
-    doc.text('Informe de sesión de eslálom', M + 25, 13);
-    // Línea separadora decorativa
-    doc.setDrawColor(...C.white);
-    doc.setLineWidth(0.3);
-    doc.line(M, 16, PAGE_W - M, 16);
-    // Metadatos sesión
-    doc.setFontSize(8);
-    doc.setTextColor(210, 230, 250);
-    const meta1 = sess.sessionName + '   ·   ' + sess.date + '   ·   ' + sess.trainer;
-    doc.text(meta1, M, 21);
-    y = 32;
+  function pageHeader(){
+    doc.setFillColor(...C.primary);doc.rect(0,0,PAGE_W,24,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.white);
+    doc.text('SLTimer',M,13);
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(200,225,248);
+    doc.text('Informe de sesión de eslálom',M+25,13);
+    doc.setDrawColor(...C.white);doc.setLineWidth(0.3);doc.line(M,16,PAGE_W-M,16);
+    doc.setFontSize(8);doc.setTextColor(210,230,250);
+    doc.text(sess.sessionName+'   ·   '+sess.date+'   ·   '+sess.trainer,M,21);
+    y=32;
   }
 
-  function needPage(needed = 20) {
-    if (y + needed > PAGE_H - 16) {
-      doc.addPage();
-      pageHeader();
-    }
+  function needPage(needed=20){
+    if(y+needed>PAGE_H-16){doc.addPage();pageHeader();}
   }
 
   pageHeader();
-
-  // ── Tabla resumen de palistas ──
   doc.setFillColor(...C.lightBlue);
-  doc.roundedRect(M, y, PAGE_W - M*2, 8 + meta.length * 7.5, 3, 3, 'F');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(...C.primary);
-  doc.text('RESUMEN GENERAL', M + 4, y + 6);
-  y += 10;
-
-  // Cabecera columnas
-  const cols = [M+4, M+68, M+100, M+134];
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.gray);
+  doc.roundedRect(M,y,PAGE_W-M*2,8+meta.length*7.5,3,3,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.primary);
+  doc.text('RESUMEN GENERAL',M+4,y+6);y+=10;
+  const cols=[M+4,M+68,M+100,M+134];
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...C.gray);
   ['Palista','Nº tiempos','Mejor (s)','Media (s)'].forEach((h,i)=>doc.text(h,cols[i],y));
-  y += 4;
-  doc.setDrawColor(190,210,230);
-  doc.setLineWidth(0.3);
-  doc.line(M+4, y, PAGE_W-M-4, y);
-  y += 5;
-
-  meta.forEach((m, i) => {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...C.black);
-    doc.text(m.name, cols[0], y);
-    doc.text(String(m.count), cols[1], y);
-    if (m.best !== null) {
-      doc.setTextColor(...C.green);
-      doc.setFont('helvetica', 'bold');
-      doc.text(m.best.toFixed(2) + ' s', cols[2], y);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(...C.black);
-    } else {
-      doc.setTextColor(...C.gray);
-      doc.text('—', cols[2], y);
-      doc.setTextColor(...C.black);
-    }
-    doc.text(m.avg !== null ? m.avg.toFixed(2) + ' s' : '—', cols[3], y);
-    y += 7.5;
+  y+=4;doc.setDrawColor(190,210,230);doc.setLineWidth(0.3);doc.line(M+4,y,PAGE_W-M-4,y);y+=5;
+  meta.forEach((m)=>{
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.black);
+    doc.text(m.name,cols[0],y);doc.text(String(m.count),cols[1],y);
+    if(m.best!==null){doc.setTextColor(...C.green);doc.setFont('helvetica','bold');doc.text(m.best.toFixed(2)+' s',cols[2],y);doc.setFont('helvetica','normal');doc.setTextColor(...C.black);}
+    else{doc.setTextColor(...C.gray);doc.text('—',cols[2],y);doc.setTextColor(...C.black);}
+    doc.text(m.avg!==null?m.avg.toFixed(2)+' s':'—',cols[3],y);y+=7.5;
   });
+  y+=8;
 
-  y += 8;
-
-  // ── Bloque por palista ──
-  sess.palistas.forEach((pal, pi) => {
-    const pm = meta[pi];
-    const nMan = Math.max(...pal.tramos.map(t => t.mangas.length), 0);
-    if (nMan === 0) return;
-
+  sess.palistas.forEach((pal,pi)=>{
+    const pm=meta[pi];
+    const nMan=Math.max(...pal.tramos.map(t=>t.mangas.length),0);
+    if(nMan===0) return;
     needPage(40);
-
-    // Encabezado palista
-    doc.setFillColor(...C.primary);
-    doc.roundedRect(M, y, PAGE_W - M*2, 10, 2, 2, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(...C.white);
-    doc.text(pal.name, M+5, y+7);
-    if (pm.best !== null) {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(200, 230, 248);
-      const stats = `Mejor: ${pm.best.toFixed(2)}s   ·   Media: ${pm.avg.toFixed(2)}s   ·   ${pm.count} tiempo${pm.count!==1?'s':''}`;
-      doc.text(stats, PAGE_W - M - 5, y+7, {align:'right'});
+    doc.setFillColor(...C.primary);doc.roundedRect(M,y,PAGE_W-M*2,10,2,2,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
+    doc.text(pal.name,M+5,y+7);
+    if(pm.best!==null){
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,230,248);
+      doc.text(`Mejor: ${pm.best.toFixed(2)}s   ·   Media: ${pm.avg.toFixed(2)}s   ·   ${pm.count} tiempo${pm.count!==1?'s':''}`,PAGE_W-M-5,y+7,{align:'right'});
     }
-    y += 13;
-
-    // Tabla de tiempos
-    const colW = Math.min(20, (PAGE_W - M*2 - 20) / nMan);
-    const head = [['Tramo', ...Array.from({length:nMan},(_,i)=>'M'+(i+1))]];
-    const body = [];
-
-    pal.tramos.forEach((tra, ti) => {
-      if (!tra.mangas.some(v => v !== null && v !== undefined)) return;
-      const row = ['T' + (ti+1)];
-      for (let mi = 0; mi < nMan; mi++) {
-        const v = tra.mangas[mi];
-        const pen = tra.pens?.[mi] || 0;
-        if (v === null || v === undefined) row.push('');
-        else if (v === 'DNF') row.push('DNF');
-        else row.push((v + pen).toFixed(2));
+    y+=13;
+    const colW=Math.min(20,(PAGE_W-M*2-20)/nMan);
+    const head=[['Tramo',...Array.from({length:nMan},(_,i)=>'M'+(i+1))]];
+    const body=[];
+    pal.tramos.forEach((tra,ti)=>{
+      if(!tra.mangas.some(v=>v!==null&&v!==undefined)) return;
+      const row=['T'+(ti+1)];
+      for(let mi=0;mi<nMan;mi++){
+        const v=tra.mangas[mi];const pen=tra.pens?.[mi]||0;
+        if(v===null||v===undefined) row.push('');
+        else if(v==='DNF') row.push('DNF');
+        else row.push((v+pen).toFixed(2));
       }
       body.push(row);
     });
-
-    // Fila "Mejor por manga"
-    const mejorRow = ['Mejor'];
-    for (let mi = 0; mi < nMan; mi++) {
-      const vals = pal.tramos
-        .map(tra => {
-          const v = tra.mangas[mi];
-          if (v === null || v === undefined || v === 'DNF') return null;
-          return v + (tra.pens?.[mi] || 0);
-        })
-        .filter(v => v !== null);
-      mejorRow.push(vals.length ? Math.min(...vals).toFixed(2) : '');
+    const mejorRow=['Mejor'];
+    for(let mi=0;mi<nMan;mi++){
+      const vals=pal.tramos.map(tra=>{const v=tra.mangas[mi];if(v===null||v===undefined||v==='DNF') return null;return v+(tra.pens?.[mi]||0);}).filter(v=>v!==null);
+      mejorRow.push(vals.length?Math.min(...vals).toFixed(2):'');
     }
     body.push(mejorRow);
-
-    doc.autoTable({
-      startY: y,
-      head,
-      body,
-      theme: 'grid',
-      margin: { left: M, right: M },
-      styles: {
-        fontSize: 8.5,
-        cellPadding: {top:3, bottom:3, left:3, right:3},
-        font: 'helvetica',
-        textColor: C.black,
-        lineColor: [220, 228, 238],
-        lineWidth: 0.2,
-      },
-      headStyles: {
-        fillColor: C.lightBlue,
-        textColor: C.primary,
-        fontStyle: 'bold',
-        fontSize: 8,
-        halign: 'center',
-      },
-      columnStyles: {
-        0: { fontStyle:'bold', cellWidth:20, textColor:C.gray, halign:'left' },
-        ...Object.fromEntries(
-          Array.from({length:nMan}, (_,i) => [i+1, {cellWidth:colW, halign:'center'}])
-        )
-      },
-      didParseCell: data => {
-        // Última fila: "Mejor por manga" en verde
-        if (data.row.index === body.length - 1 && data.section === 'body') {
-          data.cell.styles.fillColor = C.lightGreen;
-          data.cell.styles.textColor = C.green;
-          data.cell.styles.fontStyle = 'bold';
-        }
-        // DNF en morado
-        if (data.cell.raw === 'DNF') {
-          data.cell.styles.textColor = C.purple;
-          data.cell.styles.fontStyle = 'bold';
-        }
-        // Fila columna 0 (nombre tramo)
-        if (data.column.index === 0 && data.section === 'body' && data.row.index < body.length - 1) {
-          data.cell.styles.fillColor = [245, 248, 252];
-        }
-      },
+    doc.autoTable({startY:y,head,body,theme:'grid',margin:{left:M,right:M},
+      styles:{fontSize:8.5,cellPadding:{top:3,bottom:3,left:3,right:3},font:'helvetica',textColor:C.black,lineColor:[220,228,238],lineWidth:0.2},
+      headStyles:{fillColor:C.lightBlue,textColor:C.primary,fontStyle:'bold',fontSize:8,halign:'center'},
+      columnStyles:{0:{fontStyle:'bold',cellWidth:20,textColor:C.gray,halign:'left'},...Object.fromEntries(Array.from({length:nMan},(_,i)=>[i+1,{cellWidth:colW,halign:'center'}]))},
+      didParseCell:data=>{
+        if(data.row.index===body.length-1&&data.section==='body'){data.cell.styles.fillColor=C.lightGreen;data.cell.styles.textColor=C.green;data.cell.styles.fontStyle='bold';}
+        if(data.cell.raw==='DNF'){data.cell.styles.textColor=C.purple;data.cell.styles.fontStyle='bold';}
+        if(data.column.index===0&&data.section==='body'&&data.row.index<body.length-1){data.cell.styles.fillColor=[245,248,252];}
+      }
     });
-
-    y = doc.lastAutoTable.finalY + 10;
-    needPage(8);
+    y=doc.lastAutoTable.finalY+10;needPage(8);
   });
 
-  // ── Pie de página en todas las páginas ──
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
-    doc.setFillColor(245, 248, 252);
-    doc.rect(0, PAGE_H-12, PAGE_W, 12, 'F');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
-    doc.setTextColor(...C.gray);
-    doc.text(
-      `SLTimer · Generado el ${new Date().toLocaleDateString('es-ES', {day:'2-digit',month:'long',year:'numeric'})}`,
-      M, PAGE_H - 5
-    );
-    doc.text(`Página ${i} de ${totalPages}`, PAGE_W - M, PAGE_H - 5, {align:'right'});
+  const totalPages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=totalPages;i++){
+    doc.setPage(i);doc.setFillColor(245,248,252);doc.rect(0,PAGE_H-12,PAGE_W,12,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.gray);
+    doc.text(`SLTimer · Generado el ${new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}`,M,PAGE_H-5);
+    doc.text(`Página ${i} de ${totalPages}`,PAGE_W-M,PAGE_H-5,{align:'right'});
   }
-
-  const safeName = (sess.sessionName || 'sesion')
-    .replace(/\s+/g, '_')
-    .replace(/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑ]/g, '');
+  const safeName=(sess.sessionName||'sesion').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑ]/g,'');
   doc.save(`SLTimer_${sess.date}_${safeName}.pdf`);
   toast('PDF descargado ✓');
 }
 
-// ── PWA: Service Worker ───────────────────────────────────────────────────────
+// ── PWA ───────────────────────────────────────────────────────────────────────
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
+  window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/sw.js')
-      .then(r => console.log('SW registrado:', r.scope))
-      .catch(e => console.warn('SW error:', e));
+      .then(r=>console.log('SW registrado:',r.scope))
+      .catch(e=>console.warn('SW error:',e));
   });
 }
 
-// ── Feedback (vibración + sonido) ─────────────────────────────────────────────
-function vibe(pattern){
-  if(navigator.vibrate) navigator.vibrate(pattern);
-}
+// ── Feedback ──────────────────────────────────────────────────────────────────
+function vibe(pattern){if(navigator.vibrate) navigator.vibrate(pattern);}
 
 let _audioCtx=null;
-function beep(freq=880, dur=0.06, vol=0.3){
+function beep(freq=880,dur=0.06,vol=0.3){
   try{
     if(!_audioCtx) _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     const ctx=_audioCtx;
-    const osc=ctx.createOscillator();
-    const gain=ctx.createGain();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
     osc.connect(gain);gain.connect(ctx.destination);
-    osc.type='sine';
-    osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    osc.type='sine';osc.frequency.setValueAtTime(freq,ctx.currentTime);
     gain.gain.setValueAtTime(vol,ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime+dur);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+dur);
   }catch(e){}
 }
 
-// ── Refresco automático de token ──────────────────────────────────────────────
+// ── Refresco de token ─────────────────────────────────────────────────────────
 async function refreshToken(){
   const ref=localStorage.getItem('slt_ref');
   if(!ref) return false;
@@ -1785,6 +1526,7 @@ async function refreshToken(){
   }catch{ return false; }
 }
 
+// ── Init ──────────────────────────────────────────────────────────────────────
 async function initApp(){
   const hash=window.location.hash.substring(1);
   if(hash.includes('access_token')){
@@ -1796,44 +1538,40 @@ async function initApp(){
         const user=await fetch(`${SB}/auth/v1/user`,{
           headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
         }).then(r=>r.json());
-        _tok=access_token;
-        _uid=user.id;
-        _email=user.email;
+        _tok=access_token;_uid=user.id;_email=user.email;
         localStorage.setItem('slt_tok',access_token);
         localStorage.setItem('slt_ref',refresh_token||'');
         localStorage.setItem('slt_uid',user.id);
         localStorage.setItem('slt_email',user.email);
         localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
         history.replaceState(null,'',window.location.pathname);
-      }catch(e){
-        window.location.href='index.html';return;
-      }
+      }catch(e){window.location.href='index.html';return;}
     }
   } else {
     _tok=localStorage.getItem('slt_tok');
     _uid=localStorage.getItem('slt_uid');
     _email=localStorage.getItem('slt_email');
-    if(!_tok){ window.location.href='index.html'; return; }
+    if(!_tok){window.location.href='index.html';return;}
     const exp=parseInt(localStorage.getItem('slt_exp')||'0');
-    if(Date.now() > exp - 10*60*1000){
+    if(Date.now()>exp-10*60*1000){
       const ok=await refreshToken();
-      if(!ok){ window.location.href='index.html'; return; }
+      if(!ok){window.location.href='index.html';return;}
     }
   }
 
   setInterval(async()=>{
     const exp2=parseInt(localStorage.getItem('slt_exp')||'0');
-    if(Date.now() > exp2 - 10*60*1000) await refreshToken();
-  }, 45*60*1000);
+    if(Date.now()>exp2-10*60*1000) await refreshToken();
+  },45*60*1000);
 
   $('u-email').textContent=_email;
   $('cfg-date').value=new Date().toISOString().slice(0,10);
+  await loadAthletesList();
   updatePalInputs();
 
-  // Navegar a la pantalla indicada por ?screen= (viene de menu.html)
-  const screenParam = new URLSearchParams(window.location.search).get('screen');
-  const VALID_SCREENS = ['s-home', 's-hist', 's-session'];
-  if (screenParam && VALID_SCREENS.includes(screenParam)) {
+  const screenParam=new URLSearchParams(window.location.search).get('screen');
+  const VALID_SCREENS=['s-home','s-hist','s-session'];
+  if(screenParam&&VALID_SCREENS.includes(screenParam)){
     goTo(screenParam);
   } else {
     goTo('s-home');
@@ -1841,7 +1579,6 @@ async function initApp(){
 }
 
 initApp();
-
 </script>
 
 </body>
