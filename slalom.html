@@ -34,7 +34,7 @@
     .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
 
-    /* ── Layout ─────────────────────────────────────────────── */
+    /* ── Layout / pantallas ─────────────────────────────────── */
     .screen{display:none}
     .screen.active{display:block}
     .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
@@ -85,48 +85,59 @@
     .btn-primary:active{opacity:.85}
     .btn-primary:disabled{opacity:.4;cursor:not-allowed}
 
-    /* ── CRONÓMETRO ─────────────────────────────────────────── */
-    /* Cabecera de sesión */
-    .ses-header{padding:16px 16px 0;max-width:480px;margin:0 auto}
+    /* ═══════════════════════════════════════════════════════════
+       PANTALLA SESIÓN
+    ═══════════════════════════════════════════════════════════ */
+    .ses-content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
+
+    /* Cabecera sesión */
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
 
-    /* Display principal */
-    .chrono-wrap{padding:0 16px;max-width:480px;margin:0 auto}
-    .chrono-display{background:#1B3A5C;border-radius:20px;padding:28px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:14px}
-    .chrono-palista{font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.08em;min-height:18px}
-    .chrono-time{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:2px;line-height:1;tabular-nums:true}
-    .chrono-tramo{font-size:12px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;margin-top:2px}
+    /* ── Selector Palista / Tramo / Manga ───────────────────── */
+    .sel-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px}
+    .sel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .sel-col{display:flex;flex-direction:column;gap:5px}
+    .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em}
+
+    /* scroll horizontal de tabs dentro de sel-col */
+    .sel-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+    .sel-tabs::-webkit-scrollbar{display:none}
+    .sel-tab{flex-shrink:0;min-width:36px;padding:6px 10px;border-radius:8px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;text-align:center;white-space:nowrap;transition:background .1s,color .1s,border-color .1s}
+    .sel-tab.active{background:#1B3A5C;border-color:#1B3A5C;color:#fff}
+    .sel-tab:active{opacity:.75}
+    /* Manga: sólo muestra el valor actual + +/- */
+    .manga-row{display:flex;align-items:center;gap:6px}
+    .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:5px 0;line-height:1}
+    .manga-btn{width:32px;height:32px;border-radius:7px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
+    .manga-btn:active{background:#f0f0f0}
+
+    /* ── Display cronómetro ─────────────────────────────────── */
+    .chrono-display{background:#1B3A5C;border-radius:20px;padding:24px 20px 20px;display:flex;flex-direction:column;align-items:center;gap:3px}
+    .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.50);text-transform:uppercase;letter-spacing:0.08em;min-height:16px;text-align:center}
+    .chrono-time{font-family:'Bebas Neue',sans-serif;font-size:76px;color:#fff;letter-spacing:2px;line-height:1}
+    .chrono-manga{font-size:11px;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.06em;margin-top:2px}
 
     /* Controles */
-    .chrono-controls{display:flex;gap:10px;margin-top:12px}
+    .chrono-controls{display:flex;gap:10px}
     .btn-start{flex:1;padding:16px;border-radius:14px;border:none;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;background:#22C55E;color:#fff;transition:opacity .12s}
     .btn-start:active{opacity:.82}
     .btn-start.running{background:#EF4444}
-    .btn-reset{width:54px;height:54px;border-radius:14px;border:none;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:#666}
+    .btn-reset{width:54px;height:54px;border-radius:14px;border:none;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:#666;border:0.5px solid rgba(0,0,0,0.10)}
     .btn-reset:active{background:#f0f0f0}
 
-    /* Selector de palista activo */
-    .pal-selector-wrap{padding:0 16px;max-width:480px;margin:12px auto 0}
-    .pal-selector-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
-    .pal-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-    .pal-tabs::-webkit-scrollbar{display:none}
-    .pal-tab{flex-shrink:0;padding:7px 14px;border-radius:100px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .12s}
-    .pal-tab.active{background:#185FA5;border-color:#185FA5;color:#fff}
-    .pal-tab:active{opacity:.75}
-
-    /* Tabla de tiempos */
-    .times-wrap{padding:0 16px 32px;max-width:480px;margin:14px auto 0}
+    /* ── Tabla de tiempos ───────────────────────────────────── */
     .times-section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
     .times-table{width:100%;border-collapse:collapse;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
     .times-table th{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:0.5px solid #f0f0f0;text-align:left;background:#fafafa}
-    .times-table td{padding:10px 12px;font-size:14px;color:#111;border-bottom:0.5px solid #f5f5f5}
+    .times-table td{padding:9px 12px;font-size:14px;color:#111;border-bottom:0.5px solid #f5f5f5;vertical-align:top}
     .times-table tr:last-child td{border-bottom:none}
-    .time-cell{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.5px;color:#1B3A5C}
-    .time-cell.empty{color:#ddd;font-family:inherit;font-size:13px;font-weight:400}
-    .time-best{color:#0F6E56;font-weight:700}
-    .pal-name-cell{font-weight:600;font-size:13px;max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .cat-chip{font-size:10px;font-weight:700;padding:1px 5px;border-radius:100px;display:inline-block;margin-left:4px}
+    .time-cell{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.5px;color:#1B3A5C;display:block}
+    .time-cell.best{color:#0F6E56}
+    .time-cell.empty{color:#ddd;font-family:inherit;font-size:12px;font-weight:400}
+    .time-manga-lbl{font-size:9px;color:#bbb;font-weight:600;display:block;margin-top:1px}
+    .pal-name-cell{font-weight:600;font-size:13px;max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+    .cat-chip{font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;display:inline-block;margin-top:2px}
     .cat-chip.K1{background:#E6F1FB;color:#0C447C}
     .cat-chip.C1{background:#E1F5EE;color:#085041}
 
@@ -149,11 +160,11 @@
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  TOPBAR (común a las dos pantallas)                        -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<div class="topbar" id="topbar">
-  <button class="topbar-back" id="topbar-back" onclick="handleBack()">&#8592;</button>
+<!-- ═══════════════════════════════════════════════════════════
+     TOPBAR
+═══════════════════════════════════════════════════════════ -->
+<div class="topbar">
+  <button class="topbar-back" onclick="handleBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
     <img src="icons/icon-192x192.png" alt="SLTimer">
     <span class="topbar-brand-name">SLTimer</span>
@@ -165,9 +176,9 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  PANTALLA 1 — CONFIGURACIÓN                                -->
-<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     PANTALLA 1 — CONFIGURACIÓN
+═══════════════════════════════════════════════════════════ -->
 <div class="screen active" id="screen-config">
   <div class="content">
 
@@ -214,428 +225,494 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  PANTALLA 2 — CRONÓMETRO                                    -->
-<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     PANTALLA 2 — CRONÓMETRO
+═══════════════════════════════════════════════════════════ -->
 <div class="screen" id="screen-session">
+  <div class="ses-content">
 
-  <!-- Info sesión -->
-  <div class="ses-header">
-    <div class="ses-title" id="ses-title"></div>
-    <div class="ses-meta" id="ses-meta"></div>
-  </div>
+    <!-- Cabecera sesión -->
+    <div>
+      <div class="ses-title" id="ses-title"></div>
+      <div class="ses-meta" id="ses-meta"></div>
+    </div>
 
-  <!-- Display del cronómetro -->
-  <div class="chrono-wrap">
+    <!-- ── Selector Palista / Tramo / Manga ──────────────── -->
+    <div class="sel-card">
+      <div class="sel-grid">
+
+        <!-- Palista -->
+        <div class="sel-col">
+          <div class="sel-label">Palista</div>
+          <div class="sel-tabs" id="sel-pal"></div>
+        </div>
+
+        <!-- Tramo -->
+        <div class="sel-col">
+          <div class="sel-label">Tramo</div>
+          <div class="sel-tabs" id="sel-tra"></div>
+        </div>
+
+        <!-- Manga -->
+        <div class="sel-col">
+          <div class="sel-label">Manga</div>
+          <div class="manga-row">
+            <button class="manga-btn" onclick="adjManga(-1)">&#8722;</button>
+            <div class="manga-val" id="manga-val">1</div>
+            <button class="manga-btn" onclick="adjManga(1)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Display cronómetro ──────────────────────────────── -->
     <div class="chrono-display">
-      <div class="chrono-palista" id="chrono-palista"></div>
+      <div class="chrono-ctx" id="chrono-ctx"></div>
       <div class="chrono-time" id="chrono-time">00:00.0</div>
-      <div class="chrono-tramo" id="chrono-tramo"></div>
+      <div class="chrono-manga" id="chrono-manga"></div>
     </div>
     <div class="chrono-controls">
       <button class="btn-start" id="btn-start" onclick="toggleTimer()">&#9654; Iniciar</button>
       <button class="btn-reset" onclick="resetTimer()" title="Reiniciar">&#8635;</button>
     </div>
-  </div>
 
-  <!-- Selector de palista activo -->
-  <div class="pal-selector-wrap">
-    <div class="pal-selector-label">Palista activo</div>
-    <div class="pal-tabs" id="pal-tabs"></div>
-  </div>
+    <!-- ── Tabla de tiempos ────────────────────────────────── -->
+    <div>
+      <div class="times-section-label">Tiempos registrados</div>
+      <table class="times-table" id="times-table">
+        <thead><tr id="times-head"></tr></thead>
+        <tbody id="times-body"></tbody>
+      </table>
+    </div>
 
-  <!-- Tabla de tiempos -->
-  <div class="times-wrap">
-    <div class="times-section-label">Tiempos registrados</div>
-    <table class="times-table" id="times-table">
-      <thead>
-        <tr id="times-head"></tr>
-      </thead>
-      <tbody id="times-body"></tbody>
-    </table>
   </div>
-
 </div>
 
 <script>
-  /* ================================================================
-     CONSTANTES
-  ================================================================ */
-  const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
-  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+/* ================================================================
+   CONSTANTES
+================================================================ */
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
-  /* ================================================================
-     ESTADO
-  ================================================================ */
-  const CFG     = { pal:3, tra:3 };
-  const MIN     = { pal:1, tra:1 };
-  const MAX     = { pal:15, tra:12 };
+/* ================================================================
+   ESTADO GLOBAL
+================================================================ */
+const CFG = { pal:3, tra:3 };
+const MIN = { pal:1, tra:1 };
+const MAX = { pal:15, tra:12 };
 
-  let _tok=null, _uid=null, _email=null;
-  let _athletes = [];
-  let _palState = [];   // [{id,name,category,isTemp}]
+let _tok=null, _uid=null, _email=null;
+let _athletes = [];
+let _palState = [];  // [{id,name,category,isTemp}]
 
-  // Cronómetro
-  let _timerInterval = null;
-  let _timerStart    = 0;
-  let _timerElapsed  = 0;
-  let _timerRunning  = false;
-  let _activePal     = 0;   // índice del palista seleccionado
+// Cronómetro
+let _timerInterval = null;
+let _timerStart    = 0;
+let _timerElapsed  = 0;
+let _timerRunning  = false;
 
-  // Tiempos: _times[palIdx][tramoIdx] = ms | null
-  let _times = [];
-  // Tramo actual por palista
-  let _curTramo = [];
+// Selector activo
+let _selPal   = 0;  // índice de palista
+let _selTramo = 0;  // índice de tramo (0-based)
 
-  const $ = id => document.getElementById(id);
+// _mangas[palIdx][tramoIdx] = número de la siguiente manga a registrar (empieza en 1)
+let _mangas = [];
+// _times[palIdx][tramoIdx]  = [ {manga, ms}, ... ]
+let _times  = [];
 
-  /* ================================================================
-     UTILIDADES
-  ================================================================ */
-  function initials(str){
-    if(!str) return '?';
-    const p = str.trim().split(/[\s._\-]+/);
-    return (p.length>=2 ? p[0][0]+p[1][0] : str.slice(0,2)).toUpperCase();
-  }
+const $ = id => document.getElementById(id);
 
-  function fmtTime(ms){
-    if(ms == null) return '—';
-    const total = Math.floor(ms/100);
-    const dec   = total % 10;
-    const secs  = Math.floor(total/10) % 60;
-    const mins  = Math.floor(total/600);
-    return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
-  }
+/* ================================================================
+   UTILIDADES
+================================================================ */
+function initials(str){
+  if(!str) return '?';
+  const p = str.trim().split(/[\s._\-]+/);
+  return (p.length>=2 ? p[0][0]+p[1][0] : str.slice(0,2)).toUpperCase();
+}
 
-  let _toastTimer;
-  function toast(msg, type=''){
-    const el=$('toast'); el.textContent=msg;
-    el.className='toast'+(type?' '+type:'');
-    el.classList.add('show');
-    clearTimeout(_toastTimer);
-    _toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
-  }
+function fmtTime(ms){
+  if(ms==null) return '—';
+  const total = Math.floor(ms/100);
+  const dec   = total%10;
+  const secs  = Math.floor(total/10)%60;
+  const mins  = Math.floor(total/600);
+  return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
+}
 
-  async function api(path,opts={}){
-    const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
-    const r=await fetch(SB+path,{...opts,headers:h});
-    const t=await r.text(); let j; try{j=JSON.parse(t);}catch{j=t;}
-    if(!r.ok) throw new Error(j?.message||JSON.stringify(j));
-    return j;
-  }
+let _toastT;
+function toast(msg,type=''){
+  const el=$('toast'); el.textContent=msg;
+  el.className='toast'+(type?' '+type:'');
+  el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>el.classList.remove('show'),2500);
+}
 
-  /* ================================================================
-     CONFIG — contadores
-  ================================================================ */
-  function adjust(key, delta){
-    CFG[key] = Math.min(MAX[key], Math.max(MIN[key], CFG[key]+delta));
-    $('val-'+key).textContent = CFG[key];
-    if(key==='pal') buildPalList();
-  }
+async function api(path,opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text(); let j; try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok) throw new Error(j?.message||JSON.stringify(j));
+  return j;
+}
 
-  /* ================================================================
-     CONFIG — selector de palistas
-  ================================================================ */
-  function buildPalList(){
-    const n = CFG.pal;
-    while(_palState.length<n) _palState.push({id:null,name:'',category:null,isTemp:false});
-    _palState = _palState.slice(0,n);
-    const container=$('pal-list'); container.innerHTML='';
-    for(let i=0;i<n;i++) renderPalRow(i,container);
-  }
+/* ================================================================
+   CONFIG — contadores
+================================================================ */
+function adjust(key,delta){
+  CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
+  $('val-'+key).textContent=CFG[key];
+  if(key==='pal') buildPalList();
+}
 
-  function renderPalRow(i, container){
-    const s=_palState[i];
-    const row=document.createElement('div');
-    row.className='pal-row'; row.id='pal-row-'+i;
-    row.innerHTML=`
-      <div class="pal-row-top">
-        <div class="pal-num">${i+1}</div>
-        <div class="pal-search-wrap">
-          <input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="pal-input-${i}" type="text"
-            placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false"
-            oninput="onPalInput(${i})" onfocus="openDropdown(${i})" onblur="delayClose(${i})">
-          <button class="pal-clear${s.name?' show':''}" id="pal-clear-${i}" onclick="clearPal(${i})">✕</button>
-          <div class="pal-dropdown" id="pal-dd-${i}"></div>
-        </div>
+/* ================================================================
+   CONFIG — filas de palistas
+================================================================ */
+function buildPalList(){
+  const n=CFG.pal;
+  while(_palState.length<n) _palState.push({id:null,name:'',category:null,isTemp:false});
+  _palState=_palState.slice(0,n);
+  const c=$('pal-list'); c.innerHTML='';
+  for(let i=0;i<n;i++) renderPalRow(i,c);
+}
+
+function renderPalRow(i,container){
+  const s=_palState[i];
+  const row=document.createElement('div');
+  row.className='pal-row'; row.id='pal-row-'+i;
+  row.innerHTML=`
+    <div class="pal-row-top">
+      <div class="pal-num">${i+1}</div>
+      <div class="pal-search-wrap">
+        <input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="pal-input-${i}" type="text"
+          placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false"
+          oninput="onPalInput(${i})" onfocus="openDropdown(${i})" onblur="delayClose(${i})">
+        <button class="pal-clear${s.name?' show':''}" id="pal-clear-${i}" onclick="clearPal(${i})">✕</button>
+        <div class="pal-dropdown" id="pal-dd-${i}"></div>
       </div>
-      <div id="pal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px">
-        <div class="cat-label">Categoría</div>
-        <div class="cat-selector">
-          <button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setCat(${i},'K1')">K1</button>
-          <button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setCat(${i},'C1')">C1</button>
-        </div>
-      </div>`;
-    container.appendChild(row);
-  }
+    </div>
+    <div id="pal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px">
+      <div class="cat-label">Categoría</div>
+      <div class="cat-selector">
+        <button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setCat(${i},'K1')">K1</button>
+        <button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setCat(${i},'C1')">C1</button>
+      </div>
+    </div>`;
+  container.appendChild(row);
+}
 
-  function onPalInput(i){
-    const val=$('pal-input-'+i).value;
-    _palState[i].name=val; _palState[i].id=null; _palState[i].isTemp=true;
-    $('pal-clear-'+i).classList.toggle('show',val.length>0);
-    showCatSelector(i,val.length>0); openDropdown(i);
-  }
-  function openDropdown(i){
-    const q=($('pal-input-'+i).value||'').toLowerCase().trim();
-    const dd=$('pal-dd-'+i);
-    if(!q){dd.classList.remove('open');dd.innerHTML='';return;}
-    const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
-    if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
-    dd.innerHTML=m.map(a=>{
-      const fn=a.name+(a.surname?' '+a.surname:'');
-      const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
-      return `<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])">
-        <span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
-    }).join('');
-    dd.classList.add('open');
-  }
-  function delayClose(i){setTimeout(()=>{const dd=$('pal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
-  function selectAthlete(i,id,name,cats){
-    _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
-    const inp=$('pal-input-'+i); inp.value=name; inp.classList.add('matched');
-    $('pal-clear-'+i).classList.add('show'); $('pal-dd-'+i).classList.remove('open');
-    showCatSelector(i,true);
-    if(cats.length===1) setCatUI(i,cats[0]); else setCatUI(i,_palState[i].category);
-  }
-  function clearPal(i){
-    _palState[i]={id:null,name:'',category:null,isTemp:false};
-    const inp=$('pal-input-'+i); inp.value=''; inp.classList.remove('matched');
-    $('pal-clear-'+i).classList.remove('show'); $('pal-dd-'+i).classList.remove('open');
-    showCatSelector(i,false);
-  }
-  function showCatSelector(i,show){$('pal-cat-wrap-'+i).style.display=show?'flex':'none';}
-  function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
-  function setCatUI(i,cat){
-    const w=$('pal-cat-wrap-'+i); if(!w) return;
-    w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
-  }
+function onPalInput(i){
+  const val=$('pal-input-'+i).value;
+  _palState[i].name=val; _palState[i].id=null; _palState[i].isTemp=true;
+  $('pal-clear-'+i).classList.toggle('show',val.length>0);
+  showCatSelector(i,val.length>0); openDropdown(i);
+}
+function openDropdown(i){
+  const q=($('pal-input-'+i).value||'').toLowerCase().trim();
+  const dd=$('pal-dd-'+i);
+  if(!q){dd.classList.remove('open');dd.innerHTML='';return;}
+  const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  dd.innerHTML=m.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+    return `<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])">
+      <span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+function delayClose(i){setTimeout(()=>{const dd=$('pal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
+function selectAthlete(i,id,name,cats){
+  _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
+  const inp=$('pal-input-'+i); inp.value=name; inp.classList.add('matched');
+  $('pal-clear-'+i).classList.add('show'); $('pal-dd-'+i).classList.remove('open');
+  showCatSelector(i,true);
+  if(cats.length===1) setCatUI(i,cats[0]); else setCatUI(i,_palState[i].category);
+}
+function clearPal(i){
+  _palState[i]={id:null,name:'',category:null,isTemp:false};
+  const inp=$('pal-input-'+i); inp.value=''; inp.classList.remove('matched');
+  $('pal-clear-'+i).classList.remove('show'); $('pal-dd-'+i).classList.remove('open');
+  showCatSelector(i,false);
+}
+function showCatSelector(i,show){$('pal-cat-wrap-'+i).style.display=show?'flex':'none';}
+function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
+function setCatUI(i,cat){
+  const w=$('pal-cat-wrap-'+i); if(!w) return;
+  w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
+}
 
-  /* ================================================================
-     TRANSICIÓN CONFIG → SESIÓN
-  ================================================================ */
-  function goToSession(){
-    const name=$('cfg-name').value.trim();
-    if(!name){toast('Introduce un nombre para la sesión','err');return;}
-    const lugar=$('cfg-lugar').value.trim();
-    const fecha=$('cfg-fecha').value;
-    const palistas=_palState.map((s,i)=>({
-      name: s.name.trim()||'Palista '+(i+1),
-      category: s.category, id:s.id||null, isTemp:s.isTemp
-    }));
-    sessionStorage.setItem('slalom_cfg',JSON.stringify({name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas}));
-    initSession({name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas});
-  }
+/* ================================================================
+   TRANSICIÓN CONFIG → SESIÓN
+================================================================ */
+function goToSession(){
+  const name=$('cfg-name').value.trim();
+  if(!name){toast('Introduce un nombre para la sesión','err');return;}
+  const lugar=$('cfg-lugar').value.trim();
+  const fecha=$('cfg-fecha').value;
+  const palistas=_palState.map((s,i)=>({
+    name:s.name.trim()||'Palista '+(i+1),
+    category:s.category, id:s.id||null, isTemp:s.isTemp
+  }));
+  const cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
+  sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
+  initSession(cfg);
+}
 
-  function handleBack(){
-    if($('screen-session').classList.contains('active')){
-      if(_timerRunning){ toast('Para el cronómetro antes de salir','err'); return; }
-      if(!confirm('\u00bfVolver a la configuración? Se perderán los tiempos no guardados.')) return;
-      showScreen('config');
-    } else {
-      window.location.href='app.html';
+function handleBack(){
+  if($('screen-session').classList.contains('active')){
+    if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}
+    if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.')) return;
+    showScreen('config');
+  } else {
+    window.location.href='app.html';
+  }
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('screen-'+name).classList.add('active');
+  const isSes=name==='session';
+  $('topbar-div').style.display  = isSes?'block':'none';
+  $('topbar-title').style.display= isSes?'block':'none';
+  window.scrollTo(0,0);
+}
+
+/* ================================================================
+   SESIÓN — INIT
+================================================================ */
+function initSession(cfg){
+  $('topbar-title').textContent=cfg.name;
+  $('ses-title').textContent=cfg.name;
+  const parts=[];
+  if(cfg.lugar) parts.push(cfg.lugar);
+  if(cfg.fecha) parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('ses-meta').textContent=parts.join(' · ');
+
+  // Matrices
+  _times  = Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));
+  _mangas = Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
+
+  _selPal=0; _selTramo=0;
+
+  buildSelPal(cfg);
+  buildSelTramo(cfg);
+  syncMangaVal();
+  updateChronoCtx(cfg);
+  buildTimesTable(cfg);
+  resetTimer();
+  showScreen('session');
+}
+
+/* ================================================================
+   SELECTOR PALISTA
+================================================================ */
+function buildSelPal(cfg){
+  const el=$('sel-pal'); el.innerHTML='';
+  cfg.palistas.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='sel-tab'+(i===0?' active':'');
+    b.textContent=p.name.split(' ')[0];  // primer nombre para que quepa
+    b.title=p.name+(p.category?' · '+p.category:'');
+    b.onclick=()=>{
+      if(_timerRunning){toast('Para el cronómetro primero','err');return;}
+      _selPal=i;
+      el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+      syncMangaVal();
+      updateChronoCtx(cfg);
+      resetTimer();
+    };
+    el.appendChild(b);
+  });
+}
+
+/* ================================================================
+   SELECTOR TRAMO
+================================================================ */
+function buildSelTramo(cfg){
+  const el=$('sel-tra'); el.innerHTML='';
+  for(let i=0;i<cfg.nTra;i++){
+    const b=document.createElement('button');
+    b.className='sel-tab'+(i===0?' active':'');
+    b.textContent='T'+(i+1);
+    b.onclick=(idx=>()=>{
+      if(_timerRunning){toast('Para el cronómetro primero','err');return;}
+      _selTramo=idx;
+      el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===idx));
+      syncMangaVal();
+      updateChronoCtx(cfg);
+      resetTimer();
+    })(i);
+    el.appendChild(b);
+  }
+}
+
+/* ================================================================
+   MANGA
+================================================================ */
+function syncMangaVal(){
+  $('manga-val').textContent = _mangas[_selPal][_selTramo];
+}
+
+function adjManga(d){
+  if(_timerRunning){toast('Para el cronómetro primero','err');return;}
+  const v=_mangas[_selPal][_selTramo]+d;
+  if(v<1) return;
+  _mangas[_selPal][_selTramo]=v;
+  $('manga-val').textContent=v;
+  updateChronoCtx(JSON.parse(sessionStorage.getItem('slalom_cfg')));
+}
+
+/* ================================================================
+   CRONÓMETRO — contexto (texto en display)
+================================================================ */
+function updateChronoCtx(cfg){
+  const p=cfg.palistas[_selPal];
+  const label=(p.name+(p.category?' · '+p.category:'')).toUpperCase();
+  $('chrono-ctx').textContent=label;
+  const m=_mangas[_selPal][_selTramo];
+  $('chrono-manga').textContent='Tramo '+((_selTramo)+1)+' · Manga '+m;
+}
+
+/* ================================================================
+   CRONÓMETRO — controles
+================================================================ */
+function toggleTimer(){
+  _timerRunning ? stopAndRecord() : startTimer();
+}
+
+function startTimer(){
+  _timerStart=performance.now()-_timerElapsed;
+  _timerRunning=true;
+  $('btn-start').textContent='■ Parar';
+  $('btn-start').classList.add('running');
+  _timerInterval=setInterval(tickTimer,50);
+}
+
+function tickTimer(){
+  _timerElapsed=performance.now()-_timerStart;
+  $('chrono-time').textContent=fmtTime(_timerElapsed);
+}
+
+function stopAndRecord(){
+  clearInterval(_timerInterval);
+  _timerRunning=false;
+  $('btn-start').classList.remove('running');
+  $('btn-start').textContent='▶ Iniciar';
+
+  const cfg=JSON.parse(sessionStorage.getItem('slalom_cfg'));
+  const pi=_selPal, ti=_selTramo;
+  const manga=_mangas[pi][ti];
+
+  _times[pi][ti].push({manga, ms:Math.round(_timerElapsed)});
+  // Auto-incrementar manga
+  _mangas[pi][ti]=manga+1;
+  $('manga-val').textContent=_mangas[pi][ti];
+
+  renderTimesTable(cfg);
+  toast(fmtTime(Math.round(_timerElapsed))+'  ✓','ok');
+
+  _timerElapsed=0;
+  $('chrono-time').textContent='00:00.0';
+  updateChronoCtx(cfg);
+}
+
+function resetTimer(){
+  clearInterval(_timerInterval);
+  _timerRunning=false; _timerElapsed=0;
+  $('chrono-time').textContent='00:00.0';
+  $('btn-start').textContent='▶ Iniciar';
+  $('btn-start').classList.remove('running');
+}
+
+/* ================================================================
+   TABLA DE TIEMPOS
+   Cabecera: Palista | T1 | T2 | …
+   Cada celda de tramo muestra todas las mangas registradas
+================================================================ */
+function buildTimesTable(cfg){
+  $('times-head').innerHTML=
+    '<th>Palista</th>'+
+    Array.from({length:cfg.nTra},(_,i)=>`<th>T${i+1}</th>`).join('');
+  renderTimesTable(cfg);
+}
+
+function renderTimesTable(cfg){
+  const body=$('times-body'); body.innerHTML='';
+  cfg.palistas.forEach((p,pi)=>{
+    const tr=document.createElement('tr');
+    // Celda nombre
+    const cat=p.category?`<span class="cat-chip ${p.category}">${p.category}</span>`:'';
+    let html=`<td><span class="pal-name-cell">${p.name.split(' ')[0]}</span>${cat}</td>`;
+    // Celdas tramos
+    for(let ti=0;ti<cfg.nTra;ti++){
+      const entries=_times[pi][ti];
+      if(!entries.length){
+        html+=`<td><span class="time-cell empty">—</span></td>`;
+      } else {
+        const bestMs=Math.min(...entries.map(e=>e.ms));
+        const cells=entries.map(e=>{
+          const isBest=e.ms===bestMs;
+          return `<span class="time-cell${isBest?' best':''}">${fmtTime(e.ms)}</span>`+
+                 `<span class="time-manga-lbl">M${e.manga}</span>`;
+        }).join('');
+        html+=`<td>${cells}</td>`;
+      }
     }
-  }
+    tr.innerHTML=html;
+    body.appendChild(tr);
+  });
+}
 
-  function showScreen(name){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    $('screen-'+name).classList.add('active');
-    const isSession = name==='session';
-    $('topbar-div').style.display  = isSession ? 'block' : 'none';
-    $('topbar-title').style.display = isSession ? 'block' : 'none';
-    window.scrollTo(0,0);
-  }
-
-  /* ================================================================
-     SESIÓN — INICIALIZACIÓN
-  ================================================================ */
-  function initSession(cfg){
-    // Meta en topbar
-    $('topbar-title').textContent = cfg.name;
-
-    // Cabecera
-    $('ses-title').textContent = cfg.name;
-    const parts = [];
-    if(cfg.lugar) parts.push(cfg.lugar);
-    if(cfg.fecha) parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
-    $('ses-meta').textContent = parts.join(' · ');
-
-    // Inicializar matrices de tiempos
-    _times    = Array.from({length:cfg.nPal}, ()=> Array(cfg.nTra).fill(null));
-    _curTramo = Array(cfg.nPal).fill(0);
-    _activePal = 0;
-
-    // Construir tabs de palistas
-    const tabs=$('pal-tabs'); tabs.innerHTML='';
-    cfg.palistas.forEach((p,i)=>{
-      const btn=document.createElement('button');
-      btn.className='pal-tab'+(i===0?' active':'');
-      btn.textContent=p.name+(p.category?' · '+p.category:'');
-      btn.onclick=()=>setActivePal(i);
-      tabs.appendChild(btn);
-    });
-
-    // Construir tabla
-    buildTimesTable(cfg);
-    updateChronoHeader(cfg);
-    resetTimer();
-    showScreen('session');
-  }
-
-  /* ================================================================
-     SESIÓN — CRONÓMETRO
-  ================================================================ */
-  function toggleTimer(){
-    if(_timerRunning){
-      // PARAR → registrar tiempo
-      stopAndRecord();
-    } else {
-      // INICIAR
-      startTimer();
-    }
-  }
-
-  function startTimer(){
-    _timerStart   = performance.now() - _timerElapsed;
-    _timerRunning = true;
-    $('btn-start').textContent = '■ Parar';
-    $('btn-start').classList.add('running');
-    _timerInterval = setInterval(tickTimer, 50);
-  }
-
-  function tickTimer(){
-    _timerElapsed = performance.now() - _timerStart;
-    $('chrono-time').textContent = fmtTime(_timerElapsed);
-  }
-
-  function stopAndRecord(){
-    clearInterval(_timerInterval);
-    _timerRunning = false;
-    $('btn-start').classList.remove('running');
-
-    const cfg = JSON.parse(sessionStorage.getItem('slalom_cfg'));
-    const pi  = _activePal;
-    const ti  = _curTramo[pi];
-
-    if(ti < cfg.nTra){
-      _times[pi][ti] = Math.round(_timerElapsed);
-      _curTramo[pi]++;
-      renderTimesTable(cfg);
-      toast(fmtTime(_times[pi][ti]) + '  ✓', 'ok');
-    }
-
-    _timerElapsed = 0;
-    $('chrono-time').textContent = '00:00.0';
-    $('btn-start').textContent = '▶ Iniciar';
-    updateChronoHeader(cfg);
-
-    // Si el palista completó sus tramos, pasar al siguiente automáticamente
-    if(_curTramo[pi] >= cfg.nTra){
-      const next = cfg.palistas.findIndex((_,i)=>i>pi && _curTramo[i]<cfg.nTra);
-      if(next !== -1) setActivePal(next);
-    }
-  }
-
-  function resetTimer(){
-    clearInterval(_timerInterval);
-    _timerRunning=false; _timerElapsed=0;
-    $('chrono-time').textContent='00:00.0';
-    $('btn-start').textContent='▶ Iniciar';
-    $('btn-start').classList.remove('running');
-  }
-
-  function setActivePal(i){
-    _activePal=i;
-    document.querySelectorAll('.pal-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
-    const cfg=JSON.parse(sessionStorage.getItem('slalom_cfg'));
-    updateChronoHeader(cfg);
-    resetTimer();
-  }
-
-  function updateChronoHeader(cfg){
-    const p=cfg.palistas[_activePal];
-    $('chrono-palista').textContent = p.name+(p.category?' · '+p.category:'');
-    const tr=_curTramo[_activePal];
-    $('chrono-tramo').textContent = tr<cfg.nTra ? 'Tramo '+(tr+1)+' de '+cfg.nTra : '✓ Completado';
-  }
-
-  /* ================================================================
-     SESIÓN — TABLA DE TIEMPOS
-  ================================================================ */
-  function buildTimesTable(cfg){
-    // Cabecera
-    const head=$('times-head');
-    head.innerHTML='<th>Palista</th>'+Array.from({length:cfg.nTra},(_,i)=>`<th>T${i+1}</th>`).join('');
-    renderTimesTable(cfg);
-  }
-
-  function renderTimesTable(cfg){
-    const body=$('times-body'); body.innerHTML='';
-    cfg.palistas.forEach((p,pi)=>{
-      // Mejor tiempo de este palista
-      const recorded=_times[pi].filter(t=>t!=null);
-      const best=recorded.length?Math.min(...recorded):null;
-      const tr=document.createElement('tr');
-      const catHtml=p.category?`<span class="cat-chip ${p.category}">${p.category}</span>`:''
-      const nameTd=`<td><span class="pal-name-cell">${p.name}</span>${catHtml}</td>`;
-      const timeTds=_times[pi].map(t=>{
-        if(t==null) return `<td><span class="time-cell empty">—</span></td>`;
-        const cls=t===best?' time-best':'';
-        return `<td><span class="time-cell${cls}">${fmtTime(t)}</span></td>`;
-      }).join('');
-      tr.innerHTML=nameTd+timeTds;
-      body.appendChild(tr);
-    });
-  }
-
-  /* ================================================================
-     CARGA DE ATLETAS
-  ================================================================ */
-  async function loadAthletes(){
-    $('overlay').classList.add('show');
-    $('overlay-msg').textContent='Cargando palistas...';
+/* ================================================================
+   CARGA ATLETAS
+================================================================ */
+async function loadAthletes(){
+  $('overlay').classList.add('show');
+  $('overlay-msg').textContent='Cargando palistas...';
+  try{
+    const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+    let shared=[];
     try{
-      const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
-      let shared=[];
-      try{
-        const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
-        const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
-        if(ids.length) shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
-      }catch{}
-      _athletes=[...(owned||[]),...(shared||[])];
-    }catch{ _athletes=[]; }
-    $('overlay').classList.remove('show');
-    buildPalList();
-  }
-
-  /* ================================================================
-     INIT
-  ================================================================ */
-  _tok   = localStorage.getItem('slt_tok');
-  _uid   = localStorage.getItem('slt_uid');
-  _email = localStorage.getItem('slt_email');
-  if(!_tok){ window.location.href='index.html'; }
-
-  $('top-avatar').textContent = initials(_email?.split('@')[0]||'');
-  $('cfg-fecha').value        = new Date().toISOString().slice(0,10);
-
-  // Recuperar config previa
-  const prev=sessionStorage.getItem('slalom_cfg');
-  if(prev){
-    try{
-      const p=JSON.parse(prev);
-      if(p.name)  $('cfg-name').value  = p.name;
-      if(p.lugar) $('cfg-lugar').value = p.lugar;
-      if(p.fecha) $('cfg-fecha').value = p.fecha;
-      if(p.nPal){ CFG.pal=p.nPal; $('val-pal').textContent=p.nPal; }
-      if(p.nTra){ CFG.tra=p.nTra; $('val-tra').textContent=p.nTra; }
-      if(p.palistas) _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+      const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+      const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
+      if(ids.length) shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
     }catch{}
-  }
+    _athletes=[...(owned||[]),...(shared||[])];
+  }catch{ _athletes=[]; }
+  $('overlay').classList.remove('show');
+  buildPalList();
+}
 
-  loadAthletes();
+/* ================================================================
+   INIT
+================================================================ */
+_tok  =localStorage.getItem('slt_tok');
+_uid  =localStorage.getItem('slt_uid');
+_email=localStorage.getItem('slt_email');
+if(!_tok){window.location.href='index.html';}
 
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+$('top-avatar').textContent=initials(_email?.split('@')[0]||'');
+$('cfg-fecha').value=new Date().toISOString().slice(0,10);
+
+const prev=sessionStorage.getItem('slalom_cfg');
+if(prev){
+  try{
+    const p=JSON.parse(prev);
+    if(p.name)  $('cfg-name').value=p.name;
+    if(p.lugar) $('cfg-lugar').value=p.lugar;
+    if(p.fecha) $('cfg-fecha').value=p.fecha;
+    if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}
+    if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}
+    if(p.palistas) _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+  }catch{}
+}
+
+loadAthletes();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
-
 </body>
 </html>
