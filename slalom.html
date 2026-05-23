@@ -142,6 +142,11 @@
     .cat-chip.K1{background:#E6F1FB;color:#0C447C}
     .cat-chip.C1{background:#E1F5EE;color:#085041}
 
+    /* Botón guardar sesión */
+    .btn-save-session{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#0F6E56;color:#fff;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-save-session:active{opacity:.85}
+    .btn-save-session:disabled{opacity:.5;cursor:not-allowed}
+
     /* ── BOTTOM SHEET EDICIÓN ──────────────────────────── */
     .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
     .sheet-backdrop.open{display:block;opacity:1}
@@ -329,6 +334,7 @@
         <tbody id="times-body"></tbody>
       </table>
     </div>
+    <button class="btn-save-session" id="btn-save-session" onclick="saveSession()">&#128190; Finalizar y guardar sesión</button>
   </div>
 </div>
 
@@ -345,12 +351,11 @@ let _penMs=0,_penStack=[],_isDsq=false;
 let _cfg=null;
 let _editPi=null,_editTi=null,_editIdx=null;
 let _editCnt2=0,_editCnt50=0,_editDsq=false;
+let _savedSessionId=null;
 
 const $=id=>document.getElementById(id);
 
-/* VIBRACIÓN — silenciosa si el dispositivo no lo soporta */
 function vibrate(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern);}catch{}}
-
 function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
 function fmtTime(ms){if(ms==null)return'—';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
 let _toastT;
@@ -375,12 +380,12 @@ function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
 function setCatUI(i,cat){const w=$('pal-cat-wrap-'+i);if(!w)return;w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));}
 
 /* TRANSICIÓN */
-function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesión','err');return;}const lugar=$('cfg-lugar').value.trim(),fecha=$('cfg-fecha').value;const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));initSession(_cfg);}
+function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesión','err');return;}const lugar=$('cfg-lugar').value.trim(),fecha=$('cfg-fecha').value;const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));_savedSessionId=null;initSession(_cfg);}
 function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.'))return;showScreen('config');}else{window.location.href='app.html';}}
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';window.scrollTo(0,0);}
 
 /* SESIÓN */
-function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' · ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();buildSelPal(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();showScreen('session');}
+function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' · ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();buildSelPal(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='💾 Finalizar y guardar sesión';btn.disabled=false;showScreen('session');}
 
 /* SELECTORES */
 function buildSelPal(cfg){const sel=$('sel-pal');sel.innerHTML='';cfg.palistas.forEach((p,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+p.name+(p.category?' ('+p.category+')':'');sel.appendChild(opt);});sel.value=0;}
@@ -400,34 +405,9 @@ function updatePenDisplay(){const el=$('chrono-pen'),summary=$('pen-summary');if
 /* CRONÓMETRO */
 function updateChronoCtx(){if(!_cfg)return;const p=_cfg.palistas[_selPal];$('chrono-ctx').textContent=(p.name+(p.category?' · '+p.category:'')).toUpperCase();$('chrono-manga').textContent='Tramo '+(_selTramo+1)+' · Manga '+_mangas[_selPal][_selTramo];}
 function toggleTimer(){if(_isDsq){recordDsq();return;}_timerRunning?stopAndRecord():startTimer();}
-function startTimer(){
-  vibrate(60); // pulso corto al iniciar
-  _timerStart=performance.now()-_timerElapsed;
-  _timerRunning=true;
-  $('btn-start').textContent='■ Parar';
-  $('btn-start').classList.add('running');
-  _timerInterval=setInterval(tickTimer,50);
-}
+function startTimer(){vibrate(60);_timerStart=performance.now()-_timerElapsed;_timerRunning=true;$('btn-start').textContent='■ Parar';$('btn-start').classList.add('running');_timerInterval=setInterval(tickTimer,50);}
 function tickTimer(){_timerElapsed=performance.now()-_timerStart;$('chrono-time').textContent=fmtTime(_timerElapsed);}
-function stopAndRecord(){
-  vibrate([50,60,100]); // doble pulso al parar
-  clearInterval(_timerInterval);
-  _timerRunning=false;
-  $('btn-start').classList.remove('running');
-  $('btn-start').textContent='▶ Iniciar';
-  const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];
-  const ms=Math.round(_timerElapsed),pen=_penMs;
-  _times[pi][ti].push({manga,ms,pen,dsq:false});
-  _mangas[pi][ti]=manga+1;
-  $('manga-val').textContent=_mangas[pi][ti];
-  renderTimesTable(_cfg);
-  const penSeg=pen/1000,total=ms+pen;
-  toast(pen>0?`${fmtTime(ms)} +${penSeg}s = ${fmtTime(total)} ✓`:`${fmtTime(ms)} ✓`,'ok');
-  _timerElapsed=0;
-  $('chrono-time').textContent='00:00.0';
-  clearPenState();
-  updateChronoCtx();
-}
+function stopAndRecord(){vibrate([50,60,100]);clearInterval(_timerInterval);_timerRunning=false;$('btn-start').classList.remove('running');$('btn-start').textContent='▶ Iniciar';const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];const ms=Math.round(_timerElapsed),pen=_penMs;_times[pi][ti].push({manga,ms,pen,dsq:false});_mangas[pi][ti]=manga+1;$('manga-val').textContent=_mangas[pi][ti];renderTimesTable(_cfg);const penSeg=pen/1000,total=ms+pen;toast(pen>0?`${fmtTime(ms)} +${penSeg}s = ${fmtTime(total)} ✓`:`${fmtTime(ms)} ✓`,'ok');_timerElapsed=0;$('chrono-time').textContent='00:00.0';clearPenState();updateChronoCtx();}
 function recordDsq(){if(!confirm('¿Registrar DSQ para esta manga?'))return;const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];_times[pi][ti].push({manga,ms:0,pen:0,dsq:true});_mangas[pi][ti]=manga+1;$('manga-val').textContent=_mangas[pi][ti];renderTimesTable(_cfg);toast('⛔ DSQ registrado — M'+manga,'err');clearPenState();updateChronoCtx();}
 function resetTimer(){clearInterval(_timerInterval);_timerRunning=false;_timerElapsed=0;$('chrono-time').textContent='00:00.0';$('btn-start').textContent='▶ Iniciar';$('btn-start').classList.remove('running');}
 
@@ -489,6 +469,83 @@ function updateSheetPenEnabled(){const dis=_editDsq;[$('edit-cnt2'),$('edit-cnt5
 function editDeleteEntry(){if(!confirm('¿Eliminar este tiempo?'))return;_times[_editPi][_editTi].splice(_editIdx,1);recalcMangas(_editPi,_editTi);renderTimesTable(_cfg);closeEditSheet();toast('Tiempo eliminado');}
 function saveEditEntry(){const newPi=parseInt($('sheet-sel-pal').value);const newTi=parseInt($('sheet-sel-tra').value);const oldEntry=_times[_editPi][_editTi][_editIdx];const newPen=(_editCnt2*2+_editCnt50*50)*1000;const updatedEntry={manga:oldEntry.manga,ms:oldEntry.ms,pen:newPen,dsq:_editDsq,cnt2:_editCnt2,cnt50:_editCnt50};if(newPi!==_editPi||newTi!==_editTi){_times[_editPi][_editTi].splice(_editIdx,1);recalcMangas(_editPi,_editTi);_times[newPi][newTi].push(updatedEntry);recalcMangas(newPi,newTi);syncMangaVal();}else{_times[_editPi][_editTi][_editIdx]=updatedEntry;}renderTimesTable(_cfg);closeEditSheet();toast('Tiempo actualizado ✓','ok');}
 function recalcMangas(pi,ti){const entries=_times[pi][ti];const maxManga=entries.length?Math.max(...entries.map(e=>e.manga)):0;_mangas[pi][ti]=maxManga+1;if(pi===_selPal&&ti===_selTramo)$('manga-val').textContent=_mangas[pi][ti];}
+
+/* ── GUARDAR SESIÓN EN SUPABASE ── */
+async function saveSession(){
+  if(_timerRunning){toast('Para el cronómetro antes de guardar','err');return;}
+  const totalEntries=_times.flat(2).length;
+  if(!totalEntries){toast('No hay tiempos registrados aún','err');return;}
+  if(!confirm('¿Finalizar y guardar la sesión en el historial?'))return;
+
+  const btn=$('btn-save-session');
+  btn.disabled=true;
+  btn.textContent='Guardando...';
+
+  try{
+    // 1. Crear o actualizar la sesión
+    let sessionId=_savedSessionId;
+    if(!sessionId){
+      const sesRow=await api('/rest/v1/sessions?select=id',{
+        method:'POST',
+        headers:{'Prefer':'return=representation'},
+        body:JSON.stringify({
+          user_id:_uid,
+          name:_cfg.name,
+          lugar:_cfg.lugar||null,
+          fecha:_cfg.fecha||null,
+          n_pal:_cfg.nPal,
+          n_tra:_cfg.nTra
+        })
+      });
+      sessionId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
+      _savedSessionId=sessionId;
+    } else {
+      // Borrar entradas antiguas para reescribir (re-guardado)
+      await api('/rest/v1/session_entries?session_id=eq.'+sessionId,{method:'DELETE'});
+    }
+
+    // 2. Insertar todas las entradas
+    const entries=[];
+    for(let pi=0;pi<_cfg.nPal;pi++){
+      const p=_cfg.palistas[pi];
+      for(let ti=0;ti<_cfg.nTra;ti++){
+        for(const e of _times[pi][ti]){
+          entries.push({
+            session_id:sessionId,
+            pal_index:pi,
+            pal_name:p.name,
+            pal_cat:p.category||null,
+            athlete_id:p.id||null,
+            tramo:ti,
+            manga:e.manga,
+            ms:e.ms,
+            pen:e.pen,
+            dsq:e.dsq,
+            cnt2:e.cnt2||0,
+            cnt50:e.cnt50||0
+          });
+        }
+      }
+    }
+    if(entries.length){
+      await api('/rest/v1/session_entries',{
+        method:'POST',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify(entries)
+      });
+    }
+
+    toast('Sesión guardada ✓','ok');
+    btn.textContent='✓ Guardada — guardar de nuevo';
+    btn.disabled=false;
+
+  }catch(err){
+    console.error(err);
+    toast('Error al guardar: '+err.message,'err');
+    btn.textContent='💾 Finalizar y guardar sesión';
+    btn.disabled=false;
+  }
+}
 
 /* CARGA */
 async function loadAthletes(){$('overlay').classList.add('show');$('overlay-msg').textContent='Cargando palistas...';try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');let shared=[];try{const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');}catch{}_athletes=[...(owned||[]),...(shared||[])];}catch{_athletes=[];} $('overlay').classList.remove('show');buildPalList();}
