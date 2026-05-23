@@ -33,13 +33,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* ── Layout ── */
 .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
-.user-card{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.user-avatar{width:40px;height:40px;border-radius:50%;background:#B5D4F4;color:#0C447C;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase}
-.user-info{flex:1;min-width:0}
-.user-email{font-size:13px;font-weight:700;color:#0C447C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.user-role{font-size:11px;color:#378ADD;margin-top:1px}
-.logout-btn{background:none;border:none;font-size:12px;font-weight:700;color:#A32D2D;cursor:pointer;padding:5px 8px;border-radius:6px;font-family:inherit;transition:background .12s}
-.logout-btn:active{background:#FCEBEB}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
 .menu-primary{background:#185FA5;border:none;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:opacity .12s;-webkit-tap-highlight-color:transparent;width:100%;text-align:left;font-family:inherit}
 .menu-primary:active{opacity:.85}
@@ -62,6 +55,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .list-icon.red{background:#FCEBEB} .list-icon.red svg{stroke:#A32D2D}
 .list-icon.blue{background:#E6F1FB} .list-icon.blue svg{stroke:#0C447C}
 .list-title{font-size:15px;font-weight:600;color:#111;flex:1}
+.list-title.danger{color:#A32D2D}
 .list-badge{background:#185FA5;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px}
 .list-sub{font-size:12px;color:#aaa;font-weight:400;margin-left:4px}
 .list-arrow{color:#ccc;font-size:18px;flex-shrink:0}
@@ -98,11 +92,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="greeting-sub">Bienvenido/a de nuevo</div>
     <div class="greeting-name" id="greeting-name">¿Qué hacemos hoy?</div>
   </div>
-  <div class="user-card">
-    <div class="user-avatar" id="user-avatar"></div>
-    <div class="user-info"><div class="user-email" id="user-email"></div><div class="user-role">Entrenador/a</div></div>
-    <button class="logout-btn" onclick="doLogout()">Salir</button>
-  </div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <div class="section-label">Principal</div>
     <button class="menu-primary" onclick="goToApp('nueva-sesion')">
@@ -125,6 +114,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <button class="list-item" onclick="goToApp('ajustes')"><div class="list-icon gray"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><span class="list-title">Ajustes</span><span class="list-arrow">›</span></button>
       <button class="list-item" onclick="goToProfile()"><div class="list-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div style="flex:1;min-width:0"><div class="list-title" style="flex:none">Mi perfil</div><div class="list-sub" id="profile-username" style="display:none"></div></div><span class="list-arrow">›</span></button>
       <button class="list-item" onclick="goToApp('ayuda')"><div class="list-icon red"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"/></svg></div><span class="list-title">Ayuda y soporte</span><span class="list-arrow">›</span></button>
+      <button class="list-item" onclick="doLogout()"><div class="list-icon red"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><span class="list-title danger">Cerrar sesión</span></button>
     </div>
   </div>
 </div>
@@ -141,7 +131,7 @@ function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay
 function hideLoad(){$('overlay').classList.remove('show');}
 let _tTimer;
 function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
-function initials(email){if(!email)return'?';const name=email.split('@')[0];const parts=name.split(/[._\-]/);if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();return name.slice(0,2).toUpperCase();}
+function initials(str){if(!str)return'?';const parts=str.trim().split(/[\s._\-]+/);if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();return str.slice(0,2).toUpperCase();}
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json',...(opts.headers||{})};if(_tok)h['Authorization']='Bearer '+_tok;const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.error_description||JSON.stringify(j));return j;}
 async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_exp')||'0');const ref=localStorage.getItem('slt_ref');if(!ref)return false;if(Date.now()<exp-10*60*1000)return true;try{const d=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:ref})});_tok=d.access_token;localStorage.setItem('slt_tok',d.access_token);localStorage.setItem('slt_ref',d.refresh_token);localStorage.setItem('slt_exp',Date.now()+(d.expires_in||3600)*1000);return true;}catch{clearSession();return false;}}
 function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
@@ -150,9 +140,62 @@ function goToApp(section){const dest=ROUTES[section];if(dest)window.location.hre
 function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'coach.html';}
 async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&is_live=eq.false&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
 async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
-async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';}}catch{}}
-function renderUser(email){const ini=initials(email);$('top-avatar').textContent=ini;$('user-avatar').textContent=ini;$('user-email').textContent=email;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' 👋';}
-window.addEventListener('DOMContentLoaded',async()=>{const hash=window.location.hash.substring(1);if(hash.includes('access_token')){showLoad('Iniciando sesión...');const params=new URLSearchParams(hash);const access_token=params.get('access_token');const refresh_token=params.get('refresh_token');if(access_token){try{const user=await fetch(`${SB}/auth/v1/user`,{headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}}).then(r=>r.json());localStorage.setItem('slt_tok',access_token);localStorage.setItem('slt_ref',refresh_token||'');localStorage.setItem('slt_uid',user.id);localStorage.setItem('slt_email',user.email);localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);history.replaceState(null,'',window.location.pathname);}catch{hideLoad();toast('Error al iniciar sesión',true);setTimeout(()=>window.location.href='index.html',1500);return;}}}_tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');_email=localStorage.getItem('slt_email');if(!_tok){window.location.href='index.html';return;}showLoad('Comprobando sesión...');const ok=await refreshIfNeeded();if(!ok){window.location.href='index.html';return;}hideLoad();renderUser(_email);loadHistCount();loadAthletesCount();loadCoachProfile();});
+async function loadCoachProfile(){
+  try{
+    const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');
+    if(rows&&rows.length>0){
+      _coachId=rows[0].id;
+      const usernameEl=$('profile-username');
+      usernameEl.textContent='@'+rows[0].username;
+      usernameEl.style.display='block';
+      // Actualizar saludo con nombre real si existe
+      const displayName=rows[0].name||rows[0].username;
+      if(displayName){
+        $('greeting-name').textContent='Hola, '+displayName+' 👋';
+        $('top-avatar').textContent=initials(displayName);
+      }
+    }
+  }catch{}
+}
+function renderUser(email){
+  const ini=initials(email.split('@')[0]);
+  $('top-avatar').textContent=ini;
+  // Saludo provisional con email hasta cargar el perfil
+  const name=email.split('@')[0];
+  $('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' 👋';
+}
+window.addEventListener('DOMContentLoaded',async()=>{
+  const hash=window.location.hash.substring(1);
+  if(hash.includes('access_token')){
+    showLoad('Iniciando sesión...');
+    const params=new URLSearchParams(hash);
+    const access_token=params.get('access_token');
+    const refresh_token=params.get('refresh_token');
+    if(access_token){
+      try{
+        const user=await fetch(`${SB}/auth/v1/user`,{headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}}).then(r=>r.json());
+        localStorage.setItem('slt_tok',access_token);
+        localStorage.setItem('slt_ref',refresh_token||'');
+        localStorage.setItem('slt_uid',user.id);
+        localStorage.setItem('slt_email',user.email);
+        localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
+        history.replaceState(null,'',window.location.pathname);
+      }catch{hideLoad();toast('Error al iniciar sesión',true);setTimeout(()=>window.location.href='index.html',1500);return;}
+    }
+  }
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok){window.location.href='index.html';return;}
+  showLoad('Comprobando sesión...');
+  const ok=await refreshIfNeeded();
+  if(!ok){window.location.href='index.html';return;}
+  hideLoad();
+  renderUser(_email);
+  loadHistCount();
+  loadAthletesCount();
+  loadCoachProfile();
+});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
 </body>
