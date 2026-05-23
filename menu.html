@@ -78,8 +78,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .list-icon.gray{background:#f0f0f0} .list-icon.gray svg{stroke:#666}
 .list-icon.orange{background:#FAEEDA} .list-icon.orange svg{stroke:#854F0B}
 .list-icon.red{background:#FCEBEB} .list-icon.red svg{stroke:#A32D2D}
+.list-icon.blue{background:#E6F1FB} .list-icon.blue svg{stroke:#0C447C}
 .list-title{font-size:15px;font-weight:600;color:#111;flex:1}
 .list-badge{background:#185FA5;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px}
+.list-sub{font-size:12px;color:#aaa;font-weight:400;margin-left:4px}
 .list-arrow{color:#ccc;font-size:18px;flex-shrink:0}
 
 /* ── Greeting ── */
@@ -140,7 +142,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="section-label">Principal</div>
     <button class="menu-primary" onclick="goToApp('nueva-sesion')">
       <div class="menu-primary-icon">
-        <!-- Icono play -->
         <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
       </div>
       <div class="menu-primary-info">
@@ -157,7 +158,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="list-group">
       <button class="list-item" onclick="goToApp('historial')">
         <div class="list-icon green">
-          <!-- Icono reloj -->
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg>
         </div>
         <span class="list-title">Historial de Sesiones <span class="list-badge" id="hist-badge" style="display:none"></span></span>
@@ -172,7 +172,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </button>
       <button class="list-item" onclick="goToApp('estadisticas')">
         <div class="list-icon teal">
-          <!-- Icono gráfica barras -->
           <svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
         </div>
         <span class="list-title">Estadísticas</span>
@@ -187,23 +186,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="list-group">
       <button class="list-item" onclick="goToApp('ajustes')">
         <div class="list-icon gray">
-          <!-- Icono tuerca -->
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </div>
         <span class="list-title">Ajustes</span>
         <span class="list-arrow">›</span>
       </button>
-      <button class="list-item" onclick="goToApp('notificaciones')">
-        <div class="list-icon orange">
-          <!-- Icono campana -->
-          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <button class="list-item" onclick="goToProfile()">
+        <div class="list-icon blue">
+          <!-- Icono persona/perfil -->
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
-        <span class="list-title">Notificaciones</span>
+        <div style="flex:1;min-width:0">
+          <div class="list-title" style="flex:none">Mi perfil</div>
+          <div class="list-sub" id="profile-username" style="display:none"></div>
+        </div>
         <span class="list-arrow">›</span>
       </button>
       <button class="list-item" onclick="goToApp('ayuda')">
         <div class="list-icon red">
-          <!-- Icono interrogación -->
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"/></svg>
         </div>
         <span class="list-title">Ayuda y soporte</span>
@@ -218,24 +218,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 // ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
-// ⚠️ Copia estos valores desde tu proyecto en supabase.com → Project Settings → API
-const SB  = 'https://TU_PROJECT_ID.supabase.co';   // <-- CAMBIAR
-const KEY = 'TU_ANON_PUBLIC_KEY';                   // <-- CAMBIAR
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
 // ── Rutas de navegación ───────────────────────────────────────────────────────
-// Ajusta estos valores según la estructura de tu proyecto
 const ROUTES = {
-  'nueva-sesion':   'app.html',          // Pantalla de creación de sesión
-  'historial':      'app.html?screen=s-hist', // Pantalla de historial
-  'palistas':       'athletes.html',     // Lista de palistas
-  'estadisticas':   'app.html?screen=s-hist',     // Estadísticas (adaptar si existe)
-  'ajustes':        'app.html?screen=s-home',   // Pantalla de ajustes (adaptar si existe)
-  'notificaciones': 'app.html?screen=s-home',     // Notificaciones (adaptar si existe)
-  'ayuda':          'app.html?screen=s-home',     // Ayuda (adaptar si existe)
+  'nueva-sesion':   'app.html',
+  'historial':      'app.html?screen=s-hist',
+  'palistas':       'athletes.html',
+  'estadisticas':   'app.html?screen=s-hist',
+  'ajustes':        'app.html?screen=s-home',
+  'ayuda':          'app.html?screen=s-home',
 };
 
 // ── Estado ────────────────────────────────────────────────────────────────────
 let _tok = null, _uid = null, _email = null;
+let _coachId = null;
 
 const $ = id => document.getElementById(id);
 
@@ -258,7 +256,6 @@ function toast(msg, err = false) {
   _tTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// Genera las iniciales del email para el avatar
 function initials(email) {
   if (!email) return '?';
   const name = email.split('@')[0];
@@ -278,7 +275,7 @@ async function api(path, opts = {}) {
   return j;
 }
 
-// ── Refrescar token ───────────────────────────────────────────────────────────
+// ── Refrescar token ───────────────────────────────────────────────────────────────
 async function refreshIfNeeded() {
   const exp = parseInt(localStorage.getItem('slt_exp') || '0');
   const ref = localStorage.getItem('slt_ref');
@@ -304,7 +301,7 @@ function clearSession() {
   ['slt_tok', 'slt_ref', 'slt_uid', 'slt_email', 'slt_exp'].forEach(k => localStorage.removeItem(k));
 }
 
-// ── Logout ────────────────────────────────────────────────────────────────────
+// ── Logout ──────────────────────────────────────────────────────────────────────
 async function doLogout() {
   showLoad('Cerrando sesión...');
   try { await api('/auth/v1/logout', { method: 'POST' }); } catch {}
@@ -313,17 +310,23 @@ async function doLogout() {
   window.location.href = 'index.html';
 }
 
-// ── Navegación ────────────────────────────────────────────────────────────────
+// ── Navegación genérica ───────────────────────────────────────────────────────────
 function goToApp(section) {
   const dest = ROUTES[section];
-  if (dest) {
-    window.location.href = dest;
+  if (dest) window.location.href = dest;
+  else toast('Sección no disponible aún', true);
+}
+
+// ── Navegación a Mi perfil ───────────────────────────────────────────────────────
+function goToProfile() {
+  if (_coachId) {
+    window.location.href = 'coach.html?id=' + _coachId;
   } else {
-    toast('Sección no disponible aún', true);
+    window.location.href = 'coach.html';
   }
 }
 
-// ── Cargar historial count ────────────────────────────────────────────────────
+// ── Cargar historial count ────────────────────────────────────────────────────────
 async function loadHistCount() {
   try {
     const rows = await api('/rest/v1/sessions?user_id=eq.' + _uid + '&is_live=eq.false&select=id');
@@ -335,7 +338,7 @@ async function loadHistCount() {
   } catch { /* silencioso */ }
 }
 
-// ── Cargar conteo de palistas ─────────────────────────────────────────────────
+// ── Cargar conteo de palistas ─────────────────────────────────────────────────────
 async function loadAthletesCount() {
   try {
     const owned  = await api('/rest/v1/athletes?owner_id=eq.' + _uid + '&select=id');
@@ -349,7 +352,20 @@ async function loadAthletesCount() {
   } catch { /* silencioso */ }
 }
 
-// ── Renderizar UI de usuario ──────────────────────────────────────────────────
+// ── Cargar perfil del entrenador ───────────────────────────────────────────────────
+async function loadCoachProfile() {
+  try {
+    const rows = await api('/rest/v1/coaches?owner_id=eq.' + _uid + '&select=id,username&limit=1');
+    if (rows && rows.length > 0) {
+      _coachId = rows[0].id;
+      const usernameEl = $('profile-username');
+      usernameEl.textContent = '@' + rows[0].username;
+      usernameEl.style.display = 'block';
+    }
+  } catch { /* silencioso */ }
+}
+
+// ── Renderizar UI de usuario ───────────────────────────────────────────────────────
 function renderUser(email) {
   const ini = initials(email);
   $('top-avatar').textContent = ini;
@@ -410,6 +426,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderUser(_email);
   loadHistCount();
   loadAthletesCount();
+  loadCoachProfile();
 });
 
 // PWA: Service Worker
