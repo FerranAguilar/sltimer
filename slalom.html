@@ -130,7 +130,6 @@
     .times-table tr:last-child td{border-bottom:none}
     .time-entry{cursor:pointer;display:block;padding:2px 0;border-radius:6px;transition:background .12s}
     .time-entry:active{background:#f0f4ff}
-    .time-entry-hint{font-size:9px;color:#bbb;font-weight:500;margin-top:1px}
     .time-cell{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.5px;color:#1B3A5C;display:block}
     .time-cell.best{color:#0F6E56}
     .time-cell.empty{color:#ddd;font-family:inherit;font-size:12px;font-weight:400}
@@ -155,7 +154,6 @@
     .sheet-row{display:flex;gap:8px;align-items:center}
     .sheet-select{flex:1;padding:9px 28px 9px 10px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer;line-height:1.3}
     .sheet-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
-    /* Stepper penalizaciones */
     .pen-stepper{display:flex;gap:8px;margin-top:2px}
     .pen-step-box{flex:1;background:#f9f9f9;border:0.5px solid #eee;border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
     .pen-step-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
@@ -163,10 +161,8 @@
     .pen-step-btn{width:32px;height:32px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0;font-family:inherit}
     .pen-step-btn:active{background:#f0f0f0}
     .pen-step-val{flex:1;text-align:center;font-size:16px;font-weight:700;color:#111;background:#fff;border:1px solid #e8eef5;border-radius:7px;padding:4px 0;line-height:1}
-    /* DSQ toggle en sheet */
     .sheet-dsq-btn{width:100%;padding:12px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
     .sheet-dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
-    /* Botones acción */
     .sheet-actions{display:flex;gap:10px;margin-top:18px}
     .sheet-btn-save{flex:1;padding:14px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
     .sheet-btn-save:active{opacity:.85}
@@ -194,13 +190,11 @@
   <div class="sheet-handle"></div>
   <div class="sheet-title" id="sheet-title">Editar tiempo</div>
   <div class="sheet-subtitle" id="sheet-subtitle"></div>
-
   <div class="sheet-section">Mover a</div>
   <div class="sheet-row">
     <select class="sheet-select" id="sheet-sel-pal"></select>
     <select class="sheet-select" id="sheet-sel-tra"></select>
   </div>
-
   <div class="sheet-section">Penalizaciones</div>
   <div class="pen-stepper">
     <div class="pen-step-box">
@@ -220,13 +214,11 @@
       </div>
     </div>
   </div>
-
   <div class="sheet-section">Estado</div>
   <button class="sheet-dsq-btn" id="sheet-dsq-btn" onclick="editToggleDsq()">
     <span id="sheet-dsq-icon">⬜</span>
     <span id="sheet-dsq-txt">Marcar como DSQ</span>
   </button>
-
   <div class="sheet-actions">
     <button class="sheet-btn-del" onclick="editDeleteEntry()" title="Eliminar">🗑</button>
     <button class="sheet-btn-save" onclick="saveEditEntry()">Guardar cambios</button>
@@ -351,12 +343,13 @@ let _selPal=0,_selTramo=0;
 let _mangas=[],_times=[];
 let _penMs=0,_penStack=[],_isDsq=false;
 let _cfg=null;
-
-// Estado edición
 let _editPi=null,_editTi=null,_editIdx=null;
 let _editCnt2=0,_editCnt50=0,_editDsq=false;
 
 const $=id=>document.getElementById(id);
+
+/* VIBRACIÓN — silenciosa si el dispositivo no lo soporta */
+function vibrate(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern);}catch{}}
 
 function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
 function fmtTime(ms){if(ms==null)return'—';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
@@ -373,7 +366,7 @@ function renderPalRow(i,container){
   container.appendChild(row);
 }
 function onPalInput(i){const val=$('pal-input-'+i).value;_palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;$('pal-clear-'+i).classList.toggle('show',val.length>0);showCatSelector(i,val.length>0);openDropdown(i);}
-function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}'",[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
+function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
 function delayClose(i){setTimeout(()=>{const dd=$('pal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
 function selectAthlete(i,id,name,cats){_palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};const inp=$('pal-input-'+i);inp.value=name;inp.classList.add('matched');$('pal-clear-'+i).classList.add('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,true);if(cats.length===1)setCatUI(i,cats[0]);else setCatUI(i,_palState[i].category);}
 function clearPal(i){_palState[i]={id:null,name:'',category:null,isTemp:false};const inp=$('pal-input-'+i);inp.value='';inp.classList.remove('matched');$('pal-clear-'+i).classList.remove('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,false);}
@@ -407,9 +400,34 @@ function updatePenDisplay(){const el=$('chrono-pen'),summary=$('pen-summary');if
 /* CRONÓMETRO */
 function updateChronoCtx(){if(!_cfg)return;const p=_cfg.palistas[_selPal];$('chrono-ctx').textContent=(p.name+(p.category?' · '+p.category:'')).toUpperCase();$('chrono-manga').textContent='Tramo '+(_selTramo+1)+' · Manga '+_mangas[_selPal][_selTramo];}
 function toggleTimer(){if(_isDsq){recordDsq();return;}_timerRunning?stopAndRecord():startTimer();}
-function startTimer(){_timerStart=performance.now()-_timerElapsed;_timerRunning=true;$('btn-start').textContent='■ Parar';$('btn-start').classList.add('running');_timerInterval=setInterval(tickTimer,50);}
+function startTimer(){
+  vibrate(60); // pulso corto al iniciar
+  _timerStart=performance.now()-_timerElapsed;
+  _timerRunning=true;
+  $('btn-start').textContent='■ Parar';
+  $('btn-start').classList.add('running');
+  _timerInterval=setInterval(tickTimer,50);
+}
 function tickTimer(){_timerElapsed=performance.now()-_timerStart;$('chrono-time').textContent=fmtTime(_timerElapsed);}
-function stopAndRecord(){clearInterval(_timerInterval);_timerRunning=false;$('btn-start').classList.remove('running');$('btn-start').textContent='▶ Iniciar';const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];const ms=Math.round(_timerElapsed),pen=_penMs;_times[pi][ti].push({manga,ms,pen,dsq:false});_mangas[pi][ti]=manga+1;$('manga-val').textContent=_mangas[pi][ti];renderTimesTable(_cfg);const penSeg=pen/1000,total=ms+pen;toast(pen>0?`${fmtTime(ms)} +${penSeg}s = ${fmtTime(total)} ✓`:`${fmtTime(ms)} ✓`,'ok');_timerElapsed=0;$('chrono-time').textContent='00:00.0';clearPenState();updateChronoCtx();}
+function stopAndRecord(){
+  vibrate([50,60,100]); // doble pulso al parar
+  clearInterval(_timerInterval);
+  _timerRunning=false;
+  $('btn-start').classList.remove('running');
+  $('btn-start').textContent='▶ Iniciar';
+  const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];
+  const ms=Math.round(_timerElapsed),pen=_penMs;
+  _times[pi][ti].push({manga,ms,pen,dsq:false});
+  _mangas[pi][ti]=manga+1;
+  $('manga-val').textContent=_mangas[pi][ti];
+  renderTimesTable(_cfg);
+  const penSeg=pen/1000,total=ms+pen;
+  toast(pen>0?`${fmtTime(ms)} +${penSeg}s = ${fmtTime(total)} ✓`:`${fmtTime(ms)} ✓`,'ok');
+  _timerElapsed=0;
+  $('chrono-time').textContent='00:00.0';
+  clearPenState();
+  updateChronoCtx();
+}
 function recordDsq(){if(!confirm('¿Registrar DSQ para esta manga?'))return;const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];_times[pi][ti].push({manga,ms:0,pen:0,dsq:true});_mangas[pi][ti]=manga+1;$('manga-val').textContent=_mangas[pi][ti];renderTimesTable(_cfg);toast('⛔ DSQ registrado — M'+manga,'err');clearPenState();updateChronoCtx();}
 function resetTimer(){clearInterval(_timerInterval);_timerRunning=false;_timerElapsed=0;$('chrono-time').textContent='00:00.0';$('btn-start').textContent='▶ Iniciar';$('btn-start').classList.remove('running');}
 
@@ -440,129 +458,37 @@ function renderTimesTable(cfg){
   });
 }
 
-/* ================================================================
-   BOTTOM SHEET EDICIÓN
-================================================================ */
+/* BOTTOM SHEET EDICIÓN */
 function openEditSheet(pi,ti,idx){
   if(_timerRunning){toast('Para el cronómetro antes de editar','err');return;}
   _editPi=pi;_editTi=ti;_editIdx=idx;
   const e=_times[pi][ti][idx];
-
-  // Cabecera
   const p=_cfg.palistas[pi];
   $('sheet-title').textContent='Editar · M'+e.manga;
   $('sheet-subtitle').textContent=p.name+' · Tramo '+(ti+1)+(e.dsq?' · DSQ':' · '+fmtTime(e.ms)+(e.pen>0?' +'+e.pen/1000+'s':''));
-
-  // Selectores mover a
   const sp=$('sheet-sel-pal');sp.innerHTML='';
   _cfg.palistas.forEach((pp,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+pp.name+(pp.category?' ('+pp.category+')':'');sp.appendChild(opt);});
   sp.value=pi;
   const st=$('sheet-sel-tra');st.innerHTML='';
   for(let i=0;i<_cfg.nTra;i++){const opt=document.createElement('option');opt.value=i;opt.textContent='Tramo '+(i+1);st.appendChild(opt);}
   st.value=ti;
-
-  // Penalizaciones — descomponer pen en cnt2/cnt50
-  _editCnt2=Math.round((e.pen%(50000)) / 2000);  // rough: extraemos de _times si guardáramos stack; aquí aproximamos
-  // Mejor: guardar cnt2/cnt50 en la entrada. Si no están, recalculamos desde pen
   if(e.cnt2!==undefined){_editCnt2=e.cnt2;_editCnt50=e.cnt50;}
-  else{
-    // inferir: intentamos combinaciones que sumen e.pen
-    const penSeg=e.pen/1000;
-    // heurística: máximos posibles de +50
-    let c50=Math.floor(penSeg/50),rem=penSeg-c50*50;
-    while(rem%2!==0&&c50>0){c50--;rem+=50;}
-    _editCnt50=c50;_editCnt2=rem/2;
-  }
+  else{const penSeg=e.pen/1000;let c50=Math.floor(penSeg/50),rem=penSeg-c50*50;while(rem%2!==0&&c50>0){c50--;rem+=50;}_editCnt50=c50;_editCnt2=rem/2;}
   _editDsq=e.dsq||false;
   $('edit-cnt2').textContent=_editCnt2;
   $('edit-cnt50').textContent=_editCnt50;
-  updateSheetDsqBtn();
-  // Si es DSQ desactiva steppers visualmente
-  updateSheetPenEnabled();
-
-  // Mostrar
+  updateSheetDsqBtn();updateSheetPenEnabled();
   $('sheet-backdrop').classList.add('open');
   setTimeout(()=>$('edit-sheet').classList.add('open'),10);
 }
-
-function closeEditSheet(){
-  $('edit-sheet').classList.remove('open');
-  $('sheet-backdrop').classList.remove('open');
-  _editPi=null;_editTi=null;_editIdx=null;
-}
-
-function editAdjPen(seg,delta){
-  if(_editDsq){toast('Quita el DSQ primero','err');return;}
-  if(seg===2){_editCnt2=Math.max(0,_editCnt2+delta);$('edit-cnt2').textContent=_editCnt2;}
-  else{_editCnt50=Math.max(0,_editCnt50+delta);$('edit-cnt50').textContent=_editCnt50;}
-}
-
-function editToggleDsq(){
-  _editDsq=!_editDsq;
-  updateSheetDsqBtn();
-  updateSheetPenEnabled();
-  if(_editDsq){_editCnt2=0;_editCnt50=0;$('edit-cnt2').textContent=0;$('edit-cnt50').textContent=0;}
-}
-
-function updateSheetDsqBtn(){
-  const btn=$('sheet-dsq-btn');
-  btn.classList.toggle('on',_editDsq);
-  $('sheet-dsq-icon').textContent=_editDsq?'⛔':'⬜';
-  $('sheet-dsq-txt').textContent=_editDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';
-}
-
-function updateSheetPenEnabled(){
-  const dis=_editDsq;
-  [$('edit-cnt2'),$('edit-cnt50')].forEach(el=>{el.style.opacity=dis?'0.35':'1';});
-  document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=dis);
-}
-
-function editDeleteEntry(){
-  if(!confirm('¿Eliminar este tiempo?'))return;
-  _times[_editPi][_editTi].splice(_editIdx,1);
-  // Recalcular mangas (siguiente = max manga registrada + 1, o 1)
-  recalcMangas(_editPi,_editTi);
-  renderTimesTable(_cfg);
-  closeEditSheet();
-  toast('Tiempo eliminado');
-}
-
-function saveEditEntry(){
-  const newPi=parseInt($('sheet-sel-pal').value);
-  const newTi=parseInt($('sheet-sel-tra').value);
-  const oldEntry=_times[_editPi][_editTi][_editIdx];
-  const newPen=(_editCnt2*2+_editCnt50*50)*1000;
-  const updatedEntry={
-    manga:oldEntry.manga,
-    ms:oldEntry.ms,
-    pen:newPen,
-    dsq:_editDsq,
-    cnt2:_editCnt2,
-    cnt50:_editCnt50
-  };
-
-  // Mover si cambió palista o tramo
-  if(newPi!==_editPi||newTi!==_editTi){
-    _times[_editPi][_editTi].splice(_editIdx,1);
-    recalcMangas(_editPi,_editTi);
-    _times[newPi][newTi].push(updatedEntry);
-    recalcMangas(newPi,newTi);
-    syncMangaVal();
-  }else{
-    _times[_editPi][_editTi][_editIdx]=updatedEntry;
-  }
-
-  renderTimesTable(_cfg);
-  closeEditSheet();
-  toast('Tiempo actualizado ✓','ok');
-}
-
-function recalcMangas(pi,ti){
-  const entries=_times[pi][ti];
-  const maxManga=entries.length?Math.max(...entries.map(e=>e.manga)):0;
-  _mangas[pi][ti]=maxManga+1;
-  if(pi===_selPal&&ti===_selTramo)$('manga-val').textContent=_mangas[pi][ti];
-}
+function closeEditSheet(){$('edit-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');_editPi=null;_editTi=null;_editIdx=null;}
+function editAdjPen(seg,delta){if(_editDsq){toast('Quita el DSQ primero','err');return;}if(seg===2){_editCnt2=Math.max(0,_editCnt2+delta);$('edit-cnt2').textContent=_editCnt2;}else{_editCnt50=Math.max(0,_editCnt50+delta);$('edit-cnt50').textContent=_editCnt50;}}
+function editToggleDsq(){_editDsq=!_editDsq;updateSheetDsqBtn();updateSheetPenEnabled();if(_editDsq){_editCnt2=0;_editCnt50=0;$('edit-cnt2').textContent=0;$('edit-cnt50').textContent=0;}}
+function updateSheetDsqBtn(){const btn=$('sheet-dsq-btn');btn.classList.toggle('on',_editDsq);$('sheet-dsq-icon').textContent=_editDsq?'⛔':'⬜';$('sheet-dsq-txt').textContent=_editDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
+function updateSheetPenEnabled(){const dis=_editDsq;[$('edit-cnt2'),$('edit-cnt50')].forEach(el=>{el.style.opacity=dis?'0.35':'1';});document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=dis);}
+function editDeleteEntry(){if(!confirm('¿Eliminar este tiempo?'))return;_times[_editPi][_editTi].splice(_editIdx,1);recalcMangas(_editPi,_editTi);renderTimesTable(_cfg);closeEditSheet();toast('Tiempo eliminado');}
+function saveEditEntry(){const newPi=parseInt($('sheet-sel-pal').value);const newTi=parseInt($('sheet-sel-tra').value);const oldEntry=_times[_editPi][_editTi][_editIdx];const newPen=(_editCnt2*2+_editCnt50*50)*1000;const updatedEntry={manga:oldEntry.manga,ms:oldEntry.ms,pen:newPen,dsq:_editDsq,cnt2:_editCnt2,cnt50:_editCnt50};if(newPi!==_editPi||newTi!==_editTi){_times[_editPi][_editTi].splice(_editIdx,1);recalcMangas(_editPi,_editTi);_times[newPi][newTi].push(updatedEntry);recalcMangas(newPi,newTi);syncMangaVal();}else{_times[_editPi][_editTi][_editIdx]=updatedEntry;}renderTimesTable(_cfg);closeEditSheet();toast('Tiempo actualizado ✓','ok');}
+function recalcMangas(pi,ti){const entries=_times[pi][ti];const maxManga=entries.length?Math.max(...entries.map(e=>e.manga)):0;_mangas[pi][ti]=maxManga+1;if(pi===_selPal&&ti===_selTramo)$('manga-val').textContent=_mangas[pi][ti];}
 
 /* CARGA */
 async function loadAthletes(){$('overlay').classList.add('show');$('overlay-msg').textContent='Cargando palistas...';try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');let shared=[];try{const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');}catch{}_athletes=[...(owned||[]),...(shared||[])];}catch{_athletes=[];} $('overlay').classList.remove('show');buildPalList();}
