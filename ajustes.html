@@ -142,6 +142,7 @@ body.dark .overlay p{color:#aaa}
         <select class="lang-select" id="lang-select" onchange="changeLang(this.value)">
           <option value="es">Espanol</option>
           <option value="en">English</option>
+          <option value="fr">Fran&#231;ais</option>
         </select>
       </div>
       <!-- Notificaciones -->
@@ -268,7 +269,8 @@ async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_ex
 function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
 
 // Idioma
-function changeLang(val){localStorage.setItem('slt_lang',val);toast(val==='es'?'Idioma: Espanol':'Language: English','ok');}
+const LANG_LABELS={'es':'Idioma: Espanol','en':'Language: English','fr':'Langue : Francais'};
+function changeLang(val){localStorage.setItem('slt_lang',val);toast(LANG_LABELS[val]||val,'ok');}
 function loadLang(){const v=localStorage.getItem('slt_lang')||'es';$('lang-select').value=v;}
 
 // Notificaciones
@@ -293,9 +295,7 @@ async function changePwd(){
   showLoad('Actualizando contrasena...');
   try{
     await api('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:p1})});
-    hideLoad();
-    closeModal('pwd');
-    toast('Contrasena actualizada','ok');
+    hideLoad();closeModal('pwd');toast('Contrasena actualizada','ok');
   }catch(e){hideLoad();$('btn-pwd-confirm').disabled=false;toast(e.message,'err');}
 }
 
@@ -305,9 +305,7 @@ async function deleteAccount(){
   showLoad('Eliminando cuenta...');
   try{
     await api('/auth/v1/user',{method:'DELETE'});
-    clearSession();
-    hideLoad();
-    window.location.href='index.html';
+    clearSession();hideLoad();window.location.href='index.html';
   }catch(e){hideLoad();toast(e.message,'err');}
 }
 
