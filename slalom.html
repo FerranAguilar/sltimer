@@ -22,6 +22,8 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+
+    /* Topbar */
     .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
     .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
     .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
@@ -29,12 +31,16 @@
     .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
     .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
     .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
+
+    /* Layout */
     .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
     .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
     .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
     label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px}
-    input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+    input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
     input:focus{outline:none;border-color:#185FA5}
+
+    /* Contadores */
     .counter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .counter-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
     .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
@@ -42,11 +48,53 @@
     .counter-btn{width:38px;height:38px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
     .counter-btn:active{background:#f0f0f0}
     .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:6px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
+
+    /* Palista rows */
+    .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .pal-row-top{display:flex;align-items:center;gap:10px}
+    .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pal-search-wrap{position:relative;flex:1}
+    .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+    .pal-input:focus{outline:none;border-color:#185FA5}
+    .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
+    .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
+    .pal-dropdown.open{display:block}
+    .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+    .pal-option:last-child{border-bottom:none}
+    .pal-option:active{background:#f7f7f7}
+    .pal-option-name{font-weight:600;color:#111;flex:1}
+    .pal-option-cats{display:flex;gap:4px}
+    .cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
+    .cat-badge.K1{background:#E6F1FB;color:#0C447C}
+    .cat-badge.C1{background:#E1F5EE;color:#085041}
+    .pal-tmp-badge{font-size:10px;font-weight:700;background:#f0f0f0;color:#888;padding:2px 7px;border-radius:100px}
+    .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:0;line-height:1;display:none}
+    .pal-clear.show{display:block}
+
+    /* Categoria selector */
+    .cat-selector{display:flex;gap:6px}
+    .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+    .cat-btn:active{opacity:.75}
+    .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+    .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+    .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
+
+    /* Botones */
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;margin-top:4px}
     .btn-primary:active{opacity:.85}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Overlay */
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+    .overlay.show{display:flex}
+    .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay p{font-size:14px;color:#666}
   </style>
 </head>
 <body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p>Cargando palistas...</p></div>
 
 <div class="topbar">
   <button class="topbar-back" onclick="window.location.href='app.html'">←</button>
@@ -63,7 +111,6 @@
 
   <!-- Datos de la sesión -->
   <div class="section-label">Configuración de la sesión</div>
-
   <div class="card">
     <div>
       <label>Nombre de la sesión</label>
@@ -81,14 +128,13 @@
 
   <!-- Estructura -->
   <div class="section-label">Estructura</div>
-
   <div class="counter-grid">
     <div class="counter-box">
       <div class="counter-label">Nº Palistas</div>
       <div class="counter-row">
         <button class="counter-btn" onclick="adjust('pal', -1)">&#8722;</button>
         <div class="counter-val" id="val-pal">3</div>
-        <button class="counter-btn" onclick="adjust('pal', 1)">&#43;</button>
+        <button class="counter-btn" onclick="adjust('pal', 1)">+</button>
       </div>
     </div>
     <div class="counter-box">
@@ -96,50 +142,244 @@
       <div class="counter-row">
         <button class="counter-btn" onclick="adjust('tra', -1)">&#8722;</button>
         <div class="counter-val" id="val-tra">3</div>
-        <button class="counter-btn" onclick="adjust('tra', 1)">&#43;</button>
+        <button class="counter-btn" onclick="adjust('tra', 1)">+</button>
       </div>
     </div>
   </div>
 
-  <button class="btn-primary" onclick="nextStep()">Continuar →</button>
+  <!-- Palistas -->
+  <div class="section-label">Palistas</div>
+  <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
+
+  <button class="btn-primary" id="btn-continuar" onclick="nextStep()">Continuar →</button>
 
 </div>
 
 <script>
+  const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
   const CFG = { pal: 3, tra: 3 };
   const MIN = { pal: 1, tra: 1 };
   const MAX = { pal: 15, tra: 12 };
 
-  function adjust(key, delta){
-    CFG[key] = Math.min(MAX[key], Math.max(MIN[key], CFG[key] + delta));
-    document.getElementById('val-' + key).textContent = CFG[key];
-  }
+  let _tok = null, _uid = null, _email = null;
+  let _athletes = []; // lista cargada de BD
+  // Estado de cada fila: { id, name, category, isTemp }
+  let _palState = [];
 
-  function nextStep(){
-    const name  = document.getElementById('cfg-name').value.trim();
-    const lugar = document.getElementById('cfg-lugar').value.trim();
-    const fecha = document.getElementById('cfg-fecha').value;
-    if(!name){ alert('Introduce un nombre para la sesión'); return; }
-    // Guardar en sessionStorage para la siguiente pantalla
-    sessionStorage.setItem('slalom_cfg', JSON.stringify({
-      name, lugar, fecha, nPal: CFG.pal, nTra: CFG.tra
-    }));
-    // TODO: navegar a la siguiente pantalla
-    alert('Configuración guardada — próximo paso en desarrollo');
-  }
+  const $ = id => document.getElementById(id);
 
-  // Init
+  // ── Utilidades ────────────────────────────────────────────────
   function initials(str){
     if(!str) return '?';
-    const parts = str.trim().split(/[\s._\-]+/);
-    if(parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return str.slice(0,2).toUpperCase();
+    const p = str.trim().split(/[\s._\-]+/);
+    return (p.length >= 2 ? p[0][0]+p[1][0] : str.slice(0,2)).toUpperCase();
   }
-  const email = localStorage.getItem('slt_email') || '';
-  const tok   = localStorage.getItem('slt_tok');
-  if(!tok){ window.location.href = 'index.html'; }
-  document.getElementById('top-avatar').textContent = initials(email.split('@')[0]);
-  document.getElementById('cfg-fecha').value = new Date().toISOString().slice(0, 10);
+
+  async function api(path, opts={}){
+    const h = {'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+    const r = await fetch(SB+path, {...opts, headers:h});
+    const t = await r.text();
+    let j; try{j=JSON.parse(t);}catch{j=t;}
+    if(!r.ok) throw new Error(j?.message||JSON.stringify(j));
+    return j;
+  }
+
+  // ── Contadores ────────────────────────────────────────────────
+  function adjust(key, delta){
+    CFG[key] = Math.min(MAX[key], Math.max(MIN[key], CFG[key] + delta));
+    $('val-'+key).textContent = CFG[key];
+    if(key === 'pal') buildPalList();
+  }
+
+  // ── Lista de palistas ─────────────────────────────────────────
+  function buildPalList(){
+    const n = CFG.pal;
+    // Preservar estado existente
+    while(_palState.length < n) _palState.push({ id:null, name:'', category:null, isTemp:false });
+    _palState = _palState.slice(0, n);
+
+    const container = $('pal-list');
+    container.innerHTML = '';
+    for(let i = 0; i < n; i++) renderPalRow(i, container);
+  }
+
+  function renderPalRow(i, container){
+    const state = _palState[i];
+    const row = document.createElement('div');
+    row.className = 'pal-row';
+    row.id = 'pal-row-'+i;
+    row.innerHTML = `
+      <div class="pal-row-top">
+        <div class="pal-num">${i+1}</div>
+        <div class="pal-search-wrap">
+          <input
+            class="pal-input${state.name&&!state.isTemp?' matched':''}"
+            id="pal-input-${i}"
+            type="text"
+            placeholder="Buscar palista…"
+            value="${state.name||''}"
+            autocomplete="off" autocorrect="off" spellcheck="false"
+            oninput="onPalInput(${i})"
+            onfocus="openDropdown(${i})"
+            onblur="delayClose(${i})"
+          >
+          <button class="pal-clear${state.name?' show':''}" id="pal-clear-${i}" onclick="clearPal(${i})">✕</button>
+          <div class="pal-dropdown" id="pal-dd-${i}"></div>
+        </div>
+      </div>
+      <div id="pal-cat-wrap-${i}" style="display:${state.name?'flex':'none'};flex-direction:column;gap:4px">
+        <div class="cat-label">Categoría</div>
+        <div class="cat-selector">
+          <button class="cat-btn K1${state.category==='K1'?' active':''}" onclick="setCat(${i},'K1')">K1</button>
+          <button class="cat-btn C1${state.category==='C1'?' active':''}" onclick="setCat(${i},'C1')">C1</button>
+        </div>
+      </div>`;
+    container.appendChild(row);
+  }
+
+  function onPalInput(i){
+    const val = $('pal-input-'+i).value;
+    _palState[i].name = val;
+    _palState[i].id   = null;
+    _palState[i].isTemp = true;
+    $('pal-clear-'+i).classList.toggle('show', val.length > 0);
+    showCatSelector(i, val.length > 0);
+    openDropdown(i);
+  }
+
+  function openDropdown(i){
+    const q = ($('pal-input-'+i).value || '').toLowerCase().trim();
+    const dd = $('pal-dd-'+i);
+    if(!q){ dd.classList.remove('open'); dd.innerHTML=''; return; }
+    const matches = _athletes.filter(a =>
+      ((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)
+    ).slice(0, 8);
+
+    if(matches.length === 0){ dd.classList.remove('open'); dd.innerHTML=''; return; }
+
+    dd.innerHTML = matches.map(a => {
+      const fullName = a.name + (a.surname ? ' '+a.surname : '');
+      const cats = (a.categories||[]).filter(c=>c==='K1'||c==='C1')
+        .map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+      return `<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fullName.replace(/'/g,"\\'")}',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])">
+        <span class="pal-option-name">${fullName}</span>
+        <span class="pal-option-cats">${cats}</span>
+      </div>`;
+    }).join('');
+    dd.classList.add('open');
+  }
+
+  function delayClose(i){
+    setTimeout(() => {
+      const dd = $('pal-dd-'+i);
+      if(dd) dd.classList.remove('open');
+    }, 150);
+  }
+
+  function selectAthlete(i, id, name, cats){
+    _palState[i] = { id, name, isTemp: false,
+      category: cats.length === 1 ? cats[0] : (_palState[i].category || null)
+    };
+    const input = $('pal-input-'+i);
+    input.value = name;
+    input.classList.add('matched');
+    $('pal-clear-'+i).classList.add('show');
+    $('pal-dd-'+i).classList.remove('open');
+    showCatSelector(i, true);
+    // Si solo tiene una categoría, marcarla automáticamente
+    if(cats.length === 1) setCatUI(i, cats[0]);
+    else setCatUI(i, _palState[i].category);
+  }
+
+  function clearPal(i){
+    _palState[i] = { id:null, name:'', category:null, isTemp:false };
+    const input = $('pal-input-'+i);
+    input.value = '';
+    input.classList.remove('matched');
+    $('pal-clear-'+i).classList.remove('show');
+    $('pal-dd-'+i).classList.remove('open');
+    showCatSelector(i, false);
+  }
+
+  function showCatSelector(i, show){
+    $('pal-cat-wrap-'+i).style.display = show ? 'flex' : 'none';
+  }
+
+  function setCat(i, cat){
+    _palState[i].category = cat;
+    setCatUI(i, cat);
+  }
+
+  function setCatUI(i, cat){
+    const wrap = $('pal-cat-wrap-'+i);
+    if(!wrap) return;
+    wrap.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.toggle('active', b.classList.contains(cat));
+    });
+  }
+
+  // ── Continuar ─────────────────────────────────────────────────
+  function nextStep(){
+    const name  = $('cfg-name').value.trim();
+    const lugar = $('cfg-lugar').value.trim();
+    const fecha = $('cfg-fecha').value;
+    if(!name){ alert('Introduce un nombre para la sesión'); return; }
+    const palistas = _palState.map((s,i) => {
+      if(!s.name.trim()) return { name:'Palista '+(i+1), category:null, id:null, isTemp:true };
+      return { name: s.name.trim(), category: s.category, id: s.id||null, isTemp: s.isTemp };
+    });
+    sessionStorage.setItem('slalom_cfg', JSON.stringify({
+      name, lugar, fecha, nPal: CFG.pal, nTra: CFG.tra, palistas
+    }));
+    // TODO: navegar a la pantalla de sesión
+    alert('Configuración lista — próximo paso en desarrollo');
+  }
+
+  // ── Carga de atletas ──────────────────────────────────────────
+  async function loadAthletes(){
+    $('overlay').classList.add('show');
+    try{
+      const owned = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+      let shared = [];
+      try{
+        const access = await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+        const ids = (access||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
+        if(ids.length) shared = await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
+      }catch{}
+      _athletes = [...(owned||[]), ...(shared||[])];
+    }catch(e){
+      _athletes = [];
+    }
+    $('overlay').classList.remove('show');
+    buildPalList();
+  }
+
+  // ── Init ──────────────────────────────────────────────────────
+  _tok   = localStorage.getItem('slt_tok');
+  _uid   = localStorage.getItem('slt_uid');
+  _email = localStorage.getItem('slt_email');
+  if(!_tok){ window.location.href = 'index.html'; }
+
+  $('top-avatar').textContent = initials(_email?.split('@')[0]||'');
+  $('cfg-fecha').value = new Date().toISOString().slice(0,10);
+
+  // Recuperar config previa si existe
+  const prev = sessionStorage.getItem('slalom_cfg');
+  if(prev){
+    try{
+      const p = JSON.parse(prev);
+      if(p.name)  $('cfg-name').value  = p.name;
+      if(p.lugar) $('cfg-lugar').value = p.lugar;
+      if(p.fecha) $('cfg-fecha').value = p.fecha;
+      if(p.nPal){ CFG.pal = p.nPal; $('val-pal').textContent = p.nPal; }
+      if(p.nTra){ CFG.tra = p.nTra; $('val-tra').textContent = p.nTra; }
+      if(p.palistas) _palState = p.palistas.map(s=>({...s, isTemp: s.isTemp||!s.id}));
+    }catch{}
+  }
+
+  loadAthletes();
 
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
