@@ -17,7 +17,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-  <title>SLTimer — Nueva Sesión</title>
+  <title>SLTimer — Eslálom</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -26,26 +26,16 @@
     .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
     .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
     .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
     .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
     .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
     .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
-    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
-    .page-title{font-size:22px;font-weight:700;color:#1B3A5C;letter-spacing:-0.3px}
-    .page-sub{font-size:13px;color:#888;margin-top:3px}
-    .session-btn{border:none;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:opacity .12s;-webkit-tap-highlight-color:transparent;width:100%;text-align:left;font-family:inherit}
-    .session-btn:active{opacity:.85}
-    .session-btn.slalom{background:#185FA5}
-    .session-btn.kxc{background:#0F6E56}
-    .session-btn-icon{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px}
-    .session-btn-info{flex:1;min-width:0}
-    .session-btn-title{font-size:18px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:3px}
-    .session-btn-desc{font-size:12px;color:rgba(255,255,255,0.72);line-height:1.4}
-    .session-btn-arrow{font-size:22px;color:rgba(255,255,255,0.45)}
   </style>
 </head>
 <body>
 
 <div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='app.html'">←</button>
   <a class="topbar-brand" href="menu.html">
     <img src="icons/icon-192x192.png" alt="SLTimer">
     <span class="topbar-brand-name">SLTimer</span>
@@ -56,32 +46,7 @@
 </div>
 
 <div class="content">
-
-  <div>
-    <div class="page-title">¿Qué tipo de sesión?</div>
-    <div class="page-sub">Elige la modalidad para configurar la sesión</div>
-  </div>
-
-  <div class="section-label">Modalidad</div>
-
-  <button class="session-btn slalom" onclick="window.location.href='slalom.html'">
-    <div class="session-btn-icon">🏁</div>
-    <div class="session-btn-info">
-      <div class="session-btn-title">Eslálom</div>
-      <div class="session-btn-desc">Registro de tiempos por tramos y mangas con cronómetro</div>
-    </div>
-    <span class="session-btn-arrow">›</span>
-  </button>
-
-  <button class="session-btn kxc" onclick="selectType('kxc')">
-    <div class="session-btn-icon">⚡</div>
-    <div class="session-btn-info">
-      <div class="session-btn-title">Kayak Cross</div>
-      <div class="session-btn-desc">Gestión de series eliminatorias y enfrentamientos directos</div>
-    </div>
-    <span class="session-btn-arrow">›</span>
-  </button>
-
+  <!-- Contenido sesión eslálom -->
 </div>
 
 <script>
@@ -90,11 +55,6 @@
     const parts = str.trim().split(/[\s._\-]+/);
     if(parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
     return str.slice(0,2).toUpperCase();
-  }
-
-  function selectType(type){
-    // TODO: navegar a la pantalla de kayak cross cuando esté lista
-    alert('Sesión de Kayak Cross — próximamente');
   }
 
   const email = localStorage.getItem('slt_email') || '';
