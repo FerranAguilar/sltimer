@@ -77,18 +77,38 @@
     .ses-content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
+
+    /* Selector card — grid 3 columnas */
     .sel-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px}
-    .sel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .sel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
     .sel-col{display:flex;flex-direction:column;gap:5px}
-    .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em}
-    .sel-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-    .sel-tabs::-webkit-scrollbar{display:none}
-    .sel-tab{flex-shrink:0;min-width:36px;padding:6px 10px;border-radius:8px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;text-align:center;white-space:nowrap;transition:background .1s,color .1s,border-color .1s}
-    .sel-tab.active{background:#1B3A5C;border-color:#1B3A5C;color:#fff}
-    .sel-tab:active{opacity:.75}
+    .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px}
+
+    /* Select nativo estilizado */
+    .sel-select{
+      width:100%;
+      padding:9px 28px 9px 10px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:600;
+      font-family:inherit;
+      color:#1B3A5C;
+      background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;
+      background-size:12px;
+      -webkit-appearance:none;
+      appearance:none;
+      cursor:pointer;
+      transition:border-color .15s;
+      line-height:1.3;
+    }
+    .sel-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
+    .sel-select:active{border-color:#185FA5}
+
+    /* Manga stepper */
     .manga-row{display:flex;align-items:center;gap:6px}
-    .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:5px 0;line-height:1}
-    .manga-btn{width:32px;height:32px;border-radius:7px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
+    .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:8px 0;line-height:1}
+    .manga-btn{width:36px;height:36px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
     .manga-btn:active{background:#f0f0f0}
 
     /* Cronómetro */
@@ -115,20 +135,14 @@
     .btn-pen.p2.active-pen{background:#F59E0B;color:#fff;border-color:#F59E0B}
     .btn-pen.p50.active-pen{background:#EF4444;color:#fff;border-color:#EF4444}
     .btn-pen-sec{font-size:10px;font-weight:600;opacity:.75}
-    /* DSQ button */
     .btn-dsq{flex:1;padding:11px 4px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:#6B7280;transition:all .15s}
     .btn-dsq:active{opacity:.75}
     .btn-dsq.active-dsq{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
     .btn-dsq-sec{font-size:10px;font-weight:600;opacity:.75}
-    /* Undo */
     .btn-pen-undo{width:36px;height:36px;border-radius:10px;border:0.5px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#888;flex-shrink:0}
     .btn-pen-undo:active{background:#f5f5f5}
-
-    /* Banner DSQ */
     .dsq-banner{display:none;padding:8px 12px;background:#7F1D1D;border-radius:10px;font-size:13px;font-weight:700;color:#fff;text-align:center;letter-spacing:0.04em}
     .dsq-banner.show{display:block}
-
-    /* Banner penalizaciones */
     #pen-summary{display:none;padding:6px 10px;background:#FEF3C7;border-radius:10px;font-size:12px;font-weight:600;color:#92400E}
 
     /* Tabla */
@@ -216,16 +230,16 @@
       <div class="ses-meta" id="ses-meta"></div>
     </div>
 
-    <!-- Selector PTM -->
+    <!-- Selectores PTM -->
     <div class="sel-card">
       <div class="sel-grid">
         <div class="sel-col">
           <div class="sel-label">Palista</div>
-          <div class="sel-tabs" id="sel-pal"></div>
+          <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
         </div>
         <div class="sel-col">
           <div class="sel-label">Tramo</div>
-          <div class="sel-tabs" id="sel-tra"></div>
+          <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
         </div>
         <div class="sel-col">
           <div class="sel-label">Manga</div>
@@ -292,9 +306,8 @@ let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[];
 let _timerInterval=null,_timerStart=0,_timerElapsed=0,_timerRunning=false;
 let _selPal=0,_selTramo=0;
 let _mangas=[], _times=[];
-// _times entries: {manga, ms, pen, dsq}
-// dsq=true => tiempo no válido, se muestra como DSQ
-let _penMs=0, _penStack=[], _isDsq=false;
+let _penMs=0,_penStack=[],_isDsq=false;
+let _cfg=null; // referencia global a cfg de sesión
 
 const $=id=>document.getElementById(id);
 
@@ -323,12 +336,12 @@ async function api(path,opts={}){
   return j;
 }
 
+/* CONFIG */
 function adjust(key,delta){
   CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
   $('val-'+key).textContent=CFG[key];
   if(key==='pal')buildPalList();
 }
-
 function buildPalList(){
   const n=CFG.pal;
   while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});
@@ -401,14 +414,15 @@ function setCatUI(i,cat){
   w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
 }
 
+/* TRANSICIÓN */
 function goToSession(){
   const name=$('cfg-name').value.trim();
   if(!name){toast('Introduce un nombre para la sesión','err');return;}
   const lugar=$('cfg-lugar').value.trim(),fecha=$('cfg-fecha').value;
   const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));
-  const cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
-  sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
-  initSession(cfg);
+  _cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
+  sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));
+  initSession(_cfg);
 }
 function handleBack(){
   if($('screen-session').classList.contains('active')){
@@ -426,7 +440,9 @@ function showScreen(name){
   window.scrollTo(0,0);
 }
 
+/* SESIÓN */
 function initSession(cfg){
+  _cfg=cfg;
   $('topbar-title').textContent=cfg.name;
   $('ses-title').textContent=cfg.name;
   const parts=[];
@@ -437,41 +453,41 @@ function initSession(cfg){
   _mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
   _selPal=0;_selTramo=0;
   clearPenState();
-  buildSelPal(cfg);buildSelTramo(cfg);
-  syncMangaVal();updateChronoCtx(cfg);buildTimesTable(cfg);resetTimer();
+  buildSelPal(cfg);buildSelTra(cfg);
+  syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();
   showScreen('session');
 }
 
+/* SELECTORES DESPLEGABLES */
 function buildSelPal(cfg){
-  const el=$('sel-pal');el.innerHTML='';
+  const sel=$('sel-pal');sel.innerHTML='';
   cfg.palistas.forEach((p,i)=>{
-    const b=document.createElement('button');
-    b.className='sel-tab'+(i===0?' active':'');
-    b.textContent=p.name.split(' ')[0];
-    b.title=p.name+(p.category?' · '+p.category:'');
-    b.onclick=()=>{
-      if(_timerRunning){toast('Para el cronómetro primero','err');return;}
-      _selPal=i;
-      el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
-      syncMangaVal();updateChronoCtx(cfg);resetTimer();clearPenState();
-    };
-    el.appendChild(b);
+    const opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent=(i+1)+'. '+p.name+(p.category?' ('+p.category+')':'');
+    sel.appendChild(opt);
   });
+  sel.value=0;
 }
-function buildSelTramo(cfg){
-  const el=$('sel-tra');el.innerHTML='';
+function buildSelTra(cfg){
+  const sel=$('sel-tra');sel.innerHTML='';
   for(let i=0;i<cfg.nTra;i++){
-    const b=document.createElement('button');
-    b.className='sel-tab'+(i===0?' active':'');
-    b.textContent='T'+(i+1);
-    b.onclick=(idx=>()=>{
-      if(_timerRunning){toast('Para el cronómetro primero','err');return;}
-      _selTramo=idx;
-      el.querySelectorAll('.sel-tab').forEach((t,j)=>t.classList.toggle('active',j===idx));
-      syncMangaVal();updateChronoCtx(cfg);resetTimer();clearPenState();
-    })(i);
-    el.appendChild(b);
+    const opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent='Tramo '+(i+1);
+    sel.appendChild(opt);
   }
+  sel.value=0;
+}
+function onSelPal(){
+  if(_timerRunning){toast('Para el cronómetro primero','err');$('sel-pal').value=_selPal;return;}
+  _selPal=parseInt($('sel-pal').value);
+  syncMangaVal();updateChronoCtx();resetTimer();clearPenState();
+}
+function onSelTra(){
+  if(_timerRunning){toast('Para el cronómetro primero','err');$('sel-tra').value=_selTramo;return;}
+  _selTramo=parseInt($('sel-tra').value);
+  syncMangaVal();updateChronoCtx();resetTimer();clearPenState();
 }
 function syncMangaVal(){$('manga-val').textContent=_mangas[_selPal][_selTramo];}
 function adjManga(d){
@@ -480,10 +496,10 @@ function adjManga(d){
   if(v<1)return;
   _mangas[_selPal][_selTramo]=v;
   $('manga-val').textContent=v;
-  updateChronoCtx(JSON.parse(sessionStorage.getItem('slalom_cfg')));
+  updateChronoCtx();
 }
 
-/* ==== PENALIZACIONES ==== */
+/* PENALIZACIONES */
 function clearPenState(){
   _penMs=0;_penStack=[];_isDsq=false;
   $('btn-p2').classList.remove('active-pen');
@@ -497,7 +513,7 @@ function addPen(seg){
   if(_isDsq){toast('Quita el DSQ antes de añadir penalización','err');return;}
   _penMs+=seg*1000;_penStack.push(seg);
   const btnId=seg===2?'btn-p2':'btn-p50';
-  $( btnId).classList.add('active-pen');
+  $(btnId).classList.add('active-pen');
   setTimeout(()=>$(btnId).classList.remove('active-pen'),300);
   updatePenDisplay();
   toast('+'+(seg===2?'2 seg':'50 seg')+' pen.');
@@ -508,21 +524,14 @@ function toggleDsq(){
   $('btn-dsq').classList.toggle('active-dsq',_isDsq);
   $('chrono-display').classList.toggle('dsq',_isDsq);
   $('dsq-banner').classList.toggle('show',_isDsq);
-  if(_isDsq){
-    // DSQ anula penalizaciones pendientes
-    _penMs=0;_penStack=[];
-    updatePenDisplay();
-    toast('⛔ Descalificado');
-  }else{
-    toast('DSQ eliminado');
-  }
+  if(_isDsq){_penMs=0;_penStack=[];updatePenDisplay();toast('⛔ Descalificado');}
+  else{toast('DSQ eliminado');}
 }
 function undoPen(){
   if(_isDsq){toggleDsq();return;}
   if(!_penStack.length){toast('Sin penalizaciones','err');return;}
   const last=_penStack.pop();
-  _penMs-=last*1000;
-  if(_penMs<0)_penMs=0;
+  _penMs-=last*1000;if(_penMs<0)_penMs=0;
   updatePenDisplay();
   toast('Penalización +'+last+'s eliminada');
 }
@@ -530,8 +539,7 @@ function updatePenDisplay(){
   const el=$('chrono-pen'),summary=$('pen-summary');
   if(_isDsq){el.textContent='⛔ DSQ';summary.style.display='none';return;}
   if(!_penStack.length){el.textContent='';summary.style.display='none';return;}
-  const cnt2=_penStack.filter(s=>s===2).length;
-  const cnt50=_penStack.filter(s=>s===50).length;
+  const cnt2=_penStack.filter(s=>s===2).length,cnt50=_penStack.filter(s=>s===50).length;
   const parts=[];if(cnt2)parts.push(cnt2+'x +2s');if(cnt50)parts.push(cnt50+'x +50s');
   const totalSeg=_penMs/1000;
   el.textContent='+'+totalSeg+'s pen.';
@@ -539,9 +547,10 @@ function updatePenDisplay(){
   summary.style.display='block';
 }
 
-/* ==== CRONÓMETRO ==== */
-function updateChronoCtx(cfg){
-  const p=cfg.palistas[_selPal];
+/* CRONÓMETRO */
+function updateChronoCtx(){
+  if(!_cfg)return;
+  const p=_cfg.palistas[_selPal];
   $('chrono-ctx').textContent=(p.name+(p.category?' · '+p.category:'')).toUpperCase();
   $('chrono-manga').textContent='Tramo '+(_selTramo+1)+' · Manga '+_mangas[_selPal][_selTramo];
 }
@@ -565,32 +574,29 @@ function stopAndRecord(){
   _timerRunning=false;
   $('btn-start').classList.remove('running');
   $('btn-start').textContent='▶ Iniciar';
-  const cfg=JSON.parse(sessionStorage.getItem('slalom_cfg'));
   const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];
   const ms=Math.round(_timerElapsed),pen=_penMs;
   _times[pi][ti].push({manga,ms,pen,dsq:false});
   _mangas[pi][ti]=manga+1;
   $('manga-val').textContent=_mangas[pi][ti];
-  renderTimesTable(cfg);
+  renderTimesTable(_cfg);
   const penSeg=pen/1000,total=ms+pen;
   toast(pen>0?`${fmtTime(ms)} +${penSeg}s = ${fmtTime(total)} ✓`:`${fmtTime(ms)} ✓`,'ok');
   _timerElapsed=0;
   $('chrono-time').textContent='00:00.0';
   clearPenState();
-  updateChronoCtx(cfg);
+  updateChronoCtx();
 }
 function recordDsq(){
-  // Registra DSQ sin necesidad de correr el cronómetro
   if(!confirm('¿Registrar DSQ para esta manga?'))return;
-  const cfg=JSON.parse(sessionStorage.getItem('slalom_cfg'));
   const pi=_selPal,ti=_selTramo,manga=_mangas[pi][ti];
   _times[pi][ti].push({manga,ms:0,pen:0,dsq:true});
   _mangas[pi][ti]=manga+1;
   $('manga-val').textContent=_mangas[pi][ti];
-  renderTimesTable(cfg);
+  renderTimesTable(_cfg);
   toast('⛔ DSQ registrado — M'+manga,'err');
   clearPenState();
-  updateChronoCtx(cfg);
+  updateChronoCtx();
 }
 function resetTimer(){
   clearInterval(_timerInterval);
@@ -600,7 +606,7 @@ function resetTimer(){
   $('btn-start').classList.remove('running');
 }
 
-/* ==== TABLA ==== */
+/* TABLA */
 function buildTimesTable(cfg){
   $('times-head').innerHTML='<th>Palista</th>'+Array.from({length:cfg.nTra},(_,i)=>`<th>T${i+1}</th>`).join('');
   renderTimesTable(cfg);
@@ -614,14 +620,10 @@ function renderTimesTable(cfg){
     for(let ti=0;ti<cfg.nTra;ti++){
       const entries=_times[pi][ti];
       if(!entries.length){html+=`<td><span class="time-cell empty">—</span></td>`;continue;}
-      // Mejor = mínimo total entre entradas válidas (no DSQ)
       const valid=entries.filter(e=>!e.dsq);
       const bestTotal=valid.length?Math.min(...valid.map(e=>e.ms+e.pen)):Infinity;
       const cells=entries.map(e=>{
-        if(e.dsq){
-          return`<span class="time-cell dsq-cell">DSQ <span class="time-dsq-badge">DSQ</span></span>`+
-                `<span class="time-manga-lbl">M${e.manga}</span>`;
-        }
+        if(e.dsq)return`<span class="time-cell dsq-cell">DSQ <span class="time-dsq-badge">DSQ</span></span><span class="time-manga-lbl">M${e.manga}</span>`;
         const total=e.ms+e.pen,isBest=total===bestTotal&&valid.length>0;
         const penSeg=e.pen/1000;
         const penBadge=e.pen>0?`<span class="time-pen-badge">+${penSeg}s</span>`:'';
