@@ -251,7 +251,7 @@ async function loadSessions(){
 function renderList(){
   const c=$('ses-list');
   if(!_sessions.length){
-    c.innerHTML=`<div class="empty-state"><p>Aún no tienes sesiones guardadas</p><p style="font-size:12px;margin-top:6px;font-weight:400">Crea una sesión y pulsa «Finalizar y guardar»</p></div>`;
+    c.innerHTML=`<div class="empty-state"><p>A\u00fan no tienes sesiones guardadas</p><p style="font-size:12px;margin-top:6px;font-weight:400">Crea una sesi\u00f3n y pulsa \u00abFinalizar y guardar\u00bb</p></div>`;
     return;
   }
   c.innerHTML=_sessions.map(s=>{
@@ -318,7 +318,7 @@ async function deleteCurrentSession(){
 
 /* ── DETALLE ── */
 async function openSession(id){
-  showLoad('Cargando sesión...');
+  showLoad('Cargando sesi\u00f3n...');
   _curSes=_sessions.find(s=>s.id===id);
   try{_entries=await api('/rest/v1/session_entries?session_id=eq.'+id+'&order=pal_index.asc,tramo.asc,manga.asc&select=*');}
   catch(e){_entries=[];toast('Error al cargar tiempos','err');}
@@ -329,7 +329,7 @@ async function openSession(id){
 function renderDetail(){
   const s=_curSes;
   const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}):'';
-  const sub=[s.lugar,fecha].filter(Boolean).join(' · ');
+  const sub=[s.lugar,fecha].filter(Boolean).join(' \u00b7 ');
   const nPal=s.n_pal,nTra=s.n_tra;
   const totalTimes=_entries.filter(e=>!e.dsq).length;
   const dsqCount=_entries.filter(e=>e.dsq).length;
@@ -348,14 +348,14 @@ function renderDetail(){
     tableHTML+=`<tr><td><span class="pal-cell">${pn.name.split(' ')[0]}</span>${cat}</td>`;
     for(let ti=0;ti<nTra;ti++){
       const ents=_entries.filter(e=>e.pal_index===pi&&e.tramo===ti);
-      if(!ents.length){tableHTML+=`<td><span style="color:#ddd;font-size:12px">—</span></td>`;continue;}
+      if(!ents.length){tableHTML+=`<td><span style="color:#ddd;font-size:12px">\u2014</span></td>`;continue;}
       const vld=ents.filter(e=>!e.dsq);
       const best=vld.length?Math.min(...vld.map(e=>e.ms+e.pen)):Infinity;
       const cells=ents.map(e=>{
-        if(e.dsq)return`<span onclick="openEntrySheet('${e.id}')" style="cursor:pointer"><span class="time-val dsq">DSQ</span><span class="manga-lbl">M${e.manga}·✏</span></span>`;
+        if(e.dsq)return`<span onclick="openEntrySheet('${e.id}')" style="cursor:pointer"><span class="time-val dsq">DSQ</span><span class="manga-lbl">M${e.manga}\u00b7\u270f</span></span>`;
         const tot=e.ms+e.pen,isBest=tot===best&&vld.length>0;
         const pen=e.pen>0?`<span class="time-pen">+${e.pen/1000}s</span>`:'';
-        return`<span onclick="openEntrySheet('${e.id}')" style="cursor:pointer"><span class="time-val${isBest?' best':''}">${fmtTime(e.ms)}${pen}</span><span class="manga-lbl">M${e.manga}·✏</span></span>`;
+        return`<span onclick="openEntrySheet('${e.id}')" style="cursor:pointer"><span class="time-val${isBest?' best':''}">${fmtTime(e.ms)}${pen}</span><span class="manga-lbl">M${e.manga}\u00b7\u270f</span></span>`;
       }).join('<br>');
       tableHTML+=`<td>${cells}</td>`;
     }
@@ -370,23 +370,23 @@ function renderDetail(){
       <div class="det-stats">
         <div class="det-stat"><div class="det-stat-val">${totalTimes}</div><div class="det-stat-lbl">Tiempos</div></div>
         <div class="det-stat"><div class="det-stat-val">${dsqCount}</div><div class="det-stat-lbl">DSQ</div></div>
-        <div class="det-stat"><div class="det-stat-val">${bestMs!==null?fmtTime(bestMs):'—'}</div><div class="det-stat-lbl">Mejor</div></div>
+        <div class="det-stat"><div class="det-stat-val">${bestMs!==null?fmtTime(bestMs):'\u2014'}</div><div class="det-stat-lbl">Mejor</div></div>
       </div>
     </div>
-    <button class="btn-resume-ses" onclick="resumeSession()">&#9654; Continuar sesión</button>
+    <button class="btn-resume-ses" onclick="resumeSession()">▶ Continuar sesi\u00f3n</button>
     <div class="export-row">
       <button class="btn-export btn-pdf" onclick="exportPDF()">📄 PDF</button>
       <button class="btn-export btn-xls" onclick="exportXLS()">📊 Excel</button>
-      <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edición':'Editar sesión'}</button>
+      <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edici\u00f3n':'Editar sesi\u00f3n'}</button>
       <button class="btn-del-ses" onclick="deleteCurrentSession()">🗑️</button>
     </div>
-    <div class="edit-mode-bar${_editMode?' show':''}">✏️ Modo edición — los cambios se guardan al instante</div>
+    <div class="edit-mode-bar${_editMode?' show':''}">\u270f\ufe0f Modo edici\u00f3n \u2014 los cambios se guardan al instante</div>
     <div class="section-label">Tiempos</div>
     ${tableHTML}
-    ${_editMode?'<button class="btn-add-time" onclick="openNewEntrySheet()">+ Añadir tiempo</button>':''}
+    ${_editMode?'<button class="btn-add-time" onclick="openNewEntrySheet()">+ A\u00f1adir tiempo</button>':''}
   `;
 }
-function toggleEditMode(){_editMode=!_editMode;renderDetail();if(_editMode)toast('Edición activa — cambios instantáneos');}
+function toggleEditMode(){_editMode=!_editMode;renderDetail();if(_editMode)toast('Edici\u00f3n activa \u2014 cambios instant\u00e1neos');}
 
 /* ── CONTINUAR SESIÓN ── */
 function resumeSession(){
@@ -394,7 +394,7 @@ function resumeSession(){
   const s=_curSes;
   const nPal=s.n_pal,nTra=s.n_tra;
 
-  // Construir _cfg a partir de los metadatos de la sesión
+  // Construir cfg a partir de los metadatos
   let palMap={};
   _entries.forEach(e=>{
     if(!palMap[e.pal_index])palMap[e.pal_index]={name:e.pal_name,category:e.pal_cat||null,id:e.athlete_id||null,isTemp:!e.athlete_id};
@@ -412,7 +412,7 @@ function resumeSession(){
     palistas
   };
 
-  // Construir _times: array[nPal][nTra][]
+  // Construir times: array[nPal][nTra][]
   const times=Array.from({length:nPal},()=>Array.from({length:nTra},()=>[]));
   _entries.forEach(e=>{
     const pi=e.pal_index,ti=e.tramo;
@@ -428,11 +428,21 @@ function resumeSession(){
     }
   });
 
-  // Guardar en sessionStorage con clave slalom_resume
+  // Construir mangas: siguiente manga para cada [pal][tramo]
+  const mangas=Array.from({length:nPal},()=>Array(nTra).fill(1));
+  for(let pi=0;pi<nPal;pi++){
+    for(let ti=0;ti<nTra;ti++){
+      const ents=times[pi][ti];
+      mangas[pi][ti]=ents.length?Math.max(...ents.map(e=>e.manga))+1:1;
+    }
+  }
+
+  // Guardar en sessionStorage con el formato que espera slalom.html
   sessionStorage.setItem('slalom_resume',JSON.stringify({
-    session_id:s.id,
+    sessionId:s.id,
     cfg,
-    times
+    times,
+    mangas
   }));
 
   window.location.href='slalom.html';
@@ -454,7 +464,7 @@ function openEntrySheet(entryId){
   if(!e)return;
   _shMode='edit';_shEntryId=entryId;
   $('sh-title').textContent='Editar tiempo';
-  $('sh-sub').textContent=e.pal_name+' · Tramo '+(e.tramo+1)+' · M'+e.manga;
+  $('sh-sub').textContent=e.pal_name+' \u00b7 Tramo '+(e.tramo+1)+' \u00b7 M'+e.manga;
   buildSheetSelectors(e.pal_index,e.tramo);
   $('sh-time').value=e.dsq?'':fmtTime(e.ms);
   _shCnt2=e.cnt2||0;_shCnt50=e.cnt50||0;_shDsq=e.dsq||false;
@@ -465,8 +475,8 @@ function openEntrySheet(entryId){
 }
 function openNewEntrySheet(){
   _shMode='new';_shEntryId=null;
-  $('sh-title').textContent='Añadir tiempo';
-  $('sh-sub').textContent='Nuevo tiempo para esta sesión';
+  $('sh-title').textContent='A\u00f1adir tiempo';
+  $('sh-sub').textContent='Nuevo tiempo para esta sesi\u00f3n';
   buildSheetSelectors(0,0);
   $('sh-time').value='';
   _shCnt2=0;_shCnt50=0;_shDsq=false;
@@ -479,7 +489,7 @@ function openSheet(){$('sheet-backdrop').classList.add('open');setTimeout(()=>$(
 function closeSheet(){$('entry-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');}
 function shAdjPen(seg,d){if(_shDsq)return;if(seg===2){_shCnt2=Math.max(0,_shCnt2+d);$('sh-cnt2').textContent=_shCnt2;}else{_shCnt50=Math.max(0,_shCnt50+d);$('sh-cnt50').textContent=_shCnt50;}}
 function shToggleDsq(){_shDsq=!_shDsq;updateShDsqBtn();updateShPenEnabled();if(_shDsq){_shCnt2=0;_shCnt50=0;$('sh-cnt2').textContent=0;$('sh-cnt50').textContent=0;}}
-function updateShDsqBtn(){const btn=$('sh-dsq-btn');btn.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'⛔':'□';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
+function updateShDsqBtn(){const btn=$('sh-dsq-btn');btn.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
 function updateShPenEnabled(){document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=_shDsq);[$('sh-cnt2'),$('sh-cnt50')].forEach(el=>el.style.opacity=_shDsq?'0.35':'1');}
 
 function shSetLoading(on){
@@ -497,7 +507,7 @@ function shSetLoading(on){
 
 /* DELETE inmediato */
 async function shDelete(){
-  if(!confirm('¿Eliminar este tiempo?'))return;
+  if(!confirm('\u00bfEliminar este tiempo?'))return;
   shSetLoading(true);
   try{
     if(_shEntryId&&!String(_shEntryId).startsWith('new_')){
@@ -521,7 +531,7 @@ async function shSave(){
   let newMs=0;
   if(!_shDsq){
     newMs=msFromStr(timeStr);
-    if(newMs===null){toast('Formato inválido. Usa MM:SS.d','err');return;}
+    if(newMs===null){toast('Formato inv\u00e1lido. Usa MM:SS.d','err');return;}
   }
   let palNames={};
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat,aid:e.athlete_id};});
@@ -540,7 +550,7 @@ async function shSave(){
         body:JSON.stringify({pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,tramo:newTi,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50})
       });
       _entries[idx]=updated;
-      toast('Guardado ✓','ok');
+      toast('Guardado \u2713','ok');
     } else {
       const existing=_entries.filter(e=>e.pal_index===newPi&&e.tramo===newTi);
       const maxManga=existing.length?Math.max(...existing.map(e=>e.manga)):0;
@@ -552,7 +562,7 @@ async function shSave(){
       });
       const realId=Array.isArray(inserted)?inserted[0].id:inserted.id;
       _entries.push({...newRow,id:realId});
-      toast('Tiempo añadido ✓','ok');
+      toast('Tiempo a\u00f1adido \u2713','ok');
     }
     closeSheet();renderDetail();
   }catch(err){
@@ -576,8 +586,8 @@ async function exportPDF(){
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(27,58,92);
   doc.text(s.name,14,18);
   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(120,120,120);
-  doc.text([s.lugar,fecha].filter(Boolean).join('  ·  ')||' ',14,25);
-  doc.text('Generado con SLTimer — '+new Date().toLocaleDateString('es-ES'),14,30);
+  doc.text([s.lugar,fecha].filter(Boolean).join('  \u00b7  ')||' ',14,25);
+  doc.text('Generado con SLTimer \u2014 '+new Date().toLocaleDateString('es-ES'),14,30);
   const nTra=s.n_tra,nPal=s.n_pal;
   let palNames={};
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
@@ -589,16 +599,16 @@ async function exportPDF(){
     const row=[pn.name+(pn.cat?' ('+pn.cat+')':'')];
     for(let ti=0;ti<nTra;ti++){
       const ents=_entries.filter(e=>e.pal_index===pi&&e.tramo===ti);
-      if(!ents.length){row.push('—');continue;}
+      if(!ents.length){row.push('\u2014');continue;}
       const vld=ents.filter(e=>!e.dsq);
       const best=vld.length?Math.min(...vld.map(e=>e.ms+e.pen)):Infinity;
-      row.push(ents.map(e=>e.dsq?'DSQ (M'+e.manga+')':(((e.ms+e.pen)===best&&vld.length>0)?'★ ':'')+fmtTime(e.ms)+(e.pen>0?' +'+e.pen/1000+'s':'')+'  M'+e.manga).join('\n'));
+      row.push(ents.map(e=>e.dsq?'DSQ (M'+e.manga+')':(((e.ms+e.pen)===best&&vld.length>0)?'\u2605 ':'')+fmtTime(e.ms)+(e.pen>0?' +'+e.pen/1000+'s':'')+'  M'+e.manga).join('\n'));
     }
     body.push(row);
   }
   doc.autoTable({startY:35,head,body,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[24,95,165],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[245,248,252]},columnStyles:{0:{cellWidth:40}}});
   doc.save(s.name.replace(/[^a-zA-Z0-9_\-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
-  toast('PDF descargado ✓','ok');
+  toast('PDF descargado \u2713','ok');
 }
 
 /* ── EXPORTAR XLS ── */
@@ -614,7 +624,7 @@ async function exportXLS(){
   let palNames={};
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
   for(let i=0;i<nPal;i++)if(!palNames[i])palNames[i]={name:'Palista '+(i+1),cat:null};
-  const summaryHeader=['Palista','Categoría',...Array.from({length:nTra},(_,i)=>'Tramo '+(i+1))];
+  const summaryHeader=['Palista','Categor\u00eda',...Array.from({length:nTra},(_,i)=>'Tramo '+(i+1))];
   const summaryRows=[];
   for(let pi=0;pi<nPal;pi++){
     const pn=palNames[pi];
@@ -625,15 +635,15 @@ async function exportXLS(){
     }
     summaryRows.push(row);
   }
-  const detailHeader=['Palista','Categoría','Tramo','Manga','Tiempo','Pen (+s)','Total','DSQ'];
-  const detailRows=_entries.map(e=>[e.pal_name,e.pal_cat||'','T'+(e.tramo+1),'M'+e.manga,e.dsq?'DSQ':fmtTime(e.ms),e.pen/1000,e.dsq?'DSQ':fmtTime(e.ms+e.pen),e.dsq?'SÍ':'NO']);
+  const detailHeader=['Palista','Categor\u00eda','Tramo','Manga','Tiempo','Pen (+s)','Total','DSQ'];
+  const detailRows=_entries.map(e=>[e.pal_name,e.pal_cat||'','T'+(e.tramo+1),'M'+e.manga,e.dsq?'DSQ':fmtTime(e.ms),e.pen/1000,e.dsq?'DSQ':fmtTime(e.ms+e.pen),e.dsq?'S\u00cd':'NO']);
   const wb=XLSX.utils.book_new();
   const ws1=XLSX.utils.aoa_to_sheet([[s.name],[s.lugar||''],[fecha],[],...[summaryHeader,...summaryRows]]);
   const ws2=XLSX.utils.aoa_to_sheet([detailHeader,...detailRows]);
   XLSX.utils.book_append_sheet(wb,ws1,'Resumen');
   XLSX.utils.book_append_sheet(wb,ws2,'Detalle');
   XLSX.writeFile(wb,s.name.replace(/[^a-zA-Z0-9_\-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  toast('Excel descargado ✓','ok');
+  toast('Excel descargado \u2713','ok');
 }
 
 function loadScript(src){
