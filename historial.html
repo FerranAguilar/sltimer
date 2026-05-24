@@ -240,7 +240,7 @@ function handleBack(){
 /* ── LISTA ── */
 async function loadSessions(){
   showLoad();
-  try{_sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,fecha,n_pal,n_tra,created_at');}
+  try{_sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,n_pal,n_tra,created_at');}
   catch(e){_sessions=[];toast('Error al cargar sesiones','err');}
   hideLoad();renderList();
 }
@@ -251,7 +251,7 @@ function renderList(){
     return;
   }
   c.innerHTML=_sessions.map(s=>{
-    const fecha=s.fecha?new Date(s.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}):'';
+    const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}):'';
     const sub=[s.lugar,fecha].filter(Boolean).join(' &middot; ');
     return`
     <div class="ses-wrap" id="wrap-${s.id}">
@@ -289,7 +289,7 @@ function onCardClick(e,id){if(_swipedId===id){closeSwipe(id);return;}openSession
 /* ── ELIMINAR SESIÓN ── */
 async function confirmDeleteSession(id){
   const s=_sessions.find(x=>x.id===id);
-  if(!confirm('\u00bfEliminar "'+(s?s.name:id)+'"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.')){
+  if(!confirm('\u00bfEliminar \"'+(s?s.name:id)+'\"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.')){
     closeSwipe(id);return;
   }
   showLoad('Eliminando...');
@@ -301,7 +301,7 @@ async function confirmDeleteSession(id){
 }
 async function deleteCurrentSession(){
   if(!_curSes)return;
-  if(!confirm('\u00bfEliminar "'+_curSes.name+'"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.'))return;
+  if(!confirm('\u00bfEliminar \"'+_curSes.name+'\"?\nSe borrar\u00e1n todos sus tiempos. No se puede deshacer.'))return;
   showLoad('Eliminando...');
   try{
     await api('/rest/v1/sessions?id=eq.'+_curSes.id,{method:'DELETE'});
@@ -324,7 +324,7 @@ async function openSession(id){
 }
 function renderDetail(){
   const s=_curSes;
-  const fecha=s.fecha?new Date(s.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}):'';
+  const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}):'';
   const sub=[s.lugar,fecha].filter(Boolean).join(' · ');
   const nPal=s.n_pal,nTra=s.n_tra;
   const totalTimes=_entries.filter(e=>!e.dsq).length;
@@ -445,7 +445,6 @@ async function shDelete(){
   if(!confirm('¿Eliminar este tiempo?'))return;
   shSetLoading(true);
   try{
-    // Si tiene ID real (no temp) borramos en BD
     if(_shEntryId&&!String(_shEntryId).startsWith('new_')){
       await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
     }
@@ -480,7 +479,6 @@ async function shSave(){
       if(idx===-1)throw new Error('Entrada no encontrada');
       const old=_entries[idx];
       const updated={...old,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,tramo:newTi,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50};
-      // PATCH en BD
       await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{
         method:'PATCH',
         headers:{'Prefer':'return=minimal'},
@@ -489,7 +487,6 @@ async function shSave(){
       _entries[idx]=updated;
       toast('Guardado ✓','ok');
     } else {
-      // nueva entrada
       const existing=_entries.filter(e=>e.pal_index===newPi&&e.tramo===newTi);
       const maxManga=existing.length?Math.max(...existing.map(e=>e.manga)):0;
       const newRow={session_id:_curSes.id,pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,athlete_id:pInfo.aid||null,tramo:newTi,manga:maxManga+1,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50};
@@ -520,7 +517,7 @@ async function exportPDF(){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const s=_curSes;
-  const fecha=s.fecha?new Date(s.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}):'';
+  const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}):'';
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(27,58,92);
   doc.text(s.name,14,18);
   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(120,120,120);
@@ -558,7 +555,7 @@ async function exportXLS(){
   }
   const s=_curSes;
   const nTra=s.n_tra,nPal=s.n_pal;
-  const fecha=s.fecha?new Date(s.fecha+'T12:00:00').toLocaleDateString('es-ES'):'';
+  const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES'):'';
   let palNames={};
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
   for(let i=0;i<nPal;i++)if(!palNames[i])palNames[i]={name:'Palista '+(i+1),cat:null};
