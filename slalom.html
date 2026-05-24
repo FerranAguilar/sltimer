@@ -371,7 +371,7 @@ function renderPalRow(i,container){
   container.appendChild(row);
 }
 function onPalInput(i){const val=$('pal-input-'+i).value;_palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;$('pal-clear-'+i).classList.toggle('show',val.length>0);showCatSelector(i,val.length>0);openDropdown(i);}
-function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}' ,[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
+function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")} ',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
 function delayClose(i){setTimeout(()=>{const dd=$('pal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
 function selectAthlete(i,id,name,cats){_palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};const inp=$('pal-input-'+i);inp.value=name;inp.classList.add('matched');$('pal-clear-'+i).classList.add('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,true);if(cats.length===1)setCatUI(i,cats[0]);else setCatUI(i,_palState[i].category);}
 function clearPal(i){_palState[i]={id:null,name:'',category:null,isTemp:false};const inp=$('pal-input-'+i);inp.value='';inp.classList.remove('matched');$('pal-clear-'+i).classList.remove('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,false);}
@@ -502,7 +502,6 @@ async function saveSession(){
           user_id:_uid,
           name:_cfg.name,
           lugar:_cfg.lugar||null,
-          // FIX: columna real en Supabase es 'data', con fallback a fecha actual
           data:(_cfg.fecha&&_cfg.fecha.trim()!=='')?_cfg.fecha:new Date().toISOString().slice(0,10),
           n_pal:_cfg.nPal,
           n_tra:_cfg.nTra
@@ -545,9 +544,9 @@ async function saveSession(){
       });
     }
 
+    // 3. Redirigir al historial tras guardar
     toast('Sesión guardada ✓','ok');
-    btn.textContent='✓ Guardada — guardar de nuevo';
-    btn.disabled=false;
+    setTimeout(()=>{ window.location.href='historial.html'; }, 1200);
 
   }catch(err){
     console.error(err);
@@ -558,7 +557,7 @@ async function saveSession(){
 }
 
 /* CARGA */
-async function loadAthletes(){$('overlay').classList.add('show');$('overlay-msg').textContent='Cargando palistas...';try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');let shared=[];try{const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');}catch{}_athletes=[...(owned||[]),...(shared||[])];}catch{_athletes=[];} $('overlay').classList.remove('show');buildPalList();}
+async function loadAthletes(){$('overlay').classList.add('show');$('overlay-msg').textContent='Cargando palistas...';try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');let shared=[];try{const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');}catch{}}_athletes=[...(owned||[]),...(shared||[])];}catch{_athletes=[];} $('overlay').classList.remove('show');buildPalList();}
 
 _tok=localStorage.getItem('slt_tok');
 _uid=localStorage.getItem('slt_uid');
