@@ -34,16 +34,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .notif-icon.purple{background:#F0EBFB} .notif-icon.purple svg{stroke:#6B21A8}
 .notif-icon.teal{background:#E1F5EE} .notif-icon.teal svg{stroke:#085041}
 .notif-icon.blue{background:#E6F1FB} .notif-icon.blue svg{stroke:#0C447C}
+.notif-icon.orange{background:#FEF3C7} .notif-icon.orange svg{stroke:#D97706}
 .notif-body{flex:1;min-width:0}
 .notif-title{font-size:14px;font-weight:700;color:#111;margin-bottom:2px}
-.notif-sub{font-size:12px;color:#888;line-height:1.4;margin-bottom:8px}
+.notif-sub{font-size:12px;color:#888;line-height:1.4;margin-bottom:6px}
+.notif-athlete{font-size:12px;font-weight:700;color:#185FA5;margin-bottom:4px}
 .notif-team{font-size:12px;font-weight:600;color:#185FA5}
 .notif-date{font-size:11px;color:#bbb;margin-bottom:8px}
 .notif-actions{display:flex;gap:8px}
-.btn-accept{background:#185FA5;border:none;color:#fff;font-size:13px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;font-family:inherit}
+.btn-accept{background:#185FA5;border:none;color:#fff;font-size:13px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;font-family:inherit;transition:opacity .12s}
 .btn-accept:active{opacity:.8}
+.btn-accept:disabled{opacity:.5;cursor:not-allowed}
 .btn-reject{background:#f0f0f0;border:none;color:#666;font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
 .btn-reject:active{background:#e4e4e4}
+.btn-reject:disabled{opacity:.5;cursor:not-allowed}
+/* Badges de estado */
+.status-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;margin-top:6px}
+.status-badge.accepted{background:#E1F5EE;color:#085041}
+.status-badge.rejected{background:#fde8e8;color:#A32D2D}
 /* Coming soon */
 .coming-soon{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:20px 16px;display:flex;align-items:center;gap:12px;opacity:.55}
 .coming-soon-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -104,7 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
-let _tok=null, _uid=null, _email=null;
+let _tok=null, _uid=null, _email=null, _username=null;
 const $=id=>document.getElementById(id);
 
 let _tTimer;
@@ -114,27 +122,62 @@ async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'applicati
 
 function fmtDate(iso){return new Date(iso).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});}
 
+/* ---- Cargar username del entrenador ---- */
+async function loadUsername(){
+  try{
+    const res=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=username&limit=1');
+    if(res&&res.length>0)_username=res[0].username;
+  }catch{}
+}
+
 /* ---- Aceptar / Rechazar invitación de grupo ---- */
 async function respondGroupInvite(inviteId, teamId, accept){
-  const btn=document.querySelectorAll(`[data-inv="${inviteId}"]`);
-  btn.forEach(b=>b.disabled=true);
+  const btns=document.querySelectorAll(`[data-inv="${inviteId}"]`);
+  btns.forEach(b=>b.disabled=true);
   try{
     if(accept){
-      // Insertar como miembro
       await api('/rest/v1/team_members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({team_id:teamId,user_id:_uid,role:'member'})});
     }
-    // Actualizar estado de la invitación
     await api('/rest/v1/team_invites?id=eq.'+inviteId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({status:accept?'accepted':'rejected'})});
     toast(accept?'Te has unido al grupo ✓':'Invitación rechazada', accept?'ok':'');
     await loadData();
   }catch(e){
     toast('Error: '+e.message,'err');
-    btn.forEach(b=>b.disabled=false);
+    btns.forEach(b=>b.disabled=false);
+  }
+}
+
+/* ---- Aceptar / Rechazar invitación de palista ---- */
+async function respondAthleteInvite(inviteId, athleteName, accept){
+  const btns=document.querySelectorAll(`[data-ainv="${inviteId}"]`);
+  btns.forEach(b=>b.disabled=true);
+  try{
+    if(accept){
+      // Llamar a la función RPC que valida y crea el acceso
+      await api('/rest/v1/rpc/accept_athlete_share_invite',{
+        method:'POST',
+        body:JSON.stringify({invite_id:inviteId})
+      });
+      toast('Ahora tienes acceso a '+athleteName+' ✓','ok');
+    } else {
+      await api('/rest/v1/athlete_share_invites?id=eq.'+inviteId,{
+        method:'PATCH',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({status:'rejected'})
+      });
+      toast('Invitación rechazada');
+    }
+    await loadData();
+  }catch(e){
+    toast('Error: '+e.message,'err');
+    btns.forEach(b=>b.disabled=false);
   }
 }
 
 async function loadData(){
   try{
+    await loadUsername();
+
     // Invitaciones de grupo pendientes para este email
     const groupInvites = await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(_email)+'&status=eq.pending&select=id,team_id,created_at&order=created_at.desc');
 
@@ -146,15 +189,41 @@ async function loadData(){
       teams.forEach(t=>teamNames[t.id]=t.name);
     }
 
+    // Invitaciones de palistas pendientes (por email o username)
+    let athleteInvites=[];
+    const orFilters=[];
+    if(_email)orFilters.push('to_email=eq.'+encodeURIComponent(_email));
+    if(_username)orFilters.push('to_username=eq.'+encodeURIComponent(_username));
+    if(orFilters.length){
+      athleteInvites=await api('/rest/v1/athlete_share_invites?or=('+orFilters.join(',')+')&status=eq.pending&select=id,athlete_id,invited_by,can_share,created_at,to_email,to_username&order=created_at.desc');
+    }
+
+    // Obtener nombres de los palistas
+    let athleteNames={};
+    if(athleteInvites.length){
+      const athleteIds=[...new Set(athleteInvites.map(i=>i.athlete_id))];
+      const athletes=await api('/rest/v1/athletes?id=in.('+athleteIds.join(',')+')&select=id,name,surname');
+      athletes.forEach(a=>athleteNames[a.id]=(a.name+(a.surname?' '+a.surname:'')));
+    }
+
+    // Obtener nombres de los entrenadores que invitan
+    let coachNames={};
+    if(athleteInvites.length){
+      const coachIds=[...new Set(athleteInvites.map(i=>i.invited_by))];
+      const coaches=await api('/rest/v1/coaches?owner_id=in.('+coachIds.join(',')+')&select=owner_id,name,username');
+      coaches.forEach(c=>coachNames[c.owner_id]={name:c.name,username:c.username});
+    }
+
     $('skeleton').style.display='none';
     const wrap=$('main');
     wrap.style.display='';
     let html='';
+    let hasAny=false;
 
     /* ---- Invitaciones de grupo ---- */
-    html+=`<div class="section-label">Invitaciones a grupos</div>`;
     if(groupInvites.length){
-      html+=`<div class="notif-card">`;
+      hasAny=true;
+      html+=`<div class="section-label">Invitaciones a grupos</div><div class="notif-card">`;
       html+=groupInvites.map(inv=>{
         const tname=teamNames[inv.team_id]||'Grupo desconocido';
         return`<div class="notif-item">
@@ -173,20 +242,38 @@ async function loadData(){
         </div>`;
       }).join('');
       html+=`</div>`;
-    }else{
-      html+=`<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px"><div style="padding:18px;text-align:center;font-size:13px;color:#aaa">Sin invitaciones de grupos pendientes</div></div>`;
     }
 
-    /* ---- Compartir palistas (próximamente) ---- */
-    html+=`<div class="section-label" style="margin-top:4px">Palistas compartidos</div>
-    <div class="coming-soon">
-      <div class="coming-soon-icon orange"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
-      <div class="coming-soon-body">
-        <div class="coming-soon-title">Invitaciones de palistas</div>
-        <div class="coming-soon-sub">Cuando otro entrenador te comparta un palista aparecерá aquí</div>
-      </div>
-      <span class="coming-badge">Próximamente</span>
-    </div>`;
+    /* ---- Invitaciones de palistas ---- */
+    html+=`<div class="section-label">Palistas compartidos</div>`;
+    if(athleteInvites.length){
+      hasAny=true;
+      html+=`<div class="notif-card">`;
+      html+=athleteInvites.map(inv=>{
+        const athName=athleteNames[inv.athlete_id]||'Palista desconocido';
+        const coach=coachNames[inv.invited_by];
+        const coachLabel=coach?(coach.name+(coach.username?' (@'+coach.username+')':"")):'Otro entrenador';
+        const canShareLabel=inv.can_share?'· Podrás re-compartirlo':'';
+        return`<div class="notif-item">
+          <div class="notif-icon orange">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="notif-title">Palista compartido contigo</div>
+            <div class="notif-athlete">${athName}</div>
+            <div class="notif-sub">De parte de <strong>${coachLabel}</strong> ${canShareLabel}</div>
+            <div class="notif-date">${fmtDate(inv.created_at)}</div>
+            <div class="notif-actions">
+              <button class="btn-accept" data-ainv="${inv.id}" onclick="respondAthleteInvite('${inv.id}','${athName}',true)">Aceptar</button>
+              <button class="btn-reject" data-ainv="${inv.id}" onclick="respondAthleteInvite('${inv.id}','${athName}',false)">Rechazar</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      html+=`</div>`;
+    } else {
+      html+=`<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px"><div style="padding:18px;text-align:center;font-size:13px;color:#aaa">Sin invitaciones de palistas pendientes</div></div>`;
+    }
 
     /* ---- Sesiones colaborativas (próximamente) ---- */
     html+=`<div class="section-label" style="margin-top:4px">Sesiones colaborativas</div>
@@ -199,24 +286,12 @@ async function loadData(){
       <span class="coming-badge">Próximamente</span>
     </div>`;
 
-    /* Empty total */
-    if(!groupInvites.length){
+    if(!hasAny){
       html=`<div class="empty">
         <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
         <div class="empty-title">Sin notificaciones</div>
         <div class="empty-sub">Cuando recibas invitaciones a grupos, palistas o sesiones aparecerán aquí</div>
-      </div>`+
-      `<div class="section-label">Próximamente</div>
-      <div class="coming-soon">
-        <div class="coming-soon-icon orange"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
-        <div class="coming-soon-body"><div class="coming-soon-title">Palistas compartidos</div><div class="coming-soon-sub">Invitaciones para ver palistas de otros entrenadores</div></div>
-        <span class="coming-badge">Próximamente</span>
-      </div>
-      <div class="coming-soon">
-        <div class="coming-soon-icon indigo"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-        <div class="coming-soon-body"><div class="coming-soon-title">Sesiones colaborativas</div><div class="coming-soon-sub">Unión a sesiones en tiempo real con otros entrenadores</div></div>
-        <span class="coming-badge">Próximamente</span>
-      </div>`;
+      </div>`+html.replace(/<div class="section-label">Invitaciones a grupos<\/div>/,'').replace(/<div class="section-label">Palistas compartidos<\/div>/,'<div class="section-label" style="margin-top:4px">Próximamente</div>');
     }
 
     wrap.innerHTML=html;

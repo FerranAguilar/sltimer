@@ -81,6 +81,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ath-sex{font-size:11px;color:#bbb}
 .ath-shared-badge{font-size:10px;font-weight:700;background:#f0f0f0;color:#888;padding:2px 7px;border-radius:100px}
 .ath-arrow{color:#ccc;font-size:18px;flex-shrink:0}
+.btn-share-ath{background:none;border:0.5px solid #ddd;border-radius:8px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;color:#666;flex-shrink:0;transition:background .1s}
+.btn-share-ath:active{background:#f0f0f0}
+.btn-share-ath svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── Empty state ── */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:12px;text-align:center}
@@ -118,6 +121,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* FAB */
 .fab{position:fixed;bottom:28px;right:20px;width:52px;height:52px;border-radius:50%;background:#185FA5;border:none;color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(24,95,165,0.38);z-index:50;transition:transform .12s,opacity .12s;-webkit-tap-highlight-color:transparent}
 .fab:active{transform:scale(.93);opacity:.9}
+
+/* ── Modal compartir ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;animation:slideUp .22s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:17px;font-weight:700;color:#111;margin-bottom:4px}
+.modal-sub{font-size:13px;color:#888;margin-bottom:18px;line-height:1.4}
+.share-input-wrap{position:relative}
+.share-input{width:100%;border:1.5px solid #ddd;border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;outline:none;transition:border-color .15s;-webkit-appearance:none}
+.share-input:focus{border-color:#185FA5}
+.share-input.found{border-color:#0F6E56}
+.share-input.notfound{border-color:#C0392B}
+.share-suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #e0e0e0;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:10;overflow:hidden;display:none}
+.share-suggestions.show{display:block}
+.suggestion-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.suggestion-item:hover,.suggestion-item:active{background:#f5f9ff}
+.suggestion-item+.suggestion-item{border-top:0.5px solid #f2f2f2}
+.sug-avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sug-name{font-size:14px;font-weight:600;color:#111;line-height:1.2}
+.sug-username{font-size:12px;color:#888}
+.share-found-info{margin-top:10px;padding:10px 14px;background:#F0FBF5;border-radius:10px;display:none;align-items:center;gap:10px}
+.share-found-info.show{display:flex}
+.share-found-avatar{width:36px;height:36px;border-radius:50%;background:#0F6E56;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.share-found-name{font-size:14px;font-weight:600;color:#111}
+.share-found-sub{font-size:12px;color:#0F6E56}
+.share-can-share{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 14px;background:#f9f9f9;border-radius:12px}
+.share-can-share label{font-size:13px;color:#555;flex:1;cursor:pointer}
+.share-can-share input[type=checkbox]{width:18px;height:18px;accent-color:#185FA5;cursor:pointer}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.btn-modal-cancel{flex:1;background:#f0f0f0;border:none;color:#555;font-size:15px;font-weight:600;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit}
+.btn-modal-cancel:active{background:#e4e4e4}
+.btn-modal-send{flex:2;background:#185FA5;border:none;color:#fff;font-size:15px;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.btn-modal-send:disabled{opacity:.45;cursor:not-allowed}
+.btn-modal-send:not(:disabled):active{opacity:.85}
 </style>
 </head>
 <body>
@@ -182,11 +221,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="toast" id="toast"></div>
 
+<!-- MODAL COMPARTIR PALISTA -->
+<div class="modal-bg" id="share-modal" onclick="handleModalBgClick(event)">
+  <div class="modal-sheet" id="share-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="share-modal-title">Compartir palista</div>
+    <div class="modal-sub">Introduce el email o @usuario del entrenador con quien quieres compartir</div>
+
+    <div class="share-input-wrap">
+      <input class="share-input" id="share-input"
+        type="text"
+        placeholder="email@ejemplo.com o @usuario"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        oninput="onShareInput()"
+      >
+      <div class="share-suggestions" id="share-suggestions"></div>
+    </div>
+
+    <div class="share-found-info" id="share-found-info">
+      <div class="share-found-avatar" id="share-found-avatar"></div>
+      <div>
+        <div class="share-found-name" id="share-found-name"></div>
+        <div class="share-found-sub" id="share-found-sub"></div>
+      </div>
+    </div>
+
+    <div class="share-can-share">
+      <label for="share-can-share-chk">Permitir que también pueda compartir este palista</label>
+      <input type="checkbox" id="share-can-share-chk" checked>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeShareModal()">Cancelar</button>
+      <button class="btn-modal-send" id="share-send-btn" disabled onclick="sendShareInvite()">
+        Enviar invitación
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 let _tok=null,_uid=null,_email=null,_allAthletes=[],_filter='all',_query='';
 const $=id=>document.getElementById(id);
+
+// ── Share modal state ──
+let _shareAthleteId=null,_shareAthleteName='';
+let _foundCoach=null; // {user_id, display_name, username, found_by}
+let _searchTimer=null;
 
 let _tTimer;
 function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
@@ -199,20 +282,233 @@ async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'applicati
 
 function applyFilters(){let list=_allAthletes;if(_filter==='own')list=list.filter(a=>!a._shared);if(_filter==='shared')list=list.filter(a=>a._shared);if(['K1','C1','KXC'].includes(_filter))list=list.filter(a=>a.categories&&a.categories.includes(_filter));if(_query){const q=_query.toLowerCase();list=list.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q));}return list;}
 
-function render(){const list=applyFilters();const owned=_allAthletes.filter(a=>!a._shared).length;const shared=_allAthletes.filter(a=>a._shared).length;const wrap=$('main-content');
-const statsHTML=`<div class="stats-bar"><div class="stat-chip"><div class="stat-num">${_allAthletes.length}</div><div class="stat-label">Total</div></div><div class="stat-chip"><div class="stat-num">${owned}</div><div class="stat-label">Propios</div></div><div class="stat-chip"><div class="stat-num">${shared}</div><div class="stat-label">Compartidos</div></div></div>`;
-if(_allAthletes.length===0){wrap.innerHTML=`<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><div class="empty-title">Sin palistas aún</div><div class="empty-sub">Añade tus primeros palistas para empezar a gestionar sesiones y tiempos</div><button class="empty-btn" onclick="goNew()">+ Añadir palista</button></div>`;return;}
-if(list.length===0){wrap.innerHTML=statsHTML+`<div class="no-results"><p>No se encontraron palistas con ese criterio</p></div>`;return;}
-let ownList=list.filter(a=>!a._shared);let sharedList=list.filter(a=>a._shared);let html=statsHTML;
-function renderGroup(athletes,label){if(athletes.length===0)return'';const items=athletes.map(a=>{const ini=initials(a.name,a.surname);const avCls=avatarClass(a);const age=calcAge(a.birth_date);const sx=sexLabel(a.sex);const cats=(a.categories||[]).map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');const meta=[cats?`<span class="ath-cats">${cats}</span>`:'',age?`<span class="ath-age">${age} años</span>`:'',sx?`<span class="ath-sex">${sx}</span>`:'',a._shared?`<span class="ath-shared-badge">Compartido</span>`:''].filter(Boolean).join('');const fullName=a.name+(a.surname?' '+a.surname:'');return`<button class="athlete-item" onclick="goEdit('${a.id}')"><div class="ath-avatar ${avCls}">${ini}</div><div class="ath-info"><div class="ath-name">${fullName}</div><div class="ath-meta">${meta}</div></div><span class="ath-arrow">›</span></button>`;}).join('');return`<div class="section-label">${label}</div><div class="athlete-list">${items}</div>`;}
-if(_filter==='all'){html+=renderGroup(ownList,'Mis palistas');html+=renderGroup(sharedList,'Compartidos conmigo');}else{html+=renderGroup(list,_filter==='shared'?'Compartidos conmigo':'Palistas');}
-wrap.innerHTML=html;}
+function render(){
+  const list=applyFilters();
+  const owned=_allAthletes.filter(a=>!a._shared).length;
+  const shared=_allAthletes.filter(a=>a._shared).length;
+  const wrap=$('main-content');
+  const statsHTML=`<div class="stats-bar"><div class="stat-chip"><div class="stat-num">${_allAthletes.length}</div><div class="stat-label">Total</div></div><div class="stat-chip"><div class="stat-num">${owned}</div><div class="stat-label">Propios</div></div><div class="stat-chip"><div class="stat-num">${shared}</div><div class="stat-label">Compartidos</div></div></div>`;
+  if(_allAthletes.length===0){wrap.innerHTML=`<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><div class="empty-title">Sin palistas aún</div><div class="empty-sub">Añade tus primeros palistas para empezar a gestionar sesiones y tiempos</div><button class="empty-btn" onclick="goNew()">+ Añadir palista</button></div>`;return;}
+  if(list.length===0){wrap.innerHTML=statsHTML+`<div class="no-results"><p>No se encontraron palistas con ese criterio</p></div>`;return;}
+  let ownList=list.filter(a=>!a._shared);
+  let sharedList=list.filter(a=>a._shared);
+  let html=statsHTML;
+
+  function renderGroup(athletes,label){
+    if(athletes.length===0)return'';
+    const isOwn=label==='Mis palistas';
+    const items=athletes.map(a=>{
+      const ini=initials(a.name,a.surname);
+      const avCls=avatarClass(a);
+      const age=calcAge(a.birth_date);
+      const sx=sexLabel(a.sex);
+      const cats=(a.categories||[]).map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+      const meta=[cats?`<span class="ath-cats">${cats}</span>`:'',age?`<span class="ath-age">${age} años</span>`:'',sx?`<span class="ath-sex">${sx}</span>`:'',a._shared?`<span class="ath-shared-badge">Compartido</span>`:''].filter(Boolean).join('');
+      const fullName=a.name+(a.surname?' '+a.surname:'');
+      const shareBtn=isOwn
+        ?`<button class="btn-share-ath" title="Compartir" onclick="openShareModal(event,'${a.id}','${fullName.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>`
+        :'';
+      return`<div class="athlete-item" style="gap:10px">
+        <div class="ath-avatar ${avCls}" style="cursor:pointer" onclick="goEdit('${a.id}')">${ini}</div>
+        <div class="ath-info" style="cursor:pointer" onclick="goEdit('${a.id}')">
+          <div class="ath-name">${fullName}</div>
+          <div class="ath-meta">${meta}</div>
+        </div>
+        ${shareBtn}
+        <span class="ath-arrow" style="cursor:pointer" onclick="goEdit('${a.id}')">›</span>
+      </div>`;
+    }).join('');
+    return`<div class="section-label">${label}</div><div class="athlete-list">${items}</div>`;
+  }
+
+  if(_filter==='all'){html+=renderGroup(ownList,'Mis palistas');html+=renderGroup(sharedList,'Compartidos conmigo');}else{html+=renderGroup(list,_filter==='shared'?'Compartidos conmigo':'Palistas');}
+  wrap.innerHTML=html;
+}
 
 function onSearch(){_query=$('search-input').value.trim();$('search-clear').classList.toggle('show',_query.length>0);render();}
 function clearSearch(){$('search-input').value='';_query='';$('search-clear').classList.remove('show');render();}
 function setFilter(btn,val){_filter=val;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
 
-async function loadAthletes(){try{const owned=await api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=*&order=name.asc`);let sharedIds=[];try{const access=await api(`/rest/v1/athlete_access?trainer_id=eq.${_uid}&select=athlete_id`);sharedIds=(access||[]).map(a=>a.athlete_id);}catch{}let sharedAthletes=[];if(sharedIds.length>0){const notOwned=sharedIds.filter(id=>!(owned||[]).find(a=>a.id===id));if(notOwned.length>0){const ids=notOwned.join(',');sharedAthletes=await api(`/rest/v1/athletes?id=in.(${ids})&select=*&order=name.asc`);sharedAthletes=(sharedAthletes||[]).map(a=>({...a,_shared:true}));}}_allAthletes=[...(owned||[]),...sharedAthletes];$('skeleton-wrap').style.display='none';$('main-content').style.display='';$('fab').style.display='flex';render();}catch(e){$('skeleton-wrap').style.display='none';$('main-content').style.display='';$('main-content').innerHTML=`<div class="no-results"><p>Error al cargar: ${e.message}</p></div>`;toast(e.message,'err');}}
+async function loadAthletes(){
+  try{
+    const owned=await api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=*&order=name.asc`);
+    let sharedIds=[];
+    try{const access=await api(`/rest/v1/athlete_access?trainer_id=eq.${_uid}&select=athlete_id`);sharedIds=(access||[]).map(a=>a.athlete_id);}catch{}
+    let sharedAthletes=[];
+    if(sharedIds.length>0){
+      const notOwned=sharedIds.filter(id=>!(owned||[]).find(a=>a.id===id));
+      if(notOwned.length>0){
+        const ids=notOwned.join(',');
+        sharedAthletes=await api(`/rest/v1/athletes?id=in.(${ids})&select=*&order=name.asc`);
+        sharedAthletes=(sharedAthletes||[]).map(a=>({...a,_shared:true}));
+      }
+    }
+    _allAthletes=[...(owned||[]),...sharedAthletes];
+    $('skeleton-wrap').style.display='none';
+    $('main-content').style.display='';
+    $('fab').style.display='flex';
+    render();
+  }catch(e){
+    $('skeleton-wrap').style.display='none';
+    $('main-content').style.display='';
+    $('main-content').innerHTML=`<div class="no-results"><p>Error al cargar: ${e.message}</p></div>`;
+    toast(e.message,'err');
+  }
+}
+
+// ── Share modal ──
+function openShareModal(evt,athleteId,athleteName){
+  evt.stopPropagation();
+  _shareAthleteId=athleteId;
+  _shareAthleteName=athleteName;
+  _foundCoach=null;
+  $('share-modal-title').textContent='Compartir: '+athleteName;
+  $('share-input').value='';
+  $('share-input').className='share-input';
+  $('share-suggestions').innerHTML='';
+  $('share-suggestions').classList.remove('show');
+  $('share-found-info').classList.remove('show');
+  $('share-send-btn').disabled=true;
+  $('share-can-share-chk').checked=true;
+  $('share-modal').classList.add('show');
+  setTimeout(()=>$('share-input').focus(),200);
+}
+
+function closeShareModal(){
+  $('share-modal').classList.remove('show');
+  clearTimeout(_searchTimer);
+}
+
+function handleModalBgClick(evt){
+  if(evt.target===$('share-modal'))closeShareModal();
+}
+
+function coachInitials(name){
+  if(!name)return'?';
+  const parts=name.trim().split(' ');
+  if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();
+  return name.trim().substring(0,2).toUpperCase();
+}
+
+async function onShareInput(){
+  const val=$('share-input').value.trim();
+  _foundCoach=null;
+  $('share-send-btn').disabled=true;
+  $('share-input').className='share-input';
+  $('share-found-info').classList.remove('show');
+  $('share-suggestions').classList.remove('show');
+  $('share-suggestions').innerHTML='';
+  clearTimeout(_searchTimer);
+  if(val.length<2)return;
+
+  _searchTimer=setTimeout(async()=>{
+    try{
+      const res=await api('/rest/v1/rpc/search_coach',{method:'POST',body:JSON.stringify({query:val})});
+      const coaches=res||[];
+
+      if(val.startsWith('@')){
+        // Mostrar sugerencias de autocompletado
+        if(coaches.length>0){
+          const html=coaches.map(c=>{
+            const ini=coachInitials(c.display_name);
+            return`<button class="suggestion-item" onclick="selectCoach(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+              <div class="sug-avatar">${ini}</div>
+              <div><div class="sug-name">${c.display_name||'Sin nombre'}</div><div class="sug-username">@${c.username}</div></div>
+            </button>`;
+          }).join('');
+          $('share-suggestions').innerHTML=html;
+          $('share-suggestions').classList.add('show');
+        } else {
+          $('share-suggestions').innerHTML=`<div style="padding:12px 14px;font-size:13px;color:#aaa">No se encontró ningún entrenador con ese usuario</div>`;
+          $('share-suggestions').classList.add('show');
+          $('share-input').className='share-input notfound';
+        }
+      } else {
+        // Búsqueda por email exacto
+        const isValidEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        if(!isValidEmail)return;
+        if(coaches.length>0){
+          selectCoach(coaches[0]);
+        } else {
+          // Email no registrado: enviar de todos modos (invitación por email)
+          _foundCoach={user_id:null,display_name:val,username:null,found_by:'email_pending',email:val};
+          $('share-input').className='share-input found';
+          $('share-found-avatar').textContent='✉';
+          $('share-found-name').textContent=val;
+          $('share-found-sub').textContent='Se enviará una invitación a este email';
+          $('share-found-info').classList.add('show');
+          $('share-send-btn').disabled=false;
+        }
+      }
+    }catch(e){
+      console.error(e);
+    }
+  },350);
+}
+
+function selectCoach(coach){
+  _foundCoach=coach;
+  $('share-suggestions').classList.remove('show');
+  const displayVal=coach.username?('@'+coach.username):coach.display_name;
+  $('share-input').value=displayVal;
+  $('share-input').className='share-input found';
+  $('share-found-avatar').textContent=coachInitials(coach.display_name);
+  $('share-found-name').textContent=coach.display_name||displayVal;
+  $('share-found-sub').textContent=coach.username?('@'+coach.username+' · Entrenador registrado'):'Entrenador registrado';
+  $('share-found-info').classList.add('show');
+  $('share-send-btn').disabled=false;
+}
+
+async function sendShareInvite(){
+  if(!_foundCoach||!_shareAthleteId)return;
+  const canShare=$('share-can-share-chk').checked;
+  const btn=$('share-send-btn');
+  btn.disabled=true;
+  btn.textContent='Enviando…';
+
+  try{
+    const isPending=_foundCoach.found_by==='email_pending';
+
+    if(!isPending && _foundCoach.user_id){
+      // Entrenador registrado: crear acceso directo + invitación aceptada
+      // Primero insertamos en athlete_access
+      await api('/rest/v1/athlete_access',{
+        method:'POST',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({
+          athlete_id:_shareAthleteId,
+          trainer_id:_foundCoach.user_id,
+          granted_by:_uid,
+          can_share:canShare
+        })
+      });
+      // También guardamos la invitación como registro histórico (accepted)
+      const invBody={athlete_id:_shareAthleteId,invited_by:_uid,can_share:canShare,status:'accepted'};
+      if(_foundCoach.username)invBody.to_username=_foundCoach.username;
+      else invBody.to_email=_foundCoach.display_name;
+      try{await api('/rest/v1/athlete_share_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(invBody)});}catch{}
+      toast('Acceso concedido a '+(_foundCoach.display_name||'el entrenador'),'ok');
+    } else {
+      // Email no registrado: crear invitación pendiente
+      await api('/rest/v1/athlete_share_invites',{
+        method:'POST',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({
+          athlete_id:_shareAthleteId,
+          invited_by:_uid,
+          to_email:_foundCoach.email,
+          can_share:canShare
+        })
+      });
+      toast('Invitación enviada a '+_foundCoach.email,'ok');
+    }
+    closeShareModal();
+  }catch(e){
+    toast('Error: '+e.message,'err');
+    btn.disabled=false;
+    btn.textContent='Enviar invitación';
+  }
+}
 
 function goNew(){window.location.href='athlete.html';}
 function goEdit(id){window.location.href=`athlete.html?id=${id}`;}
