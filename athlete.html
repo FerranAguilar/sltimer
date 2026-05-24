@@ -17,14 +17,13 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
 .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.back{font-size:22px;color:#666;background:none;border:none;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
-.back:active{opacity:.6}
 .btn-save{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;font-family:inherit;transition:opacity .12s;flex-shrink:0}
 .btn-save:active{opacity:.8}
 .btn-save:disabled{opacity:.4;cursor:not-allowed}
@@ -119,10 +118,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Guardando...</p></div>
 
 <div class="topbar">
-  <a class="topbar-brand" href="athletes.html">
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <div class="topbar-brand">
     <img src="icons/icon-192x192.png" alt="SLTimer">
     <span class="topbar-brand-name">SLTimer</span>
-  </a>
+  </div>
   <div class="topbar-divider"></div>
   <span class="topbar-title" id="page-title">Nuevo palista</span>
   <div class="topbar-actions">
@@ -224,7 +224,6 @@ function switchTab(name){
   $('tab-'+name).classList.add('active');
   $('panel-'+name).classList.add('active');
   if(name==='historial'&&!_histLoaded)loadHistorial();
-  // Ocultar botón guardar en historial
   $('btn-save').style.display=name==='historial'?'none':'block';
 }
 
@@ -236,24 +235,20 @@ async function loadHistorial(){
   const container=$('hist-content');
   container.innerHTML='<div class="hist-spinner"><div class="spinner"></div></div>';
   try{
-    // 1. Sesiones del usuario
     const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,created_at');
     if(!sessions||sessions.length===0){
       container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';
       _histLoaded=true;return;
     }
     const sesIds=sessions.map(s=>s.id);
-    // 2. Entradas del atleta en esas sesiones
     const entries=await api('/rest/v1/session_entries?session_id=in.('+sesIds.join(',')+')'+'&pal_name=eq.'+encodeURIComponent(_athleteName)+'&select=session_id,ms,pen,dsq,tramo,manga');
 
-    // Agrupar por sesión
     const sesMap={};
     for(const e of entries){
       if(!sesMap[e.session_id])sesMap[e.session_id]={entries:[]};
       sesMap[e.session_id].entries.push(e);
     }
 
-    // Filtrar sesiones con al menos 1 entrada
     const activeSessions=sessions.filter(s=>sesMap[s.id]);
     if(!activeSessions.length){
       container.innerHTML='<div class="empty-state"><p>Este palista no ha participado en ninguna sesión aún</p></div>';
@@ -391,11 +386,12 @@ async function loadAthlete(id){
     }
     renderShared();
     $('btn-delete').style.display='block';
-    // Mostrar pestañas solo en modo edición
     $('tabs-bar').style.display='flex';
     hideLoad();
   }catch(e){hideLoad();toast(e.message,'err');}
 }
+
+function goBack(){window.location.href='athletes.html';}
 
 window.addEventListener('DOMContentLoaded',async()=>{
   _tok=localStorage.getItem('slt_tok');
