@@ -28,6 +28,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
 .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
+/* Bell */
+.bell-btn{position:relative;width:34px;height:34px;border-radius:50%;background:#f4f4f4;border:0.5px solid rgba(0,0,0,0.10);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s}
+.bell-btn:active{background:#e8e8e8}
+.bell-btn svg{width:17px;height:17px;fill:none;stroke:#444;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bell-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:#D97706;border-radius:50%;border:1.5px solid #fff;display:none}
+.bell-dot.show{display:block}
 .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
 .menu-primary{background:#185FA5;border:none;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:opacity .12s;-webkit-tap-highlight-color:transparent;width:100%;text-align:left;font-family:inherit}
@@ -50,10 +56,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .list-icon.gray{background:#f0f0f0} .list-icon.gray svg{stroke:#666}
 .list-icon.red{background:#FCEBEB} .list-icon.red svg{stroke:#A32D2D}
 .list-icon.blue{background:#E6F1FB} .list-icon.blue svg{stroke:#0C447C}
+.list-icon.amber{background:#FEF3C7} .list-icon.amber svg{stroke:#92400E}
 .list-title{font-size:15px;font-weight:600;color:#111;flex:1}
 .list-title.danger{color:#A32D2D}
 .list-badge{background:#185FA5;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px}
 .list-badge.amber{background:#D97706}
+.list-badge.red{background:#A32D2D}
 .list-sub{font-size:12px;color:#aaa;font-weight:400;margin-left:4px}
 .list-arrow{color:#ccc;font-size:18px;flex-shrink:0}
 .greeting-sub{font-size:13px;color:#888;margin-bottom:3px}
@@ -78,6 +86,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <span class="topbar-brand-name">SLTimer</span>
   </a>
   <div class="topbar-right">
+    <button class="bell-btn" onclick="window.location.href='notifications.html'" title="Notificaciones">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="bell-dot" id="bell-dot"></div>
+    </button>
     <div class="avatar" id="top-avatar"></div>
   </div>
 </div>
@@ -102,6 +114,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <button class="list-item" onclick="goToApp('palistas')"><div class="list-icon" style="background:#EAF3DE"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#3B6D11;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><span class="list-title">Mis palistas <span class="list-badge" id="athletes-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
       <button class="list-item" onclick="goToApp('grupos')"><div class="list-icon purple"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="list-title">Grupos <span class="list-badge amber" id="groups-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
       <button class="list-item" onclick="goToApp('estadisticas')"><div class="list-icon teal"><svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg></div><span class="list-title">Estad&#237;sticas</span><span class="list-arrow">&#8250;</span></button>
+      <button class="list-item" onclick="window.location.href='notifications.html'">
+        <div class="list-icon amber"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+        <span class="list-title">Notificaciones <span class="list-badge red" id="notif-badge" style="display:none"></span></span>
+        <span class="list-arrow">&#8250;</span>
+      </button>
     </div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
@@ -135,7 +152,9 @@ function goToApp(section){const dest=ROUTES[section];if(dest)window.location.hre
 function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'coach.html';}
 async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
 async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
-async function loadGroupsBadge(){try{const myEmail=localStorage.getItem('slt_email')||'';const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(myEmail)+'&status=eq.pending&select=id');const badge=$('groups-badge');if(invites&&invites.length>0){badge.textContent=invites.length;badge.style.display='inline';}}catch{}}
+async function loadNotifBadge(){try{const myEmail=localStorage.getItem('slt_email')||'';const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(myEmail)+'&status=eq.pending&select=id');const total=(invites?.length||0);const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}
+  // Mantener también el badge de grupos (invitaciones pendientes)
+  const groupsBadge=$('groups-badge');if(total>0){groupsBadge.textContent=total;groupsBadge.style.display='inline';}}catch{}}
 async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
 function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' \uD83D\uDC4B';}
 window.addEventListener('DOMContentLoaded',async()=>{
@@ -150,7 +169,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   renderUser(_email);
   loadHistCount();
   loadAthletesCount();
-  loadGroupsBadge();
+  loadNotifBadge();
   loadCoachProfile();
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
