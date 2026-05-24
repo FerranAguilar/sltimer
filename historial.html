@@ -244,7 +244,7 @@ function handleBack(){
 /* ── LISTA ── */
 async function loadSessions(){
   showLoad();
-  try{_sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,n_pal,n_tra,created_at');}
+  try{_sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,n_pal,n_tra,palistas,created_at');}
   catch(e){_sessions=[];toast('Error al cargar sesiones','err');}
   hideLoad();renderList();
 }
@@ -380,7 +380,7 @@ function renderDetail(){
       <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edici\u00f3n':'Editar sesi\u00f3n'}</button>
       <button class="btn-del-ses" onclick="deleteCurrentSession()">🗑️</button>
     </div>
-    <div class="edit-mode-bar${_editMode?' show':''}">\u270f\ufe0f Modo edici\u00f3n \u2014 los cambios se guardan al instante</div>
+    <div class="edit-mode-bar${_editMode?' show':''}">✏️ Modo edici\u00f3n \u2014 los cambios se guardan al instante</div>
     <div class="section-label">Tiempos</div>
     ${tableHTML}
     ${_editMode?'<button class="btn-add-time" onclick="openNewEntrySheet()">+ A\u00f1adir tiempo</button>':''}
@@ -394,15 +394,21 @@ function resumeSession(){
   const s=_curSes;
   const nPal=s.n_pal,nTra=s.n_tra;
 
-  // Construir cfg a partir de los metadatos
-  let palMap={};
-  _entries.forEach(e=>{
-    if(!palMap[e.pal_index])palMap[e.pal_index]={name:e.pal_name,category:e.pal_cat||null,id:e.athlete_id||null,isTemp:!e.athlete_id};
-  });
-  const palistas=[];
-  for(let i=0;i<nPal;i++){
-    palistas.push(palMap[i]||{name:'Palista '+(i+1),category:null,id:null,isTemp:true});
+  // Usar palistas guardados en la sesión si existen; si no, reconstruir desde entries
+  let palistas;
+  if(s.palistas && Array.isArray(s.palistas) && s.palistas.length===nPal){
+    palistas=s.palistas;
+  } else {
+    let palMap={};
+    _entries.forEach(e=>{
+      if(!palMap[e.pal_index])palMap[e.pal_index]={name:e.pal_name,category:e.pal_cat||null,id:e.athlete_id||null,isTemp:!e.athlete_id};
+    });
+    palistas=[];
+    for(let i=0;i<nPal;i++){
+      palistas.push(palMap[i]||{name:'Palista '+(i+1),category:null,id:null,isTemp:true});
+    }
   }
+
   const cfg={
     name:s.name,
     lugar:s.lugar||'',
@@ -437,7 +443,6 @@ function resumeSession(){
     }
   }
 
-  // Guardar en sessionStorage con el formato que espera slalom.html
   sessionStorage.setItem('slalom_resume',JSON.stringify({
     sessionId:s.id,
     cfg,
