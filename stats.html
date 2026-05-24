@@ -204,7 +204,6 @@ function renderRanking(){
   const card=$('ranking-card');
   const valid=_entries.filter(e=>!e.dsq&&e.ms>0);
   if(!valid.length){card.innerHTML='<div class="empty">Sin tiempos válidos</div>';return;}
-  // mejor tiempo neto (ms + pen) por palista
   const byPal={};
   for(const e of valid){
     const net=e.ms+e.pen;
@@ -212,7 +211,6 @@ function renderRanking(){
       byPal[e.pal_name]={net,ms:e.ms,pen:e.pen,tramo:e.tramo,sesName:''};
     }
   }
-  // sesion de ese tiempo
   for(const e of valid){
     const net=e.ms+e.pen;
     if(byPal[e.pal_name]&&byPal[e.pal_name].net===net){
@@ -326,7 +324,6 @@ function renderPalDetail(name){
   const sesList=[...new Set(mine.map(e=>e.session_id))].length;
   const tramoSet=[...new Set(mine.map(e=>e.tramo))];
 
-  // Mini sparkline: mejor tiempo neto por sesión (solo válidos)
   const sesOrder=_sessions.map(s=>s.id);
   const sparkData=sesOrder.map(sid=>{
     const sEnts=valid.filter(e=>e.session_id===sid);
@@ -371,7 +368,7 @@ if(!_tok){window.location.href='index.html';}
   showLoad();
   try{
     const [sessions,entries]=await Promise.all([
-      api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,fecha,created_at'),
+      api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,data,created_at'),
       api('/rest/v1/session_entries?session_id=in.('+
         (await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id'))
           .map(s=>s.id).join(',')
