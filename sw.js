@@ -1,10 +1,11 @@
-// SLTimer Service Worker v1.0
-const CACHE = 'sltimer-v1';
+// SLTimer Service Worker v3
+const CACHE = 'sltimer-v3';
 
 // Archivos que se guardan en caché para modo offline
 const PRECACHE = [
   '/app.html',
   '/index.html',
+  '/slalom.html',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
@@ -15,7 +16,6 @@ const PRECACHE = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => {
-      // Intentar cachear cada archivo individualmente para no fallar todos si uno falla
       return Promise.allSettled(
         PRECACHE.map(url => cache.add(url).catch(() => console.warn('No cacheado:', url)))
       );
@@ -34,7 +34,6 @@ self.addEventListener('activate', e => {
 
 // Fetch: Network first, caché como fallback
 self.addEventListener('fetch', e => {
-  // Solo interceptar peticiones GET
   if (e.request.method !== 'GET') return;
 
   // Para peticiones a Supabase (API), siempre ir a la red
@@ -43,7 +42,6 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request)
       .then(response => {
-        // Si la respuesta es válida, guardarla en caché
         if (response && response.status === 200 && response.type !== 'opaque') {
           const clone = response.clone();
           caches.open(CACHE).then(cache => cache.put(e.request, clone));
@@ -51,10 +49,8 @@ self.addEventListener('fetch', e => {
         return response;
       })
       .catch(() => {
-        // Sin red: intentar servir desde caché
         return caches.match(e.request).then(cached => {
           if (cached) return cached;
-          // Si es una navegación, devolver la app principal
           if (e.request.mode === 'navigate') {
             return caches.match('/app.html');
           }
