@@ -371,7 +371,7 @@ function renderPalRow(i,container){
   container.appendChild(row);
 }
 function onPalInput(i){const val=$('pal-input-'+i).value;_palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;$('pal-clear-'+i).classList.toggle('show',val.length>0);showCatSelector(i,val.length>0);openDropdown(i);}
-function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
+function openDropdown(i){const q=($('pal-input-'+i).value||'').toLowerCase().trim();const dd=$('pal-dd-'+i);if(!q){dd.classList.remove('open');dd.innerHTML='';return;}const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}dd.innerHTML=m.map(a=>{const fn=a.name+(a.surname?' '+a.surname:'');const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');return`<div class="pal-option" onmousedown="selectAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}' ,[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;}).join('');dd.classList.add('open');}
 function delayClose(i){setTimeout(()=>{const dd=$('pal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
 function selectAthlete(i,id,name,cats){_palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};const inp=$('pal-input-'+i);inp.value=name;inp.classList.add('matched');$('pal-clear-'+i).classList.add('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,true);if(cats.length===1)setCatUI(i,cats[0]);else setCatUI(i,_palState[i].category);}
 function clearPal(i){_palState[i]={id:null,name:'',category:null,isTemp:false};const inp=$('pal-input-'+i);inp.value='';inp.classList.remove('matched');$('pal-clear-'+i).classList.remove('show');$('pal-dd-'+i).classList.remove('open');showCatSelector(i,false);}
@@ -380,7 +380,18 @@ function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
 function setCatUI(i,cat){const w=$('pal-cat-wrap-'+i);if(!w)return;w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));}
 
 /* TRANSICIÓN */
-function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesión','err');return;}const lugar=$('cfg-lugar').value.trim(),fecha=$('cfg-fecha').value;const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));_savedSessionId=null;initSession(_cfg);}
+function goToSession(){
+  const name=$('cfg-name').value.trim();
+  if(!name){toast('Introduce un nombre para la sesión','err');return;}
+  const lugar=$('cfg-lugar').value.trim();
+  // FIX: garantizar que fecha siempre tenga valor
+  const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+  const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));
+  _cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
+  sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));
+  _savedSessionId=null;
+  initSession(_cfg);
+}
 function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.'))return;showScreen('config');}else{window.location.href='app.html';}}
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';window.scrollTo(0,0);}
 
@@ -492,7 +503,8 @@ async function saveSession(){
           user_id:_uid,
           name:_cfg.name,
           lugar:_cfg.lugar||null,
-          fecha:_cfg.fecha||null,
+          // FIX: garantizar que fecha nunca sea cadena vacía
+          fecha:(_cfg.fecha&&_cfg.fecha.trim()!=='')?_cfg.fecha:new Date().toISOString().slice(0,10),
           n_pal:_cfg.nPal,
           n_tra:_cfg.nTra
         })
@@ -557,7 +569,7 @@ if(!_tok){window.location.href='index.html';}
 $('top-avatar').textContent=initials(_email?.split('@')[0]||'');
 $('cfg-fecha').value=new Date().toISOString().slice(0,10);
 const prev=sessionStorage.getItem('slalom_cfg');
-if(prev){try{const p=JSON.parse(prev);if(p.name)$('cfg-name').value=p.name;if(p.lugar)$('cfg-lugar').value=p.lugar;if(p.fecha)$('cfg-fecha').value=p.fecha;if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}if(p.palistas)_palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));}catch{}}
+if(prev){try{const p=JSON.parse(prev);if(p.name)$('cfg-name').value=p.name;if(p.lugar)$('cfg-lugar').value=p.lugar;if(p.fecha!=null)$('cfg-fecha').value=p.fecha;if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}if(p.palistas)_palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));}catch{}}
 loadAthletes();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
