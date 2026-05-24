@@ -363,8 +363,20 @@ function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className=
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
 
 /* CONFIG */
-function adjust(key,delta){CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));$('val-'+key).textContent=CFG[key];if(key==='pal')buildPalList();}
-function buildPalList(){const n=CFG.pal;while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});_palState=_palState.slice(0,n);const c=$('pal-list');c.innerHTML='';for(let i=0;i<n;i++)renderPalRow(i,c);}
+function adjust(key,delta){
+  CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
+  $('val-'+key).textContent=CFG[key];
+  if(key==='pal') buildPalList();
+}
+function buildPalList(){
+  const n=CFG.pal;
+  // Asegurar que _palState tiene exactamente n entradas
+  while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});
+  _palState=_palState.slice(0,n);
+  const c=$('pal-list');
+  c.innerHTML='';
+  for(let i=0;i<n;i++)renderPalRow(i,c);
+}
 function renderPalRow(i,container){
   const s=_palState[i];const row=document.createElement('div');row.className='pal-row';row.id='pal-row-'+i;
   row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="pal-input-${i}" type="text" placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openDropdown(${i})" onblur="delayClose(${i})"><button class="pal-clear${s.name?' show':''}" id="pal-clear-${i}" onclick="clearPal(${i})">✕</button><div class="pal-dropdown" id="pal-dd-${i}"></div></div></div><div id="pal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categoría</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setCat(${i},'C1')">C1</button></div></div>`;
@@ -492,7 +504,6 @@ async function saveSession(){
   btn.textContent='Guardando...';
 
   try{
-    // 1. Crear o actualizar la sesión
     let sessionId=_savedSessionId;
     if(!sessionId){
       const sesRow=await api('/rest/v1/sessions?select=id',{
@@ -513,7 +524,6 @@ async function saveSession(){
       await api('/rest/v1/session_entries?session_id=eq.'+sessionId,{method:'DELETE'});
     }
 
-    // 2. Insertar todas las entradas
     const entries=[];
     for(let pi=0;pi<_cfg.nPal;pi++){
       const p=_cfg.palistas[pi];
@@ -544,7 +554,6 @@ async function saveSession(){
       });
     }
 
-    // 3. Redirigir al historial tras guardar
     toast('Sesión guardada ✓','ok');
     setTimeout(()=>{ window.location.href='historial.html'; }, 1200);
 
@@ -557,7 +566,25 @@ async function saveSession(){
 }
 
 /* CARGA */
-async function loadAthletes(){$('overlay').classList.add('show');$('overlay-msg').textContent='Cargando palistas...';try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');let shared=[];try{const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');}catch{}}_athletes=[...(owned||[]),...(shared||[])];}catch{_athletes=[];} $('overlay').classList.remove('show');buildPalList();}
+async function loadAthletes(){
+  $('overlay').classList.add('show');
+  $('overlay-msg').textContent='Cargando palistas...';
+  try{
+    const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+    let shared=[];
+    try{
+      const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+      const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
+      if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
+    }catch{}
+    _athletes=[...(owned||[]),...(shared||[])];
+  }catch{
+    _athletes=[];
+  }finally{
+    $('overlay').classList.remove('show');
+    buildPalList();
+  }
+}
 
 _tok=localStorage.getItem('slt_tok');
 _uid=localStorage.getItem('slt_uid');
@@ -565,8 +592,27 @@ _email=localStorage.getItem('slt_email');
 if(!_tok){window.location.href='index.html';}
 $('top-avatar').textContent=initials(_email?.split('@')[0]||'');
 $('cfg-fecha').value=new Date().toISOString().slice(0,10);
+
+// Restaurar configuración previa de sessionStorage
 const prev=sessionStorage.getItem('slalom_cfg');
-if(prev){try{const p=JSON.parse(prev);if(p.name)$('cfg-name').value=p.name;if(p.lugar)$('cfg-lugar').value=p.lugar;if(p.fecha!=null)$('cfg-fecha').value=p.fecha;if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}if(p.palistas)_palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));}catch{}}
+if(prev){
+  try{
+    const p=JSON.parse(prev);
+    if(p.name)$('cfg-name').value=p.name;
+    if(p.lugar)$('cfg-lugar').value=p.lugar;
+    if(p.fecha!=null)$('cfg-fecha').value=p.fecha;
+    if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}
+    if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}
+    // Restaurar palistas y asegurar longitud correcta
+    if(p.palistas){
+      _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+    }
+    // Sincronizar _palState con CFG.pal
+    while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
+    _palState=_palState.slice(0,CFG.pal);
+  }catch{}
+}
+
 loadAthletes();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
