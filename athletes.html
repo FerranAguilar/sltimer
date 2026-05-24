@@ -19,14 +19,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* ── Topbar ── */
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
 .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.back{font-size:22px;color:#666;background:none;border:none;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
-.back:active{opacity:.6}
 .btn-new{background:#185FA5;border:none;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:opacity .12s}
 .btn-new:active{opacity:.8}
 .btn-new svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
@@ -165,10 +164,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <a class="topbar-brand" href="menu.html">
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <div class="topbar-brand">
     <img src="icons/icon-192x192.png" alt="SLTimer">
     <span class="topbar-brand-name">SLTimer</span>
-  </a>
+  </div>
   <div class="topbar-divider"></div>
   <span class="topbar-title">Mis palistas</span>
   <div class="topbar-actions">
@@ -407,7 +407,6 @@ async function onShareInput(){
       const coaches=res||[];
 
       if(val.startsWith('@')){
-        // Mostrar sugerencias de autocompletado
         if(coaches.length>0){
           const html=coaches.map(c=>{
             const ini=coachInitials(c.display_name);
@@ -424,13 +423,11 @@ async function onShareInput(){
           $('share-input').className='share-input notfound';
         }
       } else {
-        // Búsqueda por email exacto
         const isValidEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
         if(!isValidEmail)return;
         if(coaches.length>0){
           selectCoach(coaches[0]);
         } else {
-          // Email no registrado: enviar de todos modos (invitación por email)
           _foundCoach={user_id:null,display_name:val,username:null,found_by:'email_pending',email:val};
           $('share-input').className='share-input found';
           $('share-found-avatar').textContent='✉';
@@ -470,8 +467,6 @@ async function sendShareInvite(){
     const isPending=_foundCoach.found_by==='email_pending';
 
     if(!isPending && _foundCoach.user_id){
-      // Entrenador registrado: crear acceso directo + invitación aceptada
-      // Primero insertamos en athlete_access
       await api('/rest/v1/athlete_access',{
         method:'POST',
         headers:{'Prefer':'return=minimal'},
@@ -482,14 +477,12 @@ async function sendShareInvite(){
           can_share:canShare
         })
       });
-      // También guardamos la invitación como registro histórico (accepted)
       const invBody={athlete_id:_shareAthleteId,invited_by:_uid,can_share:canShare,status:'accepted'};
       if(_foundCoach.username)invBody.to_username=_foundCoach.username;
       else invBody.to_email=_foundCoach.display_name;
       try{await api('/rest/v1/athlete_share_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(invBody)});}catch{}
       toast('Acceso concedido a '+(_foundCoach.display_name||'el entrenador'),'ok');
     } else {
-      // Email no registrado: crear invitación pendiente
       await api('/rest/v1/athlete_share_invites',{
         method:'POST',
         headers:{'Prefer':'return=minimal'},
@@ -510,6 +503,7 @@ async function sendShareInvite(){
   }
 }
 
+function goBack(){window.history.length>1?window.history.back():window.location.href='menu.html';}
 function goNew(){window.location.href='athlete.html';}
 function goEdit(id){window.location.href=`athlete.html?id=${id}`;}
 
