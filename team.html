@@ -64,7 +64,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .invite-del{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0}
 .invite-del:active{color:#A32D2D}
 .empty-inline{padding:20px;text-align:center;font-size:13px;color:#aaa}
-/* Sheet */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
 .sheet-backdrop.open{display:block;opacity:1}
 .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:201;padding:0 16px 36px;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);max-width:480px;margin:0 auto}
@@ -76,7 +75,6 @@ label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-
 input[type=text],input[type=search]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
 input:focus{outline:none;border-color:#185FA5}
 .ig{margin-bottom:12px}
-/* Preview del usuario encontrado */
 .invite-preview{display:none;background:#F0F7FF;border:0.5px solid #B5D4F4;border-radius:10px;padding:11px 14px;margin-bottom:12px;align-items:center;gap:10px}
 .invite-preview.show{display:flex}
 .invite-preview-avatar{width:34px;height:34px;border-radius:50%;background:#185FA5;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase}
@@ -84,12 +82,10 @@ input:focus{outline:none;border-color:#185FA5}
 .invite-preview-name{font-size:14px;font-weight:700;color:#0C447C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .invite-preview-email{font-size:12px;color:#5b8fc9;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .invite-preview-ok{font-size:18px;color:#185FA5}
-/* Spinner inline */
 .lookup-spinner{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;flex-shrink:0}
 .lookup-spinner.show{display:inline-block}
 .field-row{display:flex;align-items:center;gap:8px}
 .field-row input{flex:1}
-/* Athlete search */
 .ath-dd{background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);margin-top:6px;max-height:200px;overflow-y:auto;display:none}
 .ath-dd.open{display:block}
 .ath-option{padding:11px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
@@ -170,7 +166,6 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 let _tok=null, _uid=null, _teamId=null, _team=null, _isOwner=false;
 let _members=[], _athletes=[], _invites=[], _myAthletes=[];
 let _selAthleteId=null;
-// Estado de búsqueda de entrenador
 let _foundEmail=null, _lookupTimer=null;
 const $=id=>document.getElementById(id);
 
@@ -195,7 +190,7 @@ function closeInviteSheet(){$('sheet-invite').classList.remove('open');$('bd-inv
 function openAthleteSheet(){$('ath-search').value='';$('ath-dd').classList.remove('open');$('ath-dd').innerHTML='';_selAthleteId=null;$('btn-add-ath').disabled=true;$('bd-athlete').classList.add('open');setTimeout(()=>$('sheet-athlete').classList.add('open'),10);setTimeout(()=>$('ath-search').focus(),300);}
 function closeAthleteSheet(){$('sheet-athlete').classList.remove('open');$('bd-athlete').classList.remove('open');}
 
-/* ── LOOKUP DE ENTRENADOR (debounced 500ms) ── */
+/* ── LOOKUP (debounced 500ms) ── */
 function onInviteInput(){
   clearTimeout(_lookupTimer);
   _foundEmail=null;
@@ -204,32 +199,36 @@ function onInviteInput(){
   $('lookup-spinner').classList.remove('show');
   const raw=($('invite-input').value||'').trim();
   if(!raw)return;
-  // Si es email válido: activa el botón directamente sin lookup
+  // Email directo
   if(raw.includes('@') && !raw.startsWith('@') && raw.includes('.')){
     _foundEmail=raw.toLowerCase();
-    showPreview(null, _foundEmail);
+    showPreview(null,_foundEmail);
     return;
   }
-  // Si empieza por @: buscar por username en coaches
+  // @usuario → RPC
   if(raw.startsWith('@') && raw.length>1){
     $('lookup-spinner').classList.add('show');
     _lookupTimer=setTimeout(()=>lookupByUsername(raw.slice(1).toLowerCase()),500);
   }
 }
 
-function showPreview(coachRow, email){
-  const name=coachRow?(coachRow.name||coachRow.username):null;
-  const displayEmail=email||coachRow?.email||'';
+function showPreview(coachRow,email){
+  const name=coachRow?(coachRow.name||('@'+coachRow.username)):null;
+  const displayEmail=email||'';
   $('preview-avatar').textContent=name?initials(name):(displayEmail.slice(0,2).toUpperCase());
-  $('preview-name').textContent=name||(coachRow?.username?('@'+coachRow.username):'');
+  $('preview-name').textContent=name||displayEmail;
   $('preview-email').textContent=displayEmail;
   $('invite-preview').classList.add('show');
   $('btn-send-invite').disabled=false;
 }
 
+/* Llama a la función RPC find_coach_by_username que hace el join con auth.users */
 async function lookupByUsername(username){
   try{
-    const rows=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username)+'&select=id,username,name,email&limit=1');
+    const rows=await api('/rest/v1/rpc/find_coach_by_username',{
+      method:'POST',
+      body:JSON.stringify({p_username:username})
+    });
     $('lookup-spinner').classList.remove('show');
     if(!rows||!rows.length){
       toast('No se encontró ningún entrenador con ese @usuario','err');
@@ -239,14 +238,8 @@ async function lookupByUsername(username){
       return;
     }
     const coach=rows[0];
-    if(!coach.email){
-      toast('Este entrenador no tiene email registrado','err');
-      $('btn-send-invite').disabled=true;
-      _foundEmail=null;
-      return;
-    }
     _foundEmail=coach.email.toLowerCase();
-    showPreview(coach, coach.email);
+    showPreview(coach,coach.email);
   }catch(e){
     $('lookup-spinner').classList.remove('show');
     toast('Error al buscar: '+e.message,'err');
@@ -417,11 +410,10 @@ function render(){
   if(_isOwner&&_invites.length){
     html+=`<div class="section-label">Invitaciones</div><div class="list-group">`;
     html+=_invites.map(inv=>{
-      const label=inv.email;
       return`<div class="invite-item">
         <div class="list-avatar orange">${inv.email.slice(0,2).toUpperCase()}</div>
         <div class="list-info">
-          <div class="list-name">${label}</div>
+          <div class="list-name">${inv.email}</div>
           <div class="list-sub">${new Date(inv.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
         </div>
         <span class="invite-status ${inv.status}">${inv.status==='pending'?'Pendiente':inv.status==='accepted'?'Aceptada':'Rechazada'}</span>
