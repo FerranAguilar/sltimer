@@ -370,7 +370,6 @@ function adjust(key,delta){
 }
 function buildPalList(){
   const n=CFG.pal;
-  // Asegurar que _palState tiene exactamente n entradas
   while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});
   _palState=_palState.slice(0,n);
   const c=$('pal-list');
@@ -554,6 +553,8 @@ async function saveSession(){
       });
     }
 
+    sessionStorage.removeItem('slalom_resume');
+    sessionStorage.removeItem('slalom_cfg');
     toast('Sesión guardada ✓','ok');
     setTimeout(()=>{ window.location.href='historial.html'; }, 1200);
 
@@ -593,27 +594,109 @@ if(!_tok){window.location.href='index.html';}
 $('top-avatar').textContent=initials(_email?.split('@')[0]||'');
 $('cfg-fecha').value=new Date().toISOString().slice(0,10);
 
-// Restaurar configuración previa de sessionStorage
-const prev=sessionStorage.getItem('slalom_cfg');
-if(prev){
+// ── RESTAURAR SESIÓN ACTIVA DESDE slalom_resume ──────────────────────────────
+const resumeRaw=sessionStorage.getItem('slalom_resume');
+if(resumeRaw){
   try{
-    const p=JSON.parse(prev);
-    if(p.name)$('cfg-name').value=p.name;
-    if(p.lugar)$('cfg-lugar').value=p.lugar;
-    if(p.fecha!=null)$('cfg-fecha').value=p.fecha;
-    if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}
-    if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}
-    // Restaurar palistas y asegurar longitud correcta
-    if(p.palistas){
-      _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+    const resume=JSON.parse(resumeRaw);
+    // Restaurar configuración en variables globales
+    _cfg=resume.cfg;
+    _savedSessionId=resume.sessionId||null;
+    _times=resume.times;
+    _mangas=resume.mangas;
+
+    // Reconstruir contadores CFG para que coincidan con _cfg
+    CFG.pal=_cfg.nPal;
+    CFG.tra=_cfg.nTra;
+    $('val-pal').textContent=CFG.pal;
+    $('val-tra').textContent=CFG.tra;
+
+    // Rellenar también la pantalla de configuración por si el usuario vuelve atrás
+    $('cfg-name').value=_cfg.name||'';
+    $('cfg-lugar').value=_cfg.lugar||'';
+    if(_cfg.fecha)$('cfg-fecha').value=_cfg.fecha;
+    _palState=_cfg.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+
+    // Cargar palistas y luego restaurar la pantalla de sesión
+    $('overlay').classList.add('show');
+    $('overlay-msg').textContent='Restaurando sesión...';
+    (async()=>{
+      try{
+        const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+        let shared=[];
+        try{
+          const acc=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+          const ids=(acc||[]).map(a=>a.athlete_id).filter(id=>!(owned||[]).find(o=>o.id===id));
+          if(ids.length)shared=await api('/rest/v1/athletes?id=in.('+ids.join(',')+')'+'&select=id,name,surname,categories&order=name.asc');
+        }catch{}
+        _athletes=[...(owned||[]),...(shared||[])];
+      }catch{_athletes=[];}
+      finally{$('overlay').classList.remove('show');}
+
+      // Montar pantalla de sesión con los datos restaurados
+      $('topbar-title').textContent=_cfg.name;
+      $('ses-title').textContent=_cfg.name;
+      const parts=[];
+      if(_cfg.lugar)parts.push(_cfg.lugar);
+      if(_cfg.fecha)parts.push(new Date(_cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+      $('ses-meta').textContent=parts.join(' · ');
+      _selPal=0;_selTramo=0;
+      clearPenState();
+      buildSelPal(_cfg);
+      buildSelTra(_cfg);
+      syncMangaVal();
+      updateChronoCtx();
+      buildTimesTable(_cfg);
+      resetTimer();
+      const btn=$('btn-save-session');
+      btn.textContent='💾 Finalizar y guardar sesión';
+      btn.disabled=false;
+      showScreen('session');
+      toast('Sesión restaurada ✓','ok');
+    })();
+  }catch(e){
+    console.error('Error restaurando slalom_resume:',e);
+    sessionStorage.removeItem('slalom_resume');
+    // Caer al flujo normal
+    const prev=sessionStorage.getItem('slalom_cfg');
+    if(prev){
+      try{
+        const p=JSON.parse(prev);
+        if(p.name)$('cfg-name').value=p.name;
+        if(p.lugar)$('cfg-lugar').value=p.lugar;
+        if(p.fecha!=null)$('cfg-fecha').value=p.fecha;
+        if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}
+        if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}
+        if(p.palistas){
+          _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+        }
+        while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
+        _palState=_palState.slice(0,CFG.pal);
+      }catch{}
     }
-    // Sincronizar _palState con CFG.pal
-    while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
-    _palState=_palState.slice(0,CFG.pal);
-  }catch{}
+    loadAthletes();
+  }
+} else {
+  // Flujo normal: restaurar solo configuración previa si existe
+  const prev=sessionStorage.getItem('slalom_cfg');
+  if(prev){
+    try{
+      const p=JSON.parse(prev);
+      if(p.name)$('cfg-name').value=p.name;
+      if(p.lugar)$('cfg-lugar').value=p.lugar;
+      if(p.fecha!=null)$('cfg-fecha').value=p.fecha;
+      if(p.nPal){CFG.pal=p.nPal;$('val-pal').textContent=p.nPal;}
+      if(p.nTra){CFG.tra=p.nTra;$('val-tra').textContent=p.nTra;}
+      if(p.palistas){
+        _palState=p.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
+      }
+      while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
+      _palState=_palState.slice(0,CFG.pal);
+    }catch{}
+  }
+  loadAthletes();
 }
 
-loadAthletes();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
 </body>
