@@ -268,7 +268,7 @@ const $=id=>document.getElementById(id);
 
 // ── Share modal state ──
 let _shareAthleteId=null,_shareAthleteName='';
-let _foundCoach=null; // {user_id, display_name, username, found_by}
+let _foundCoach=null;
 let _searchTimer=null;
 
 let _tTimer;
@@ -503,7 +503,7 @@ async function sendShareInvite(){
   }
 }
 
-function goBack(){window.history.length>1?window.history.back():window.location.href='menu.html';}
+function goBack(){window.location.href='menu.html';}
 function goNew(){window.location.href='athlete.html';}
 function goEdit(id){window.location.href=`athlete.html?id=${id}`;}
 
