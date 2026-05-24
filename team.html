@@ -25,7 +25,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:4px 2px 2px}
-/* Header del grupo */
 .group-header{background:#185FA5;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
 .group-header-name{font-size:20px;font-weight:700;color:#fff;line-height:1.2}
 .group-header-desc{font-size:13px;color:rgba(255,255,255,0.75)}
@@ -33,7 +32,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .group-stat{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 16px;min-width:64px}
 .group-stat-num{font-size:20px;font-weight:700;color:#fff;line-height:1}
 .group-stat-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.70);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
-/* List items */
 .list-group{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
 .list-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border:none;background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer;transition:background .1s}
 .list-item+.list-item{border-top:0.5px solid #f2f2f2}
@@ -51,25 +49,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cat-badge.K1{background:#E6F1FB;color:#0C447C}
 .cat-badge.C1{background:#E1F5EE;color:#085041}
 .cat-badge.KXC{background:#FAEEDA;color:#633806}
-.list-arrow{color:#ccc;font-size:18px;flex-shrink:0}
-/* Botón acción */
 .btn-action{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#185FA5;width:100%;transition:background .1s}
 .btn-action:active{background:#f0f5fc}
 .btn-action svg{width:18px;height:18px;fill:none;stroke:#185FA5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .btn-action.danger{color:#A32D2D;border-color:#FECACA}
 .btn-action.danger svg{stroke:#A32D2D}
 .btn-action.danger:active{background:#FEF2F2}
-/* Invite status */
 .invite-item{display:flex;align-items:center;gap:12px;padding:13px 16px}
 .invite-item+.invite-item{border-top:0.5px solid #f2f2f2}
-.invite-email{font-size:14px;color:#111;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.invite-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px}
+.invite-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;flex-shrink:0}
 .invite-status.pending{background:#FEF3C7;color:#92400E}
 .invite-status.accepted{background:#E1F5EE;color:#085041}
 .invite-status.rejected{background:#FEE2E2;color:#991B1B}
 .invite-del{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0}
 .invite-del:active{color:#A32D2D}
-/* Empty */
 .empty-inline{padding:20px;text-align:center;font-size:13px;color:#aaa}
 /* Sheet */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
@@ -80,20 +73,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sheet-title{font-size:17px;font-weight:700;color:#1B3A5C;margin-bottom:6px}
 .sheet-sub{font-size:13px;color:#aaa;margin-bottom:16px}
 label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
-input[type=text],input[type=email],input[type=search]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+input[type=text],input[type=search]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
 input:focus{outline:none;border-color:#185FA5}
 .ig{margin-bottom:12px}
-.btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;margin-top:4px}
-.btn-primary:active{opacity:.85}
-.btn-primary:disabled{opacity:.45;cursor:not-allowed}
-/* Athlete search sheet */
+/* Preview del usuario encontrado */
+.invite-preview{display:none;background:#F0F7FF;border:0.5px solid #B5D4F4;border-radius:10px;padding:11px 14px;margin-bottom:12px;align-items:center;gap:10px}
+.invite-preview.show{display:flex}
+.invite-preview-avatar{width:34px;height:34px;border-radius:50%;background:#185FA5;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase}
+.invite-preview-info{flex:1;min-width:0}
+.invite-preview-name{font-size:14px;font-weight:700;color:#0C447C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invite-preview-email{font-size:12px;color:#5b8fc9;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invite-preview-ok{font-size:18px;color:#185FA5}
+/* Spinner inline */
+.lookup-spinner{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;flex-shrink:0}
+.lookup-spinner.show{display:inline-block}
+.field-row{display:flex;align-items:center;gap:8px}
+.field-row input{flex:1}
+/* Athlete search */
 .ath-dd{background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);margin-top:6px;max-height:200px;overflow-y:auto;display:none}
 .ath-dd.open{display:block}
 .ath-option{padding:11px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
 .ath-option:last-child{border-bottom:none}
 .ath-option:active{background:#f7f7f7}
 .ath-option-name{font-weight:600;flex:1}
-/* Overlay */
+.btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;margin-top:4px}
+.btn-primary:active{opacity:.85}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 .overlay.show{display:flex}
 .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
@@ -114,9 +119,23 @@ input:focus{outline:none;border-color:#185FA5}
 <div class="sheet" id="sheet-invite">
   <div class="sheet-handle"></div>
   <div class="sheet-title">Invitar entrenador</div>
-  <div class="sheet-sub">El entrenador recibirá la invitación en su lista de grupos</div>
-  <div class="ig"><label>Email del entrenador</label><input id="invite-email" type="email" placeholder="entrenador@ejemplo.com"></div>
-  <button class="btn-primary" id="btn-send-invite" onclick="sendInvite()">Enviar invitación</button>
+  <div class="sheet-sub">Introduce el email o el @usuario del entrenador</div>
+  <div class="ig">
+    <label>Email o @usuario</label>
+    <div class="field-row">
+      <input id="invite-input" type="text" placeholder="email@ejemplo.com o @usuario" oninput="onInviteInput()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div class="lookup-spinner" id="lookup-spinner"></div>
+    </div>
+  </div>
+  <div class="invite-preview" id="invite-preview">
+    <div class="invite-preview-avatar" id="preview-avatar"></div>
+    <div class="invite-preview-info">
+      <div class="invite-preview-name" id="preview-name"></div>
+      <div class="invite-preview-email" id="preview-email"></div>
+    </div>
+    <span class="invite-preview-ok">✓</span>
+  </div>
+  <button class="btn-primary" id="btn-send-invite" onclick="sendInvite()" disabled>Enviar invitación</button>
 </div>
 
 <!-- SHEET: Añadir palista -->
@@ -151,28 +170,95 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 let _tok=null, _uid=null, _teamId=null, _team=null, _isOwner=false;
 let _members=[], _athletes=[], _invites=[], _myAthletes=[];
 let _selAthleteId=null;
+// Estado de búsqueda de entrenador
+let _foundEmail=null, _lookupTimer=null;
 const $=id=>document.getElementById(id);
 
 let _tTimer;
 function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
-function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
+function initials(a,b){const s=b?a+' '+b:a;if(!s)return'?';const p=s.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:s.slice(0,2)).toUpperCase();}
 
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
 
 /* ── SHEETS ── */
-function openInviteSheet(){if(!_isOwner){toast('Solo el propietario puede invitar','err');return;}$('invite-email').value='';$('bd-invite').classList.add('open');setTimeout(()=>$('sheet-invite').classList.add('open'),10);setTimeout(()=>$('invite-email').focus(),300);}
+function openInviteSheet(){
+  if(!_isOwner){toast('Solo el propietario puede invitar','err');return;}
+  $('invite-input').value='';
+  $('invite-preview').classList.remove('show');
+  $('btn-send-invite').disabled=true;
+  _foundEmail=null;
+  $('bd-invite').classList.add('open');
+  setTimeout(()=>$('sheet-invite').classList.add('open'),10);
+  setTimeout(()=>$('invite-input').focus(),300);
+}
 function closeInviteSheet(){$('sheet-invite').classList.remove('open');$('bd-invite').classList.remove('open');}
 function openAthleteSheet(){$('ath-search').value='';$('ath-dd').classList.remove('open');$('ath-dd').innerHTML='';_selAthleteId=null;$('btn-add-ath').disabled=true;$('bd-athlete').classList.add('open');setTimeout(()=>$('sheet-athlete').classList.add('open'),10);setTimeout(()=>$('ath-search').focus(),300);}
 function closeAthleteSheet(){$('sheet-athlete').classList.remove('open');$('bd-athlete').classList.remove('open');}
 
+/* ── LOOKUP DE ENTRENADOR (debounced 500ms) ── */
+function onInviteInput(){
+  clearTimeout(_lookupTimer);
+  _foundEmail=null;
+  $('invite-preview').classList.remove('show');
+  $('btn-send-invite').disabled=true;
+  $('lookup-spinner').classList.remove('show');
+  const raw=($('invite-input').value||'').trim();
+  if(!raw)return;
+  // Si es email válido: activa el botón directamente sin lookup
+  if(raw.includes('@') && !raw.startsWith('@') && raw.includes('.')){
+    _foundEmail=raw.toLowerCase();
+    showPreview(null, _foundEmail);
+    return;
+  }
+  // Si empieza por @: buscar por username en coaches
+  if(raw.startsWith('@') && raw.length>1){
+    $('lookup-spinner').classList.add('show');
+    _lookupTimer=setTimeout(()=>lookupByUsername(raw.slice(1).toLowerCase()),500);
+  }
+}
+
+function showPreview(coachRow, email){
+  const name=coachRow?(coachRow.name||coachRow.username):null;
+  const displayEmail=email||coachRow?.email||'';
+  $('preview-avatar').textContent=name?initials(name):(displayEmail.slice(0,2).toUpperCase());
+  $('preview-name').textContent=name||(coachRow?.username?('@'+coachRow.username):'');
+  $('preview-email').textContent=displayEmail;
+  $('invite-preview').classList.add('show');
+  $('btn-send-invite').disabled=false;
+}
+
+async function lookupByUsername(username){
+  try{
+    const rows=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username)+'&select=id,username,name,email&limit=1');
+    $('lookup-spinner').classList.remove('show');
+    if(!rows||!rows.length){
+      toast('No se encontró ningún entrenador con ese @usuario','err');
+      $('invite-preview').classList.remove('show');
+      $('btn-send-invite').disabled=true;
+      _foundEmail=null;
+      return;
+    }
+    const coach=rows[0];
+    if(!coach.email){
+      toast('Este entrenador no tiene email registrado','err');
+      $('btn-send-invite').disabled=true;
+      _foundEmail=null;
+      return;
+    }
+    _foundEmail=coach.email.toLowerCase();
+    showPreview(coach, coach.email);
+  }catch(e){
+    $('lookup-spinner').classList.remove('show');
+    toast('Error al buscar: '+e.message,'err');
+  }
+}
+
 /* ── INVITAR ── */
 async function sendInvite(){
-  const email=$('invite-email').value.trim().toLowerCase();
-  if(!email||!email.includes('@')){toast('Introduce un email válido','err');return;}
-  const alreadyMember=_members.find(m=>m._email&&m._email.toLowerCase()===email);
-  if(alreadyMember){toast('Este entrenador ya es miembro del grupo','err');return;}
+  const email=_foundEmail;
+  if(!email){toast('Introduce un email o @usuario válido','err');return;}
   const alreadyInvited=_invites.find(i=>i.email.toLowerCase()===email&&i.status==='pending');
-  if(alreadyInvited){toast('Ya hay una invitación pendiente para ese email','err');return;}
+  if(alreadyInvited){toast('Ya hay una invitación pendiente para ese entrenador','err');return;}
   const btn=$('btn-send-invite');btn.disabled=true;btn.textContent='Enviando...';
   try{
     await api('/rest/v1/team_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({team_id:_teamId,invited_by:_uid,email,status:'pending'})});
@@ -263,14 +349,14 @@ async function deleteTeam(){
 /* ── CARGA Y RENDER ── */
 async function loadData(){
   try{
-    _team = (await api('/rest/v1/teams?id=eq.'+_teamId+'&select=id,name,description,owner_id'))[0];
+    _team=(await api('/rest/v1/teams?id=eq.'+_teamId+'&select=id,name,description,owner_id'))[0];
     if(!_team){toast('Grupo no encontrado','err');setTimeout(()=>window.location.href='teams.html',1200);return;}
     _isOwner=_team.owner_id===_uid;
     $('topbar-title').textContent=_team.name;
 
-    _members = await api('/rest/v1/team_members?team_id=eq.'+_teamId+'&select=user_id,role,joined_at');
+    _members=await api('/rest/v1/team_members?team_id=eq.'+_teamId+'&select=user_id,role,joined_at');
 
-    const athRows = await api('/rest/v1/team_athletes?team_id=eq.'+_teamId+'&select=athlete_id,added_by,added_at');
+    const athRows=await api('/rest/v1/team_athletes?team_id=eq.'+_teamId+'&select=athlete_id,added_by,added_at');
     if(athRows.length){
       const ids=athRows.map(r=>r.athlete_id).join(',');
       const athData=await api('/rest/v1/athletes?id=in.('+ids+')&select=id,name,surname,categories');
@@ -278,14 +364,10 @@ async function loadData(){
     }else{_athletes=[];}
 
     _invites=_isOwner?await api('/rest/v1/team_invites?team_id=eq.'+_teamId+'&select=id,email,status,created_at&order=created_at.desc'):[];
-
-    // Mis propios atletas (para añadir al grupo)
     _myAthletes=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
 
     render();
-  }catch(e){
-    toast('Error al cargar: '+e.message,'err');
-  }
+  }catch(e){toast('Error al cargar: '+e.message,'err');}
 }
 
 function render(){
@@ -303,22 +385,20 @@ function render(){
     </div>
   </div>`;
 
-  /* Miembros */
   html+=`<div class="section-label">Miembros</div><div class="list-group">`;
   if(_members.length){
     html+=_members.map(m=>{
       const isMe=m.user_id===_uid;
-      const isOwner=m.role==='owner';
-      const label=isMe?'Tú':'Entrenador';
-      const ini=label.slice(0,2).toUpperCase();
-      const canRemove=(_isOwner&&!isOwner)||isMe;
+      const isOwnerRole=m.role==='owner';
+      const ini=isMe?initials(localStorage.getItem('slt_email')||'?'):'EN';
+      const canRemove=(_isOwner&&!isOwnerRole)||isMe;
       return`<div class="list-item">
-        <div class="list-avatar ${isOwner?'':'green'}">${ini}</div>
+        <div class="list-avatar ${isOwnerRole?'':'green'}">${ini}</div>
         <div class="list-info">
           <div class="list-name">${isMe?'Tú ('+localStorage.getItem('slt_email')+')':'Entrenador'}</div>
           <div class="list-sub">Unido: ${new Date(m.joined_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
         </div>
-        <span class="role-badge ${m.role}">${isOwner?'Propietario':'Miembro'}</span>
+        <span class="role-badge ${m.role}">${isOwnerRole?'Propietario':'Miembro'}</span>
         ${canRemove?`<button style="background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0" onclick="removeMember('${m.user_id}')" title="${isMe?'Salir':'Eliminar'}">✕</button>`:''}
       </div>`;
     }).join('');
@@ -334,14 +414,14 @@ function render(){
     </button>`;
   }
 
-  /* Invitaciones (solo owner) */
   if(_isOwner&&_invites.length){
     html+=`<div class="section-label">Invitaciones</div><div class="list-group">`;
     html+=_invites.map(inv=>{
+      const label=inv.email;
       return`<div class="invite-item">
         <div class="list-avatar orange">${inv.email.slice(0,2).toUpperCase()}</div>
         <div class="list-info">
-          <div class="list-name">${inv.email}</div>
+          <div class="list-name">${label}</div>
           <div class="list-sub">${new Date(inv.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
         </div>
         <span class="invite-status ${inv.status}">${inv.status==='pending'?'Pendiente':inv.status==='accepted'?'Aceptada':'Rechazada'}</span>
@@ -351,7 +431,6 @@ function render(){
     html+=`</div>`;
   }
 
-  /* Palistas */
   html+=`<div class="section-label">Palistas del grupo</div>`;
   if(_athletes.length){
     html+=`<div class="list-group">`;
@@ -378,7 +457,6 @@ function render(){
     Añadir palista al grupo
   </button>`;
 
-  /* Zona peligrosa */
   html+=`<div class="section-label">Zona de riesgo</div>`;
   if(_isOwner){
     html+=`<button class="btn-action danger" onclick="deleteTeam()">
