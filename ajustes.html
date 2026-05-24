@@ -70,9 +70,7 @@ body.dark .btn-row+.btn-row,body.dark .row+.btn-row,body.dark .btn-row+.row{bord
 .btn-row:active{background:#f7f7f7}
 body.dark .btn-row:active{background:rgba(255,255,255,0.05)}
 .row-arrow{color:#ccc;font-size:18px;flex-shrink:0}
-/* Badge vinculado */
 .linked-badge{font-size:11px;font-weight:700;color:#085041;background:#E1F5EE;padding:3px 9px;border-radius:100px;flex-shrink:0}
-/* Modal */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:0}
 .modal-backdrop.show{display:flex}
 .modal{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:16px;transition:background .2s}
@@ -90,11 +88,6 @@ body.dark .btn-cancel{background:#2c2c2e;border-color:#444;color:#aaa}
 .btn-confirm:active,.btn-cancel:active{opacity:.75}
 .btn-confirm.danger{background:#A32D2D}
 .btn-confirm:disabled{opacity:.4;cursor:not-allowed}
-/* Botón Google dentro del modal */
-.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:0.5px solid #ddd;background:#fff;color:#333;font-family:inherit;transition:opacity .12s}
-.btn-google:active{opacity:.75}
-body.dark .btn-google{background:#2c2c2e;border-color:#444;color:#f0f0f0}
-.btn-google svg{width:18px;height:18px;flex-shrink:0}
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
 body.dark .overlay{background:rgba(0,0,0,.8)}
 .overlay.show{display:flex}
@@ -176,7 +169,6 @@ body.dark .overlay p{color:#aaa}
       <!-- Vincular con Google -->
       <button class="btn-row" id="btn-link-google" onclick="linkGoogle()">
         <div class="row-icon goog">
-          <!-- Logo Google SVG -->
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -326,11 +318,10 @@ async function doLogout(){
   window.location.href='index.html';
 }
 
-// Vincular con Google
-// Comprueba si el usuario ya tiene Google vinculado leyendo las identidades del JWT
+// --- Vincular con Google ---
 function isGoogleLinked(){
   try{
-    const payload=JSON.parse(atob(_tok.split('.')[1]));
+    const payload=JSON.parse(atob(_tok.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
     const identities=payload.identities||[];
     return identities.some(i=>i.provider==='google');
   }catch{return false;}
@@ -347,41 +338,47 @@ function renderGoogleLink(){
     $('btn-link-google').appendChild(badge);
     $('btn-link-google').style.cursor='default';
     $('btn-link-google').onclick=null;
-    // Ocultar cambiar contraseña si el registro fue solo con Google (sin password)
-    // (no aplicable aquí ya que solo se muestra si está vinculado)
   }
 }
 
-async function linkGoogle(){
+function linkGoogle(){
   if(isGoogleLinked()){return;}
   showLoad('Redirigiendo a Google...');
-  try{
-    // Usamos el endpoint de OAuth con link_identity para vincular sin crear cuenta nueva
-    const redirectTo=encodeURIComponent(window.location.origin+'/ajustes.html?linked=google');
-    const url=`${SB}/auth/v1/user/identities/authorize?provider=google&redirect_to=${redirectTo}`;
-    // Guardamos el token actual para recuperar sesión al volver
-    localStorage.setItem('slt_link_pending','1');
-    window.location.href=url;
-  }catch(e){
-    hideLoad();
-    toast('Error: '+e.message,'err');
-  }
+  // El endpoint correcto de Supabase para vincular identidades es /auth/v1/authorize
+  // con los parámetros: provider, redirect_to, access_token (token del usuario actual)
+  // y link_identity=true para indicar que es un link y no un login nuevo.
+  const redirectTo=encodeURIComponent(window.location.origin+'/ajustes.html');
+  const url=`${SB}/auth/v1/authorize`
+    +`?provider=google`
+    +`&redirect_to=${redirectTo}`
+    +`&access_token=${encodeURIComponent(_tok)}`
+    +`&link_identity=true`;
+  window.location.href=url;
 }
 
-// Al volver del redirect de Google, mostrar confirmación
+// Al volver del redirect de Google, detectar resultado
 function checkLinkCallback(){
   const params=new URLSearchParams(window.location.search);
-  if(params.get('linked')==='google'){
-    localStorage.removeItem('slt_link_pending');
-    // Limpiar el parámetro de la URL
-    window.history.replaceState({},'',window.location.pathname);
-    toast('Cuenta vinculada con Google correctamente','ok');
-  }
-  // Si hay error en el redirect
+  // Supabase devuelve error_description en la URL si algo falla
   const err=params.get('error_description');
   if(err){
     window.history.replaceState({},'',window.location.pathname);
-    toast(decodeURIComponent(err),'err');
+    toast(decodeURIComponent(err.replace(/\+/g,' ')),'err');
+    return;
+  }
+  // Si hay access_token en la URL (hash) o el token cambió, la vinculación fue exitosa.
+  // Supabase redirige con #access_token=... tras el OAuth.
+  const hash=new URLSearchParams(window.location.hash.slice(1));
+  const newTok=hash.get('access_token');
+  const newRef=hash.get('refresh_token');
+  const expiresIn=parseInt(hash.get('expires_in')||'3600');
+  if(newTok){
+    _tok=newTok;
+    localStorage.setItem('slt_tok',newTok);
+    if(newRef){localStorage.setItem('slt_ref',newRef);localStorage.setItem('slt_exp',Date.now()+expiresIn*1000);}
+    window.history.replaceState({},'',window.location.pathname);
+    toast('Cuenta vinculada con Google correctamente','ok');
+    renderGoogleLink();
   }
 }
 
@@ -390,6 +387,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
   _uid=localStorage.getItem('slt_uid');
   _email=localStorage.getItem('slt_email');
   if(!_tok){window.location.href='index.html';return;}
+  // Primero procesar el callback por si venimos del redirect de Google
+  checkLinkCallback();
   showLoad('Comprobando sesion...');
   const ok=await refreshIfNeeded();
   if(!ok){window.location.href='index.html';return;}
@@ -399,7 +398,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
   loadNotif();
   loadTheme();
   renderGoogleLink();
-  checkLinkCallback();
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
