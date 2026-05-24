@@ -19,7 +19,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 body.dark{background:#111;color:#f0f0f0}
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;transition:background .2s,border-color .2s}
 body.dark .topbar{background:#1c1c1e;border-bottom-color:rgba(255,255,255,0.08)}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+body.dark .topbar-back{color:#aaa}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
 .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 body.dark .topbar-brand-name{color:#5B9FD8}
@@ -27,8 +29,6 @@ body.dark .topbar-brand-name{color:#5B9FD8}
 body.dark .topbar-divider{background:rgba(255,255,255,0.12)}
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
 body.dark .topbar-title{color:#f0f0f0}
-.btn-back{background:none;border:none;font-size:22px;color:#185FA5;cursor:pointer;padding:4px 8px 4px 0;line-height:1;font-family:inherit}
-body.dark .btn-back{color:#5B9FD8}
 .content{padding:20px 16px 48px;display:flex;flex-direction:column;gap:24px;max-width:480px;margin:0 auto}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px;margin-bottom:8px}
 .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden;transition:background .2s,border-color .2s}
@@ -103,7 +103,11 @@ body.dark .overlay p{color:#aaa}
 <div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
 
 <div class="topbar">
-  <button class="btn-back" onclick="goBack()">&#8249;</button>
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <div class="topbar-brand">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </div>
   <div class="topbar-divider"></div>
   <span class="topbar-title">Ajustes</span>
 </div>
