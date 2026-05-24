@@ -16,7 +16,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
 .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
@@ -88,10 +89,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="overlay" id="overlay"><div class="spinner"></div><p>Cargando...</p></div>
 
 <div class="topbar">
-  <a class="topbar-brand" href="menu.html">
+  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
+  <div class="topbar-brand">
     <img src="icons/icon-192x192.png" alt="SLTimer">
     <span class="topbar-brand-name">SLTimer</span>
-  </a>
+  </div>
   <div class="topbar-divider"></div>
   <span class="topbar-title">Estad&#237;sticas</span>
 </div>
