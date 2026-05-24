@@ -28,6 +28,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn-save{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;font-family:inherit;transition:opacity .12s;flex-shrink:0}
 .btn-save:active{opacity:.8}
 .btn-save:disabled{opacity:.4;cursor:not-allowed}
+
+/* Tabs */
+.tabs-bar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.10);display:flex;padding:0 16px;gap:0;position:sticky;top:53px;z-index:9}
+.tab-btn{flex:1;padding:12px 8px 10px;font-size:14px;font-weight:600;color:#aaa;background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;font-family:inherit;transition:color .15s,border-color .15s;text-align:center}
+.tab-btn.active{color:#185FA5;border-bottom-color:#185FA5}
+.tab-btn:active{opacity:.7}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
 .content{padding:16px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto;padding-bottom:40px}
 .avatar-wrap{display:flex;justify-content:center;padding:8px 0 4px}
 .avatar{width:76px;height:76px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;letter-spacing:-1px;transition:background .2s}
@@ -64,8 +73,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .badge-owner{font-size:11px;font-weight:700;background:#E6F1FB;color:#0C447C;padding:3px 9px;border-radius:100px;white-space:nowrap}
 .btn-add{background:none;border:0.5px solid #185FA5;color:#185FA5;font-size:13px;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-add:active{background:#E6F1FB}
-
-/* Input compartir */
 .share-input-area{padding:12px 16px;display:none}
 .share-input-inner{display:flex;gap:8px}
 .share-text-input{flex:1;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;color:#111;font-family:inherit;outline:none;background:#fff;-webkit-appearance:none}
@@ -78,10 +85,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn-share-confirm{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .btn-share-confirm:active{opacity:.8}
 .btn-share-confirm:disabled{opacity:.5;cursor:not-allowed}
-
 .shared-item{display:flex;align-items:center;gap:12px;padding:11px 16px}
 .btn-revoke{background:none;border:none;color:#A32D2D;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;padding:5px 8px;border-radius:6px;white-space:nowrap}
 .btn-revoke:active{background:#FCEBEB}
+
+/* Historial */
+.ses-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.ses-icon{width:40px;height:40px;border-radius:11px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ses-icon svg{width:20px;height:20px;fill:none;stroke:#085041;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ses-info{flex:1;min-width:0}
+.ses-name{font-size:15px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ses-sub{font-size:12px;color:#aaa;margin-top:2px}
+.ses-best{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#0F6E56;letter-spacing:0.5px;flex-shrink:0;text-align:right;line-height:1.1}
+.ses-best-lbl{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;text-align:right;font-family:inherit}
+.empty-state{text-align:center;padding:48px 24px;color:#bbb}
+.empty-state p{font-size:14px;font-weight:600;color:#bbb}
+.hist-spinner{display:flex;justify-content:center;padding:40px 0}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
@@ -111,55 +130,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<div class="content">
-  <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
+<!-- PESTAÑAS (solo visibles al editar un palista existente) -->
+<div class="tabs-bar" id="tabs-bar" style="display:none">
+  <button class="tab-btn active" id="tab-datos" onclick="switchTab('datos')">Datos</button>
+  <button class="tab-btn" id="tab-historial" onclick="switchTab('historial')">Historial</button>
+</div>
 
-  <div class="section-label">Datos personales</div>
-  <div class="card">
-    <div class="field-row"><div class="field-label">Nombre</div><input class="field-input" id="inp-name" type="text" placeholder="Ej: Carlos" autocomplete="given-name" oninput="updateAvatar()"></div>
-    <div class="field-row"><div class="field-label">Apellido <span class="opt">(opcional)</span></div><input class="field-input" id="inp-surname" type="text" placeholder="Ej: García" autocomplete="family-name" oninput="updateAvatar()"></div>
-    <div class="field-row"><div class="field-label">Sexo</div><div class="sex-row"><button class="sex-btn" onclick="setSex(this,'M')">Masculino</button><button class="sex-btn" onclick="setSex(this,'F')">Femenino</button><button class="sex-btn" onclick="setSex(this,'O')">Otro</button></div></div>
-  </div>
+<!-- PANEL DATOS -->
+<div class="tab-panel active" id="panel-datos">
+  <div class="content">
+    <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
 
-  <div class="section-label">Categorías</div>
-  <div class="card">
-    <div class="field-row">
-      <div class="field-label">Modalidades en las que compite</div>
-      <div class="cat-row">
-        <button class="cat-btn k1" onclick="toggleCat(this,'K1')">K1</button>
-        <button class="cat-btn c1" onclick="toggleCat(this,'C1')">C1</button>
-        <button class="cat-btn kxc" onclick="toggleCat(this,'KXC')">KXC</button>
+    <div class="section-label">Datos personales</div>
+    <div class="card">
+      <div class="field-row"><div class="field-label">Nombre</div><input class="field-input" id="inp-name" type="text" placeholder="Ej: Carlos" autocomplete="given-name" oninput="updateAvatar()"></div>
+      <div class="field-row"><div class="field-label">Apellido <span class="opt">(opcional)</span></div><input class="field-input" id="inp-surname" type="text" placeholder="Ej: García" autocomplete="family-name" oninput="updateAvatar()"></div>
+      <div class="field-row"><div class="field-label">Sexo</div><div class="sex-row"><button class="sex-btn" onclick="setSex(this,'M')">Masculino</button><button class="sex-btn" onclick="setSex(this,'F')">Femenino</button><button class="sex-btn" onclick="setSex(this,'O')">Otro</button></div></div>
+    </div>
+
+    <div class="section-label">Categorías</div>
+    <div class="card">
+      <div class="field-row">
+        <div class="field-label">Modalidades en las que compite</div>
+        <div class="cat-row">
+          <button class="cat-btn k1" onclick="toggleCat(this,'K1')">K1</button>
+          <button class="cat-btn c1" onclick="toggleCat(this,'C1')">C1</button>
+          <button class="cat-btn kxc" onclick="toggleCat(this,'KXC')">KXC</button>
+        </div>
+        <div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div>
       </div>
-      <div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div>
     </div>
-  </div>
 
-  <div class="section-label">Acceso</div>
-  <div class="card" id="access-card">
-    <div class="access-row">
-      <div class="mini-avatar owner" id="owner-avatar"></div>
-      <div class="access-info"><div class="access-name" id="owner-name">Tú</div><div class="access-sub" id="owner-email"></div></div>
-      <span class="badge-owner">Propietario</span>
-    </div>
-    <div class="access-row">
-      <div class="access-info">
-        <div class="access-name">Compartir con entrenador</div>
-        <div class="access-sub">Por email o usuario @</div>
+    <div class="section-label">Acceso</div>
+    <div class="card" id="access-card">
+      <div class="access-row">
+        <div class="mini-avatar owner" id="owner-avatar"></div>
+        <div class="access-info"><div class="access-name" id="owner-name">Tú</div><div class="access-sub" id="owner-email"></div></div>
+        <span class="badge-owner">Propietario</span>
       </div>
-      <button class="btn-add" onclick="toggleShareInput()">+ Añadir</button>
-    </div>
-    <div class="share-input-area" id="share-input-area">
-      <div class="share-input-inner">
-        <input class="share-text-input" id="share-input" type="text" placeholder="email@ejemplo.com o @usuario" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')addShared()">
-        <div class="share-spinner" id="share-spinner"></div>
-        <button class="btn-share-confirm" id="btn-share-confirm" onclick="addShared()">Añadir</button>
+      <div class="access-row">
+        <div class="access-info">
+          <div class="access-name">Compartir con entrenador</div>
+          <div class="access-sub">Por email o usuario @</div>
+        </div>
+        <button class="btn-add" onclick="toggleShareInput()">+ Añadir</button>
       </div>
-      <div class="share-hint"><b>Email</b>: carlos@club.es &nbsp;&middot;&nbsp; <b>Usuario</b>: @carlos o carlos</div>
+      <div class="share-input-area" id="share-input-area">
+        <div class="share-input-inner">
+          <input class="share-text-input" id="share-input" type="text" placeholder="email@ejemplo.com o @usuario" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')addShared()">
+          <div class="share-spinner" id="share-spinner"></div>
+          <button class="btn-share-confirm" id="btn-share-confirm" onclick="addShared()">Añadir</button>
+        </div>
+        <div class="share-hint"><b>Email</b>: carlos@club.es &nbsp;&middot;&nbsp; <b>Usuario</b>: @carlos o carlos</div>
+      </div>
+      <div id="shared-list"></div>
     </div>
-    <div id="shared-list"></div>
-  </div>
 
-  <button class="btn-delete" id="btn-delete" style="display:none" onclick="confirmDelete()">Eliminar palista</button>
+    <button class="btn-delete" id="btn-delete" style="display:none" onclick="confirmDelete()">Eliminar palista</button>
+  </div>
+</div>
+
+<!-- PANEL HISTORIAL -->
+<div class="tab-panel" id="panel-historial">
+  <div class="content" id="hist-content">
+    <div class="hist-spinner"><div class="spinner"></div></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -168,6 +203,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 let _tok=null,_uid=null,_email=null,_athleteId=null,_sex=null,_cats=new Set(),_shared=[];
+let _athleteName='';
 const $=id=>document.getElementById(id);
 function showLoad(msg='Guardando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
 function hideLoad(){$('overlay').classList.remove('show');}
@@ -181,30 +217,91 @@ function toggleCat(btn,cat){if(_cats.has(cat)){_cats.delete(cat);btn.classList.r
 function updateCatDesc(){const desc=$('cat-desc');if(_cats.size===0){desc.textContent='Selecciona al menos una modalidad';desc.style.color='#bbb';}else{desc.textContent=[..._cats].map(c=>`${c} — ${CAT_LABELS[c]}`).join('  ·  ');desc.style.color='#888';}}
 function toggleShareInput(){const area=$('share-input-area');const open=area.style.display==='block';area.style.display=open?'none':'block';if(!open)$('share-input').focus();}
 
+/* ── TABS ── */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  $('tab-'+name).classList.add('active');
+  $('panel-'+name).classList.add('active');
+  if(name==='historial'&&!_histLoaded)loadHistorial();
+  // Ocultar botón guardar en historial
+  $('btn-save').style.display=name==='historial'?'none':'block';
+}
+
+/* ── HISTORIAL ── */
+let _histLoaded=false;
+function fmtTime(ms){if(!ms&&ms!==0)return'—';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
+
+async function loadHistorial(){
+  const container=$('hist-content');
+  container.innerHTML='<div class="hist-spinner"><div class="spinner"></div></div>';
+  try{
+    // 1. Sesiones del usuario
+    const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,created_at');
+    if(!sessions||sessions.length===0){
+      container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';
+      _histLoaded=true;return;
+    }
+    const sesIds=sessions.map(s=>s.id);
+    // 2. Entradas del atleta en esas sesiones
+    const entries=await api('/rest/v1/session_entries?session_id=in.('+sesIds.join(',')+')'+'&pal_name=eq.'+encodeURIComponent(_athleteName)+'&select=session_id,ms,pen,dsq,tramo,manga');
+
+    // Agrupar por sesión
+    const sesMap={};
+    for(const e of entries){
+      if(!sesMap[e.session_id])sesMap[e.session_id]={entries:[]};
+      sesMap[e.session_id].entries.push(e);
+    }
+
+    // Filtrar sesiones con al menos 1 entrada
+    const activeSessions=sessions.filter(s=>sesMap[s.id]);
+    if(!activeSessions.length){
+      container.innerHTML='<div class="empty-state"><p>Este palista no ha participado en ninguna sesión aún</p></div>';
+      _histLoaded=true;return;
+    }
+
+    let html='';
+    for(const s of activeSessions){
+      const ents=sesMap[s.id].entries;
+      const valid=ents.filter(e=>!e.dsq&&e.ms>0);
+      const nDsq=ents.filter(e=>e.dsq).length;
+      const bestNet=valid.length?Math.min(...valid.map(e=>e.ms+e.pen)):null;
+      const bestEntry=bestNet!==null?valid.find(e=>e.ms+e.pen===bestNet):null;
+      const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}):'';
+      const sub=[s.lugar,fecha].filter(Boolean).join(' · ');
+      const nTiempos=ents.length;
+      const subInfo=[sub,nTiempos+(nTiempos===1?' tiempo':' tiempos'),nDsq>0?nDsq+' DSQ':null].filter(Boolean).join(' · ');
+      const bestHtml=bestEntry
+        ?`<div class="ses-best">${fmtTime(bestEntry.ms+(bestEntry.pen||0))}</div><div class="ses-best-lbl">T${bestEntry.tramo+1} · mejor</div>`
+        :nDsq===nTiempos?`<div class="ses-best" style="color:#A32D2D;font-size:14px;font-family:inherit;font-weight:800">DSQ</div><div class="ses-best-lbl">todos</div>`
+        :`<div class="ses-best" style="color:#ccc">—</div>`;
+      html+=`<div class="ses-card">
+        <div class="ses-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg></div>
+        <div class="ses-info"><div class="ses-name">${s.name}</div><div class="ses-sub">${subInfo||'Sin metadatos'}</div></div>
+        <div style="text-align:right;flex-shrink:0">${bestHtml}</div>
+      </div>`;
+    }
+    container.innerHTML=html;
+    _histLoaded=true;
+  }catch(e){
+    container.innerHTML='<div class="empty-state"><p>Error al cargar el historial</p></div>';
+    toast('Error: '+e.message,'err');
+  }
+}
+
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));return j;}
 
-/* Resuelve un email o @username → {user_id, display, displayName} */
 async function resolveIdentifier(raw){
   const val=raw.trim();
   if(!val)return null;
   const emailRx=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   if(emailRx.test(val)){
-    try{
-      const res=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:val.toLowerCase()})});
-      if(res?.user_id)return{user_id:res.user_id,display:val.toLowerCase(),type:'email'};
-    }catch{}
+    try{const res=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:val.toLowerCase()})});if(res?.user_id)return{user_id:res.user_id,display:val.toLowerCase(),type:'email'};}catch{}
     return null;
   }
-  // Username (con o sin @)
   const username=val.startsWith('@')?val.slice(1):val;
   if(!username)return null;
-  try{
-    const rows=await api('/rest/v1/profiles?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=id,username,name&limit=1');
-    if(rows&&rows.length>0){
-      const r=rows[0];
-      return{user_id:r.id,display:'@'+r.username,displayName:r.name||null,type:'username'};
-    }
-  }catch{}
+  try{const rows=await api('/rest/v1/profiles?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=id,username,name&limit=1');if(rows&&rows.length>0){const r=rows[0];return{user_id:r.id,display:'@'+r.username,displayName:r.name||null,type:'username'};}}catch{}
   return null;
 }
 
@@ -213,19 +310,15 @@ async function addShared(){
   if(!raw){toast('Introduce un email o usuario @','err');return;}
   const lowerRaw=raw.toLowerCase().replace(/^@/,'');
   if(_shared.find(s=>s.display.toLowerCase().replace(/^@/,'')===lowerRaw)){toast('Ya está en la lista','err');return;}
-  $('share-spinner').classList.add('show');
-  $('btn-share-confirm').disabled=true;
+  $('share-spinner').classList.add('show');$('btn-share-confirm').disabled=true;
   let resolved=null;
-  try{resolved=await resolveIdentifier(raw);}
-  finally{$('share-spinner').classList.remove('show');$('btn-share-confirm').disabled=false;}
+  try{resolved=await resolveIdentifier(raw);}finally{$('share-spinner').classList.remove('show');$('btn-share-confirm').disabled=false;}
   if(!resolved){toast('No se encontró ningún usuario con ese dato','err');return;}
   if(resolved.user_id===_uid){toast('Eres el propietario','err');return;}
   if(_shared.find(s=>s.user_id===resolved.user_id)){toast('Ya tiene acceso','err');return;}
   _shared.push({user_id:resolved.user_id,display:resolved.display,displayName:resolved.displayName||null,id:null});
-  $('share-input').value='';
-  $('share-input-area').style.display='none';
-  renderShared();
-  toast(resolved.display+' añadido ✓','ok');
+  $('share-input').value='';$('share-input-area').style.display='none';
+  renderShared();toast(resolved.display+' añadido ✓','ok');
 }
 
 function removeShared(userId){_shared=_shared.filter(s=>s.user_id!==userId);renderShared();}
@@ -255,8 +348,7 @@ async function savePalista(){
       await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});
     }
     await syncSharedAccess(athleteId);
-    hideLoad();
-    toast(_athleteId?'Cambios guardados':'Palista creado','ok');
+    hideLoad();toast(_athleteId?'Cambios guardados':'Palista creado','ok');
     setTimeout(()=>window.location.href='athletes.html',1200);
   }catch(e){hideLoad();$('btn-save').disabled=false;toast(e.message,'err');}
 }
@@ -264,15 +356,8 @@ async function savePalista(){
 async function syncSharedAccess(athleteId){
   let existing=[];
   try{existing=await api(`/rest/v1/athlete_access?athlete_id=eq.${athleteId}&select=id,trainer_id`);}catch{}
-  for(const s of _shared){
-    if(s.id||!s.user_id)continue;
-    try{await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});}catch{}
-  }
-  for(const ex of existing){
-    if(ex.trainer_id===_uid)continue;
-    const stillPresent=_shared.find(s=>s.user_id===ex.trainer_id);
-    if(!stillPresent){try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}}
-  }
+  for(const s of _shared){if(s.id||!s.user_id)continue;try{await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});}catch{}}
+  for(const ex of existing){if(ex.trainer_id===_uid)continue;const stillPresent=_shared.find(s=>s.user_id===ex.trainer_id);if(!stillPresent){try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}}}
 }
 
 async function confirmDelete(){
@@ -288,7 +373,8 @@ async function loadAthlete(id){
     const rows=await api(`/rest/v1/athletes?id=eq.${id}&select=*`);
     if(!rows||rows.length===0)throw new Error('Palista no encontrado');
     const a=rows[0];
-    $('page-title').textContent=a.name+(a.surname?' '+a.surname:'');
+    _athleteName=(a.name+(a.surname?' '+a.surname:'')).trim();
+    $('page-title').textContent=_athleteName;
     $('inp-name').value=a.name||'';
     $('inp-surname').value=a.surname||'';
     updateAvatar();
@@ -297,23 +383,16 @@ async function loadAthlete(id){
     const accesses=await api(`/rest/v1/athlete_access?athlete_id=eq.${id}&select=id,trainer_id`);
     for(const ac of accesses){
       if(ac.trainer_id===_uid)continue;
-      // Buscar en profiles por id
       try{
         const profiles=await api(`/rest/v1/profiles?id=eq.${ac.trainer_id}&select=id,username,name&limit=1`);
-        if(profiles&&profiles.length>0){
-          const p=profiles[0];
-          _shared.push({user_id:ac.trainer_id,display:'@'+(p.username||ac.trainer_id),displayName:p.name||null,id:ac.id});
-          continue;
-        }
+        if(profiles&&profiles.length>0){const p=profiles[0];_shared.push({user_id:ac.trainer_id,display:'@'+(p.username||ac.trainer_id),displayName:p.name||null,id:ac.id});continue;}
       }catch{}
-      // Fallback: email via RPC
-      try{
-        const res=await api('/rest/v1/rpc/get_email_by_user_id',{method:'POST',body:JSON.stringify({p_user_id:ac.trainer_id})});
-        if(res?.email)_shared.push({user_id:ac.trainer_id,display:res.email,displayName:null,id:ac.id});
-      }catch{}
+      try{const res=await api('/rest/v1/rpc/get_email_by_user_id',{method:'POST',body:JSON.stringify({p_user_id:ac.trainer_id})});if(res?.email)_shared.push({user_id:ac.trainer_id,display:res.email,displayName:null,id:ac.id});}catch{}
     }
     renderShared();
     $('btn-delete').style.display='block';
+    // Mostrar pestañas solo en modo edición
+    $('tabs-bar').style.display='flex';
     hideLoad();
   }catch(e){hideLoad();toast(e.message,'err');}
 }
@@ -327,7 +406,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   $('owner-email').textContent=_email||'';
   const params=new URLSearchParams(window.location.search);
   _athleteId=params.get('id')||null;
-  if(_athleteId){$('page-title').textContent='Editar palista';await loadAthlete(_athleteId);}
+  if(_athleteId){$('page-title').textContent='Cargando...';await loadAthlete(_athleteId);}
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
