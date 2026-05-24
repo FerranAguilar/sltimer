@@ -24,61 +24,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12)}
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
 .content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
-.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:4px 2px 2px}
-.notif-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
-.notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px}
-.notif-item+.notif-item{border-top:0.5px solid #f2f2f2}
-.notif-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.notif-icon svg{width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.notif-icon.purple{background:#F0EBFB} .notif-icon.purple svg{stroke:#6B21A8}
-.notif-icon.teal{background:#E1F5EE} .notif-icon.teal svg{stroke:#085041}
-.notif-icon.blue{background:#E6F1FB} .notif-icon.blue svg{stroke:#0C447C}
-.notif-icon.orange{background:#FEF3C7} .notif-icon.orange svg{stroke:#D97706}
-.notif-body{flex:1;min-width:0}
-.notif-title{font-size:14px;font-weight:700;color:#111;margin-bottom:2px}
-.notif-sub{font-size:12px;color:#888;line-height:1.4;margin-bottom:6px}
-.notif-athlete{font-size:12px;font-weight:700;color:#185FA5;margin-bottom:4px}
-.notif-team{font-size:12px;font-weight:600;color:#185FA5}
-.notif-date{font-size:11px;color:#bbb;margin-bottom:8px}
-.notif-actions{display:flex;gap:8px}
-.btn-accept{background:#185FA5;border:none;color:#fff;font-size:13px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;font-family:inherit;transition:opacity .12s}
-.btn-accept:active{opacity:.8}
-.btn-accept:disabled{opacity:.5;cursor:not-allowed}
-.btn-reject{background:#f0f0f0;border:none;color:#666;font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
-.btn-reject:active{background:#e4e4e4}
-.btn-reject:disabled{opacity:.5;cursor:not-allowed}
-.status-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;margin-top:6px}
-.status-badge.accepted{background:#E1F5EE;color:#085041}
-.status-badge.rejected{background:#fde8e8;color:#A32D2D}
-.coming-soon{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:20px 16px;display:flex;align-items:center;gap:12px;opacity:.55}
-.coming-soon-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.coming-soon-icon svg{width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.coming-soon-icon.orange{background:#FEF3C7} .coming-soon-icon.orange svg{stroke:#D97706}
-.coming-soon-icon.indigo{background:#EDE9FE} .coming-soon-icon.indigo svg{stroke:#4F46E5}
-.coming-soon-body{flex:1}
-.coming-soon-title{font-size:14px;font-weight:700;color:#111}
-.coming-soon-sub{font-size:12px;color:#aaa;margin-top:2px}
-.coming-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;background:#f0f0f0;color:#888;flex-shrink:0}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:14px;text-align:center}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;gap:14px;text-align:center}
 .empty-icon{width:60px;height:60px;background:#F0EBFB;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .empty-icon svg{width:26px;height:26px;fill:none;stroke:#6B21A8;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .empty-title{font-size:16px;font-weight:700;color:#111}
 .empty-sub{font-size:13px;color:#aaa;line-height:1.5;max-width:280px}
-.sk{background:linear-gradient(90deg,#f0f0f0 25%,#e4e4e4 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px}
-@keyframes shimmer{to{background-position:-200% 0}}
-.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
-.overlay.show{display:flex}
-.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90vw;text-align:center}
-.toast.show{opacity:1}
-.toast.ok{background:#0F6E56}
-.toast.err{background:#A32D2D}
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay"><div class="spinner"></div></div>
-<div class="toast" id="toast"></div>
 
 <div class="topbar">
   <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
@@ -90,223 +43,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <span class="topbar-title">Notificaciones</span>
 </div>
 
-<div class="content" id="content">
-  <div id="skeleton">
-    <div style="background:#fff;border-radius:14px;border:0.5px solid rgba(0,0,0,0.10);padding:16px;display:flex;gap:12px;align-items:flex-start">
-      <div class="sk" style="width:40px;height:40px;border-radius:11px;flex-shrink:0"></div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:7px">
-        <div class="sk" style="height:13px;width:55%"></div>
-        <div class="sk" style="height:11px;width:80%"></div>
-        <div class="sk" style="height:11px;width:40%"></div>
-      </div>
+<div class="content">
+  <div class="empty">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     </div>
+    <div class="empty-title">Sin notificaciones</div>
+    <div class="empty-sub">No tienes notificaciones pendientes</div>
   </div>
-  <div id="main" style="display:none"></div>
 </div>
 
 <script>
-const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
-let _tok=null, _uid=null, _email=null, _username=null;
-const $=id=>document.getElementById(id);
-
-let _tTimer;
-function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3200);}
-
-async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
-
-function fmtDate(iso){return new Date(iso).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});}
-
-async function loadUsername(){
-  try{
-    const res=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=username&limit=1');
-    if(res&&res.length>0)_username=res[0].username;
-  }catch{}
-}
-
-async function respondGroupInvite(inviteId, teamId, accept){
-  const btns=document.querySelectorAll(`[data-inv="${inviteId}"]`);
-  btns.forEach(b=>b.disabled=true);
-  try{
-    if(accept){
-      await api('/rest/v1/team_members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({team_id:teamId,user_id:_uid,role:'member'})});
-    }
-    await api('/rest/v1/team_invites?id=eq.'+inviteId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({status:accept?'accepted':'rejected'})});
-    toast(accept?'Te has unido al grupo ✓':'Invitación rechazada', accept?'ok':'');
-    await loadData();
-  }catch(e){
-    toast('Error: '+e.message,'err');
-    btns.forEach(b=>b.disabled=false);
-  }
-}
-
-async function respondAthleteInvite(inviteId, athleteName, accept){
-  const btns=document.querySelectorAll(`[data-ainv="${inviteId}"]`);
-  btns.forEach(b=>b.disabled=true);
-  try{
-    if(accept){
-      await api('/rest/v1/rpc/accept_athlete_share_invite',{
-        method:'POST',
-        body:JSON.stringify({invite_id:inviteId})
-      });
-      toast('Ahora tienes acceso a '+athleteName+' ✓','ok');
-    } else {
-      await api('/rest/v1/athlete_share_invites?id=eq.'+inviteId,{
-        method:'PATCH',
-        headers:{'Prefer':'return=minimal'},
-        body:JSON.stringify({status:'rejected'})
-      });
-      toast('Invitación rechazada');
-    }
-    await loadData();
-  }catch(e){
-    toast('Error: '+e.message,'err');
-    btns.forEach(b=>b.disabled=false);
-  }
-}
-
-/* Construye la query de athlete_share_invites evitando el or= cuando solo hay un filtro,
-   y usando la sintaxis correcta de PostgREST: or=(col.eq.val,col.eq.val) con los valores
-   sin encodeURIComponent para que PostgREST los interprete correctamente. */
-async function fetchAthleteInvites(){
-  const base='/rest/v1/athlete_share_invites?status=eq.pending&select=id,athlete_id,invited_by,can_share,created_at,to_email,to_username&order=created_at.desc';
-  // Si tenemos ambos (email y username), hacemos dos peticiones y combinamos
-  // para evitar la sintaxis or= que da problemas con caracteres especiales como @
-  const results=[];
-  const seen=new Set();
-  if(_email){
-    const rows=await api(base+'&to_email=eq.'+encodeURIComponent(_email));
-    rows.forEach(r=>{if(!seen.has(r.id)){seen.add(r.id);results.push(r);}});
-  }
-  if(_username){
-    const rows=await api(base+'&to_username=eq.'+encodeURIComponent(_username));
-    rows.forEach(r=>{if(!seen.has(r.id)){seen.add(r.id);results.push(r);}});
-  }
-  return results;
-}
-
-async function loadData(){
-  try{
-    await loadUsername();
-
-    const groupInvites = await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(_email)+'&status=eq.pending&select=id,team_id,created_at&order=created_at.desc');
-
-    let teamNames={};
-    if(groupInvites.length){
-      const ids=groupInvites.map(i=>i.team_id).join(',');
-      const teams=await api('/rest/v1/teams?id=in.('+ids+')&select=id,name');
-      teams.forEach(t=>teamNames[t.id]=t.name);
-    }
-
-    const athleteInvites=await fetchAthleteInvites();
-
-    let athleteNames={};
-    if(athleteInvites.length){
-      const athleteIds=[...new Set(athleteInvites.map(i=>i.athlete_id))];
-      const athletes=await api('/rest/v1/athletes?id=in.('+athleteIds.join(',')+')&select=id,name,surname');
-      athletes.forEach(a=>athleteNames[a.id]=(a.name+(a.surname?' '+a.surname:'')));
-    }
-
-    let coachNames={};
-    if(athleteInvites.length){
-      const coachIds=[...new Set(athleteInvites.map(i=>i.invited_by))];
-      const coaches=await api('/rest/v1/coaches?owner_id=in.('+coachIds.join(',')+')&select=owner_id,name,username');
-      coaches.forEach(c=>coachNames[c.owner_id]={name:c.name,username:c.username});
-    }
-
-    $('skeleton').style.display='none';
-    const wrap=$('main');
-    wrap.style.display='';
-    let html='';
-    let hasAny=false;
-
-    if(groupInvites.length){
-      hasAny=true;
-      html+=`<div class="section-label">Invitaciones a grupos</div><div class="notif-card">`;
-      html+=groupInvites.map(inv=>{
-        const tname=teamNames[inv.team_id]||'Grupo desconocido';
-        return`<div class="notif-item">
-          <div class="notif-icon purple">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">Invitación a grupo</div>
-            <div class="notif-sub">Te han invitado a unirte a <span class="notif-team">${tname}</span></div>
-            <div class="notif-date">${fmtDate(inv.created_at)}</div>
-            <div class="notif-actions">
-              <button class="btn-accept" data-inv="${inv.id}" onclick="respondGroupInvite('${inv.id}','${inv.team_id}',true)">Aceptar</button>
-              <button class="btn-reject" data-inv="${inv.id}" onclick="respondGroupInvite('${inv.id}','${inv.team_id}',false)">Rechazar</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-      html+=`</div>`;
-    }
-
-    html+=`<div class="section-label">Palistas compartidos</div>`;
-    if(athleteInvites.length){
-      hasAny=true;
-      html+=`<div class="notif-card">`;
-      html+=athleteInvites.map(inv=>{
-        const athName=athleteNames[inv.athlete_id]||'Palista desconocido';
-        const coach=coachNames[inv.invited_by];
-        const coachLabel=coach?(coach.name+(coach.username?' (@'+coach.username+')':"")):'Otro entrenador';
-        const canShareLabel=inv.can_share?'· Podrás re-compartirlo':'';
-        return`<div class="notif-item">
-          <div class="notif-icon orange">
-            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          </div>
-          <div class="notif-body">
-            <div class="notif-title">Palista compartido contigo</div>
-            <div class="notif-athlete">${athName}</div>
-            <div class="notif-sub">De parte de <strong>${coachLabel}</strong> ${canShareLabel}</div>
-            <div class="notif-date">${fmtDate(inv.created_at)}</div>
-            <div class="notif-actions">
-              <button class="btn-accept" data-ainv="${inv.id}" onclick="respondAthleteInvite('${inv.id}','${athName}',true)">Aceptar</button>
-              <button class="btn-reject" data-ainv="${inv.id}" onclick="respondAthleteInvite('${inv.id}','${athName}',false)">Rechazar</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-      html+=`</div>`;
-    } else {
-      html+=`<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px"><div style="padding:18px;text-align:center;font-size:13px;color:#aaa">Sin invitaciones de palistas pendientes</div></div>`;
-    }
-
-    html+=`<div class="section-label" style="margin-top:4px">Sesiones colaborativas</div>
-    <div class="coming-soon">
-      <div class="coming-soon-icon indigo"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
-      <div class="coming-soon-body">
-        <div class="coming-soon-title">Invitaciones a sesiones</div>
-        <div class="coming-soon-sub">Podrás unirte a sesiones en tiempo real con otros entrenadores</div>
-      </div>
-      <span class="coming-badge">Próximamente</span>
-    </div>`;
-
-    if(!hasAny){
-      html=`<div class="empty">
-        <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <div class="empty-title">Sin notificaciones</div>
-        <div class="empty-sub">Cuando recibas invitaciones a grupos, palistas o sesiones aparecerán aquí</div>
-      </div>`+html.replace(/<div class="section-label">Invitaciones a grupos<\/div>/,'').replace(/<div class="section-label">Palistas compartidos<\/div>/,'<div class="section-label" style="margin-top:4px">Próximamente</div>');
-    }
-
-    wrap.innerHTML=html;
-  }catch(e){
-    $('skeleton').style.display='none';
-    $('main').style.display='';
-    $('main').innerHTML=`<div style="padding:32px;text-align:center;color:#aaa;font-size:14px">Error al cargar: ${e.message}</div>`;
-  }
-}
-
-window.addEventListener('DOMContentLoaded',()=>{
-  _tok=localStorage.getItem('slt_tok');
-  _uid=localStorage.getItem('slt_uid');
-  _email=localStorage.getItem('slt_email');
-  if(!_tok){window.location.href='index.html';return;}
-  loadData();
-});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+const tok=localStorage.getItem('slt_tok');
+if(!tok)window.location.href='index.html';
 </script>
 </body>
 </html>
