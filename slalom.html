@@ -384,7 +384,6 @@ function goToSession(){
   const name=$('cfg-name').value.trim();
   if(!name){toast('Introduce un nombre para la sesión','err');return;}
   const lugar=$('cfg-lugar').value.trim();
-  // FIX: garantizar que fecha siempre tenga valor
   const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
   const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));
   _cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};
@@ -503,8 +502,8 @@ async function saveSession(){
           user_id:_uid,
           name:_cfg.name,
           lugar:_cfg.lugar||null,
-          // FIX: garantizar que fecha nunca sea cadena vacía
-          fecha:(_cfg.fecha&&_cfg.fecha.trim()!=='')?_cfg.fecha:new Date().toISOString().slice(0,10),
+          // FIX: columna real en Supabase es 'data', con fallback a fecha actual
+          data:(_cfg.fecha&&_cfg.fecha.trim()!=='')?_cfg.fecha:new Date().toISOString().slice(0,10),
           n_pal:_cfg.nPal,
           n_tra:_cfg.nTra
         })
@@ -512,7 +511,6 @@ async function saveSession(){
       sessionId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
       _savedSessionId=sessionId;
     } else {
-      // Borrar entradas antiguas para reescribir (re-guardado)
       await api('/rest/v1/session_entries?session_id=eq.'+sessionId,{method:'DELETE'});
     }
 
