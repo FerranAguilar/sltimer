@@ -514,12 +514,18 @@ async function saveSession(){
           lugar:_cfg.lugar||null,
           data:(_cfg.fecha&&_cfg.fecha.trim()!=='')?_cfg.fecha:new Date().toISOString().slice(0,10),
           n_pal:_cfg.nPal,
-          n_tra:_cfg.nTra
+          n_tra:_cfg.nTra,
+          palistas:_cfg.palistas
         })
       });
       sessionId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
       _savedSessionId=sessionId;
     } else {
+      await api('/rest/v1/sessions?id=eq.'+sessionId,{
+        method:'PATCH',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({palistas:_cfg.palistas})
+      });
       await api('/rest/v1/session_entries?session_id=eq.'+sessionId,{method:'DELETE'});
     }
 
@@ -599,25 +605,21 @@ const resumeRaw=sessionStorage.getItem('slalom_resume');
 if(resumeRaw){
   try{
     const resume=JSON.parse(resumeRaw);
-    // Restaurar configuración en variables globales
     _cfg=resume.cfg;
     _savedSessionId=resume.sessionId||null;
     _times=resume.times;
     _mangas=resume.mangas;
 
-    // Reconstruir contadores CFG para que coincidan con _cfg
     CFG.pal=_cfg.nPal;
     CFG.tra=_cfg.nTra;
     $('val-pal').textContent=CFG.pal;
     $('val-tra').textContent=CFG.tra;
 
-    // Rellenar también la pantalla de configuración por si el usuario vuelve atrás
     $('cfg-name').value=_cfg.name||'';
     $('cfg-lugar').value=_cfg.lugar||'';
     if(_cfg.fecha)$('cfg-fecha').value=_cfg.fecha;
     _palState=_cfg.palistas.map(s=>({...s,isTemp:s.isTemp||!s.id}));
 
-    // Cargar palistas y luego restaurar la pantalla de sesión
     $('overlay').classList.add('show');
     $('overlay-msg').textContent='Restaurando sesión...';
     (async()=>{
@@ -633,7 +635,6 @@ if(resumeRaw){
       }catch{_athletes=[];}
       finally{$('overlay').classList.remove('show');}
 
-      // Montar pantalla de sesión con los datos restaurados
       $('topbar-title').textContent=_cfg.name;
       $('ses-title').textContent=_cfg.name;
       const parts=[];
@@ -657,7 +658,6 @@ if(resumeRaw){
   }catch(e){
     console.error('Error restaurando slalom_resume:',e);
     sessionStorage.removeItem('slalom_resume');
-    // Caer al flujo normal
     const prev=sessionStorage.getItem('slalom_cfg');
     if(prev){
       try{
@@ -677,7 +677,6 @@ if(resumeRaw){
     loadAthletes();
   }
 } else {
-  // Flujo normal: restaurar solo configuración previa si existe
   const prev=sessionStorage.getItem('slalom_cfg');
   if(prev){
     try{
