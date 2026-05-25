@@ -52,7 +52,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sex-btn.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
 .sex-btn:active{opacity:.75}
 .cat-row{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
-.cat-btn{padding:9px 20px;border-radius:10px;border:0.5px solid #ddd;background:#fff;font-size:14px;font-weight:700;color:#aaa;cursor:pointer;font-family:inherit;transition:all .15s;letter-spacing:0.03em}
+.cat-btn{padding:9px 20px;border-radius:10px;border:0.5px solid #ddd;background:#fff;font-size:14px;font-weight:700;color:#aaa;cursor:pointer;font-family:inherit;transition:all .15px;letter-spacing:0.03em}
 .cat-btn:active{opacity:.75}
 .cat-btn.k1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
 .cat-btn.c1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
@@ -108,6 +108,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .stat-val{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
 .stat-val.green{color:#0F6E56}
 .stat-val.red{color:#A32D2D}
+.stat-val.amber{color:#B45309}
 .stat-val.small{font-size:22px}
 .stat-sub{font-size:11px;color:#bbb;font-weight:500;margin-top:1px}
 .tramo-table{width:100%;border-collapse:collapse}
@@ -288,19 +289,16 @@ async function loadHistorial(){
     }
     const sesIds=sessions.map(s=>s.id);
     const entries=await api('/rest/v1/session_entries?session_id=in.('+sesIds.join(',')+')'+'&pal_name=eq.'+encodeURIComponent(_athleteName)+'&select=session_id,ms,pen,dsq,tramo,manga');
-
     const sesMap={};
     for(const e of entries){
       if(!sesMap[e.session_id])sesMap[e.session_id]={entries:[]};
       sesMap[e.session_id].entries.push(e);
     }
-
     const activeSessions=sessions.filter(s=>sesMap[s.id]);
     if(!activeSessions.length){
       container.innerHTML='<div class="empty-state"><p>Este palista no ha participado en ninguna sesi\u00f3n a\u00fan</p></div>';
       _histLoaded=true;return;
     }
-
     let html='';
     for(const s of activeSessions){
       const ents=sesMap[s.id].entries;
@@ -339,35 +337,25 @@ async function loadEstadisticas(){
   const container=$('stat-content');
   container.innerHTML='<div class="stat-spinner"><div class="spinner"></div></div>';
   try{
-    // Sesiones del usuario, ordenadas cronológicamente
     const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=data.asc,created_at.asc&select=id,name,lugar,data,created_at');
     if(!sessions||!sessions.length){
       container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';
       _statLoaded=true;return;
     }
     const sesIds=sessions.map(s=>s.id);
-
-    // Tiempos del palista: filtrar por pal_name directamente en la query
     const entries=await api(
       '/rest/v1/session_entries'
       +'?session_id=in.('+sesIds.join(',')+')'  
       +'&pal_name=eq.'+encodeURIComponent(_athleteName)
       +'&select=session_id,tramo,manga,ms,pen,dsq,cnt2,cnt50'
     );
-
     if(!entries||!entries.length){
       container.innerHTML='<div class="empty-state"><p>Este palista no tiene tiempos registrados a\u00fan</p></div>';
       _statLoaded=true;return;
     }
-
-    // Normalizar nombres de campo para compatibilidad con renderEstadisticas
-    // session_entries usa: tramo, manga, ms, pen, dsq
-    // renderEstadisticas espera: tramo_index -> usamos tramo directamente
     const myTimes=entries.map(e=>({...e,tramo_index:e.tramo}));
-
     const sesById={};
     sessions.forEach(s=>{sesById[s.id]=s;});
-
     _statRaw={sessions,sesById,myTimes};
     renderEstadisticas();
     _statLoaded=true;
@@ -382,28 +370,85 @@ function renderEstadisticas(){
   const {sessions,sesById,myTimes}=_statRaw;
   const container=$('stat-content');
 
-  // Tramos únicos
+  /* ─── KPIs de actividad reciente ─── */
+  // Sesiones de los últimos 7 días donde el palista tiene entradas
+  const now=new Date();
+  const cutoff=new Date(now);
+  cutoff.setDate(cutoff.getDate()-7);
+  cutoff.setHours(0,0,0,0);
+
+  // Sesiones con entradas del palista, agrupadas por sesión
+  const sesConEntradas=new Set(myTimes.map(t=>t.session_id));
+
+  // Sesiones de los últimos 7 días (usa campo `data`, fallback a created_at)
+  const sesRecientes=sessions.filter(s=>{
+    if(!sesConEntradas.has(s.id))return false;
+    const ref=s.data?new Date(s.data+'T12:00:00'):new Date(s.created_at);
+    return ref>=cutoff;
+  });
+  const nSesiones7d=sesRecientes.length;
+
+  // Media de mangas por sesión (todas las sesiones del palista)
+  const sesPalista=[...sesConEntradas];
+  const totalMangas=myTimes.length;
+  const mediaMangas=sesPalista.length>0?+(totalMangas/sesPalista.length).toFixed(1):0;
+
+  // % DSQ por sesión: media del % DSQ de cada sesión
+  let dsqPctArr=[];
+  sesPalista.forEach(sid=>{
+    const ents=myTimes.filter(t=>t.session_id===sid);
+    if(!ents.length)return;
+    const nDsq=ents.filter(t=>t.dsq).length;
+    dsqPctArr.push(nDsq/ents.length*100);
+  });
+  const mediaDsqPct=dsqPctArr.length?Math.round(dsqPctArr.reduce((a,b)=>a+b,0)/dsqPctArr.length):0;
+
+  // Media de segundos de penalización por sesión
+  // pen está en ms (centenas), la dividimos entre 1000 para obtener segundos
+  let penSesSumaS=[];
+  sesPalista.forEach(sid=>{
+    const ents=myTimes.filter(t=>t.session_id===sid&&!t.dsq);
+    if(!ents.length)return;
+    const totalPenMs=ents.reduce((acc,t)=>acc+(t.pen||0),0);
+    penSesSumaS.push(totalPenMs/1000);
+  });
+  const mediaPenS=penSesSumaS.length?+(penSesSumaS.reduce((a,b)=>a+b,0)/penSesSumaS.length).toFixed(1):0;
+
+  const actividadHtml=`
+  <div class="section-label">Actividad reciente</div>
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">Sesiones (7 d\u00edas)</div>
+      <div class="stat-val${nSesiones7d===0?' red':nSesiones7d>=3?' green':''}">${nSesiones7d}</div>
+      <div class="stat-sub">\u00daltimos 7 d\u00edas</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Mangas / sesi\u00f3n</div>
+      <div class="stat-val">${mediaMangas}</div>
+      <div class="stat-sub">Media por sesi\u00f3n</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">% DSQ / sesi\u00f3n</div>
+      <div class="stat-val${mediaDsqPct>30?' red':mediaDsqPct>10?' amber':'green'}">${mediaDsqPct}<span style="font-size:18px">%</span></div>
+      <div class="stat-sub">Media por sesi\u00f3n</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Pen. / sesi\u00f3n</div>
+      <div class="stat-val${mediaPenS>20?' red':mediaPenS>5?' amber':'green'} small">${mediaPenS}<span style="font-size:14px">s</span></div>
+      <div class="stat-sub">Media segundos de pen.</div>
+    </div>
+  </div>`;
+
+  /* ─── Filtros por tramo ─── */
   const tramoSet=new Set(myTimes.map(t=>t.tramo_index));
   const tramos=[...tramoSet].sort((a,b)=>a-b);
-
-  // Filtrado
   const filtered=_statFilter==='all'?myTimes:myTimes.filter(t=>t.tramo_index===parseInt(_statFilter));
-
   const valid=filtered.filter(t=>!t.dsq&&t.ms>0);
-  const nets=valid.map(t=>t.ms+(t.pen||0));
-  const total=filtered.length;
-  const nDsq=filtered.filter(t=>t.dsq).length;
-  const nValid=valid.length;
-  const bestNet=nets.length?Math.min(...nets):null;
-  const avgNet=nets.length?Math.round(nets.reduce((a,b)=>a+b,0)/nets.length):null;
-  const dsqPct=total>0?Math.round(nDsq/total*100):0;
-
-  // Penalizaciones: usar cnt2/cnt50 si existen, si no inferir de pen
   const nClean=valid.filter(t=>!t.pen||t.pen===0).length;
-  const pen2=valid.reduce((acc,t)=>acc+(t.cnt2||0),0)||valid.filter(t=>t.pen>0&&t.pen<50).length;
-  const pen50=valid.reduce((acc,t)=>acc+(t.cnt50||0),0)||valid.filter(t=>t.pen>=50).length;
+  const nDsqFilt=filtered.filter(t=>t.dsq).length;
+  const pen2=valid.reduce((acc,t)=>acc+(t.cnt2||0),0)||valid.filter(t=>t.pen>0&&t.pen<50000).length;
+  const pen50=valid.reduce((acc,t)=>acc+(t.cnt50||0),0)||valid.filter(t=>t.pen>=50000).length;
 
-  // Filtros pill
   let filterHtml=`<div class="filter-row">`;
   filterHtml+=`<button class="filter-btn${_statFilter==='all'?' active':''}" onclick="setStatFilter('all')">Todos los tramos</button>`;
   tramos.forEach(ti=>{
@@ -411,32 +456,7 @@ function renderEstadisticas(){
   });
   filterHtml+='</div>';
 
-  // KPIs
-  const kpiHtml=`
-  <div class="stat-grid">
-    <div class="stat-box">
-      <div class="stat-label">Mejor tiempo neto</div>
-      <div class="stat-val green${bestNet!==null&&fmtTime(bestNet).length>7?' small':''}">${bestNet!==null?fmtTime(bestNet):'\u2014'}</div>
-      <div class="stat-sub">Tiempo + penalizaciones</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Promedio neto</div>
-      <div class="stat-val${avgNet!==null&&fmtTime(avgNet).length>7?' small':''}">${avgNet!==null?fmtTime(avgNet):'\u2014'}</div>
-      <div class="stat-sub">${nValid} mangas v\u00e1lidas</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Total mangas</div>
-      <div class="stat-val">${total}</div>
-      <div class="stat-sub">${nDsq} DSQ \u00b7 ${nValid} v\u00e1lidas</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">% DSQ</div>
-      <div class="stat-val${dsqPct>30?' red':dsqPct>10?' small':''}">${dsqPct}<span style="font-size:18px">%</span></div>
-      <div class="stat-sub">${nDsq} de ${total} mangas</div>
-    </div>
-  </div>`;
-
-  // Tabla por tramo (solo si hay más de uno)
+  /* ─── Tabla por tramo ─── */
   let tramoHtml='';
   if(tramos.length>1){
     let rows='';
@@ -464,7 +484,7 @@ function renderEstadisticas(){
     </div>`;
   }
 
-  // Progreso temporal
+  /* ─── Progreso temporal ─── */
   const sesSorted=sessions.filter(s=>
     myTimes.some(t=>t.session_id===s.id&&!t.dsq&&t.ms>0&&(_statFilter==='all'||t.tramo_index===parseInt(_statFilter)))
   );
@@ -496,10 +516,10 @@ function renderEstadisticas(){
     }
   }
 
-  // Distribución penalizaciones
+  /* ─── Distribución penalizaciones ─── */
   let penHtml='';
-  if(nValid>0){
-    const maxVal=Math.max(nClean,pen2,pen50,nDsq,1);
+  if(valid.length>0){
+    const maxVal=Math.max(nClean,pen2,pen50,nDsqFilt,1);
     const bar=(n,label,cls='')=>{
       const w=Math.round(n/maxVal*100);
       return`<div class="pen-dist-row"><div class="pen-dist-label">${label}</div><div class="pen-dist-bar-wrap"><div class="pen-dist-bar${cls?' '+cls:''}" style="width:${w}%"></div></div><div class="pen-dist-val">${n}</div></div>`;
@@ -508,13 +528,13 @@ function renderEstadisticas(){
     <div class="section-label">Penalizaciones</div>
     <div class="card">
       ${bar(nClean,'Sin pen.')}
-      ${bar(pen2,'+2s (toque)','')}
-      ${bar(pen50,'+50s (error)','')}
-      ${bar(nDsq,'DSQ','dsq-bar')}
+      ${bar(pen2,'+2s (toque)')}
+      ${bar(pen50,'+50s (error)')}
+      ${bar(nDsqFilt,'DSQ','dsq-bar')}
     </div>`;
   }
 
-  container.innerHTML=`${filterHtml}${kpiHtml}${tramoHtml}${progHtml}${penHtml}`;
+  container.innerHTML=`${actividadHtml}${filterHtml}${tramoHtml}${progHtml}${penHtml}`;
 }
 
 function setStatFilter(val){
