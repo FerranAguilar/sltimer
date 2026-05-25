@@ -652,6 +652,15 @@ async function init(){
     if(cfgRaw){try{const c=JSON.parse(cfgRaw);if(c&&c.name){CFG.pal=c.nPal;CFG.tra=c.nTra;$('val-pal').textContent=c.nPal;$('val-tra').textContent=c.nTra;$('cfg-name').value=c.name;$('cfg-lugar').value=c.lugar||'';$('cfg-fecha').value=c.fecha||'';_palState=c.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));}}catch{}}
     buildPalList();
     $('cfg-fecha').value=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+    // Si venimos de sesion compartida, saltar directamente al cronometro
+    if(_shared&&_shared.cfg){
+      const c=_shared.cfg;
+      _cfg={name:c.name,lugar:c.lugar||'',fecha:c.fecha,nPal:c.nPal,nTra:c.nTra,palistas:c.palistas};
+      CFG.pal=_cfg.nPal;CFG.tra=_cfg.nTra;
+      _palState=_cfg.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));
+      _savedSessionId=_shared.sessionId||null;
+      initSession(_cfg);
+    }
   }catch(e){
     toast('Error de autenticaci\u00f3n','err');
   }finally{
