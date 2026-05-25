@@ -56,31 +56,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cat-btn.kxc.active{background:#FAEEDA;border-color:#854F0B;color:#633806}
 .cat-desc{font-size:12px;color:#bbb;margin-top:6px}
 .access-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
-.access-row+.access-row,.share-input-area,.shared-item{border-top:0.5px solid #f2f2f2}
+.access-row+.access-row{border-top:0.5px solid #f2f2f2}
 .mini-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;text-transform:uppercase}
 .mini-avatar.owner{background:#E6F1FB;color:#0C447C}
 .mini-avatar.shared{background:#f0f0f0;color:#666}
+.mini-avatar.group{background:#F0EEF9;color:#4B3FA0}
 .access-info{flex:1;min-width:0}
 .access-name{font-size:14px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .access-sub{font-size:12px;color:#aaa;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badge-owner{font-size:11px;font-weight:700;background:#E6F1FB;color:#0C447C;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.badge-in{font-size:11px;font-weight:700;background:#E1F5EE;color:#085041;padding:3px 9px;border-radius:100px;white-space:nowrap}
 .btn-add{background:none;border:0.5px solid #185FA5;color:#185FA5;font-size:13px;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-add:active{background:#E6F1FB}
-.share-input-area{padding:12px 16px;display:none}
-.share-input-inner{display:flex;gap:8px}
-.share-text-input{flex:1;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;color:#111;font-family:inherit;outline:none;background:#fff;-webkit-appearance:none}
-.share-text-input:focus{border-color:#185FA5}
-.share-text-input::placeholder{color:#ccc}
-.share-hint{font-size:11px;color:#bbb;margin-top:6px;line-height:1.5}
-.share-hint b{color:#888;font-weight:600}
-.share-spinner{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;align-self:center}
-.share-spinner.show{display:block}
-.btn-share-confirm{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.btn-share-confirm:active{opacity:.8}
-.btn-share-confirm:disabled{opacity:.5;cursor:not-allowed}
-.shared-item{display:flex;align-items:center;gap:12px;padding:11px 16px}
-.btn-revoke{background:none;border:none;color:#A32D2D;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;padding:5px 8px;border-radius:6px;white-space:nowrap}
-.btn-revoke:active{background:#FCEBEB}
+/* grupos */
+.group-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.group-row+.group-row{border-top:0.5px solid #f2f2f2}
+.group-check{width:20px;height:20px;border-radius:6px;border:1.5px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .12s}
+.group-check.checked{background:#185FA5;border-color:#185FA5}
+.group-check svg{width:11px;height:11px;display:none}
+.group-check.checked svg{display:block}
+.group-check:active{opacity:.75}
+.group-name{font-size:14px;font-weight:600;color:#111;flex:1}
+.group-sub{font-size:11px;color:#aaa;margin-top:1px}
+.groups-empty{padding:14px 16px;font-size:13px;color:#bbb;text-align:center}
+/* sesiones */
 .ses-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px}
 .ses-icon{width:40px;height:40px;border-radius:11px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ses-icon svg{width:20px;height:20px;fill:none;stroke:#085041;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -178,26 +177,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div>
       </div>
     </div>
-    <div class="section-label">Acceso</div>
+    <div class="section-label">Grupos</div>
+    <div class="card" id="groups-card">
+      <div class="groups-empty">Cargando grupos...</div>
+    </div>
+    <div class="section-label">Propietario</div>
     <div class="card" id="access-card">
       <div class="access-row">
         <div class="mini-avatar owner" id="owner-avatar"></div>
         <div class="access-info"><div class="access-name" id="owner-name">T&#250;</div><div class="access-sub" id="owner-email"></div></div>
         <span class="badge-owner">Propietario</span>
       </div>
-      <div class="access-row">
-        <div class="access-info"><div class="access-name">Compartir con entrenador</div><div class="access-sub">Por email o usuario @</div></div>
-        <button class="btn-add" onclick="toggleShareInput()">+ A&#241;adir</button>
-      </div>
-      <div class="share-input-area" id="share-input-area">
-        <div class="share-input-inner">
-          <input class="share-text-input" id="share-input" type="text" placeholder="email@ejemplo.com o @usuario" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')addShared()">
-          <div class="share-spinner" id="share-spinner"></div>
-          <button class="btn-share-confirm" id="btn-share-confirm" onclick="addShared()">A&#241;adir</button>
-        </div>
-        <div class="share-hint"><b>Email</b>: carlos@club.es &nbsp;&middot;&nbsp; <b>Usuario</b>: @carlos o carlos</div>
-      </div>
-      <div id="shared-list"></div>
     </div>
     <button class="btn-delete" id="btn-delete" style="display:none" onclick="confirmDelete()">Eliminar palista</button>
   </div>
@@ -212,8 +202,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
-let _tok=null,_uid=null,_email=null,_athleteId=null,_sex=null,_cats=new Set(),_shared=[];
+let _tok=null,_uid=null,_email=null,_athleteId=null,_sex=null,_cats=new Set();
 let _athleteName='';
+let _allTeams=[]; // todos los equipos del usuario
+let _athleteTeamIds=new Set(); // teams en los que ya está el palista
 const $=id=>document.getElementById(id);
 function showLoad(msg='Guardando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
 function hideLoad(){$('overlay').classList.remove('show');}
@@ -225,7 +217,62 @@ function setSex(btn,val){_sex=val;document.querySelectorAll('.sex-btn').forEach(
 const CAT_LABELS={K1:'Kayak',C1:'Canoa',KXC:'Kayak Cross'};
 function toggleCat(btn,cat){if(_cats.has(cat)){_cats.delete(cat);btn.classList.remove('active');}else{_cats.add(cat);btn.classList.add('active');}updateCatDesc();}
 function updateCatDesc(){const desc=$('cat-desc');if(_cats.size===0){desc.textContent='Selecciona al menos una modalidad';desc.style.color='#bbb';}else{desc.textContent=[..._cats].map(c=>`${c} \u2014 ${CAT_LABELS[c]}`).join('  \u00b7  ');desc.style.color='#888';}}
-function toggleShareInput(){const area=$('share-input-area');const open=area.style.display==='block';area.style.display=open?'none':'block';if(!open)$('share-input').focus();}
+
+/* GRUPOS */
+async function loadGroups(){
+  const card=$('groups-card');
+  try{
+    // Cargar todos los equipos del usuario
+    _allTeams=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&order=name.asc&select=id,name,description');
+    // Si hay palista cargado, obtener en qué equipos está
+    if(_athleteId){
+      const rows=await api('/rest/v1/team_athletes?athlete_id=eq.'+_athleteId+'&select=team_id');
+      _athleteTeamIds=new Set(rows.map(r=>r.team_id));
+    }
+    renderGroups();
+  }catch(e){
+    card.innerHTML='<div class="groups-empty">Error al cargar grupos</div>';
+  }
+}
+function renderGroups(){
+  const card=$('groups-card');
+  if(!_allTeams.length){
+    card.innerHTML='<div class="groups-empty">No tienes grupos creados a\u00fan</div>';
+    return;
+  }
+  card.innerHTML=_allTeams.map(t=>{
+    const inTeam=_athleteTeamIds.has(t.id);
+    const ini=t.name.slice(0,2).toUpperCase();
+    return`<div class="group-row">
+      <div class="mini-avatar group">${ini}</div>
+      <div class="access-info"><div class="group-name">${escHtml(t.name)}</div>${t.description?`<div class="group-sub">${escHtml(t.description)}</div>`:''}</div>
+      <div class="group-check${inTeam?' checked':''}" id="gc-${t.id}" onclick="toggleGroup('${t.id}')">
+        <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleGroup(teamId){
+  if(!_athleteId){toast('Guarda el palista primero','err');return;}
+  const inTeam=_athleteTeamIds.has(teamId);
+  const el=$('gc-'+teamId);
+  if(el)el.style.opacity='0.5';
+  try{
+    if(inTeam){
+      await api(`/rest/v1/team_athletes?team_id=eq.${teamId}&athlete_id=eq.${_athleteId}`,{method:'DELETE'});
+      _athleteTeamIds.delete(teamId);
+      toast('Eliminado del grupo','ok');
+    }else{
+      await api('/rest/v1/team_athletes',{method:'POST',body:JSON.stringify({team_id:teamId,athlete_id:_athleteId,added_by:_uid})});
+      _athleteTeamIds.add(teamId);
+      toast('A\u00f1adido al grupo \u2713','ok');
+    }
+    renderGroups();
+  }catch(e){
+    toast(e.message,'err');
+    if(el)el.style.opacity='1';
+  }
+}
 
 /* TABS */
 function switchTab(name){
@@ -277,7 +324,6 @@ async function loadHistorial(){
 
 /* ESTADÍSTICAS */
 let _statLoaded=false,_statRaw=null;
-// Estado del calendario: {year, month} del mes visible
 let _calMonth=null;
 
 async function loadEstadisticas(){
@@ -293,7 +339,6 @@ async function loadEstadisticas(){
     const sesById={};
     sessions.forEach(s=>{sesById[s.id]=s;});
     _statRaw={sessions,sesById,myTimes};
-    // Inicializar al mes actual
     const now=new Date();
     _calMonth={year:now.getFullYear(),month:now.getMonth()};
     renderEstadisticas();
@@ -310,7 +355,6 @@ function calNavPrev(){
 function calNavNext(){
   const now=new Date();
   let {year,month}=_calMonth;
-  // No avanzar más allá del mes actual
   if(year===now.getFullYear()&&month===now.getMonth())return;
   month++;if(month>11){month=0;year++;}
   _calMonth={year,month};
@@ -320,7 +364,7 @@ function calNavNext(){
 function renderCalendar(){
   const calCard=$('cal-card');
   if(!calCard||!_statRaw)return;
-  const {sessions,sesById}=_statRaw;
+  const {sessions}=_statRaw;
   const myTimes=_statRaw.myTimes;
   const sesConEntradas=new Set(myTimes.map(t=>t.session_id));
   const sesDates=new Set();
@@ -359,7 +403,6 @@ function renderEstadisticas(){
   if(!_statRaw)return;
   const {sessions,sesById,myTimes}=_statRaw;
   const container=$('stat-content');
-
   const now=new Date();
   const cutoff=new Date(now);cutoff.setDate(cutoff.getDate()-7);cutoff.setHours(0,0,0,0);
   const sesConEntradas=new Set(myTimes.map(t=>t.session_id));
@@ -378,7 +421,6 @@ function renderEstadisticas(){
   let penSesSumaS=[];
   sesPalista.forEach(sid=>{const ents=myTimes.filter(t=>t.session_id===sid&&!t.dsq);if(!ents.length)return;penSesSumaS.push(ents.reduce((acc,t)=>acc+(t.pen||0),0)/1000);});
   const mediaPenS=penSesSumaS.length?+(penSesSumaS.reduce((a,b)=>a+b,0)/penSesSumaS.length).toFixed(1):0;
-
   const kpisHtml=`
   <div class="section-label">Actividad reciente</div>
   <div class="stat-grid">
@@ -387,8 +429,6 @@ function renderEstadisticas(){
     <div class="stat-box"><div class="stat-label">% DSQ / sesi\u00f3n</div><div class="stat-val${mediaDsqPct>30?' red':mediaDsqPct>10?' amber':'green'}">${mediaDsqPct}<span style="font-size:18px">%</span></div><div class="stat-sub">Media por sesi\u00f3n</div></div>
     <div class="stat-box"><div class="stat-label">Pen. / sesi\u00f3n</div><div class="stat-val${mediaPenS>20?' red':mediaPenS>5?' amber':'green'} small">${mediaPenS}<span style="font-size:14px">s</span></div><div class="stat-sub">Media segundos de pen.</div></div>
   </div>`;
-
-  /* ─── BARRAS: mangas últimas 7 sesiones ─── */
   const sesOrd=sessions.filter(s=>sesConEntradas.has(s.id)).slice(-7);
   let mangasChartHtml='';
   if(sesOrd.length>0){
@@ -404,8 +444,6 @@ function renderEstadisticas(){
     });
     mangasChartHtml=`<div class="section-label">Mangas por sesi\u00f3n</div><div class="chart-card"><svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}"><line x1="${pL}" y1="${pT+iH}" x2="${W-pR}" y2="${pT+iH}" stroke="#f0f0f0" stroke-width="1"/>${bars}${vals}${lbls}</svg></div>`;
   }
-
-  /* ─── LÍNEA: % DSQ últimas 10 sesiones ─── */
   const sesOrdDsq=sessions.filter(s=>sesConEntradas.has(s.id)).slice(-10);
   let dsqChartHtml='';
   if(sesOrdDsq.length>1){
@@ -433,8 +471,6 @@ function renderEstadisticas(){
     });
     dsqChartHtml=`<div class="section-label">% DSQ por sesi\u00f3n</div><div class="chart-card"><svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}">${guides}<path d="${pts}" fill="none" stroke="#A32D2D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${xlbls}</svg></div>`;
   }
-
-  /* ─── DONUT: distribución penalizaciones ─── */
   const nCero=myTimes.filter(t=>!t.dsq&&(t.pen||0)===0).length;
   const nMedia=myTimes.filter(t=>!t.dsq&&(t.pen||0)>0&&(t.pen||0)<50000).length;
   const nNulo=myTimes.filter(t=>t.dsq||(t.pen||0)>=50000).length;
@@ -447,8 +483,7 @@ function renderEstadisticas(){
       {label:'Nulo (50+)',val:nNulo,color:'#A32D2D'}
     ];
     const R=40,cx=50,cy=50,r=26;
-    let startAngle=-Math.PI/2;
-    let paths='';
+    let startAngle=-Math.PI/2,paths='';
     slices.forEach(s=>{
       if(s.val===0)return;
       const angle=s.val/totalD*2*Math.PI;
@@ -467,51 +502,13 @@ function renderEstadisticas(){
     }).join('');
     donutHtml=`<div class="section-label">Distribuci\u00f3n de penalizaciones</div><div class="chart-card"><div class="donut-wrap"><svg width="100" height="100" viewBox="0 0 100 100">${paths}<text x="50" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A5C" font-family="-apple-system,sans-serif">${totalD}</text><text x="50" y="60" text-anchor="middle" font-size="8" fill="#aaa" font-family="-apple-system,sans-serif">mangas</text></svg><div class="donut-legend">${legendHtml}</div></div></div>`;
   }
-
-  /* ─── CALENDARIO: un mes con navegación ─── */
   const calHtml=`<div class="section-label">Calendario de sesiones</div><div class="chart-card" id="cal-card"></div>`;
-
   container.innerHTML=`${kpisHtml}${mangasChartHtml}${dsqChartHtml}${donutHtml}${calHtml}`;
-  // Renderizar el mes actual en el card recién insertado
   renderCalendar();
 }
 
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));return j;}
-async function resolveIdentifier(raw){
-  const val=raw.trim();if(!val)return null;
-  const emailRx=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-  if(emailRx.test(val)){try{const res=await api('/rest/v1/rpc/get_user_id_by_email',{method:'POST',body:JSON.stringify({p_email:val.toLowerCase()})});if(res?.user_id)return{user_id:res.user_id,display:val.toLowerCase(),type:'email'};}catch{}return null;}
-  const username=val.startsWith('@')?val.slice(1):val;
-  if(!username)return null;
-  try{const rows=await api('/rest/v1/profiles?username=eq.'+encodeURIComponent(username.toLowerCase())+'&select=id,username,name&limit=1');if(rows&&rows.length>0){const r=rows[0];return{user_id:r.id,display:'@'+r.username,displayName:r.name||null,type:'username'};}}catch{}
-  return null;
-}
-async function addShared(){
-  const raw=$('share-input').value.trim();
-  if(!raw){toast('Introduce un email o usuario @','err');return;}
-  const lowerRaw=raw.toLowerCase().replace(/^@/,'');
-  if(_shared.find(s=>s.display.toLowerCase().replace(/^@/,'')===lowerRaw)){toast('Ya est\u00e1 en la lista','err');return;}
-  $('share-spinner').classList.add('show');$('btn-share-confirm').disabled=true;
-  let resolved=null;
-  try{resolved=await resolveIdentifier(raw);}finally{$('share-spinner').classList.remove('show');$('btn-share-confirm').disabled=false;}
-  if(!resolved){toast('No se encontr\u00f3 ning\u00fan usuario con ese dato','err');return;}
-  if(resolved.user_id===_uid){toast('Eres el propietario','err');return;}
-  if(_shared.find(s=>s.user_id===resolved.user_id)){toast('Ya tiene acceso','err');return;}
-  _shared.push({user_id:resolved.user_id,display:resolved.display,displayName:resolved.displayName||null,id:null});
-  $('share-input').value='';$('share-input-area').style.display='none';
-  renderShared();toast(resolved.display+' a\u00f1adido \u2713','ok');
-}
-function removeShared(userId){_shared=_shared.filter(s=>s.user_id!==userId);renderShared();}
-function renderShared(){
-  const list=$('shared-list');
-  if(_shared.length===0){list.innerHTML='';return;}
-  list.innerHTML=_shared.map(s=>{
-    const label=s.displayName?`${s.displayName} <span style="color:#aaa;font-weight:400">${s.display}</span>`:s.display;
-    const ini=s.display.replace('@','').slice(0,2).toUpperCase();
-    return`<div class="shared-item"><div class="mini-avatar shared">${ini}</div><div class="access-info"><div class="access-name">${label}</div><div class="access-sub">Puede ver y usar en sesiones</div></div><button class="btn-revoke" onclick="removeShared('${s.user_id}')">Quitar</button></div>`;
-  }).join('');
-}
 async function savePalista(){
   const name=$('inp-name').value.trim();
   if(!name){toast('El nombre es obligatorio','err');return;}
@@ -521,18 +518,16 @@ async function savePalista(){
   $('btn-save').disabled=true;
   try{
     let athleteId=_athleteId;
-    if(!athleteId){const res=await api('/rest/v1/athletes',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(payload)});athleteId=res[0].id;}
-    else{await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});}
-    await syncSharedAccess(athleteId);
+    if(!athleteId){
+      const res=await api('/rest/v1/athletes',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(payload)});
+      athleteId=res[0].id;
+      _athleteId=athleteId;
+    }else{
+      await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});
+    }
     hideLoad();toast(_athleteId?'Cambios guardados':'Palista creado','ok');
     setTimeout(()=>window.location.href='athletes.html',1200);
   }catch(e){hideLoad();$('btn-save').disabled=false;toast(e.message,'err');}
-}
-async function syncSharedAccess(athleteId){
-  let existing=[];
-  try{existing=await api(`/rest/v1/athlete_access?athlete_id=eq.${athleteId}&select=id,trainer_id`);}catch{}
-  for(const s of _shared){if(s.id||!s.user_id)continue;try{await api('/rest/v1/athlete_access',{method:'POST',body:JSON.stringify({athlete_id:athleteId,trainer_id:s.user_id,granted_by:_uid,can_share:true})});}catch{}}
-  for(const ex of existing){if(ex.trainer_id===_uid)continue;const stillPresent=_shared.find(s=>s.user_id===ex.trainer_id);if(!stillPresent){try{await api(`/rest/v1/athlete_access?id=eq.${ex.id}`,{method:'DELETE'});}catch{}}}
 }
 async function confirmDelete(){
   if(!confirm('\u00bfEliminar este palista? Los tiempos registrados se conservar\u00e1n en las sesiones.'))return;
@@ -553,13 +548,6 @@ async function loadAthlete(id){
     updateAvatar();
     if(a.sex){const map={M:0,F:1,O:2};const btns=document.querySelectorAll('.sex-btn');if(btns[map[a.sex]])setSex(btns[map[a.sex]],a.sex);}
     if(a.categories){a.categories.forEach(cat=>{const btn=document.querySelector(`.cat-btn.${cat.toLowerCase()}`);if(btn)toggleCat(btn,cat);});}
-    const accesses=await api(`/rest/v1/athlete_access?athlete_id=eq.${id}&select=id,trainer_id`);
-    for(const ac of accesses){
-      if(ac.trainer_id===_uid)continue;
-      try{const profiles=await api(`/rest/v1/profiles?id=eq.${ac.trainer_id}&select=id,username,name&limit=1`);if(profiles&&profiles.length>0){const p=profiles[0];_shared.push({user_id:ac.trainer_id,display:'@'+(p.username||ac.trainer_id),displayName:p.name||null,id:ac.id});continue;}}catch{}
-      try{const res=await api('/rest/v1/rpc/get_email_by_user_id',{method:'POST',body:JSON.stringify({p_user_id:ac.trainer_id})});if(res?.email)_shared.push({user_id:ac.trainer_id,display:res.email,displayName:null,id:ac.id});}catch{}
-    }
-    renderShared();
     $('btn-delete').style.display='block';
     $('tabs-bar').style.display='flex';
     hideLoad();
@@ -576,6 +564,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const params=new URLSearchParams(window.location.search);
   _athleteId=params.get('id')||null;
   if(_athleteId){$('page-title').textContent='Cargando...';await loadAthlete(_athleteId);}
+  // Cargar grupos siempre (incluso palista nuevo)
+  await loadGroups();
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
