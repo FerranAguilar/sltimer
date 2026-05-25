@@ -17,7 +17,7 @@
   <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-  <title>SLTimer — Sesión Compartida</title>
+  <title>SLTimer &#8212; Sesi&#243;n Compartida</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -31,24 +31,18 @@
     .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
     .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
     .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-    /* Screens */
     .screen{display:none}.screen.active{display:block}
     .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
-
-    /* Cards */
     .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
     .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
     label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px}
     input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
     input:focus{outline:none;border-color:#185FA5}
-
-    /* Hero screen */
+    /* Hero */
     .hero-banner{background:linear-gradient(135deg,#1B3A5C 0%,#185FA5 100%);border-radius:18px;padding:24px 20px;display:flex;flex-direction:column;gap:6px}
     .hero-icon{font-size:36px;margin-bottom:4px}
     .hero-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:0.5px;line-height:1}
     .hero-desc{font-size:13px;color:rgba(255,255,255,0.72);line-height:1.5}
-
     /* Action cards */
     .action-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent}
     .action-card:active{background:#f5f8fc}
@@ -59,7 +53,6 @@
     .action-card-title{font-size:16px;font-weight:700;color:#111;margin-bottom:2px}
     .action-card-desc{font-size:12px;color:#888;line-height:1.4}
     .action-card-arrow{color:#ccc;font-size:20px;flex-shrink:0}
-
     /* Buttons */
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
     .btn-primary:active{opacity:.85}
@@ -68,7 +61,6 @@
     .btn-secondary:active{background:#f5f5f5}
     .btn-green{background:#0F6E56}
     .btn-red{background:#A32D2D}
-
     /* Code display */
     .code-display{background:#1B3A5C;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:8px}
     .code-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.50);text-transform:uppercase;letter-spacing:0.10em}
@@ -76,15 +68,13 @@
     .code-hint{font-size:12px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.4}
     .code-copy-btn{margin-top:4px;padding:8px 20px;border-radius:100px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.10);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
     .code-copy-btn:active{background:rgba(255,255,255,0.22)}
-
     /* Code input */
     .code-input-wrap{display:flex;gap:8px;align-items:center}
     .code-input{flex:1;padding:14px 16px;border:1.5px solid #ddd;border-radius:12px;font-size:28px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#1B3A5C;background:#fff;text-align:center;-webkit-appearance:none}
     .code-input:focus{outline:none;border-color:#185FA5}
     .code-input.error{border-color:#A32D2D;background:#FEF2F2}
     .code-input.ok{border-color:#0F6E56;background:#F0FAF5}
-
-    /* Coaches list */
+    /* Coaches */
     .coaches-list{display:flex;flex-direction:column;gap:6px}
     .coach-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px}
     .coach-avatar{width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
@@ -94,24 +84,51 @@
     .coach-badge.owner{background:#FEF3C7;color:#92400E}
     .live-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;animation:pulse 1.5s infinite}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.75)}}
-
-    /* Session info preview */
+    /* Session preview */
     .ses-preview{background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:14px}
     .ses-preview-name{font-size:16px;font-weight:700;color:#1B3A5C;margin-bottom:4px}
     .ses-preview-meta{font-size:12px;color:#888}
     .ses-preview-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
     .ses-chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:100px;background:#E6F1FB;color:#0C447C}
-
-    /* Active session banner */
+    /* Active banner */
     .active-banner{background:#0F6E56;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
     .active-banner-text{flex:1;font-size:13px;font-weight:600;color:#fff;line-height:1.4}
     .active-banner-code{font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(255,255,255,0.75);letter-spacing:3px}
-
     /* Divider */
     .divider{display:flex;align-items:center;gap:10px}
     .divider-line{flex:1;height:0.5px;background:#e5e5e5}
     .divider-text{font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.06em}
-
+    /* ── Palistas (same as slalom.html) ── */
+    .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .pal-row-top{display:flex;align-items:center;gap:10px}
+    .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pal-search-wrap{position:relative;flex:1}
+    .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+    .pal-input:focus{outline:none;border-color:#185FA5}
+    .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
+    .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
+    .pal-dropdown.open{display:block}
+    .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+    .pal-option:last-child{border-bottom:none}
+    .pal-option:active{background:#f7f7f7}
+    .pal-option-name{font-weight:600;color:#111;flex:1}
+    .pal-option-cats{display:flex;gap:4px}
+    .cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
+    .cat-badge.K1{background:#E6F1FB;color:#0C447C}
+    .cat-badge.C1{background:#E1F5EE;color:#085041}
+    .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:0;line-height:1;display:none}
+    .pal-clear.show{display:block}
+    .cat-selector{display:flex;gap:6px}
+    .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+    .cat-btn:active{opacity:.75}
+    .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+    .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+    .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
+    /* Counter row (inline, smaller) */
+    .counter-inline{display:flex;align-items:center;gap:8px}
+    .counter-btn-sm{width:34px;height:34px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
+    .counter-btn-sm:active{background:#f0f0f0}
+    .counter-val-sm{flex:1;text-align:center;font-size:20px;font-weight:700;color:#111;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:6px 0;line-height:1}
     /* Overlay & toast */
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
@@ -136,118 +153,100 @@
     <span class="topbar-brand-name">SLTimer</span>
   </a>
   <div class="topbar-divider"></div>
-  <span class="topbar-title">Sesión Compartida</span>
+  <span class="topbar-title">Sesi&#243;n Compartida</span>
   <div class="topbar-right"><div class="avatar" id="top-avatar"></div></div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANTALLA 1: HOME — Crear o Unirse
-     ══════════════════════════════════════════════ -->
+<!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="content">
-
     <div class="hero-banner">
-      <div class="hero-icon">🤝</div>
+      <div class="hero-icon">&#129309;</div>
       <div class="hero-title">Sesiones Compartidas</div>
-      <div class="hero-desc">Varios entrenadores registrando tiempos a la vez, en tiempo real, sobre la misma sesión.</div>
+      <div class="hero-desc">Varios entrenadores registrando tiempos a la vez, en tiempo real, sobre la misma sesi&#243;n.</div>
     </div>
-
-    <!-- Banner sesión activa (si hay una en curso) -->
     <div id="active-session-banner" style="display:none">
       <div class="active-banner">
-        <span style="font-size:20px">🟢</span>
-        <div class="active-banner-text">
-          Tienes una sesión compartida activa<br>
-          <span class="active-banner-code" id="active-code-label"></span>
-        </div>
-        <button onclick="resumeActiveSession()" style="padding:8px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.20);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Volver →</button>
+        <span style="font-size:20px">&#128994;</span>
+        <div class="active-banner-text">Tienes una sesi&#243;n compartida activa<br><span class="active-banner-code" id="active-code-label"></span></div>
+        <button onclick="resumeActiveSession()" style="padding:8px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.20);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Volver &#8594;</button>
       </div>
     </div>
-
-    <div class="section-label">¿Qué quieres hacer?</div>
-
+    <div class="section-label">&#191;Qu&#233; quieres hacer?</div>
     <div class="action-card" onclick="showScreen('screen-create')">
-      <div class="action-card-icon create">🚀</div>
+      <div class="action-card-icon create">&#128640;</div>
       <div class="action-card-info">
-        <div class="action-card-title">Crear sesión compartida</div>
-        <div class="action-card-desc">Genera un código que otros entrenadores pueden usar para unirse</div>
+        <div class="action-card-title">Crear sesi&#243;n compartida</div>
+        <div class="action-card-desc">Genera un c&#243;digo que otros entrenadores pueden usar para unirse</div>
       </div>
-      <span class="action-card-arrow">›</span>
+      <span class="action-card-arrow">&#8250;</span>
     </div>
-
     <div class="action-card" onclick="showScreen('screen-join')">
-      <div class="action-card-icon join">🔗</div>
+      <div class="action-card-icon join">&#128279;</div>
       <div class="action-card-info">
-        <div class="action-card-title">Unirme a una sesión</div>
-        <div class="action-card-desc">Introduce el código que te ha compartido el entrenador principal</div>
+        <div class="action-card-title">Unirme a una sesi&#243;n</div>
+        <div class="action-card-desc">Introduce el c&#243;digo que te ha compartido el entrenador principal</div>
       </div>
-      <span class="action-card-arrow">›</span>
+      <span class="action-card-arrow">&#8250;</span>
     </div>
-
     <div class="divider"><div class="divider-line"></div><div class="divider-text">o</div><div class="divider-line"></div></div>
-
-    <button class="btn-secondary" onclick="window.location.href='slalom.html'">Crear sesión normal →</button>
-
+    <button class="btn-secondary" onclick="window.location.href='slalom.html'">Crear sesi&#243;n normal &#8594;</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANTALLA 2: CREAR sesión compartida
-     ══════════════════════════════════════════════ -->
+<!-- CREAR -->
 <div class="screen" id="screen-create">
   <div class="content">
-    <div class="section-label">Configurar la sesión</div>
+    <div class="section-label">Datos de la sesi&#243;n</div>
     <div class="card">
-      <div><label>Nombre de la sesión</label><input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla"></div>
-      <div><label>Lugar</label><input id="cfg-lugar" type="text" placeholder="Ej: Canal olímpico de Sevilla"></div>
+      <div><label>Nombre de la sesi&#243;n</label><input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla"></div>
+      <div><label>Lugar</label><input id="cfg-lugar" type="text" placeholder="Ej: Canal ol&#237;mpico de Sevilla"></div>
       <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
     </div>
 
     <div class="section-label">Estructura</div>
     <div class="card" style="flex-direction:row;gap:16px">
-      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
         <div class="section-label">Palistas</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="adjustCfg('pal',-1)" style="width:36px;height:36px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
-          <div id="val-pal" style="flex:1;text-align:center;font-size:22px;font-weight:700;color:#111;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:6px 0">3</div>
-          <button onclick="adjustCfg('pal',1)" style="width:36px;height:36px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+        <div class="counter-inline">
+          <button class="counter-btn-sm" onclick="adjustCfg('pal',-1)">&#8722;</button>
+          <div class="counter-val-sm" id="val-pal">3</div>
+          <button class="counter-btn-sm" onclick="adjustCfg('pal',1)">+</button>
         </div>
       </div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
         <div class="section-label">Tramos</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="adjustCfg('tra',-1)" style="width:36px;height:36px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
-          <div id="val-tra" style="flex:1;text-align:center;font-size:22px;font-weight:700;color:#111;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:6px 0">3</div>
-          <button onclick="adjustCfg('tra',1)" style="width:36px;height:36px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+        <div class="counter-inline">
+          <button class="counter-btn-sm" onclick="adjustCfg('tra',-1)">&#8722;</button>
+          <div class="counter-val-sm" id="val-tra">3</div>
+          <button class="counter-btn-sm" onclick="adjustCfg('tra',1)">+</button>
         </div>
       </div>
     </div>
 
-    <button class="btn-primary" onclick="createSharedSession()">🚀 Crear y obtener código</button>
-    <button class="btn-secondary" onclick="showScreen('screen-home')">← Volver</button>
+    <div class="section-label">Palistas</div>
+    <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
+
+    <button class="btn-primary" onclick="createSharedSession()">&#128640; Crear y obtener c&#243;digo</button>
+    <button class="btn-secondary" onclick="showScreen('screen-home')">&#8592; Volver</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANTALLA 3: CÓDIGO generado — Compartir
-     ══════════════════════════════════════════════ -->
+<!-- CÓDIGO -->
 <div class="screen" id="screen-code">
   <div class="content">
-
     <div class="code-display">
-      <div class="code-label">Código de sesión</div>
-      <div class="code-value" id="generated-code">——</div>
-      <div class="code-hint">Comparte este código con los otros entrenadores para que puedan unirse</div>
-      <button class="code-copy-btn" onclick="copyCode()">📋 Copiar código</button>
+      <div class="code-label">C&#243;digo de sesi&#243;n</div>
+      <div class="code-value" id="generated-code">&#8212;&#8212;</div>
+      <div class="code-hint">Comparte este c&#243;digo con los otros entrenadores para que puedan unirse</div>
+      <button class="code-copy-btn" onclick="copyCode()">&#128203; Copiar c&#243;digo</button>
     </div>
-
-    <div class="section-label">Sesión creada</div>
+    <div class="section-label">Sesi&#243;n creada</div>
     <div class="ses-preview">
       <div class="ses-preview-name" id="preview-name"></div>
       <div class="ses-preview-meta" id="preview-meta"></div>
       <div class="ses-preview-badges" id="preview-badges"></div>
     </div>
-
     <div class="section-label">Entrenadores conectados</div>
     <div class="coaches-list" id="coaches-list">
       <div class="coach-row">
@@ -257,53 +256,41 @@
         <span class="coach-badge owner">Creador</span>
       </div>
     </div>
-
-    <button class="btn-primary btn-green" onclick="goToSlalom()">▶ Iniciar cronómetro →</button>
-    <button class="btn-secondary btn-red" style="color:#fff;border:none" onclick="closeSharedSession()">⏹ Cerrar sesión compartida</button>
-
+    <button class="btn-primary btn-green" onclick="goToSlalom()">&#9654; Iniciar cron&#243;metro &#8594;</button>
+    <button class="btn-secondary btn-red" style="color:#fff;border:none" onclick="closeSharedSession()">&#9209; Cerrar sesi&#243;n compartida</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANTALLA 4: UNIRSE con código
-     ══════════════════════════════════════════════ -->
+<!-- UNIRSE -->
 <div class="screen" id="screen-join">
   <div class="content">
-
-    <div class="section-label">Introduce el código</div>
+    <div class="section-label">Introduce el c&#243;digo</div>
     <div class="card" style="gap:16px">
       <div>
-        <label>Código de sesión (6 caracteres)</label>
+        <label>C&#243;digo de sesi&#243;n (6 caracteres)</label>
         <div class="code-input-wrap">
           <input class="code-input" id="join-code-input" type="text" maxlength="6" placeholder="ABC123" oninput="onCodeInput()" autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
       </div>
-      <button class="btn-primary" id="btn-join" onclick="joinSession()" disabled>Buscar sesión →</button>
+      <button class="btn-primary" id="btn-join" onclick="joinSession()" disabled>Buscar sesi&#243;n &#8594;</button>
     </div>
-
-    <button class="btn-secondary" onclick="showScreen('screen-home')">← Volver</button>
+    <button class="btn-secondary" onclick="showScreen('screen-home')">&#8592; Volver</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PANTALLA 5: VISTA PREVIA antes de unirse
-     ══════════════════════════════════════════════ -->
+<!-- PREVIEW UNIRSE -->
 <div class="screen" id="screen-join-preview">
   <div class="content">
-
-    <div class="section-label">Sesión encontrada</div>
+    <div class="section-label">Sesi&#243;n encontrada</div>
     <div class="ses-preview">
       <div class="ses-preview-name" id="join-preview-name"></div>
       <div class="ses-preview-meta" id="join-preview-meta"></div>
       <div class="ses-preview-badges" id="join-preview-badges"></div>
     </div>
-
-    <div class="section-label">Entrenadores en la sesión</div>
+    <div class="section-label">Entrenadores en la sesi&#243;n</div>
     <div class="coaches-list" id="join-coaches-list"></div>
-
-    <button class="btn-primary btn-green" onclick="confirmJoin()">🔗 Unirme a esta sesión →</button>
-    <button class="btn-secondary" onclick="showScreen('screen-join')">← Cambiar código</button>
-
+    <button class="btn-primary btn-green" onclick="confirmJoin()">&#128279; Unirme a esta sesi&#243;n &#8594;</button>
+    <button class="btn-secondary" onclick="showScreen('screen-join')">&#8592; Cambiar c&#243;digo</button>
   </div>
 </div>
 
@@ -311,11 +298,13 @@
 const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
-const CFG = {pal:3,tra:3}, MIN={pal:1,tra:1}, MAX={pal:15,tra:12};
-let _tok=null, _uid=null, _email=null, _coachName=null;
-let _sharedSessionId=null, _sharedCode=null, _sessionId=null;
+const CFG={pal:3,tra:3},MIN={pal:1,tra:1},MAX={pal:15,tra:12};
+let _tok=null,_uid=null,_email=null,_coachName=null;
+let _sharedSessionId=null,_sharedCode=null,_sessionId=null;
 let _joinPreviewData=null;
 let _realtimeChannel=null;
+let _athletes=[];
+let _palState=[];
 
 const $=id=>document.getElementById(id);
 function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
@@ -337,94 +326,119 @@ async function api(path,opts={}){
 function adjustCfg(key,delta){
   CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
   $('val-'+key).textContent=CFG[key];
+  if(key==='pal')buildPalList();
 }
 
-/* ── GENERAR CÓDIGO ÚNICO ── */
+/* ── LISTA DE PALISTAS ── */
+function buildPalList(){
+  const n=CFG.pal;
+  while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});
+  _palState=_palState.slice(0,n);
+  const c=$('pal-list');c.innerHTML='';
+  for(let i=0;i<n;i++)renderPalRow(i,c);
+}
+function renderPalRow(i,container){
+  const s=_palState[i];
+  const row=document.createElement('div');row.className='pal-row';row.id='spal-row-'+i;
+  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista\u2026" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">\u2715</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categor\u00eda</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
+  container.appendChild(row);
+}
+function onPalInput(i){
+  const val=$('spal-input-'+i).value;
+  _palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;
+  $('spal-clear-'+i).classList.toggle('show',val.length>0);
+  showPalCat(i,val.length>0);
+  openPalDropdown(i);
+}
+function openPalDropdown(i){
+  const q=($('spal-input-'+i).value||'').toLowerCase().trim();
+  const dd=$('spal-dd-'+i);
+  if(!q){dd.classList.remove('open');dd.innerHTML='';return;}
+  const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  dd.innerHTML=m.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")} ',[${(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`'${c}'`).join(',')}])"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+function delayPalClose(i){setTimeout(()=>{const dd=$('spal-dd-'+i);if(dd)dd.classList.remove('open');},150);}
+function selectPalAthlete(i,id,name,cats){
+  _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
+  const inp=$('spal-input-'+i);inp.value=name;inp.classList.add('matched');
+  $('spal-clear-'+i).classList.add('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,true);
+  if(cats.length===1)setPalCatUI(i,cats[0]);else setPalCatUI(i,_palState[i].category);
+}
+function clearPal(i){
+  _palState[i]={id:null,name:'',category:null,isTemp:false};
+  const inp=$('spal-input-'+i);inp.value='';inp.classList.remove('matched');
+  $('spal-clear-'+i).classList.remove('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,false);
+}
+function showPalCat(i,show){$('spal-cat-wrap-'+i).style.display=show?'flex':'none';}
+function setPalCat(i,cat){_palState[i].category=cat;setPalCatUI(i,cat);}
+function setPalCatUI(i,cat){
+  const w=$('spal-cat-wrap-'+i);if(!w)return;
+  w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
+}
+
+/* ── CÓDIGO ── */
 function generateCode(){
   const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
 }
 
-/* ── CREAR SESIÓN COMPARTIDA ── */
+/* ── CREAR SESIÓN ── */
 async function createSharedSession(){
   const name=$('cfg-name').value.trim();
-  if(!name){toast('Introduce un nombre para la sesión','err');return;}
+  if(!name){toast('Introduce un nombre para la sesi\u00f3n','err');return;}
   const lugar=$('cfg-lugar').value.trim();
   const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+  const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp||false}));
 
-  showLoad('Creando sesión...');
+  showLoad('Creando sesi\u00f3n...');
   try{
-    // 1. Crear la sesión base en Supabase
     const sesRow=await api('/rest/v1/sessions?select=id',{
       method:'POST',
       headers:{'Prefer':'return=representation'},
-      body:JSON.stringify({
-        user_id:_uid,
-        name,
-        lugar:lugar||null,
-        data:fecha,
-        n_pal:CFG.pal,
-        n_tra:CFG.tra,
-        palistas:[]
-      })
+      body:JSON.stringify({user_id:_uid,name,lugar:lugar||null,data:fecha,n_pal:CFG.pal,n_tra:CFG.tra,palistas})
     });
     _sessionId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
 
-    // 2. Crear la shared_session con código único
-    let code=generateCode(), attempts=0;
+    let code=generateCode(),attempts=0;
     while(attempts<5){
       try{
         const shRow=await api('/rest/v1/shared_sessions?select=id,code',{
           method:'POST',
           headers:{'Prefer':'return=representation'},
-          body:JSON.stringify({
-            code,
-            session_id:_sessionId,
-            created_by:_uid,
-            is_active:true
-          })
+          body:JSON.stringify({code,session_id:_sessionId,created_by:_uid,is_active:true})
         });
         _sharedSessionId=Array.isArray(shRow)?shRow[0].id:shRow.id;
         _sharedCode=Array.isArray(shRow)?shRow[0].code:shRow.code;
         break;
-      }catch(e){
-        // código duplicado, reintentar con otro
-        code=generateCode();
-        attempts++;
-      }
+      }catch{code=generateCode();attempts++;}
     }
-    if(!_sharedCode)throw new Error('No se pudo generar un código único');
+    if(!_sharedCode)throw new Error('No se pudo generar un c\u00f3digo \u00fanico');
 
-    // 3. Registrar al creador como participante
     await api('/rest/v1/session_coaches',{
       method:'POST',
       headers:{'Prefer':'return=minimal'},
-      body:JSON.stringify({
-        session_id:_sessionId,
-        shared_session_id:_sharedSessionId,
-        coach_id:_uid,
-        coach_name:_coachName||_email
-      })
+      body:JSON.stringify({session_id:_sessionId,shared_session_id:_sharedSessionId,coach_id:_uid,coach_name:_coachName||_email})
     });
 
-    // 4. Guardar estado localmente
-    const sharedState={
-      sharedSessionId:_sharedSessionId,
-      sessionId:_sessionId,
-      code:_sharedCode,
-      isOwner:true,
-      cfg:{name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas:[]}
-    };
+    const sharedState={sharedSessionId:_sharedSessionId,sessionId:_sessionId,code:_sharedCode,isOwner:true,cfg:{name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas}};
     sessionStorage.setItem('slt_shared',JSON.stringify(sharedState));
 
     hideLoad();
     renderCodeScreen({name,lugar,fecha});
     subscribeToCoaches();
-
   }catch(err){
-    hideLoad();
-    console.error(err);
-    toast('Error al crear la sesión: '+err.message,'err');
+    hideLoad();console.error(err);
+    toast('Error al crear la sesi\u00f3n: '+err.message,'err');
   }
 }
 
@@ -432,33 +446,27 @@ async function createSharedSession(){
 function renderCodeScreen({name,lugar,fecha}){
   $('generated-code').textContent=_sharedCode;
   $('preview-name').textContent=name;
-  const parts=[];
-  if(lugar)parts.push(lugar);
-  if(fecha)parts.push(new Date(fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
-  $('preview-meta').textContent=parts.join(' · ')||'Sin ubicación';
-  const badges=$('preview-badges');
-  badges.innerHTML=`<span class="ses-chip">${CFG.pal} palistas</span><span class="ses-chip">${CFG.tra} tramos</span>`;
+  const parts=[];if(lugar)parts.push(lugar);if(fecha)parts.push(new Date(fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('preview-meta').textContent=parts.join(' \u00b7 ')||'Sin ubicaci\u00f3n';
+  $('preview-badges').innerHTML=`<span class="ses-chip">${CFG.pal} palistas</span><span class="ses-chip">${CFG.tra} tramos</span>`;
   $('owner-avatar').textContent=initials(_coachName||_email?.split('@')[0]||'?');
-  $('owner-name').textContent=_coachName||_email?.split('@')[0]||'Tú';
+  $('owner-name').textContent=_coachName||_email?.split('@')[0]||'T\u00fa';
   showScreen('screen-code');
 }
 
-/* ── COPIAR CÓDIGO ── */
+/* ── COPIAR ── */
 function copyCode(){
   const code=_sharedCode||$('generated-code').textContent;
-  navigator.clipboard?.writeText(code).then(()=>toast('Código copiado ✓','ok')).catch(()=>{
-    // Fallback
+  navigator.clipboard?.writeText(code).then(()=>toast('C\u00f3digo copiado \u2713','ok')).catch(()=>{
     const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    toast('Código copiado ✓','ok');
+    toast('C\u00f3digo copiado \u2713','ok');
   });
 }
 
-/* ── REALTIME: escuchar nuevos entrenadores ── */
+/* ── POLLING COACHES ── */
 function subscribeToCoaches(){
   if(!_sessionId)return;
-  if(_realtimeChannel){_realtimeChannel.unsubscribe();_realtimeChannel=null;}
-
-  // Usar polling ligero (Supabase Realtime requiere la lib JS; aquí usamos polling cada 5s)
+  if(_realtimeChannel){clearInterval(_realtimeChannel);_realtimeChannel=null;}
   _realtimeChannel=setInterval(async()=>{
     try{
       const coaches=await api('/rest/v1/session_coaches?shared_session_id=eq.'+_sharedSessionId+'&select=coach_id,coach_name&order=joined_at.asc');
@@ -466,20 +474,12 @@ function subscribeToCoaches(){
     }catch{}
   },5000);
 }
-
 function renderCoachesList(coaches,container,isOwnerView=false){
   container.innerHTML='';
   coaches.forEach((c,i)=>{
-    const isMe=c.coach_id===_uid;
-    const isOwner=i===0;
+    const isMe=c.coach_id===_uid,isOwner=i===0;
     const row=document.createElement('div');row.className='coach-row';
-    row.innerHTML=`
-      <div class="coach-avatar">${initials(c.coach_name||'?')}</div>
-      <span class="coach-name">${c.coach_name||'Entrenador'}</span>
-      <div class="live-dot"></div>
-      ${isOwner?'<span class="coach-badge owner">Creador</span>':''}
-      ${isMe&&!isOwner?'<span class="coach-badge me">Tú</span>':''}
-    `;
+    row.innerHTML=`<div class="coach-avatar">${initials(c.coach_name||'?')}</div><span class="coach-name">${c.coach_name||'Entrenador'}</span><div class="live-dot"></div>${isOwner?'<span class="coach-badge owner">Creador</span>':''}${isMe&&!isOwner?'<span class="coach-badge me">T\u00fa</span>':''}`;
     container.appendChild(row);
   });
 }
@@ -487,40 +487,28 @@ function renderCoachesList(coaches,container,isOwnerView=false){
 /* ── IR AL CRONÓMETRO ── */
 function goToSlalom(){
   const raw=sessionStorage.getItem('slt_shared');
-  if(!raw){toast('Error: sesión no encontrada','err');return;}
-  // Guardar también como slalom_cfg para que slalom.html lo cargue
+  if(!raw){toast('Error: sesi\u00f3n no encontrada','err');return;}
   const state=JSON.parse(raw);
   sessionStorage.setItem('slalom_cfg',JSON.stringify(state.cfg));
   sessionStorage.setItem('slt_shared',JSON.stringify(state));
   window.location.href='slalom.html';
 }
 
-/* ── CERRAR SESIÓN COMPARTIDA ── */
+/* ── CERRAR SESIÓN ── */
 async function closeSharedSession(){
-  if(!confirm('¿Cerrar la sesión compartida? Los otros entrenadores no podrán seguir uniéndose.'))return;
+  if(!confirm('\u00bfCerrar la sesi\u00f3n compartida? Los otros entrenadores no podr\u00e1n seguir uni\u00e9ndose.'))return;
   showLoad('Cerrando...');
   try{
-    if(_sharedSessionId){
-      await api('/rest/v1/shared_sessions?id=eq.'+_sharedSessionId,{
-        method:'PATCH',
-        headers:{'Prefer':'return=minimal'},
-        body:JSON.stringify({is_active:false})
-      });
-    }
+    if(_sharedSessionId)await api('/rest/v1/shared_sessions?id=eq.'+_sharedSessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({is_active:false})});
     if(_realtimeChannel){clearInterval(_realtimeChannel);_realtimeChannel=null;}
     sessionStorage.removeItem('slt_shared');
     _sharedSessionId=null;_sharedCode=null;_sessionId=null;
-    hideLoad();
-    toast('Sesión compartida cerrada','ok');
-    showScreen('screen-home');
-    checkActiveSession();
-  }catch(err){
-    hideLoad();
-    toast('Error: '+err.message,'err');
-  }
+    hideLoad();toast('Sesi\u00f3n compartida cerrada','ok');
+    showScreen('screen-home');checkActiveSession();
+  }catch(err){hideLoad();toast('Error: '+err.message,'err');}
 }
 
-/* ── INPUT CÓDIGO ── */
+/* ── INPUT CÓDIGO UNIRSE ── */
 function onCodeInput(){
   const val=$('join-code-input').value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,6);
   $('join-code-input').value=val;
@@ -528,140 +516,77 @@ function onCodeInput(){
   $('btn-join').disabled=val.length!==6;
 }
 
-/* ── BUSCAR SESIÓN POR CÓDIGO ── */
+/* ── BUSCAR SESIÓN ── */
 async function joinSession(){
   const code=$('join-code-input').value.trim().toUpperCase();
-  if(code.length!==6){toast('Introduce un código de 6 caracteres','err');return;}
-
-  showLoad('Buscando sesión...');
+  if(code.length!==6){toast('Introduce un c\u00f3digo de 6 caracteres','err');return;}
+  showLoad('Buscando sesi\u00f3n...');
   try{
     const rows=await api('/rest/v1/shared_sessions?code=eq.'+code+'&is_active=eq.true&select=id,session_id,created_by,code');
-    if(!rows||!rows.length){
-      $('join-code-input').classList.add('error');
-      hideLoad();
-      toast('Código no encontrado o sesión cerrada','err');
-      return;
-    }
+    if(!rows||!rows.length){$('join-code-input').classList.add('error');hideLoad();toast('C\u00f3digo no encontrado o sesi\u00f3n cerrada','err');return;}
     const shared=rows[0];
-    // Cargar datos de la sesión
     const sesRows=await api('/rest/v1/sessions?id=eq.'+shared.session_id+'&select=id,name,lugar,data,n_pal,n_tra,palistas');
     const ses=sesRows[0];
-    // Cargar entrenadores ya en la sesión
     const coaches=await api('/rest/v1/session_coaches?shared_session_id=eq.'+shared.id+'&select=coach_id,coach_name&order=joined_at.asc');
-
     $('join-code-input').classList.add('ok');
     _joinPreviewData={shared,ses,coaches};
-
-    // Renderizar vista previa
     $('join-preview-name').textContent=ses.name;
-    const parts=[];
-    if(ses.lugar)parts.push(ses.lugar);
-    if(ses.data)parts.push(new Date(ses.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
-    $('join-preview-meta').textContent=parts.join(' · ')||'Sin ubicación';
+    const parts=[];if(ses.lugar)parts.push(ses.lugar);if(ses.data)parts.push(new Date(ses.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+    $('join-preview-meta').textContent=parts.join(' \u00b7 ')||'Sin ubicaci\u00f3n';
     $('join-preview-badges').innerHTML=`<span class="ses-chip">${ses.n_pal} palistas</span><span class="ses-chip">${ses.n_tra} tramos</span><span class="ses-chip">${coaches.length} entrenador${coaches.length!==1?'es':''}</span>`;
     renderCoachesList(coaches,$('join-coaches-list'));
-
-    hideLoad();
-    showScreen('screen-join-preview');
-
-  }catch(err){
-    hideLoad();
-    console.error(err);
-    toast('Error al buscar la sesión: '+err.message,'err');
-  }
+    hideLoad();showScreen('screen-join-preview');
+  }catch(err){hideLoad();console.error(err);toast('Error al buscar la sesi\u00f3n: '+err.message,'err');}
 }
 
 /* ── CONFIRMAR UNIRSE ── */
 async function confirmJoin(){
   if(!_joinPreviewData){showScreen('screen-join');return;}
   const {shared,ses}=_joinPreviewData;
-
-  showLoad('Uniéndome...');
+  showLoad('Uni\u00e9ndome...');
   try{
-    // Registrar como participante
-    await api('/rest/v1/session_coaches',{
-      method:'POST',
-      headers:{'Prefer':'return=minimal'},
-      body:JSON.stringify({
-        session_id:ses.id,
-        shared_session_id:shared.id,
-        coach_id:_uid,
-        coach_name:_coachName||_email
-      })
-    });
-
-    // Guardar estado
-    _sharedSessionId=shared.id;
-    _sessionId=ses.id;
-    _sharedCode=shared.code;
-    const sharedState={
-      sharedSessionId:shared.id,
-      sessionId:ses.id,
-      code:shared.code,
-      isOwner:false,
-      cfg:{
-        name:ses.name,
-        lugar:ses.lugar||'',
-        fecha:ses.data,
-        nPal:ses.n_pal,
-        nTra:ses.n_tra,
-        palistas:ses.palistas||[]
-      }
-    };
+    await api('/rest/v1/session_coaches',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({session_id:ses.id,shared_session_id:shared.id,coach_id:_uid,coach_name:_coachName||_email})});
+    _sharedSessionId=shared.id;_sessionId=ses.id;_sharedCode=shared.code;
+    const sharedState={sharedSessionId:shared.id,sessionId:ses.id,code:shared.code,isOwner:false,cfg:{name:ses.name,lugar:ses.lugar||'',fecha:ses.data,nPal:ses.n_pal,nTra:ses.n_tra,palistas:ses.palistas||[]}};
     sessionStorage.setItem('slt_shared',JSON.stringify(sharedState));
     sessionStorage.setItem('slalom_cfg',JSON.stringify(sharedState.cfg));
-
-    hideLoad();
-    toast('¡Unido a la sesión! 🎉','ok');
+    hideLoad();toast('\u00a1Unido a la sesi\u00f3n! \ud83c\udf89','ok');
     setTimeout(()=>window.location.href='slalom.html',800);
-
-  }catch(err){
-    hideLoad();
-    console.error(err);
-    toast('Error al unirse: '+err.message,'err');
-  }
+  }catch(err){hideLoad();console.error(err);toast('Error al unirse: '+err.message,'err');}
 }
 
-/* ── SESIÓN ACTIVA PENDIENTE ── */
+/* ── SESIÓN ACTIVA ── */
 function checkActiveSession(){
   const raw=sessionStorage.getItem('slt_shared');
   if(!raw)return;
   try{
     const state=JSON.parse(raw);
-    if(state.code){
-      $('active-session-banner').style.display='block';
-      $('active-code-label').textContent=state.code;
-      _sharedSessionId=state.sharedSessionId;
-      _sessionId=state.sessionId;
-      _sharedCode=state.code;
-    }
+    if(state.code){$('active-session-banner').style.display='block';$('active-code-label').textContent=state.code;_sharedSessionId=state.sharedSessionId;_sessionId=state.sessionId;_sharedCode=state.code;}
   }catch{}
 }
-function resumeActiveSession(){
-  window.location.href='slalom.html';
-}
+function resumeActiveSession(){window.location.href='slalom.html';}
 
 /* ── INIT ── */
-_tok=localStorage.getItem('slt_tok');
-_uid=localStorage.getItem('slt_uid');
-_email=localStorage.getItem('slt_email');
-if(!_tok){window.location.href='index.html';}
-$('top-avatar').textContent=initials(_email?.split('@')[0]||'');
-$('cfg-fecha').value=new Date().toISOString().slice(0,10);
-
-// Cargar nombre del coach
-(async()=>{
+async function init(){
+  const raw=localStorage.getItem('slt_session');
+  if(!raw){window.location.href='index.html';return;}
   try{
-    const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=name,username&limit=1');
-    if(rows&&rows.length){
-      _coachName=rows[0].name||rows[0].username||null;
-      if(_coachName)$('top-avatar').textContent=initials(_coachName);
-    }
+    const sess=JSON.parse(raw);
+    _tok=sess.access_token;_uid=sess.user?.id;_email=sess.user?.email;
+    _coachName=sess.user?.user_metadata?.full_name||sess.user?.user_metadata?.name||null;
+    $('top-avatar').textContent=initials(_coachName||_email?.split('@')[0]||'');
+  }catch{window.location.href='index.html';return;}
+  $('cfg-fecha').value=new Date().toISOString().slice(0,10);
+  // Cargar atletas
+  try{
+    const ath=await api('/rest/v1/athletes?select=id,name,surname,categories&order=surname.asc');
+    _athletes=ath||[];
   }catch{}
+  buildPalList();
   checkActiveSession();
-})();
-
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+init();
 </script>
 </body>
 </html>
