@@ -595,7 +595,16 @@ function editDeleteEntry(){
 async function saveSession(){
   const btn=$('btn-save-session');
   const hasAny=_times.some(pal=>pal.some(tra=>tra.length>0));
-  if(!hasAny){toast('No hay tiempos registrados','err');return;}
+  if(!hasAny){
+    if(confirm('No se han registrado tiempos en esta sesi\u00f3n.\n\u00bfDescartar la sesi\u00f3n y volver a la configuraci\u00f3n?')){
+      disconnectRealtime();
+      sessionStorage.removeItem('slalom_cfg');
+      _cfg=null;
+      _savedSessionId=null;
+      showScreen('config');
+    }
+    return;
+  }
   btn.disabled=true;btn.textContent='Guardando\u2026';
   try{
     let sessionId=_savedSessionId;
