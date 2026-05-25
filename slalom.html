@@ -515,7 +515,6 @@ function renderTimesTable(cfg){
       const td=document.createElement('td');
       const entries=_times[pi][ti];
       if(!entries.length){td.innerHTML='<span class="time-cell empty">\u2014</span>';tr.appendChild(td);continue;}
-      // best net time
       const nets=entries.filter(e=>!e.dsq).map(e=>e.ms+e.pen);
       const bestNet=nets.length?Math.min(...nets):null;
       let html='';
@@ -634,12 +633,12 @@ async function saveSession(){
 async function init(){
   $('overlay').classList.add('show');
   try{
-    const raw=localStorage.getItem('slt_session');
-    if(!raw)throw new Error('no_session');
-    const sess=JSON.parse(raw);
-    _tok=sess.access_token;_uid=sess.user?.id;_email=sess.user?.email;
-    _coachName=sess.user?.user_metadata?.full_name||sess.user?.user_metadata?.name||null;
-    $('top-avatar').textContent=initials(_coachName||_email);
+    _tok=localStorage.getItem('slt_tok');
+    _uid=localStorage.getItem('slt_uid');
+    _email=localStorage.getItem('slt_email');
+    if(!_tok||!_uid){window.location.href='index.html';return;}
+    _coachName=null;
+    $('top-avatar').textContent=initials(_email);
     // Sesion compartida
     const sharedRaw=sessionStorage.getItem('slt_shared');
     if(sharedRaw){try{_shared=JSON.parse(sharedRaw);}catch{}}
@@ -650,11 +649,10 @@ async function init(){
     }catch{}
     // Config previa
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
-    if(cfgRaw){try{const c=JSON.parse(cfgRaw);if(c&&c.name){CFG.pal=c.nPal;CFG.tra=c.nTra;$('val-pal').textContent=c.nPal;$('val-tra').textContent=c.nTra;$('cfg-name').value=c.name;$('cfg-lugar').value=c.lugar||'';$('cfg-fecha').value=c.fecha||'';_palState=c.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));}catch{}}
+    if(cfgRaw){try{const c=JSON.parse(cfgRaw);if(c&&c.name){CFG.pal=c.nPal;CFG.tra=c.nTra;$('val-pal').textContent=c.nPal;$('val-tra').textContent=c.nTra;$('cfg-name').value=c.name;$('cfg-lugar').value=c.lugar||'';$('cfg-fecha').value=c.fecha||'';_palState=c.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));}}catch{}}
     buildPalList();
     $('cfg-fecha').value=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
   }catch(e){
-    if(e.message==='no_session'){window.location.href='index.html';return;}
     toast('Error de autenticaci\u00f3n','err');
   }finally{
     $('overlay').classList.remove('show');
