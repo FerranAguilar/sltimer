@@ -596,12 +596,38 @@ async function saveSession(){
   const btn=$('btn-save-session');
   const hasAny=_times.some(pal=>pal.some(tra=>tra.length>0));
   if(!hasAny){
-    if(confirm('No se han registrado tiempos en esta sesi\u00f3n.\n\u00bfDescartar la sesi\u00f3n y volver a la configuraci\u00f3n?')){
+    const isShared=!!_shared;
+    const isOwner=isShared&&_shared.isOwner;
+    let msg='No se han registrado tiempos en esta sesi\u00f3n.\n';
+    if(isShared){
+      msg+=isOwner
+        ? '\u00bfCerrar la sesi\u00f3n compartida y volver a Sesiones Compartidas?'
+        : '\u00bfAbandonar la sesi\u00f3n compartida y volver a Sesiones Compartidas?';
+    }else{
+      msg+='\u00bfDescartar la sesi\u00f3n y volver a la configuraci\u00f3n?';
+    }
+    if(confirm(msg)){
       disconnectRealtime();
+      // Si es sesión compartida, marcarla como inactiva en Supabase (solo el owner)
+      if(isShared&&isOwner&&_shared.sharedSessionId){
+        try{
+          await api('/rest/v1/shared_sessions?id=eq.'+_shared.sharedSessionId,{
+            method:'PATCH',
+            headers:{'Prefer':'return=minimal'},
+            body:JSON.stringify({is_active:false})
+          });
+        }catch(e){console.warn('closeShared',e);}
+      }
       sessionStorage.removeItem('slalom_cfg');
+      sessionStorage.removeItem('slt_shared');
       _cfg=null;
+      _shared=null;
       _savedSessionId=null;
-      showScreen('config');
+      if(isShared){
+        window.location.href='shared-session.html';
+      }else{
+        showScreen('config');
+      }
     }
     return;
   }
