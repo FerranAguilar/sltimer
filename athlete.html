@@ -125,7 +125,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .prog-bar{height:100%;border-radius:100px;background:#185FA5;transition:width .4s}
 .prog-bar.best{background:#0F6E56}
 .prog-time{font-family:'Bebas Neue',sans-serif;font-size:15px;color:#1B3A5C;letter-spacing:0.3px;flex-shrink:0;min-width:58px;text-align:right}
-.prog-ses-name{font-size:11px;color:#bbb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0}
 .stat-spinner{display:flex;justify-content:center;padding:40px 0}
 .filter-row{display:flex;gap:8px;flex-wrap:wrap}
 .filter-btn{padding:7px 14px;border-radius:100px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;transition:all .12s}
@@ -333,48 +332,47 @@ async function loadHistorial(){
 
 /* ── ESTADÍSTICAS ── */
 let _statLoaded=false;
-let _statFilter='all'; // 'all' | tramo index string
+let _statFilter='all';
 let _statRaw=null;
 
 async function loadEstadisticas(){
   const container=$('stat-content');
   container.innerHTML='<div class="stat-spinner"><div class="spinner"></div></div>';
   try{
-    // Cargar sesiones del coach
-    const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,date,data,n_tramos,palistas');
+    // Sesiones del usuario, ordenadas cronológicamente
+    const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=data.asc,created_at.asc&select=id,name,lugar,data,created_at');
     if(!sessions||!sessions.length){
       container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';
       _statLoaded=true;return;
     }
     const sesIds=sessions.map(s=>s.id);
-    // Buscar el índice del palista en cada sesión
-    // Cargar session_times para este palista (identificado por nombre)
-    const times=await api('/rest/v1/session_times?session_id=in.('+sesIds.join(',')+')'+'&select=session_id,palista_index,tramo_index,manga,ms,pen,dsq');
 
-    // Mapear sesiones por id
-    const sesById={};
-    sessions.forEach(s=>{sesById[s.id]=s;});
+    // Tiempos del palista: filtrar por pal_name directamente en la query
+    const entries=await api(
+      '/rest/v1/session_entries'
+      +'?session_id=in.('+sesIds.join(',')+')'  
+      +'&pal_name=eq.'+encodeURIComponent(_athleteName)
+      +'&select=session_id,tramo,manga,ms,pen,dsq,cnt2,cnt50'
+    );
 
-    // Filtrar solo tiempos que corresponden a este palista por nombre
-    const myTimes=times.filter(t=>{
-      const ses=sesById[t.session_id];
-      if(!ses||!ses.palistas)return false;
-      const pal=Array.isArray(ses.palistas)?ses.palistas[t.palista_index]:null;
-      if(!pal)return false;
-      const fullName=(pal.name||'').trim();
-      return fullName===_athleteName||(pal.id&&_athleteId&&pal.id===_athleteId);
-    });
-
-    if(!myTimes.length){
+    if(!entries||!entries.length){
       container.innerHTML='<div class="empty-state"><p>Este palista no tiene tiempos registrados a\u00fan</p></div>';
       _statLoaded=true;return;
     }
+
+    // Normalizar nombres de campo para compatibilidad con renderEstadisticas
+    // session_entries usa: tramo, manga, ms, pen, dsq
+    // renderEstadisticas espera: tramo_index -> usamos tramo directamente
+    const myTimes=entries.map(e=>({...e,tramo_index:e.tramo}));
+
+    const sesById={};
+    sessions.forEach(s=>{sesById[s.id]=s;});
 
     _statRaw={sessions,sesById,myTimes};
     renderEstadisticas();
     _statLoaded=true;
   }catch(e){
-    container.innerHTML='<div class="empty-state"><p>Error al cargar estad\u00edsticas</p></div>';
+    container.innerHTML='<div class="empty-state"><p>Error al cargar estad\u00eddsticas</p></div>';
     toast('Error: '+e.message,'err');
   }
 }
@@ -384,11 +382,11 @@ function renderEstadisticas(){
   const {sessions,sesById,myTimes}=_statRaw;
   const container=$('stat-content');
 
-  // Detectar tramos únicos
+  // Tramos únicos
   const tramoSet=new Set(myTimes.map(t=>t.tramo_index));
   const tramos=[...tramoSet].sort((a,b)=>a-b);
 
-  // Filtrado por tramo
+  // Filtrado
   const filtered=_statFilter==='all'?myTimes:myTimes.filter(t=>t.tramo_index===parseInt(_statFilter));
 
   const valid=filtered.filter(t=>!t.dsq&&t.ms>0);
@@ -397,14 +395,15 @@ function renderEstadisticas(){
   const nDsq=filtered.filter(t=>t.dsq).length;
   const nValid=valid.length;
   const bestNet=nets.length?Math.min(...nets):null;
-  const worstNet=nets.length?Math.max(...nets):null;
   const avgNet=nets.length?Math.round(nets.reduce((a,b)=>a+b,0)/nets.length):null;
-  const totalPen=valid.reduce((a,t)=>a+(t.pen||0),0);
-  const pen2=valid.filter(t=>t.pen>0&&t.pen%50!==0).length;
-  const pen50=valid.filter(t=>t.pen>=50).length;
   const dsqPct=total>0?Math.round(nDsq/total*100):0;
 
-  // Filtros de tramo
+  // Penalizaciones: usar cnt2/cnt50 si existen, si no inferir de pen
+  const nClean=valid.filter(t=>!t.pen||t.pen===0).length;
+  const pen2=valid.reduce((acc,t)=>acc+(t.cnt2||0),0)||valid.filter(t=>t.pen>0&&t.pen<50).length;
+  const pen50=valid.reduce((acc,t)=>acc+(t.cnt50||0),0)||valid.filter(t=>t.pen>=50).length;
+
+  // Filtros pill
   let filterHtml=`<div class="filter-row">`;
   filterHtml+=`<button class="filter-btn${_statFilter==='all'?' active':''}" onclick="setStatFilter('all')">Todos los tramos</button>`;
   tramos.forEach(ti=>{
@@ -412,7 +411,7 @@ function renderEstadisticas(){
   });
   filterHtml+='</div>';
 
-  // Resumen KPI
+  // KPIs
   const kpiHtml=`
   <div class="stat-grid">
     <div class="stat-box">
@@ -428,7 +427,7 @@ function renderEstadisticas(){
     <div class="stat-box">
       <div class="stat-label">Total mangas</div>
       <div class="stat-val">${total}</div>
-      <div class="stat-sub">${nDsq} DSQ · ${nValid} v\u00e1lidas</div>
+      <div class="stat-sub">${nDsq} DSQ \u00b7 ${nValid} v\u00e1lidas</div>
     </div>
     <div class="stat-box">
       <div class="stat-label">% DSQ</div>
@@ -437,26 +436,26 @@ function renderEstadisticas(){
     </div>
   </div>`;
 
-  // Mejor por tramo
+  // Tabla por tramo (solo si hay más de uno)
   let tramoHtml='';
-  if(tramos.length>1||_statFilter==='all'){
+  if(tramos.length>1){
     let rows='';
     tramos.forEach(ti=>{
-      const tTimes=myTimes.filter(t=>t.tramo_index===ti);
-      const tValid=tTimes.filter(t=>!t.dsq&&t.ms>0);
-      const tNets=tValid.map(t=>t.ms+(t.pen||0));
-      const tBest=tNets.length?Math.min(...tNets):null;
-      const tAvg=tNets.length?Math.round(tNets.reduce((a,b)=>a+b,0)/tNets.length):null;
-      const tDsq=tTimes.filter(t=>t.dsq).length;
+      const tT=myTimes.filter(t=>t.tramo_index===ti);
+      const tV=tT.filter(t=>!t.dsq&&t.ms>0);
+      const tN=tV.map(t=>t.ms+(t.pen||0));
+      const tBest=tN.length?Math.min(...tN):null;
+      const tAvg=tN.length?Math.round(tN.reduce((a,b)=>a+b,0)/tN.length):null;
+      const tDsq=tT.filter(t=>t.dsq).length;
       rows+=`<tr>
         <td style="font-weight:700;color:#1B3A5C">Tramo ${ti+1}</td>
         <td class="time best-time">${tBest!==null?fmtTime(tBest):'\u2014'}</td>
         <td class="avg">${tAvg!==null?fmtTime(tAvg):'\u2014'}</td>
-        <td style="font-size:13px;color:#666">${tTimes.length}<span style="color:#A32D2D;font-size:11px;margin-left:4px">${tDsq>0?'('+tDsq+' DSQ)':''}</span></td>
+        <td style="font-size:13px;color:#666">${tT.length}<span style="color:#A32D2D;font-size:11px;margin-left:4px">${tDsq>0?'('+tDsq+' DSQ)':''}</span></td>
       </tr>`;
     });
     tramoHtml=`
-    <div class="section-label">Mejor tiempo por tramo</div>
+    <div class="section-label">Por tramo</div>
     <div class="card">
       <table class="tramo-table">
         <thead><tr><th>Tramo</th><th>Mejor</th><th>Promedio</th><th>Mangas</th></tr></thead>
@@ -465,29 +464,26 @@ function renderEstadisticas(){
     </div>`;
   }
 
-  // Progresión temporal (últimas 10 sesiones con tiempos válidos)
-  const sesSorted=sessions.filter(s=>{
-    return myTimes.some(t=>t.session_id===s.id&&!t.dsq&&t.ms>0&&(_statFilter==='all'||t.tramo_index===parseInt(_statFilter)));
-  });
+  // Progreso temporal
+  const sesSorted=sessions.filter(s=>
+    myTimes.some(t=>t.session_id===s.id&&!t.dsq&&t.ms>0&&(_statFilter==='all'||t.tramo_index===parseInt(_statFilter)))
+  );
   let progHtml='';
   if(sesSorted.length>1){
     const progData=sesSorted.slice(-10).map(s=>{
       const sTimes=myTimes.filter(t=>t.session_id===s.id&&!t.dsq&&t.ms>0&&(_statFilter==='all'||t.tramo_index===parseInt(_statFilter)));
       const sNets=sTimes.map(t=>t.ms+(t.pen||0));
       const sBest=sNets.length?Math.min(...sNets):null;
-      const dateStr=s.date||s.data||'';
-      const label=dateStr?new Date(dateStr+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'}):s.name.slice(0,10);
+      const label=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'}):s.name.slice(0,10);
       return{label,best:sBest,name:s.name};
     }).filter(d=>d.best!==null);
     if(progData.length>1){
       const allBests=progData.map(d=>d.best);
       const minBest=Math.min(...allBests),maxBest=Math.max(...allBests);
       const range=maxBest-minBest||1;
-      const overallBest=minBest;
-      let progRows=progData.map(d=>{
-        // Barra: mayor tiempo = barra corta (malo), menor = larga (bueno)
+      const progRows=progData.map(d=>{
         const pct=Math.round((1-(d.best-minBest)/range)*85+15);
-        const isBest=d.best===overallBest;
+        const isBest=d.best===minBest;
         return`<div class="prog-row">
           <div class="prog-date">${d.label}</div>
           <div class="prog-bar-wrap"><div class="prog-bar${isBest?' best':''}" style="width:${pct}%"></div></div>
@@ -500,32 +496,25 @@ function renderEstadisticas(){
     }
   }
 
-  // Distribución de penalizaciones
+  // Distribución penalizaciones
   let penHtml='';
   if(nValid>0){
-    const nClean=valid.filter(t=>!t.pen||t.pen===0).length;
-    const maxVal=Math.max(nClean,pen2,pen50,nDsq)||1;
-    const bar=(n,cls='')=>{
+    const maxVal=Math.max(nClean,pen2,pen50,nDsq,1);
+    const bar=(n,label,cls='')=>{
       const w=Math.round(n/maxVal*100);
-      return`<div class="pen-dist-row"><div class="pen-dist-label">${cls==='dsq-bar'?'DSQ':cls==='bar50'?'+50s (error)':cls==='bar2'?'+2s (toque)':'Sin pen.'}</div><div class="pen-dist-bar-wrap"><div class="pen-dist-bar${cls?' '+cls:''}" style="width:${w}%"></div></div><div class="pen-dist-val">${n}</div></div>`;
+      return`<div class="pen-dist-row"><div class="pen-dist-label">${label}</div><div class="pen-dist-bar-wrap"><div class="pen-dist-bar${cls?' '+cls:''}" style="width:${w}%"></div></div><div class="pen-dist-val">${n}</div></div>`;
     };
     penHtml=`
-    <div class="section-label">Distribuci\u00f3n de penalizaciones</div>
+    <div class="section-label">Penalizaciones</div>
     <div class="card">
-      ${bar(nClean,'')}
-      ${bar(pen2,'bar2')}
-      ${bar(pen50,'bar50')}
-      ${bar(nDsq,'dsq-bar')}
+      ${bar(nClean,'Sin pen.')}
+      ${bar(pen2,'+2s (toque)','')}
+      ${bar(pen50,'+50s (error)','')}
+      ${bar(nDsq,'DSQ','dsq-bar')}
     </div>`;
   }
 
-  container.innerHTML=`
-    ${filterHtml}
-    ${kpiHtml}
-    ${tramoHtml}
-    ${progHtml}
-    ${penHtml}
-  `;
+  container.innerHTML=`${filterHtml}${kpiHtml}${tramoHtml}${progHtml}${penHtml}`;
 }
 
 function setStatFilter(val){
