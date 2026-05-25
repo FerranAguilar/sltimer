@@ -113,9 +113,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .donut-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .donut-legend-val{font-weight:700;color:#111;margin-left:auto}
 /* CALENDARIO */
-.cal-wrap{display:flex;flex-direction:column;gap:6px}
-.cal-month{display:flex;flex-direction:column;gap:3px}
-.cal-month-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-header-label{font-size:13px;font-weight:700;color:#1B3A5C;text-transform:capitalize;letter-spacing:0.02em}
+.cal-nav-btn{background:none;border:none;cursor:pointer;font-size:18px;color:#185FA5;padding:2px 8px;border-radius:8px;line-height:1;font-family:inherit}
+.cal-nav-btn:active{background:#E6F1FB}
+.cal-nav-btn:disabled{color:#ccc;cursor:default}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-day{aspect-ratio:1;border-radius:4px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#ccc;font-weight:600}
 .cal-day.has-session{background:#185FA5;color:#fff}
@@ -275,6 +277,9 @@ async function loadHistorial(){
 
 /* ESTADÍSTICAS */
 let _statLoaded=false,_statRaw=null;
+// Estado del calendario: {year, month} del mes visible
+let _calMonth=null;
+
 async function loadEstadisticas(){
   const container=$('stat-content');
   container.innerHTML='<div class="stat-spinner"><div class="spinner"></div></div>';
@@ -288,9 +293,66 @@ async function loadEstadisticas(){
     const sesById={};
     sessions.forEach(s=>{sesById[s.id]=s;});
     _statRaw={sessions,sesById,myTimes};
+    // Inicializar al mes actual
+    const now=new Date();
+    _calMonth={year:now.getFullYear(),month:now.getMonth()};
     renderEstadisticas();
     _statLoaded=true;
   }catch(e){container.innerHTML='<div class="empty-state"><p>Error al cargar estad\u00eddsticas</p></div>';toast('Error: '+e.message,'err');}
+}
+
+function calNavPrev(){
+  let {year,month}=_calMonth;
+  month--;if(month<0){month=11;year--;}
+  _calMonth={year,month};
+  renderCalendar();
+}
+function calNavNext(){
+  const now=new Date();
+  let {year,month}=_calMonth;
+  // No avanzar más allá del mes actual
+  if(year===now.getFullYear()&&month===now.getMonth())return;
+  month++;if(month>11){month=0;year++;}
+  _calMonth={year,month};
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const calCard=$('cal-card');
+  if(!calCard||!_statRaw)return;
+  const {sessions,sesById}=_statRaw;
+  const myTimes=_statRaw.myTimes;
+  const sesConEntradas=new Set(myTimes.map(t=>t.session_id));
+  const sesDates=new Set();
+  sessions.filter(s=>sesConEntradas.has(s.id)).forEach(s=>{
+    const ref=s.data||(s.created_at?s.created_at.slice(0,10):null);
+    if(ref)sesDates.add(ref);
+  });
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+  const DIAS=['L','M','X','J','V','S','D'];
+  const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const {year,month}=_calMonth;
+  const isCurrentMonth=(year===now.getFullYear()&&month===now.getMonth());
+  const firstDay=new Date(year,month,1);
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const startDow=(firstDay.getDay()+6)%7;
+  let cells='';
+  for(let i=0;i<startDow;i++)cells+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasSes=sesDates.has(ds);
+    const isToday=ds===todayStr;
+    cells+=`<div class="cal-day${hasSes?' has-session':''}${isToday?' today':''}">${d}</div>`;
+  }
+  calCard.innerHTML=`
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="calNavPrev()">&#8592;</button>
+      <span class="cal-header-label">${MESES[month]} ${year}</span>
+      <button class="cal-nav-btn" onclick="calNavNext()"${isCurrentMonth?' disabled':''}>&#8594;</button>
+    </div>
+    <div class="cal-dow">${DIAS.map(d=>`<span>${d}</span>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>`;
 }
 
 function renderEstadisticas(){
@@ -355,16 +417,13 @@ function renderEstadisticas(){
     });
     const W=300,H=110,pL=28,pR=8,pT=14,pB=30,iW=W-pL-pR,iH=H-pT-pB,nn=dsqData.length;
     const xStep=iW/(nn-1);
-    // Líneas guía horizontales 0,50,100
     let guides='';
     [0,50,100].forEach(v=>{
       const y=pT+iH-Math.round(v/100*iH);
       guides+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="#f0f0f0" stroke-width="1"/>`;
       guides+=`<text x="${pL-4}" y="${y+3}" text-anchor="end" font-size="8" fill="#ccc" font-family="-apple-system,sans-serif">${v}</text>`;
     });
-    let pts='';
-    let dots='';
-    let xlbls='';
+    let pts='',dots='',xlbls='';
     dsqData.forEach((d,i)=>{
       const x=pL+i*xStep;
       const y=pT+iH-Math.round(d.pct/100*iH);
@@ -409,40 +468,12 @@ function renderEstadisticas(){
     donutHtml=`<div class="section-label">Distribuci\u00f3n de penalizaciones</div><div class="chart-card"><div class="donut-wrap"><svg width="100" height="100" viewBox="0 0 100 100">${paths}<text x="50" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A5C" font-family="-apple-system,sans-serif">${totalD}</text><text x="50" y="60" text-anchor="middle" font-size="8" fill="#aaa" font-family="-apple-system,sans-serif">mangas</text></svg><div class="donut-legend">${legendHtml}</div></div></div>`;
   }
 
-  /* ─── CALENDARIO: días con sesión (últimos 3 meses) ─── */
-  const sesDates=new Set();
-  sessions.filter(s=>sesConEntradas.has(s.id)).forEach(s=>{
-    const ref=s.data||(s.created_at?s.created_at.slice(0,10):null);
-    if(ref)sesDates.add(ref);
-  });
-  const todayStr=now.toISOString().slice(0,10);
-  // Calcular los 3 últimos meses completos + mes actual
-  const months=[];
-  for(let m=3;m>=0;m--){
-    const d=new Date(now.getFullYear(),now.getMonth()-m,1);
-    months.push({year:d.getFullYear(),month:d.getMonth()});
-  }
-  const DIAS=['L','M','X','J','V','S','D'];
-  const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  let calMonthsHtml='';
-  months.forEach(({year,month})=>{
-    const firstDay=new Date(year,month,1);
-    const daysInMonth=new Date(year,month+1,0).getDate();
-    // JS: 0=Dom,1=Lun...6=Sab → convertir a Lun=0
-    const startDow=(firstDay.getDay()+6)%7;
-    let cells='';
-    for(let i=0;i<startDow;i++)cells+='<div class="cal-day empty"></div>';
-    for(let d=1;d<=daysInMonth;d++){
-      const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const hasSes=sesDates.has(ds);
-      const isToday=ds===todayStr;
-      cells+=`<div class="cal-day${hasSes?' has-session':''}${isToday?' today':''}">${d}</div>`;
-    }
-    calMonthsHtml+=`<div class="cal-month"><div class="cal-month-label">${MESES[month]} ${year}</div><div class="cal-dow">${DIAS.map(d=>`<span>${d}</span>`).join('')}</div><div class="cal-grid">${cells}</div></div>`;
-  });
-  const calHtml=`<div class="section-label">Calendario de sesiones</div><div class="chart-card"><div class="cal-wrap">${calMonthsHtml}</div></div>`;
+  /* ─── CALENDARIO: un mes con navegación ─── */
+  const calHtml=`<div class="section-label">Calendario de sesiones</div><div class="chart-card" id="cal-card"></div>`;
 
   container.innerHTML=`${kpisHtml}${mangasChartHtml}${dsqChartHtml}${donutHtml}${calHtml}`;
+  // Renderizar el mes actual en el card recién insertado
+  renderCalendar();
 }
 
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
