@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1242x2208.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <title>SLTimer &#8212; Eslálom · Configuración</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
+    .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
+    .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px}
+    input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+    input:focus{outline:none;border-color:#185FA5}
+    .counter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .counter-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    .counter-row{display:flex;align-items:center;gap:10px;width:100%}
+    .counter-btn{width:38px;height:38px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
+    .counter-btn:active{background:#f0f0f0}
+    .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:6px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
+    .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .pal-row-placeholder{border-style:dashed;background:#fafafa}
+    .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
+    .pal-remove-btn:active{color:#e05050}
+    .pal-row-top{display:flex;align-items:center;gap:10px}
+    .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pal-search-wrap{position:relative;flex:1}
+    .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+    .pal-input:focus{outline:none;border-color:#185FA5}
+    .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
+    .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
+    .pal-dropdown.open{display:block}
+    .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+    .pal-option:last-child{border-bottom:none}
+    .pal-option:active{background:#f7f7f7}
+    .pal-option-name{font-weight:600;color:#111;flex:1}
+    .pal-option-cats{display:flex;gap:4px}
+    .cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
+    .cat-badge.K1{background:#E6F1FB;color:#0C447C}
+    .cat-badge.C1{background:#E1F5EE;color:#085041}
+    .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:2px;display:none}
+    .pal-clear.show{display:block}
+    .cat-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    .cat-selector{display:flex;gap:6px}
+    .cat-btn{padding:6px 16px;border-radius:100px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#888;transition:all .12s}
+    .cat-btn.K1.active{border-color:#185FA5;background:#E6F1FB;color:#0C447C}
+    .cat-btn.C1.active{border-color:#0F6E56;background:#E1F5EE;color:#085041}
+    .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
+    .btn-primary:active{opacity:.85}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .btn-secondary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit;transition:background .12s}
+    .btn-secondary:active{background:#f5f5f5}
+    /* OVERLAY */
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+    .overlay.show{display:flex}
+    .overlay-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay-text{font-size:13px;color:#888;font-weight:600}
+    /* TOAST */
+    .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:500;white-space:nowrap}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-spinner"></div>
+  <div class="overlay-text" id="overlay-text">Cargando...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="/icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-right">
+    <div class="avatar" id="top-avatar">?</div>
+  </div>
+</div>
+
+<!-- CONFIGURACIÓN -->
+<div class="content">
+  <div class="section-label">Datos de la sesión</div>
+  <div class="card">
+    <div><label>Nombre de la sesión</label><input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla"></div>
+    <div><label>Lugar</label><input id="cfg-lugar" type="text" placeholder="Ej: Canal olímpico de Sevilla"></div>
+    <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
+  </div>
+  <div class="section-label">Tramos</div>
+  <div class="counter-grid">
+    <div class="counter-box">
+      <div class="counter-label">Tramos</div>
+      <div class="counter-row">
+        <button class="counter-btn" onclick="adjustCfg('tra',-1)">&#8722;</button>
+        <div class="counter-val" id="val-tra">3</div>
+        <button class="counter-btn" onclick="adjustCfg('tra',1)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="section-label">Palistas</div>
+  <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  <button class="btn-primary" onclick="startSession()">&#9654; Iniciar sesión</button>
+  <button class="btn-secondary" onclick="window.location.href='menu.html'">&#8592; Volver al menú</button>
+</div>
+
+<script>
+const SUPABASE_URL='https://xorblwcvlkbhpzcegkoh.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
+
+let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[];
+
+const CFG={tra:3};
+const MIN={tra:1};
+const MAX={tra:8};
+
+function $(id){return document.getElementById(id);}
+function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+
+async function api(path,opts={}){
+  const h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_tok||SUPABASE_KEY),'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(SUPABASE_URL+path,{...opts,headers:h});
+  if(!r.ok){const t=await r.text();throw new Error(t);}
+  const ct=r.headers.get('content-type')||'';
+  if(ct.includes('json')&&r.status!==204){return r.json();}
+  return null;
+}
+
+let _toastTimer=null;
+function toast(msg,type='ok'){
+  const t=$('toast');t.textContent=msg;t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* CFG */
+function adjustCfg(key,delta){
+  CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
+  $('val-'+key).textContent=CFG[key];
+}
+
+/* PALISTAS DINÁMICOS */
+function buildPalList(){
+  const c=$('pal-list');c.innerHTML='';
+  _palState.forEach((_,i)=>renderPalRow(i,c));
+  _addPlaceholderRow(c);
+}
+
+function _addPlaceholderRow(container){
+  const row=document.createElement('div');
+  row.className='pal-row pal-row-placeholder';row.id='spal-placeholder';
+  row.innerHTML=`<div class="pal-row-top"><div class="pal-search-wrap" style="flex:1"><input class="pal-input" id="spal-placeholder-input" type="text" placeholder="+ Añadir palista…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalPlaceholderInput()" onfocus="onPalPlaceholderFocus()" onblur="delayPalClose(-1)"><div class="pal-dropdown" id="spal-dd--1"></div></div></div>`;
+  container.appendChild(row);
+}
+
+function onPalPlaceholderFocus(){
+  const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
+  if(val)_showPalDropdown(-1,val);
+}
+
+function onPalPlaceholderInput(){
+  const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
+  if(!val){$('spal-dd--1').classList.remove('open');$('spal-dd--1').innerHTML='';return;}
+  _showPalDropdown(-1,val);
+}
+
+function _showPalDropdown(i,q){
+  const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
+  const dd=$(ddId);if(!dd)return;
+  const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  dd.innerHTML=m.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+    const catsArr=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',${JSON.stringify(catsArr)})"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
+function renderPalRow(i,container){
+  const s=_palState[i];
+  const row=document.createElement('div');row.className='pal-row';row.id='spal-row-'+i;
+  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">✕</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div><button class="pal-remove-btn" onclick="removePal(${i})" title="Eliminar palista">✕</button></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categoría</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
+  container.appendChild(row);
+}
+
+function removePal(i){_palState.splice(i,1);buildPalList();}
+
+function onPalInput(i){
+  const val=$('spal-input-'+i).value;
+  _palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;
+  $('spal-clear-'+i).classList.toggle('show',val.length>0);
+  showPalCat(i,val.length>0);
+  _showPalDropdown(i,val.toLowerCase().trim());
+}
+
+function openPalDropdown(i){
+  const q=($('spal-input-'+i).value||'').toLowerCase().trim();
+  if(q)_showPalDropdown(i,q);
+}
+
+function delayPalClose(i){
+  const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
+  setTimeout(()=>{const dd=$(ddId);if(dd)dd.classList.remove('open');},150);
+}
+
+function selectPalAthlete(i,id,name,cats){
+  if(i===-1){
+    _palState.push({id,name,isTemp:false,category:cats.length===1?cats[0]:null});
+    buildPalList();
+    return;
+  }
+  _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
+  const inp=$('spal-input-'+i);inp.value=name;inp.classList.add('matched');
+  $('spal-clear-'+i).classList.add('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,true);
+  if(cats.length===1)setPalCatUI(i,cats[0]);else setPalCatUI(i,_palState[i].category);
+}
+
+function clearPal(i){
+  _palState[i]={id:null,name:'',category:null,isTemp:false};
+  const inp=$('spal-input-'+i);inp.value='';inp.classList.remove('matched');
+  $('spal-clear-'+i).classList.remove('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,false);
+}
+
+function showPalCat(i,show){$('spal-cat-wrap-'+i).style.display=show?'flex':'none';}
+function setPalCat(i,cat){_palState[i].category=cat;setPalCatUI(i,cat);}
+function setPalCatUI(i,cat){
+  const w=$('spal-cat-wrap-'+i);if(!w)return;
+  w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
+}
+
+/* INICIAR SESIÓN → navega a slalom-session.html pasando config por sessionStorage */
+function startSession(){
+  const name=$('cfg-name').value.trim();
+  if(!name){toast('Introduce un nombre para la sesión','err');return;}
+  if(_palState.length===0){toast('Añade al menos un palista','err');return;}
+  const lugar=$('cfg-lugar').value.trim();
+  const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+  const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp||false}));
+  const cfg={name,lugar,fecha,nPal:palistas.length,nTra:CFG.tra,palistas};
+  sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
+  window.location.href='slalom-session.html';
+}
+
+/* INIT */
+async function init(){
+  $('overlay').classList.add('show');
+  try{
+    _tok=localStorage.getItem('slt_tok');
+    _uid=localStorage.getItem('slt_uid');
+    _email=localStorage.getItem('slt_email');
+    if(!_tok){window.location.href='login.html';return;}
+    $('top-avatar').textContent=initials(_email||'?');
+
+    try{
+      const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
+      _athletes=ats||[];
+    }catch(atsErr){
+      console.warn('No se pudieron cargar atletas:',atsErr);
+      _athletes=[];
+    }
+
+    // Pre-rellenar si venimos de volver atrás desde la sesión
+    const cfgRaw=sessionStorage.getItem('slalom_cfg');
+    if(cfgRaw){
+      const cfg=JSON.parse(cfgRaw);
+      CFG.tra=cfg.nTra;
+      $('val-tra').textContent=CFG.tra;
+      $('cfg-name').value=cfg.name||'';
+      $('cfg-lugar').value=cfg.lugar||'';
+      $('cfg-fecha').value=cfg.fecha||'';
+      _palState=cfg.palistas.map(p=>({...p,isTemp:false}));
+    } else {
+      $('cfg-fecha').value=new Date().toISOString().slice(0,10);
+    }
+    buildPalList();
+  }catch(e){
+    console.error('Init error:',e);
+  }finally{
+    $('overlay').classList.remove('show');
+  }
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

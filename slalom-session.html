@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1242x2208.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <title>SLTimer &#8212; Eslálom · Sesión</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
+    .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+    .live-pill{display:none;align-items:center;gap:5px;background:#DCFCE7;border:0.5px solid #86EFAC;border-radius:100px;padding:4px 9px;font-size:11px;font-weight:700;color:#15803D;flex-shrink:0;white-space:nowrap}
+    .live-pill.show{display:flex}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#555;transition:background .12s;flex-shrink:0}
+    .btn-edit-cfg:active{background:#f0f0f0}
+    /* SESSION */
+    .ses-header{padding:16px 16px 0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:2px}
+    .ses-title{font-size:19px;font-weight:800;color:#111;line-height:1.2}
+    .ses-meta{font-size:12px;color:#888;margin-top:2px}
+    .chrono-card{background:#1B3A5C;border-radius:20px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+    .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.08em;text-align:center}
+    .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:4px;line-height:1;text-align:center}
+    .chrono-btns{display:flex;gap:10px;width:100%}
+    .chrono-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn:active{opacity:.82}
+    .chrono-btn.start{background:#22C55E;color:#fff}
+    .chrono-btn.stop{background:#EF4444;color:#fff}
+    .chrono-btn.save{background:#fff;color:#1B3A5C}
+    .chrono-btn:disabled{opacity:.4;cursor:not-allowed}
+    .manga-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
+    .manga-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em}
+    .manga-val{font-size:20px;font-weight:800;color:#fff;min-width:28px;text-align:center}
+    .manga-btn{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+    .manga-btn:active{background:rgba(255,255,255,0.22)}
+    .selectors-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:480px;margin:0 auto;padding:0 16px}
+    .sel-wrap{display:flex;flex-direction:column;gap:4px}
+    .sel-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    .sel-select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .sel-select:focus{outline:none;border-color:#185FA5}
+    .pen-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+    .pen-row{display:flex;align-items:center;gap:10px}
+    .pen-label{font-size:13px;font-weight:700;color:#333;flex:1}
+    .pen-val{font-size:17px;font-weight:800;color:#185FA5;min-width:24px;text-align:center}
+    .pen-btn{width:34px;height:34px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;line-height:1}
+    .pen-btn:active{background:#f0f0f0}
+    .dsq-row{display:flex;align-items:center;gap:10px}
+    .dsq-toggle{position:relative;width:44px;height:26px;cursor:pointer;flex-shrink:0}
+    .dsq-toggle input{opacity:0;width:0;height:0}
+    .dsq-toggle-track{position:absolute;inset:0;border-radius:13px;background:#ddd;transition:background .2s}
+    .dsq-toggle input:checked+.dsq-toggle-track{background:#EF4444}
+    .dsq-toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform .2s}
+    .dsq-toggle input:checked~.dsq-toggle-thumb{transform:translateX(18px)}
+    .dsq-label{font-size:13px;font-weight:700;color:#333;flex:1}
+    .dsq-val{font-size:12px;font-weight:700;color:#EF4444}
+    .times-section{max-width:480px;margin:0 auto;padding:0 16px}
+    .times-table-wrap{overflow-x:auto;border-radius:12px;border:0.5px solid rgba(0,0,0,0.10);background:#fff}
+    .times-table{width:100%;border-collapse:collapse;font-size:13px}
+    .times-table th{padding:8px 10px;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;text-align:center;border-bottom:0.5px solid #eee}
+    .times-table th:first-child{text-align:left}
+    .times-table td{padding:8px 6px;border-bottom:0.5px solid #f5f5f5;text-align:center;vertical-align:top}
+    .times-table td:first-child{text-align:left;padding-left:10px}
+    .times-table tr:last-child td{border-bottom:none}
+    .pal-name-cell{font-size:12px;font-weight:700;color:#111;display:block}
+    .cat-chip{font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;display:inline-block;margin-top:2px}
+    .cat-chip.K1{background:#E6F1FB;color:#0C447C}
+    .cat-chip.C1{background:#E1F5EE;color:#085041}
+    .time-entry{display:inline-flex;align-items:baseline;gap:3px;cursor:pointer;margin:1px}
+    .time-cell{font-size:13px;font-weight:700;color:#111;white-space:nowrap}
+    .time-cell.best{color:#0F6E56}
+    .time-cell.dsq-cell{color:#EF4444}
+    .time-cell.empty{color:#ccc;font-weight:400}
+    .time-pen-badge{font-size:10px;color:#185FA5;font-weight:700}
+    .time-dsq-badge{font-size:10px;color:#EF4444;font-weight:700}
+    .time-manga-lbl{font-size:10px;color:#bbb;font-weight:600}
+    .action-row{max-width:480px;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:10px}
+    .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
+    .btn-primary:active{opacity:.85}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .btn-green{background:#0F6E56}
+    /* BOTTOM SHEET */
+    .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:flex-end}
+    .sheet-overlay.open{display:flex}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 36px;width:100%;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+    .sheet-handle{width:36px;height:4px;border-radius:2px;background:#ddd;margin:0 auto -8px}
+    .sheet-title{font-size:16px;font-weight:800;color:#111}
+    .sheet-subtitle{font-size:12px;color:#888;margin-top:-10px}
+    .sheet-row{display:flex;align-items:center;gap:10px}
+    .sheet-label{font-size:13px;font-weight:700;color:#333;flex:1}
+    .sheet-val{font-size:18px;font-weight:800;color:#185FA5;min-width:30px;text-align:center}
+    .sheet-btn{width:36px;height:36px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;line-height:1}
+    .sheet-btn:active{background:#f0f0f0}
+    .sheet-time-raw{font-size:24px;font-weight:800;color:#1B3A5C;text-align:center}
+    .sheet-dsq-row{display:flex;align-items:center;gap:10px}
+    .sheet-sel-row{display:flex;gap:10px}
+    .sheet-sel-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
+    .sheet-sel-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase}
+    .sheet-sel{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111}
+    .sheet-sel:focus{outline:none;border-color:#185FA5}
+    .sheet-del-btn{width:100%;padding:12px;border-radius:10px;border:none;background:#FEF2F2;color:#EF4444;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+    .sheet-del-btn:active{background:#FEE2E2}
+    /* CFG SHEET */
+    .cfg-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;display:none;align-items:flex-end}
+    .cfg-sheet-overlay.open{display:flex}
+    .cfg-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+    /* OVERLAY */
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+    .overlay.show{display:flex}
+    .overlay-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay-text{font-size:13px;color:#888;font-weight:600}
+    /* TOAST */
+    .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:500;white-space:nowrap}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-spinner"></div>
+  <div class="overlay-text" id="overlay-text">Cargando...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="topbar-back" onclick="handleBack()">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="/icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <span class="topbar-title" id="topbar-title"></span>
+  <div class="topbar-right">
+    <div class="live-pill" id="live-pill"><div class="live-dot"></div><span>LIVE</span><span class="live-pill-code" id="live-pill-code"></span></div>
+    <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuración">&#9881;</button>
+    <div class="topbar-divider"></div>
+    <div class="avatar" id="top-avatar">?</div>
+  </div>
+</div>
+
+<!-- SESIÓN -->
+<div style="display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+  <div class="ses-header">
+    <div class="ses-title" id="ses-title"></div>
+    <div class="ses-meta" id="ses-meta"></div>
+  </div>
+  <div style="padding:0 16px;max-width:480px;margin:0 auto;width:100%">
+    <div class="chrono-card">
+      <div class="chrono-ctx" id="chrono-ctx"></div>
+      <div class="chrono-display" id="chrono-display">0:00.000</div>
+      <div class="manga-row">
+        <button class="manga-btn" onclick="adjustManga(-1)">&#8722;</button>
+        <span class="manga-label">Manga</span>
+        <span class="manga-val" id="manga-val">1</span>
+        <button class="manga-btn" onclick="adjustManga(1)">+</button>
+      </div>
+      <div class="chrono-btns">
+        <button class="chrono-btn start" id="btn-start" onclick="startStop()">&#9654; Start</button>
+        <button class="chrono-btn save" id="btn-save" onclick="saveTime()" disabled>Guardar</button>
+      </div>
+    </div>
+  </div>
+  <div class="selectors-row">
+    <div class="sel-wrap">
+      <div class="sel-label">Palista</div>
+      <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
+    </div>
+    <div class="sel-wrap">
+      <div class="sel-label">Tramo</div>
+      <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
+    </div>
+  </div>
+  <div class="pen-card">
+    <div class="pen-row">
+      <span class="pen-label">Puertas x2</span>
+      <button class="pen-btn" onclick="adjustPen('cnt2',-1)">&#8722;</button>
+      <span class="pen-val" id="pen-cnt2">0</span>
+      <button class="pen-btn" onclick="adjustPen('cnt2',1)">+</button>
+    </div>
+    <div class="pen-row">
+      <span class="pen-label">Puerta DSQ (+50s)</span>
+      <button class="pen-btn" onclick="adjustPen('cnt50',-1)">&#8722;</button>
+      <span class="pen-val" id="pen-cnt50">0</span>
+      <button class="pen-btn" onclick="adjustPen('cnt50',1)">+</button>
+    </div>
+    <div class="dsq-row">
+      <label class="dsq-toggle"><input type="checkbox" id="dsq-check" onchange="onDsqToggle()"><div class="dsq-toggle-track"></div><div class="dsq-toggle-thumb"></div></label>
+      <span class="dsq-label">DSQ (descalificado)</span>
+      <span class="dsq-val" id="dsq-val" style="display:none">DSQ</span>
+    </div>
+  </div>
+  <div class="times-section">
+    <div class="times-table-wrap">
+      <table class="times-table">
+        <thead><tr id="times-head"></tr></thead>
+        <tbody id="times-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="action-row">
+    <button class="btn-primary btn-green" id="btn-save-session" onclick="saveSession()" disabled>&#128190; Guardar sesión</button>
+  </div>
+</div>
+
+<!-- EDIT SHEET -->
+<div class="sheet-overlay" id="edit-sheet-overlay" onclick="closeEditSheet(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="sheet-title">Editar tiempo</div>
+    <div class="sheet-subtitle" id="sheet-subtitle"></div>
+    <div class="sheet-time-raw" id="sheet-time-raw"></div>
+    <div class="sheet-row">
+      <span class="sheet-label">Puertas x2</span>
+      <button class="sheet-btn" onclick="adjustEdit('cnt2',-1)">&#8722;</button>
+      <span class="sheet-val" id="edit-cnt2">0</span>
+      <button class="sheet-btn" onclick="adjustEdit('cnt2',1)">+</button>
+    </div>
+    <div class="sheet-row">
+      <span class="sheet-label">Puerta DSQ (+50s)</span>
+      <button class="sheet-btn" onclick="adjustEdit('cnt50',-1)">&#8722;</button>
+      <span class="sheet-val" id="edit-cnt50">0</span>
+      <button class="sheet-btn" onclick="adjustEdit('cnt50',1)">+</button>
+    </div>
+    <div class="sheet-dsq-row">
+      <label class="dsq-toggle"><input type="checkbox" id="edit-dsq-check" onchange="onEditDsqToggle()"><div class="dsq-toggle-track"></div><div class="dsq-toggle-thumb"></div></label>
+      <span class="dsq-label">DSQ (descalificado)</span>
+    </div>
+    <div class="sheet-sel-row">
+      <div class="sheet-sel-wrap">
+        <div class="sheet-sel-label">Palista</div>
+        <select class="sheet-sel" id="sheet-sel-pal"></select>
+      </div>
+      <div class="sheet-sel-wrap">
+        <div class="sheet-sel-label">Tramo</div>
+        <select class="sheet-sel" id="sheet-sel-tra"></select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="applyEdit()">Aplicar cambios</button>
+    <button class="sheet-del-btn" onclick="deleteEntry()">&#128465; Eliminar tiempo</button>
+  </div>
+</div>
+
+<!-- CFG SHEET (inyectado por cfg-sheet-patch.js) -->
+<div class="cfg-sheet-overlay" id="cfg-sheet-overlay" onclick="closeCfgSheet(event)">
+  <div class="cfg-sheet" id="cfg-sheet-inner"></div>
+</div>
+
+<script>
+const SUPABASE_URL='https://xorblwcvlkbhpzcegkoh.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
+
+let _tok=null,_uid=null,_email=null;
+let _cfg=null,_sessionId=null,_shared=null;
+let _timerInterval=null,_timerStart=null,_timerElapsed=0,_timerRunning=false;
+let _selPal=0,_selTramo=0;
+let _penMs=0,_cnt2=0,_cnt50=0,_isDsq=false;
+let _mangas=[],_times=[];
+let _editPi=-1,_editTi=-1,_editIdx=-1,_editCnt2=0,_editCnt50=0,_editDsq=false;
+let _refreshInterval=null;
+let _realtimeWs=null;
+const COACH_COLORS=['#185FA5','#0F6E56','#8B2252','#964219','#4B3B8C'];
+let _coachColorMap={};
+
+function $(id){return document.getElementById(id);}
+function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function fmtTime(ms){if(ms==null)return'—';const m=Math.floor(ms/60000);const s=Math.floor((ms%60000)/1000);const cs=Math.floor((ms%1000)/10);return`${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;}
+
+async function api(path,opts={}){
+  const h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_tok||SUPABASE_KEY),'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(SUPABASE_URL+path,{...opts,headers:h});
+  if(!r.ok){const t=await r.text();throw new Error(t);}
+  const ct=r.headers.get('content-type')||'';
+  if(ct.includes('json')&&r.status!==204){return r.json();}
+  return null;
+}
+
+let _toastTimer=null;
+function toast(msg,type='ok'){
+  const t=$('toast');t.textContent=msg;t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function showLoad(msg){$('overlay').classList.add('show');if(msg)$('overlay-text').textContent=msg;}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+/* SESIÓN */
+function initSession(cfg){
+  _cfg=cfg;
+  $('topbar-title').textContent=cfg.name;
+  $('ses-title').textContent=cfg.name;
+  const parts=[];
+  if(cfg.lugar)parts.push(cfg.lugar);
+  if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('ses-meta').textContent=parts.join(' · ');
+  _times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));
+  _mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
+  _selPal=0;_selTramo=0;
+  clearPenState();
+  buildSelPal(cfg);buildSelTra(cfg);
+  syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();
+  const btn=$('btn-save-session');
+  btn.textContent='💾 Finalizar y guardar sesión';
+  btn.disabled=false;
+  startRefreshInterval();
+  if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}
+  if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.set({type:'slalom',name:cfg.name,url:'slalom-session.html',startedAt:Date.now()});}
+}
+
+function initSessionResume(cfg){
+  _cfg=cfg;
+  $('topbar-title').textContent=cfg.name;
+  $('ses-title').textContent=cfg.name;
+  const parts=[];
+  if(cfg.lugar)parts.push(cfg.lugar);
+  if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('ses-meta').textContent=parts.join(' · ');
+  _selPal=0;_selTramo=0;
+  clearPenState();
+  buildSelPal(cfg);buildSelTra(cfg);
+  syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();
+  const btn=$('btn-save-session');
+  btn.textContent='💾 Finalizar y guardar sesión';
+  btn.disabled=false;
+  startRefreshInterval();
+  if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}
+  if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.set({type:'slalom',name:cfg.name,url:'slalom-session.html',startedAt:Date.now()});}
+}
+
+/* SELECTORES */
+function buildSelPal(cfg){const sel=$('sel-pal');sel.innerHTML='';cfg.palistas.forEach((p,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+p.name+(p.category?' ('+p.category+')':'');sel.appendChild(opt);});sel.value=0;}
+function buildSelTra(cfg){const sel=$('sel-tra');sel.innerHTML='';for(let i=0;i<cfg.nTra;i++){const opt=document.createElement('option');opt.value=i;opt.textContent='Tramo '+(i+1);sel.appendChild(opt);}sel.value=0;}
+function onSelPal(){if(_timerRunning){toast('Para el cronómetro primero','err');$('sel-pal').value=_selPal;return;}_selPal=parseInt($('sel-pal').value);syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
+function onSelTra(){if(_timerRunning){toast('Para el cronómetro primero','err');$('sel-tra').value=_selTramo;return;}_selTramo=parseInt($('sel-tra').value);syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
+
+/* CRONÓMETRO */
+function updateChronoCtx(){
+  if(!_cfg)return;
+  const p=_cfg.palistas[_selPal];
+  $('chrono-ctx').textContent=(p?p.name:'?')+' · Tramo '+(_selTramo+1)+' · Manga '+(_mangas[_selPal]?.[_selTramo]||1);
+}
+function syncMangaVal(){$('manga-val').textContent=_mangas[_selPal][_selTramo];}
+function adjustManga(d){
+  const cur=_mangas[_selPal][_selTramo];
+  _mangas[_selPal][_selTramo]=Math.max(1,cur+d);
+  syncMangaVal();updateChronoCtx();
+}
+function startStop(){
+  if(_timerRunning){
+    _timerElapsed+=Date.now()-_timerStart;
+    _timerRunning=false;clearInterval(_timerInterval);
+    $('btn-start').textContent='↺ Reset';$('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
+    $('btn-save').disabled=false;
+    updateChronoDisplay();
+  } else if(_timerElapsed>0){
+    resetTimer();
+  } else {
+    _timerStart=Date.now();_timerRunning=true;
+    _timerInterval=setInterval(updateChronoDisplay,33);
+    $('btn-start').textContent='⏹ Stop';$('btn-start').classList.remove('start');$('btn-start').classList.add('stop');
+    $('btn-save').disabled=true;
+  }
+}
+function resetTimer(){
+  clearInterval(_timerInterval);_timerRunning=false;_timerElapsed=0;
+  $('btn-start').textContent='▶ Start';$('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
+  $('btn-save').disabled=true;
+  $('chrono-display').textContent='0:00.00';
+}
+function updateChronoDisplay(){
+  const el=_timerRunning?_timerElapsed+(Date.now()-_timerStart):_timerElapsed;
+  $('chrono-display').textContent=fmtTime(el);
+}
+
+/* PENALIZACIONES */
+function clearPenState(){_penMs=0;_cnt2=0;_cnt50=0;_isDsq=false;$('pen-cnt2').textContent=0;$('pen-cnt50').textContent=0;$('dsq-check').checked=false;$('dsq-val').style.display='none';}
+function adjustPen(type,d){
+  if(type==='cnt2'){_cnt2=Math.max(0,_cnt2+d);$('pen-cnt2').textContent=_cnt2;}
+  else{_cnt50=Math.max(0,_cnt50+d);$('pen-cnt50').textContent=_cnt50;}
+  _penMs=_cnt2*2000+_cnt50*50000;
+}
+function onDsqToggle(){_isDsq=$('dsq-check').checked;$('dsq-val').style.display=_isDsq?'inline':'none';}
+
+/* GUARDAR TIEMPO */
+function saveTime(){
+  const rawMs=_timerElapsed;
+  const pi=_selPal,ti=_selTramo;
+  const manga=_mangas[pi][ti];
+  const entry={rawMs,penMs:_penMs,totalMs:_isDsq?null:rawMs+_penMs,dsq:_isDsq,manga,ts:Date.now()};
+  _times[pi][ti].push(entry);
+  _mangas[pi][ti]=manga+1;
+  syncMangaVal();
+  buildTimesTable(_cfg);
+  clearPenState();
+  toast(_isDsq?'DSQ registrado':'Tiempo guardado ✓','ok');
+}
+
+/* TABLA DE TIEMPOS */
+function buildTimesTable(cfg){
+  const head=$('times-head');
+  const body=$('times-body');
+  head.innerHTML='<th>Palista</th>'+Array.from({length:cfg.nTra},(_,i)=>'<th>T'+(i+1)+'</th>').join('');
+  body.innerHTML='';
+  for(let pi=0;pi<cfg.nPal;pi++){
+    const p=cfg.palistas[pi];
+    const tr=document.createElement('tr');
+    let tdPal=`<td><span class="pal-name-cell">${p.name}</span>`;
+    if(p.category)tdPal+=`<span class="cat-chip ${p.category}">${p.category}</span>`;
+    tdPal+='</td>';
+    tr.innerHTML=tdPal;
+    for(let ti=0;ti<cfg.nTra;ti++){
+      const td=document.createElement('td');
+      const entries=_times[pi][ti];
+      if(!entries||!entries.length){
+        td.innerHTML='<span class="time-cell empty">—</span>';
+      } else {
+        const valid=entries.filter(e=>!e.dsq&&e.totalMs!=null);
+        const best=valid.length?Math.min(...valid.map(e=>e.totalMs)):null;
+        td.innerHTML=entries.map((e,idx)=>{
+          let cls='time-cell';
+          let txt='';
+          if(e.dsq){cls+=' dsq-cell';txt='DSQ';}
+          else{if(e.totalMs===best&&best!=null)cls+=' best';txt=fmtTime(e.totalMs);}
+          const penBadge=e.penMs>0&&!e.dsq?`<span class="time-pen-badge">+${e.penMs/1000}s</span>`:'';
+          const dsqBadge=e.dsq?'<span class="time-dsq-badge">DSQ</span>':'';
+          const mangaLbl=`<span class="time-manga-lbl">M${e.manga}</span>`;
+          return `<span class="time-entry" onclick="openEditSheet(${pi},${ti},${idx})"><span class="${cls}">${txt}${penBadge}${dsqBadge}</span>${mangaLbl}</span>`;
+        }).join('');
+      }
+      tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  }
+}
+
+/* EDIT SHEET */
+function openEditSheet(pi,ti,idx){
+  _editPi=pi;_editTi=ti;_editIdx=idx;
+  const e=_times[pi][ti][idx];
+  _editCnt2=0;_editCnt50=0;
+  let rem=e.penMs||0;
+  _editCnt50=Math.floor(rem/50000);rem-=_editCnt50*50000;
+  _editCnt2=Math.floor(rem/2000);
+  _editDsq=!!e.dsq;
+  const p=_cfg.palistas[pi];
+  $('sheet-title').textContent='Editar tiempo';
+  $('sheet-subtitle').textContent=p.name+' · Tramo '+(ti+1)+' · Manga '+e.manga;
+  $('edit-cnt2').textContent=_editCnt2;
+  $('edit-cnt50').textContent=_editCnt50;
+  const selPal=$('sheet-sel-pal');selPal.innerHTML='';
+  _cfg.palistas.forEach((pl,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+pl.name;if(i===pi)o.selected=true;selPal.appendChild(o);});
+  const selTra=$('sheet-sel-tra');selTra.innerHTML='';
+  for(let i=0;i<_cfg.nTra;i++){const o=document.createElement('option');o.value=i;o.textContent='Tramo '+(i+1);if(i===ti)o.selected=true;selTra.appendChild(o);}
+  $('edit-dsq-check').checked=_editDsq;
+  $('sheet-time-raw').textContent=e.dsq?'DSQ':fmtTime(e.rawMs);
+  $('edit-sheet-overlay').classList.add('open');
+}
+function closeEditSheet(e){if(e.target===$('edit-sheet-overlay'))$('edit-sheet-overlay').classList.remove('open');}
+function adjustEdit(type,d){
+  if(type==='cnt2'){_editCnt2=Math.max(0,_editCnt2+d);$('edit-cnt2').textContent=_editCnt2;}
+  else{_editCnt50=Math.max(0,_editCnt50+d);$('edit-cnt50').textContent=_editCnt50;}
+}
+function onEditDsqToggle(){_editDsq=$('edit-dsq-check').checked;}
+function applyEdit(){
+  const e=_times[_editPi][_editTi][_editIdx];
+  const newPenMs=_editCnt2*2000+_editCnt50*50000;
+  e.penMs=newPenMs;e.dsq=_editDsq;e.totalMs=_editDsq?null:e.rawMs+newPenMs;
+  const newPi=parseInt($('sheet-sel-pal').value);
+  const newTi=parseInt($('sheet-sel-tra').value);
+  const maxManga=(_times[newPi][newTi].length?Math.max(..._times[newPi][newTi].map(x=>x.manga)):0);
+  if(newPi!==_editPi||newTi!==_editTi){
+    const moved=_times[_editPi][_editTi].splice(_editIdx,1)[0];
+    moved.manga=maxManga+1;
+    _times[newPi][newTi].push(moved);
+  }
+  buildTimesTable(_cfg);
+  $('edit-sheet-overlay').classList.remove('open');
+  toast('Tiempo actualizado ✓','ok');
+}
+function deleteEntry(){
+  if(!confirm('¿Eliminar este tiempo?'))return;
+  _times[_editPi][_editTi].splice(_editIdx,1);
+  buildTimesTable(_cfg);
+  $('edit-sheet-overlay').classList.remove('open');
+  toast('Tiempo eliminado','ok');
+}
+
+/* GUARDAR SESIÓN */
+async function saveSession(){
+  const hasData=_times.some(pt=>pt.some(t=>t.length>0));
+  if(!hasData){toast('No hay tiempos que guardar','err');return;}
+  showLoad('Guardando sesión...');
+  try{
+    let sesId=_sessionId;
+    if(!sesId){
+      const cfg=_cfg;
+      const sesRow=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,n_pal:cfg.nPal,n_tra:cfg.nTra,palistas:cfg.palistas})});
+      sesId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
+      _sessionId=sesId;
+    }
+    await api('/rest/v1/session_entries?session_id=eq.'+sesId,{method:'DELETE'});
+    const rows=[];
+    for(let pi=0;pi<_cfg.nPal;pi++){
+      for(let ti=0;ti<_cfg.nTra;ti++){
+        _times[pi][ti].forEach(e=>{
+          rows.push({session_id:sesId,pal_index:pi,pal_name:_cfg.palistas[pi].name,pal_cat:_cfg.palistas[pi].category||null,athlete_id:_cfg.palistas[pi].id||null,tramo:ti,manga:e.manga,ms:e.rawMs,pen:e.penMs,dsq:e.dsq||false,cnt2:0,cnt50:0});
+        });
+      }
+    }
+    if(rows.length){await api('/rest/v1/session_entries',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(rows)});}
+    hideLoad();toast('Sesión guardada ✓','ok');
+    $('btn-save-session').textContent='✓ Sesión guardada';$('btn-save-session').disabled=true;
+    if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.clear();}
+  }catch(err){hideLoad();console.error(err);toast('Error al guardar: '+err.message,'err');}
+}
+
+/* REALTIME */
+function connectRealtime(){
+  if(!_shared||!_sessionId)return;
+  disconnectRealtime();
+  const wsUrl=SUPABASE_URL.replace('https://','wss://')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY+'&vsn=1.0.0';
+  _realtimeWs=new WebSocket(wsUrl);
+  _realtimeWs.onopen=()=>{
+    _realtimeWs.send(JSON.stringify({topic:'realtime:slalom_session_'+_shared.sharedSessionId,event:'phx_join',payload:{},ref:'1'}));
+  };
+  _realtimeWs.onmessage=(msg)=>{
+    try{
+      const d=JSON.parse(msg.data);
+      if(d.event==='broadcast'&&d.payload?.event==='new_time'){
+        const {pi,ti,entry,coachId}=d.payload.payload||{};
+        if(pi!=null&&ti!=null&&entry)receiveCoachTime(pi,ti,entry,coachId);
+      }
+    }catch(e){}
+  };
+}
+function disconnectRealtime(){if(_realtimeWs){_realtimeWs.close();_realtimeWs=null;}}
+
+function receiveCoachTime(pi,ti,entry,coachId){
+  if(!_cfg||pi>=_cfg.nPal||ti>=_cfg.nTra)return;
+  if(!_coachColorMap[coachId]){
+    const idx=Object.keys(_coachColorMap).length%COACH_COLORS.length;
+    _coachColorMap[coachId]=COACH_COLORS[idx];
+  }
+  entry.coachId=coachId;
+  _times[pi][ti].push(entry);
+  buildTimesTable(_cfg);
+  toast('Tiempo recibido de entrenador','ok');
+}
+
+/* REFRESH */
+function startRefreshInterval(){if(_refreshInterval)clearInterval(_refreshInterval);_refreshInterval=setInterval(()=>{if(_cfg)buildTimesTable(_cfg);},5000);}
+function stopRefreshInterval(){clearInterval(_refreshInterval);_refreshInterval=null;}
+
+/* NAVEGACIÓN */
+function handleBack(){
+  if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}
+  if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.'))return;
+  stopRefreshInterval();
+  disconnectRealtime();
+  window.location.href='slalom-config.html';
+}
+
+/* INIT */
+async function init(){
+  $('overlay').classList.add('show');
+  try{
+    _tok=localStorage.getItem('slt_tok');
+    _uid=localStorage.getItem('slt_uid');
+    _email=localStorage.getItem('slt_email');
+    if(!_tok){window.location.href='login.html';return;}
+    $('top-avatar').textContent=initials(_email||'?');
+
+    const sharedRaw=sessionStorage.getItem('slalom_shared');
+    if(sharedRaw)_shared=JSON.parse(sharedRaw);
+
+    const resumeRaw=sessionStorage.getItem('slalom_resume');
+    if(resumeRaw){
+      sessionStorage.removeItem('slalom_resume');
+      const resume=JSON.parse(resumeRaw);
+      const cfg=resume.cfg;
+      _cfg=cfg;
+      const nPal=cfg.nPal,nTra=cfg.nTra;
+      _times=Array.from({length:nPal},(_,pi)=>Array.from({length:nTra},(_,ti)=>{
+        const srcArr=(resume.times?.[pi]||[])[ti]||[];
+        return srcArr.map(e=>{
+          const rawMs=e.ms||0;
+          const penMs=(e.pen||0)+(e.cnt2||0)*2000+(e.cnt50||0)*50000;
+          const dsq=!!e.dsq;
+          return {rawMs,penMs,totalMs:dsq?null:rawMs+penMs,dsq,manga:e.manga||1,ts:Date.now()};
+        });
+      }));
+      _mangas=resume.mangas||Array.from({length:nPal},()=>Array(nTra).fill(1));
+      _sessionId=resume.sessionId||null;
+      initSessionResume(cfg);
+    } else {
+      const cfgRaw=sessionStorage.getItem('slalom_cfg');
+      if(!cfgRaw){window.location.href='slalom-config.html';return;}
+      const cfg=JSON.parse(cfgRaw);
+      initSession(cfg);
+    }
+  }catch(e){
+    console.error('Init error:',e);
+  }finally{
+    $('overlay').classList.remove('show');
+  }
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+<script src="active-session-bar.js"></script>
+<script src="cfg-sheet-patch.js"></script>
+<script src="add-group-patch.js"></script>
+</body>
+</html>
