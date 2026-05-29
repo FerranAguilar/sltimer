@@ -118,6 +118,18 @@
     .counter-btn-sm{width:34px;height:34px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
     .counter-btn-sm:active{background:#f0f0f0}
     .counter-val-sm{flex:1;text-align:center;font-size:20px;font-weight:700;color:#111;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:6px 0;line-height:1}
+    .counter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .counter-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    .counter-row{display:flex;align-items:center;gap:10px;width:100%}
+    .counter-btn{width:38px;height:38px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
+    .counter-btn:active{background:#f0f0f0}
+    .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:6px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
+    .pal-row-placeholder{border-style:dashed;background:#fafafa}
+    .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
+    .pal-remove-btn:active{color:#e05050}
+    .btn-add-group{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:8px;color:#0C447C;font-size:12px;font-weight:700;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
+    .btn-add-group:active{background:#cde3f6}
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
     .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
@@ -192,25 +204,20 @@
       <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
     </div>
     <div class="section-label">Estructura</div>
-    <div class="card" style="flex-direction:row;gap:16px">
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-        <div class="section-label">Palistas</div>
-        <div class="counter-inline">
-          <button class="counter-btn-sm" onclick="adjustCfg('pal',-1)">&#8722;</button>
-          <div class="counter-val-sm" id="val-pal">3</div>
-          <button class="counter-btn-sm" onclick="adjustCfg('pal',1)">+</button>
-        </div>
-      </div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-        <div class="section-label">Tramos</div>
-        <div class="counter-inline">
-          <button class="counter-btn-sm" onclick="adjustCfg('tra',-1)">&#8722;</button>
-          <div class="counter-val-sm" id="val-tra">3</div>
-          <button class="counter-btn-sm" onclick="adjustCfg('tra',1)">+</button>
+    <div class="counter-grid">
+      <div class="counter-box">
+        <div class="counter-label">Tramos</div>
+        <div class="counter-row">
+          <button class="counter-btn" onclick="adjustCfg('tra',-1)">&#8722;</button>
+          <div class="counter-val" id="val-tra">3</div>
+          <button class="counter-btn" onclick="adjustCfg('tra',1)">+</button>
         </div>
       </div>
     </div>
-    <div class="section-label">Palistas</div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="section-label">Palistas</div>
+      <button class="btn-add-group" id="btn-add-group-config" onclick="openGroupSheet('config')">&#128101; A&#241;adir grupo</button>
+    </div>
     <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
     <button class="btn-primary" onclick="createSharedSession()">&#128640; Crear y obtener c&#243;digo</button>
     <button class="btn-secondary" onclick="showScreen('screen-home')">&#8592; Volver</button>
@@ -283,7 +290,7 @@
 const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
-const CFG={pal:3,tra:3},MIN={pal:1,tra:1},MAX={pal:15,tra:12};
+const CFG={pal:0,tra:3},MIN={pal:1,tra:1},MAX={pal:15,tra:12};
 let _tok=null,_uid=null,_email=null,_coachName=null;
 let _sharedSessionId=null,_sharedCode=null,_sessionId=null;
 let _joinPreviewData=null,_realtimeChannel=null;
@@ -309,21 +316,26 @@ async function api(path,opts={}){
 function adjustCfg(key,delta){
   CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
   $('val-'+key).textContent=CFG[key];
-  if(key==='pal')buildPalList();
 }
 
 /* ── PALISTAS ── */
 function buildPalList(){
-  const n=CFG.pal;
-  while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});
-  _palState=_palState.slice(0,n);
   const c=$('pal-list');c.innerHTML='';
-  for(let i=0;i<n;i++)renderPalRow(i,c);
+  for(let i=0;i<_palState.length;i++)renderPalRow(i,c);
+  // Placeholder row para añadir
+  if(_palState.length<MAX.pal){
+    const ph=document.createElement('div');
+    ph.className='pal-row pal-row-placeholder';
+    ph.style.cursor='pointer';
+    ph.innerHTML=`<div class="pal-row-top"><div class="pal-num" style="background:#f0f0f0;color:#bbb">+</div><span style="font-size:14px;color:#bbb;flex:1">A&#241;adir palista&#8230;</span></div>`;
+    ph.onclick=()=>{_palState.push({id:null,name:'',category:null,isTemp:false});CFG.pal=_palState.length;buildPalList();setTimeout(()=>{const inp=$('spal-input-'+(_palState.length-1));if(inp)inp.focus();},50);};
+    c.appendChild(ph);
+  }
 }
 function renderPalRow(i,container){
   const s=_palState[i];
   const row=document.createElement('div');row.className='pal-row';row.id='spal-row-'+i;
-  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista\u2026" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">\u2715</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categor\u00eda</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
+  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista\u2026" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">\u2715</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div><button class="pal-remove-btn" onclick="removePal(${i})" title="Eliminar">\u00d7</button></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categor\u00eda</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
   container.appendChild(row);
 }
 function onPalInput(i){
@@ -361,6 +373,11 @@ function clearPal(i){
   $('spal-clear-'+i).classList.remove('show');
   $('spal-dd-'+i).classList.remove('open');
   showPalCat(i,false);
+}
+function removePal(i){
+  _palState.splice(i,1);
+  CFG.pal=_palState.length;
+  buildPalList();
 }
 function showPalCat(i,show){$('spal-cat-wrap-'+i).style.display=show?'flex':'none';}
 function setPalCat(i,cat){_palState[i].category=cat;setPalCatUI(i,cat);}
@@ -549,12 +566,14 @@ async function init(){
     const ath=await api('/rest/v1/athletes?select=id,name,surname,categories&order=surname.asc');
     _athletes=ath||[];
   }catch{}
+  // Iniciar sin palistas (se añaden dinámicamente)
   buildPalList();
   checkActiveSession();
   if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 init();
 </script>
+<script src="add-group-patch.js"></script>
 <script src="active-session-bar.js"></script>
 <script>document.addEventListener("DOMContentLoaded",function(){if(typeof ActiveSessionBar!=="undefined")ActiveSessionBar.init();});</script>
 </body>
