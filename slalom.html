@@ -550,7 +550,7 @@ function goToSession(){
   _savedSessionId=null;
   initSession(_cfg);
 }
-function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;stopRefreshInterval();disconnectRealtime();showScreen('config');}else{window.location.href='app.html';}}
+function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;stopRefreshInterval();disconnectRealtime();showScreen('config');}else{window.location.href='menu.html';}}
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';$('btn-edit-cfg').classList.toggle('show',isSes);window.scrollTo(0,0);}
 
 /* SESION */
