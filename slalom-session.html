@@ -46,15 +46,10 @@
     .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.08em;text-align:center}
     .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:4px;line-height:1;text-align:center}
     .chrono-btns{display:flex;gap:10px;width:100%;align-items:stretch}
-    /* Start/Stop: más grande, ocupa ~75% del ancho */
-    .chrono-btn-main{flex:3;padding:20px 16px;border-radius:14px;border:none;font-size:20px;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .12s;letter-spacing:0.02em}
+    .chrono-btn-main{width:100%;padding:20px 16px;border-radius:14px;border:none;font-size:20px;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .12s;letter-spacing:0.02em}
     .chrono-btn-main:active{opacity:.82}
     .chrono-btn-main.start{background:#22C55E;color:#fff}
     .chrono-btn-main.stop{background:#EF4444;color:#fff}
-    /* Reset: ocupa ~25% del ancho */
-    .chrono-btn-reset{flex:1;padding:20px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.75);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
-    .chrono-btn-reset:active{opacity:.75}
-    .chrono-btn-reset:disabled{opacity:.3;cursor:not-allowed}
     .manga-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
     .manga-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em}
     .manga-val{font-size:20px;font-weight:800;color:#fff;min-width:28px;text-align:center}
@@ -199,7 +194,6 @@
       </div>
       <div class="chrono-btns">
         <button class="chrono-btn-main start" id="btn-start" onclick="startStop()">&#9654; Start</button>
-        <button class="chrono-btn-reset" id="btn-reset" onclick="resetTimer()" disabled>&#8635; Reset</button>
       </div>
     </div>
   </div>
@@ -231,7 +225,7 @@
     </div>
   </div>
   <div class="action-row ses-block">
-    <button class="btn-primary btn-danger" id="btn-reset-session" onclick="resetSession()">&#8635; Resetear sesión</button>
+    <button class="btn-primary btn-green" id="btn-save-session" onclick="saveSession()">&#128190; Guardar sesión</button>
   </div>
 </div>
 
@@ -388,7 +382,6 @@ function startStop(){
     _timerInterval=setInterval(updateChronoDisplay,33);
     $('btn-start').textContent='⏹ Stop';
     $('btn-start').classList.remove('start');$('btn-start').classList.add('stop');
-    $('btn-reset').disabled=true;
   }
 }
 
@@ -396,12 +389,10 @@ function _resetInternal(){
   clearInterval(_timerInterval);_timerRunning=false;_timerElapsed=0;
   $('btn-start').textContent='▶ Start';
   $('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
-  $('btn-reset').disabled=true;
   $('chrono-display').textContent='0:00.00';
 }
 
 function resetTimer(){
-  // Reset manual: descarta el tiempo actual sin guardar
   _resetInternal();
   clearPenState();
 }
@@ -409,8 +400,6 @@ function resetTimer(){
 function updateChronoDisplay(){
   const el=_timerRunning?_timerElapsed+(Date.now()-_timerStart):_timerElapsed;
   $('chrono-display').textContent=fmtTime(el);
-  // Habilitar reset sólo cuando hay tiempo parado
-  if(!_timerRunning&&_timerElapsed>0)$('btn-reset').disabled=false;
 }
 
 /* PENALIZACIONES */
@@ -462,11 +451,12 @@ function buildTimesTable(cfg){
           let txt='';
           if(e.dsq){cls+=' dsq-cell';txt='DSQ';}
           else{if(e.totalMs===best&&best!=null)cls+=' best';txt=fmtTime(e.totalMs);}
-          const penBadge=e.penMs>0&&!e.dsq?`<span class="time-pen-badge">+${e.penMs/1000}s</span>`:'';
-          const dsqBadge=e.dsq?'<span class="time-dsq-badge">DSQ</span>':'';
+          let badges='';
+          if(!e.dsq&&e.penMs>0)badges+=`<span class="time-pen-badge">+${fmtTime(e.penMs)}</span>`;
+          if(e.dsq)badges+=`<span class="time-dsq-badge">DSQ</span>`;
           const mangaLbl=`<span class="time-manga-lbl">M${e.manga}</span>`;
-          return `<span class="time-entry" onclick="openEditSheet(${pi},${ti},${idx})"><span class="${cls}">${txt}${penBadge}${dsqBadge}</span>${mangaLbl}</span>`;
-        }).join('');
+          return `<span class="time-entry" onclick="openEditSheet(${pi},${ti},${idx})">${mangaLbl}<span class="${cls}">${txt}</span>${badges}</span>`;
+        }).join('<br>');
       }
       tr.appendChild(td);
     }
@@ -476,161 +466,151 @@ function buildTimesTable(cfg){
 
 /* EDIT SHEET */
 function openEditSheet(pi,ti,idx){
-  _editPi=pi;_editTi=ti;_editIdx=idx;
   const e=_times[pi][ti][idx];
-  _editCnt2=0;_editCnt50=0;
-  let rem=e.penMs||0;
-  _editCnt50=Math.floor(rem/50000);rem-=_editCnt50*50000;
-  _editCnt2=Math.floor(rem/2000);
-  _editDsq=!!e.dsq;
-  const p=_cfg.palistas[pi];
+  if(!e)return;
+  _editPi=pi;_editTi=ti;_editIdx=idx;
+  _editCnt2=e.cnt2||0;_editCnt50=e.cnt50||0;_editDsq=e.dsq||false;
   $('sheet-title').textContent='Editar tiempo';
-  $('sheet-subtitle').textContent=p.name+' · Tramo '+(ti+1)+' · Manga '+e.manga;
+  $('sheet-subtitle').textContent=(_cfg.palistas[pi]?.name||'?')+' · Tramo '+(ti+1)+' · Manga '+(e.manga||'?');
+  $('sheet-time-raw').textContent=fmtTime(e.rawMs)+' (bruto)';
   $('edit-cnt2').textContent=_editCnt2;
   $('edit-cnt50').textContent=_editCnt50;
-  const selPal=$('sheet-sel-pal');selPal.innerHTML='';
-  _cfg.palistas.forEach((pl,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+pl.name;if(i===pi)o.selected=true;selPal.appendChild(o);});
-  const selTra=$('sheet-sel-tra');selTra.innerHTML='';
-  for(let i=0;i<_cfg.nTra;i++){const o=document.createElement('option');o.value=i;o.textContent='Tramo '+(i+1);if(i===ti)o.selected=true;selTra.appendChild(o);}
   $('edit-dsq-check').checked=_editDsq;
-  $('sheet-time-raw').textContent=e.dsq?'DSQ':fmtTime(e.rawMs);
+  const selPal=$('sheet-sel-pal');selPal.innerHTML='';
+  _cfg.palistas.forEach((p,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+p.name;selPal.appendChild(opt);});
+  selPal.value=pi;
+  const selTra=$('sheet-sel-tra');selTra.innerHTML='';
+  for(let i=0;i<_cfg.nTra;i++){const opt=document.createElement('option');opt.value=i;opt.textContent='Tramo '+(i+1);selTra.appendChild(opt);}
+  selTra.value=ti;
   $('edit-sheet-overlay').classList.add('open');
 }
-function closeEditSheet(e){if(e.target===$('edit-sheet-overlay'))$('edit-sheet-overlay').classList.remove('open');}
+function closeEditSheet(ev){if(ev&&ev.target!==$('edit-sheet-overlay'))return;$('edit-sheet-overlay').classList.remove('open');}
 function adjustEdit(type,d){
   if(type==='cnt2'){_editCnt2=Math.max(0,_editCnt2+d);$('edit-cnt2').textContent=_editCnt2;}
   else{_editCnt50=Math.max(0,_editCnt50+d);$('edit-cnt50').textContent=_editCnt50;}
 }
 function onEditDsqToggle(){_editDsq=$('edit-dsq-check').checked;}
 function applyEdit(){
-  const e=_times[_editPi][_editTi][_editIdx];
-  const newPenMs=_editCnt2*2000+_editCnt50*50000;
-  e.penMs=newPenMs;e.dsq=_editDsq;e.totalMs=_editDsq?null:e.rawMs+newPenMs;
   const newPi=parseInt($('sheet-sel-pal').value);
   const newTi=parseInt($('sheet-sel-tra').value);
-  const maxManga=(_times[newPi][newTi].length?Math.max(..._times[newPi][newTi].map(x=>x.manga)):0);
-  if(newPi!==_editPi||newTi!==_editTi){
-    const moved=_times[_editPi][_editTi].splice(_editIdx,1)[0];
-    moved.manga=maxManga+1;
-    _times[newPi][newTi].push(moved);
-  }
+  const e=_times[_editPi][_editTi].splice(_editIdx,1)[0];
+  e.cnt2=_editCnt2;e.cnt50=_editCnt50;
+  e.penMs=_editCnt2*2000+_editCnt50*50000;
+  e.dsq=_editDsq;
+  e.totalMs=_editDsq?null:e.rawMs+e.penMs;
+  _times[newPi][newTi].push(e);
+  _times[newPi][newTi].sort((a,b)=>a.ts-b.ts);
   buildTimesTable(_cfg);
   $('edit-sheet-overlay').classList.remove('open');
-  toast('Tiempo actualizado ✓','ok');
+  toast('Tiempo actualizado','ok');
 }
 function deleteEntry(){
-  if(!confirm('¿Eliminar este tiempo?'))return;
   _times[_editPi][_editTi].splice(_editIdx,1);
   buildTimesTable(_cfg);
   $('edit-sheet-overlay').classList.remove('open');
   toast('Tiempo eliminado','ok');
 }
 
-/* RESETEAR SESIÓN */
-function resetSession(){
-  if(_timerRunning){toast('Para el cronómetro primero','err');return;}
-  if(!confirm('¿Resetear la sesión? Se borrarán todos los tiempos registrados.'))return;
-  stopRefreshInterval();
-  disconnectRealtime();
-  if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.clear();}
-  window.location.href='slalom-config.html';
+/* GUARDAR SESIÓN */
+async function saveSession(){
+  if(!_sessionId)return toast('Sin sesión activa','err');
+  showLoad('Guardando...');
+  try{
+    const payload={times:_times,mangas:_mangas,updated_at:new Date().toISOString()};
+    await api(`/rest/v1/sessions?id=eq.${_sessionId}`,{method:'PATCH',body:JSON.stringify(payload)});
+    toast('Sesión guardada ✓','ok');
+  }catch(e){toast('Error al guardar','err');console.error(e);}
+  hideLoad();
+}
+
+/* CFG SHEET */
+function openCfgSheet(){$('cfg-sheet-overlay').classList.add('open');}
+function closeCfgSheet(ev){if(ev&&ev.target!==$('cfg-sheet-overlay'))return;$('cfg-sheet-overlay').classList.remove('open');}
+
+/* REFRESH */
+function startRefreshInterval(){
+  if(_refreshInterval)clearInterval(_refreshInterval);
+  _refreshInterval=setInterval(()=>{if(_shared)fetchSharedUpdates();},5000);
+}
+async function fetchSharedUpdates(){
+  try{
+    const rows=await api(`/rest/v1/sessions?id=eq.${_sessionId}&select=times,mangas`);
+    if(!rows||!rows.length)return;
+    const remote=rows[0];
+    if(remote.times)_times=remote.times;
+    if(remote.mangas)_mangas=remote.mangas;
+    if(_cfg)buildTimesTable(_cfg);
+  }catch(e){console.warn('refresh err',e);}
 }
 
 /* REALTIME */
 function connectRealtime(){
-  if(!_shared||!_sessionId)return;
-  disconnectRealtime();
-  const wsUrl=SUPABASE_URL.replace('https://','wss://')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY+'&vsn=1.0.0';
+  if(_realtimeWs)return;
+  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY+'&vsn=1.0.0';
   _realtimeWs=new WebSocket(wsUrl);
   _realtimeWs.onopen=()=>{
-    _realtimeWs.send(JSON.stringify({topic:'realtime:slalom_session_'+_shared.sharedSessionId,event:'phx_join',payload:{},ref:'1'}));
+    _realtimeWs.send(JSON.stringify({topic:'realtime:public:sessions:id=eq.'+_sessionId,event:'phx_join',payload:{},ref:'1'}));
   };
   _realtimeWs.onmessage=(msg)=>{
     try{
       const d=JSON.parse(msg.data);
-      if(d.event==='broadcast'&&d.payload?.event==='new_time'){
-        const {pi,ti,entry,coachId}=d.payload.payload||{};
-        if(pi!=null&&ti!=null&&entry)receiveCoachTime(pi,ti,entry,coachId);
+      if(d.event==='UPDATE'&&d.payload?.record){
+        const r=d.payload.record;
+        if(r.times)_times=r.times;
+        if(r.mangas)_mangas=r.mangas;
+        if(_cfg){buildTimesTable(_cfg);syncMangaVal();}
       }
     }catch(e){}
   };
-}
-function disconnectRealtime(){if(_realtimeWs){_realtimeWs.close();_realtimeWs=null;}}
-
-function receiveCoachTime(pi,ti,entry,coachId){
-  if(!_cfg||pi>=_cfg.nPal||ti>=_cfg.nTra)return;
-  if(!_coachColorMap[coachId]){
-    const idx=Object.keys(_coachColorMap).length%COACH_COLORS.length;
-    _coachColorMap[coachId]=COACH_COLORS[idx];
-  }
-  entry.coachId=coachId;
-  _times[pi][ti].push(entry);
-  buildTimesTable(_cfg);
-  toast('Tiempo recibido de entrenador','ok');
+  _realtimeWs.onerror=()=>{_realtimeWs=null;};
 }
 
-/* REFRESH */
-function startRefreshInterval(){if(_refreshInterval)clearInterval(_refreshInterval);_refreshInterval=setInterval(()=>{if(_cfg)buildTimesTable(_cfg);},5000);}
-function stopRefreshInterval(){clearInterval(_refreshInterval);_refreshInterval=null;}
-
-/* NAVEGACIÓN */
+/* BACK */
 function handleBack(){
-  if(_timerRunning){toast('Para el cronómetro antes de salir','err');return;}
-  if(!confirm('¿Volver a la configuración? Se perderán los tiempos no guardados.'))return;
-  stopRefreshInterval();
-  disconnectRealtime();
-  window.location.href='slalom-config.html';
+  if(_timerRunning){toast('Para el cronómetro primero','err');return;}
+  window.location.href='menu.html';
 }
 
-/* INIT */
-async function init(){
-  $('overlay').classList.add('show');
+/* BOOT */
+async function boot(){
+  showLoad('Cargando sesión...');
   try{
-    _tok=localStorage.getItem('slt_tok');
-    _uid=localStorage.getItem('slt_uid');
-    _email=localStorage.getItem('slt_email');
-    if(!_tok){window.location.href='login.html';return;}
-    $('top-avatar').textContent=initials(_email||'?');
+    const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='index.html';return;}
+    _tok=session.access_token;_uid=session.user.id;_email=session.user.email;
+    $('top-avatar').textContent=initials(_email);
 
-    const sharedRaw=sessionStorage.getItem('slalom_shared');
-    if(sharedRaw)_shared=JSON.parse(sharedRaw);
+    const sp=new URLSearchParams(location.search);
+    _sessionId=sp.get('id');
+    if(!_sessionId){window.location.href='menu.html';return;}
 
-    const resumeRaw=sessionStorage.getItem('slalom_resume');
-    if(resumeRaw){
-      sessionStorage.removeItem('slalom_resume');
-      const resume=JSON.parse(resumeRaw);
-      const cfg=resume.cfg;
-      _cfg=cfg;
-      const nPal=cfg.nPal,nTra=cfg.nTra;
-      _times=Array.from({length:nPal},(_,pi)=>Array.from({length:nTra},(_,ti)=>{
-        const srcArr=(resume.times?.[pi]||[])[ti]||[];
-        return srcArr.map(e=>{
-          const rawMs=e.ms||0;
-          const penMs=(e.pen||0)+(e.cnt2||0)*2000+(e.cnt50||0)*50000;
-          const dsq=!!e.dsq;
-          return {rawMs,penMs,totalMs:dsq?null:rawMs+penMs,dsq,manga:e.manga||1,ts:Date.now()};
-        });
-      }));
-      _mangas=resume.mangas||Array.from({length:nPal},()=>Array(nTra).fill(1));
-      _sessionId=resume.sessionId||null;
+    const rows=await api(`/rest/v1/sessions?id=eq.${_sessionId}&select=*`);
+    if(!rows||!rows.length){toast('Sesión no encontrada','err');setTimeout(()=>window.location.href='menu.html',1500);return;}
+    const row=rows[0];
+    const cfg=row.config;
+    cfg.name=row.name;
+    _shared=row.shared_code?{code:row.shared_code}:null;
+
+    if(row.times&&row.times.length){
+      _times=row.times;
+      _mangas=row.mangas||Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
       initSessionResume(cfg);
     } else {
-      const cfgRaw=sessionStorage.getItem('slalom_cfg');
-      if(!cfgRaw){window.location.href='slalom-config.html';return;}
-      const cfg=JSON.parse(cfgRaw);
       initSession(cfg);
     }
-  }catch(e){
-    console.error('Init error:',e);
-  }finally{
-    $('overlay').classList.remove('show');
-  }
+
+    // Cargar patch de cfg-sheet si existe
+    const patchScript=document.createElement('script');
+    patchScript.src='cfg-sheet-patch.js';
+    document.body.appendChild(patchScript);
+
+  }catch(e){console.error(e);toast('Error al cargar','err');}
+  hideLoad();
 }
 
-window.addEventListener('DOMContentLoaded',init);
+boot();
 </script>
-<script src="active-session-bar.js"></script>
-<script src="cfg-sheet-patch.js"></script>
-<script src="add-group-patch.js"></script>
 </body>
 </html>
