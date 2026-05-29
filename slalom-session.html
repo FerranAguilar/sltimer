@@ -367,17 +367,12 @@ function adjustManga(d){
 
 function startStop(){
   if(_timerRunning){
-    // STOP → guardar automáticamente y resetear
     _timerElapsed+=Date.now()-_timerStart;
     _timerRunning=false;clearInterval(_timerInterval);
     updateChronoDisplay();
     saveTime();
-    // Resetear tras un breve instante para que el toast sea visible
-    setTimeout(()=>{
-      _resetInternal();
-    },300);
+    setTimeout(()=>{_resetInternal();},300);
   } else {
-    // START
     _timerStart=Date.now();_timerRunning=true;
     _timerInterval=setInterval(updateChronoDisplay,33);
     $('btn-start').textContent='⏹ Stop';
@@ -589,8 +584,20 @@ async function boot(){
     const rows=await api(`/rest/v1/sessions?id=eq.${_sessionId}&select=*`);
     if(!rows||!rows.length){toast('Sesión no encontrada','err');setTimeout(()=>window.location.href='menu.html',1500);return;}
     const row=rows[0];
-    const cfg=row.config;
-    cfg.name=row.name;
+
+    // Reconstruir cfg desde los campos raíz del row (compatibilidad con slalom-config.html)
+    // row.config puede no existir si la sesión fue creada con el nuevo formato plano
+    const cfg = row.config || {
+      name:    row.name,
+      lugar:   row.lugar   || null,
+      fecha:   row.fecha   || null,
+      nPal:    row.n_palistas || (row.palistas ? row.palistas.length : 0),
+      nTra:    row.n_tramos   || 3,
+      palistas: row.palistas  || []
+    };
+    // Asegurar que name siempre refleja el campo raíz
+    cfg.name = row.name || cfg.name;
+
     _shared=row.shared_code?{code:row.shared_code}:null;
 
     if(row.times&&row.times.length){
