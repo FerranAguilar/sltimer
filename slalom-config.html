@@ -74,6 +74,19 @@
     .btn-primary:disabled{opacity:.5;cursor:not-allowed}
     .btn-secondary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit;transition:background .12s}
     .btn-secondary:active{background:#f5f5f5}
+    /* Botón añadir grupo */
+    .btn-add-group{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:8px;color:#0C447C;font-size:12px;font-weight:700;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
+    .btn-add-group:active{background:#cde3f6}
+    /* Header palistas: label + botón en la misma fila */
+    .pal-header{display:flex;align-items:center;justify-content:space-between}
+    /* Sheet backdrop + sheet */
+    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+    .sheet-backdrop.open{opacity:1;pointer-events:auto}
+    .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:16px 16px 32px;z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,1,.23,1);max-width:560px;margin:0 auto}
+    .sheet.open{transform:translateY(0)}
+    .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:100px;margin:0 auto 14px}
+    .sheet-title{font-size:16px;font-weight:700;color:#111;margin-bottom:4px}
+    .sheet-subtitle{font-size:13px;color:#aaa;margin-bottom:14px}
     /* OVERLAY */
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
     .overlay.show{display:flex}
@@ -97,6 +110,20 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- SHEET backdrop -->
+<div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
+
+<!-- SHEET selector de grupo -->
+<div class="sheet" id="group-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
+  <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
+  <div id="group-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
+  <div style="margin-top:16px">
+    <button class="btn-primary" style="background:#185FA5" onclick="closeGroupSheet()">Cancelar</button>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -129,7 +156,11 @@
       </div>
     </div>
   </div>
-  <div class="section-label">Palistas</div>
+  <!-- Header palistas con botón añadir grupo -->
+  <div class="pal-header">
+    <div class="section-label">Palistas</div>
+    <button class="btn-add-group" onclick="openGroupSheet()">&#128101; Añadir grupo</button>
+  </div>
   <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
   <button class="btn-primary" onclick="startSession()">&#9654; Iniciar sesión</button>
   <button class="btn-secondary" onclick="window.location.href='menu.html'">&#8592; Volver al menú</button>
@@ -139,11 +170,11 @@
 const SUPABASE_URL='https://xorblwcvlkbhpzcegkoh.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
 
-let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[];
+let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[],_teams=[];
 
 const CFG={tra:3};
 const MIN={tra:1};
-const MAX={tra:8};
+const MAX={tra:8,pal:20};
 
 function $(id){return document.getElementById(id);}
 function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
@@ -167,6 +198,89 @@ function toast(msg,type='ok'){
 function adjustCfg(key,delta){
   CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
   $('val-'+key).textContent=CFG[key];
+}
+
+/* ── GRUPOS ─────────────────────────────────────────────────── */
+async function loadTeams(){
+  try{
+    const members=await api('/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.'+_uid);
+    if(!members||!members.length){_teams=[];return;}
+    const results=[];
+    for(const m of members){
+      const team=m.teams;
+      if(!team)continue;
+      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
+      const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
+      results.push({id:team.id,name:team.name,athletes});
+    }
+    _teams=results;
+  }catch(e){
+    console.warn('loadTeams error:',e);
+    _teams=[];
+  }
+}
+
+function openGroupSheet(){
+  const list=$('group-list');
+  list.innerHTML='';
+  if(!_teams||!_teams.length){
+    list.innerHTML=`<div style="text-align:center;padding:24px 0;color:#aaa;font-size:14px">No perteneces a ningún grupo aún.<br><span style="font-size:12px">Crea o únete a un grupo desde el menú.</span></div>`;
+  }else{
+    _teams.forEach(team=>{
+      const card=document.createElement('div');
+      card.style.cssText='background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 14px;cursor:pointer;transition:background .15s';
+      card.onmousedown=()=>addGroupAthletes(team);
+      card.ontouchstart=()=>{};
+      const count=team.athletes.length;
+      card.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#1B3A5C">${team.name}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
+          </div>
+          <div style="font-size:22px">&#43;</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+          ${team.athletes.slice(0,8).map(a=>{
+            const fn=a.name+(a.surname?' '+a.surname:'');
+            const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+            return`<span style="font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C;padding:2px 7px;border-radius:100px">${fn}${cats.length?' · '+cats[0]:''}</span>`;
+          }).join('')}
+          ${count>8?`<span style="font-size:11px;color:#aaa">+${count-8} más</span>`:''}
+        </div>`;
+      list.appendChild(card);
+    });
+  }
+  $('group-sheet-backdrop').classList.add('open');
+  $('group-sheet').classList.add('open');
+}
+
+function closeGroupSheet(){
+  $('group-sheet-backdrop').classList.remove('open');
+  $('group-sheet').classList.remove('open');
+}
+
+function addGroupAthletes(team){
+  closeGroupSheet();
+  let added=0,skipped=0;
+  team.athletes.forEach(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    const cat=cats.length===1?cats[0]:null;
+    const exists=_palState.some(p=>p.id&&p.id===a.id);
+    if(exists){skipped++;return;}
+    if(_palState.length>=MAX.pal){skipped++;return;}
+    _palState.push({id:a.id,name:fn,category:cat,isTemp:false});
+    added++;
+  });
+  buildPalList();
+  if(added>0&&skipped>0){
+    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ('+skipped+' ya estaban)','ok');
+  }else if(added>0){
+    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ✓','ok');
+  }else{
+    toast('Todos los palistas ya estaban en la lista');
+  }
 }
 
 /* PALISTAS DINÁMICOS */
@@ -264,7 +378,7 @@ function setPalCatUI(i,cat){
   w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
 }
 
-/* INICIAR SESIÓN → navega a slalom-session.html pasando config por sessionStorage */
+/* INICIAR SESIÓN */
 function startSession(){
   const name=$('cfg-name').value.trim();
   if(!name){toast('Introduce un nombre para la sesión','err');return;}
@@ -287,6 +401,7 @@ async function init(){
     if(!_tok){window.location.href='login.html';return;}
     $('top-avatar').textContent=initials(_email||'?');
 
+    // Cargar atletas guardados
     try{
       const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
       _athletes=ats||[];
@@ -294,6 +409,9 @@ async function init(){
       console.warn('No se pudieron cargar atletas:',atsErr);
       _athletes=[];
     }
+
+    // Cargar grupos
+    await loadTeams();
 
     // Pre-rellenar si venimos de volver atrás desde la sesión
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
@@ -305,7 +423,7 @@ async function init(){
       $('cfg-lugar').value=cfg.lugar||'';
       $('cfg-fecha').value=cfg.fecha||'';
       _palState=cfg.palistas.map(p=>({...p,isTemp:false}));
-    } else {
+    }else{
       $('cfg-fecha').value=new Date().toISOString().slice(0,10);
     }
     buildPalList();
