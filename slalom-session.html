@@ -37,22 +37,24 @@
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
     .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#555;transition:background .12s;flex-shrink:0}
     .btn-edit-cfg:active{background:#f0f0f0}
-    /* BLOQUE COMÚN — todos los cuadros tienen el mismo ancho */
+    /* BLOQUE COMÚN */
     .ses-block{width:100%;max-width:480px;margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}
-    /* SESSION */
     .ses-header{display:flex;flex-direction:column;gap:2px}
     .ses-title{font-size:19px;font-weight:800;color:#111;line-height:1.2}
     .ses-meta{font-size:12px;color:#888;margin-top:2px}
     .chrono-card{background:#1B3A5C;border-radius:20px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
     .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.08em;text-align:center}
     .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:4px;line-height:1;text-align:center}
-    .chrono-btns{display:flex;gap:10px;width:100%}
-    .chrono-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
-    .chrono-btn:active{opacity:.82}
-    .chrono-btn.start{background:#22C55E;color:#fff}
-    .chrono-btn.stop{background:#EF4444;color:#fff}
-    .chrono-btn.save{background:#fff;color:#1B3A5C}
-    .chrono-btn:disabled{opacity:.4;cursor:not-allowed}
+    .chrono-btns{display:flex;gap:10px;width:100%;align-items:stretch}
+    /* Start/Stop: ocupa ~75% del ancho */
+    .chrono-btn-main{flex:3;padding:16px;border-radius:12px;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn-main:active{opacity:.82}
+    .chrono-btn-main.start{background:#22C55E;color:#fff}
+    .chrono-btn-main.stop{background:#EF4444;color:#fff}
+    /* Reset: ocupa ~25% del ancho */
+    .chrono-btn-reset{flex:1;padding:16px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.75);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn-reset:active{opacity:.75}
+    .chrono-btn-reset:disabled{opacity:.3;cursor:not-allowed}
     .manga-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
     .manga-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em}
     .manga-val{font-size:20px;font-weight:800;color:#fff;min-width:28px;text-align:center}
@@ -195,8 +197,8 @@
         <button class="manga-btn" onclick="adjustManga(1)">+</button>
       </div>
       <div class="chrono-btns">
-        <button class="chrono-btn start" id="btn-start" onclick="startStop()">&#9654; Start</button>
-        <button class="chrono-btn save" id="btn-save" onclick="saveTime()" disabled>Guardar</button>
+        <button class="chrono-btn-main start" id="btn-start" onclick="startStop()">&#9654; Start</button>
+        <button class="chrono-btn-reset" id="btn-reset" onclick="resetTimer()" disabled>&#8635; Reset</button>
       </div>
     </div>
   </div>
@@ -373,31 +375,47 @@ function adjustManga(d){
   _mangas[_selPal][_selTramo]=Math.max(1,cur+d);
   syncMangaVal();updateChronoCtx();
 }
+
 function startStop(){
   if(_timerRunning){
+    // STOP → guardar automáticamente y resetear
     _timerElapsed+=Date.now()-_timerStart;
     _timerRunning=false;clearInterval(_timerInterval);
-    $('btn-start').textContent='↺ Reset';$('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
-    $('btn-save').disabled=false;
     updateChronoDisplay();
-  } else if(_timerElapsed>0){
-    resetTimer();
+    saveTime();
+    // Resetear tras un breve instante para que el toast sea visible
+    setTimeout(()=>{
+      _resetInternal();
+    },300);
   } else {
+    // START
     _timerStart=Date.now();_timerRunning=true;
     _timerInterval=setInterval(updateChronoDisplay,33);
-    $('btn-start').textContent='⏹ Stop';$('btn-start').classList.remove('start');$('btn-start').classList.add('stop');
-    $('btn-save').disabled=true;
+    $('btn-start').textContent='⏹ Stop';
+    $('btn-start').classList.remove('start');$('btn-start').classList.add('stop');
+    $('btn-reset').disabled=true;
   }
 }
-function resetTimer(){
+
+function _resetInternal(){
   clearInterval(_timerInterval);_timerRunning=false;_timerElapsed=0;
-  $('btn-start').textContent='▶ Start';$('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
-  $('btn-save').disabled=true;
+  $('btn-start').textContent='▶ Start';
+  $('btn-start').classList.remove('stop');$('btn-start').classList.add('start');
+  $('btn-reset').disabled=true;
   $('chrono-display').textContent='0:00.00';
 }
+
+function resetTimer(){
+  // Reset manual: descarta el tiempo actual sin guardar
+  _resetInternal();
+  clearPenState();
+}
+
 function updateChronoDisplay(){
   const el=_timerRunning?_timerElapsed+(Date.now()-_timerStart):_timerElapsed;
   $('chrono-display').textContent=fmtTime(el);
+  // Habilitar reset sólo cuando hay tiempo parado
+  if(!_timerRunning&&_timerElapsed>0)$('btn-reset').disabled=false;
 }
 
 /* PENALIZACIONES */
