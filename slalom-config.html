@@ -1,1 +1,398 @@
-${html}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SLTimer – Configurar sesión</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#185FA5">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f4f7;min-height:100dvh;color:#111}
+  .top-bar{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.08);position:sticky;top:0;z-index:20}
+  .top-back{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:#185FA5;font-size:20px;line-height:1}
+  .top-title{font-size:17px;font-weight:700;flex:1}
+  .top-avatar{width:32px;height:32px;border-radius:50%;background:#185FA5;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+  .page{max-width:480px;margin:0 auto;padding:16px 16px 100px}
+  .section-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  .section-label{font-size:12px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+  .field-label{font-size:13px;font-weight:600;color:#555;margin-bottom:5px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+  input[type=text]:focus,input[type=date]:focus{outline:none;border-color:#185FA5}
+  .stepper-row{display:flex;align-items:center;gap:12px;margin-top:4px}
+  .stepper-label{font-size:14px;color:#555;flex:1}
+  .stepper{display:flex;align-items:center;gap:8px}
+  .step-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid #ddd;background:#fff;font-size:18px;font-weight:300;color:#185FA5;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;transition:background .15s,border-color .15s}
+  .step-btn:active{background:#E6F1FB}
+  .step-val{font-size:16px;font-weight:700;min-width:20px;text-align:center}
+  .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .pal-row-placeholder{border-style:dashed;background:#fafafa}
+  .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
+  .pal-remove-btn:active{color:#e05050}
+  .pal-row-top{display:flex;align-items:center;gap:10px}
+  .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pal-search-wrap{position:relative;flex:1}
+  .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+  .pal-input:focus{outline:none;border-color:#185FA5}
+  .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
+  .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
+  .pal-dropdown.open{display:block}
+  .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+  .pal-option:last-child{border-bottom:none}
+  .pal-option:active{background:#f7f7f7}
+  .pal-option-name{font-weight:600;color:#111;flex:1}
+  .pal-option-cats{display:flex;gap:4px}
+  .cat-badge{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px}
+  .cat-badge.K1{background:#E6F1FB;color:#0C447C}
+  .cat-badge.C1{background:#E1F5EE;color:#085041}
+  .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:2px;display:none}
+  .pal-clear.show{display:block}
+  .cat-selector{display:flex;gap:6px}
+  .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+  .cat-btn:active{opacity:.75}
+  .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+  .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+  .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
+  .add-group-btn-outer{width:100%;padding:13px 16px;background:#fff;border:1.5px dashed #b8d3ee;border-radius:14px;font-size:14px;font-weight:600;color:#185FA5;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;transition:background .15s,border-color .15s}
+  .add-group-btn-outer:active{background:#E6F1FB;border-color:#185FA5}
+  .start-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;padding:15px;background:#185FA5;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(24,95,165,0.30)}
+  .start-btn:active{background:#0C447C}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:flex-end;justify-content:center}
+  .overlay.show{display:flex}
+  .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:80dvh;overflow-y:auto}
+  .sheet-title{font-size:17px;font-weight:700;margin-bottom:4px}
+  .sheet-subtitle{font-size:13px;color:#888;margin-bottom:16px}
+  .sheet-close{float:right;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;margin-top:-4px}
+  .team-card{background:#f7f9fc;border:0.5px solid #e0e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .12s}
+  .team-card:active{background:#E6F1FB}
+  .team-avatar-row{display:flex;gap:-4px;flex-wrap:nowrap}
+  .team-mini-avatar{width:22px;height:22px;border-radius:50%;background:#185FA5;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;flex-shrink:0}
+  .team-info{flex:1}
+  .team-name{font-size:14px;font-weight:700}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#222;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.ok{background:#0F6E56}
+  .toast.err{background:#c0392b}
+  .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-overlay{position:fixed;inset:0;background:rgba(242,244,247,0.85);z-index:300;display:flex;align-items:center;justify-content:center}
+  .loading-card{background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:12px}
+  .loading-card .spinner{width:28px;height:28px;border-color:rgba(24,95,165,0.2);border-top-color:#185FA5}
+  .loading-text{font-size:14px;color:#555}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <div class="loading-text">Cargando…</div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <button class="top-back" onclick="history.back()">&#8592;</button>
+  <div class="top-title">Nueva sesión</div>
+  <div class="top-avatar" id="top-avatar" onclick="window.location.href='ajustes.html'">?</div>
+</div>
+
+<div class="page">
+
+  <!-- Nombre y lugar -->
+  <div class="section-card">
+    <div class="section-label">Sesión</div>
+    <div style="margin-bottom:12px">
+      <div class="field-label">Nombre</div>
+      <input type="text" id="cfg-name" placeholder="Ej: Entrenamiento martes" autocomplete="off" autocorrect="off">
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="field-label">Lugar (opcional)</div>
+      <input type="text" id="cfg-lugar" placeholder="Ej: Río Segre" autocomplete="off" autocorrect="off">
+    </div>
+    <div>
+      <div class="field-label">Fecha</div>
+      <input type="date" id="cfg-fecha">
+    </div>
+  </div>
+
+  <!-- Tramos -->
+  <div class="section-card">
+    <div class="section-label">Tramos</div>
+    <div class="stepper-row">
+      <div class="stepper-label">Número de tramos</div>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepCfg('tra',-1)">−</button>
+        <div class="step-val" id="val-tra">6</div>
+        <button class="step-btn" onclick="stepCfg('tra',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Palistas -->
+  <div class="section-card">
+    <div class="section-label">Palistas</div>
+    <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
+  <!-- Añadir grupo -->
+  <button class="add-group-btn-outer" onclick="openGroupSheet()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Añadir grupo
+  </button>
+
+</div>
+
+<button class="start-btn" onclick="startSession()">Iniciar sesión</button>
+
+<!-- Sheet grupos -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeGroupSheet()">
+  <div class="sheet">
+    <button class="sheet-close" onclick="closeGroupSheet()">&#215;</button>
+    <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
+    <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
+    <div id="team-list-sheet"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const API='https://xjxjxjxjxjxjxjxj.supabase.co';
+const KEY='eyXXXXXX';
+
+const MAX={tra:20,pal:20};
+const CFG={tra:6};
+let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[],_teams=[];
+
+function initials(e){return(e||'?').split('@')[0].slice(0,2).toUpperCase();}
+function toast(msg,type='',dur=2200){const t=$('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');void t.offsetWidth;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+
+async function api(path,opts={}){
+  const r=await fetch(API+path,{...opts,headers:{'apikey':KEY,'Authorization':'Bearer '+_tok,'Content-Type':'application/json',...(opts.headers||{})}});
+  if(!r.ok)throw new Error(await r.text());
+  const txt=await r.text();return txt?JSON.parse(txt):null;
+}
+
+function stepCfg(key,d){
+  const min=key==='tra'?1:1,max=MAX[key];
+  CFG[key]=Math.min(max,Math.max(min,(CFG[key]||1)+d));
+  $('val-'+key).textContent=CFG[key];
+}
+
+/* ── GRUPOS SHEET ── */
+async function loadTeams(){
+  try{
+    const rows=await api('/rest/v1/team_athletes?select=team_id,athletes(id,name,surname,categories)&user_id=eq.'+_uid);
+    const map={};
+    (rows||[]).forEach(r=>{
+      const a=r.athletes;if(!a)return;
+      if(!map[r.team_id])map[r.team_id]={id:r.team_id,athletes:[]};
+      map[r.team_id].athletes.push(a);
+    });
+    const teamIds=Object.keys(map);
+    if(teamIds.length){
+      const teams=await api('/rest/v1/teams?id=in.('+teamIds.join(',')+')'+'&select=id,name');
+      const results=[];
+      (teams||[]).forEach(t=>{
+        if(map[t.id])results.push({id:t.id,name:t.name,athletes:map[t.id].athletes});
+      });
+      _teams=results;
+    } else {
+      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+_uid);
+      const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
+      const results=[];
+      const allTeams=await api('/rest/v1/teams?select=id,name&order=name.asc');
+      for(const team of (allTeams||[])){
+        const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
+        const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
+        results.push({id:team.id,name:team.name,athletes});
+      }
+      _teams=results;
+    }
+  }catch(e){
+    console.warn('loadTeams error:',e);
+    _teams=[];
+  }
+}
+
+function openGroupSheet(){
+  const list=$('team-list-sheet');list.innerHTML='';
+  if(!_teams.length){list.innerHTML='<div style="text-align:center;color:#aaa;padding:24px 0;font-size:14px">No hay grupos disponibles</div>';$('overlay').classList.add('show');return;}
+  _teams.forEach(team=>{
+    const card=document.createElement('div');card.className='team-card';
+    const count=team.athletes.length;
+    card.innerHTML=`
+      <div class="team-info">
+        <div class="team-name">${team.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+          ${team.athletes.slice(0,8).map(a=>{
+            const fn=(a.name||'')+(a.surname?' '+a.surname:'');
+            return`<div class="team-mini-avatar" title="${fn}">${fn.slice(0,2).toUpperCase()}</div>`;
+          }).join('')}${count>8?`<div class="team-mini-avatar" style="background:#aaa">+${count-8}</div>`:''}
+        </div>
+      </div>
+      <div style="color:#185FA5;font-size:20px">›</div>`;
+    card.onmousedown=()=>addGroupAthletes(team);
+    list.appendChild(card);
+  });
+  $('overlay').classList.add('show');
+}
+
+function closeGroupSheet(){$('overlay').classList.remove('show');}
+
+function addGroupAthletes(team){
+  closeGroupSheet();
+  let added=0,skipped=0;
+  team.athletes.forEach(a=>{
+    const fn=(a.name||'')+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    const cat=cats.length===1?cats[0]:null;
+    const exists=_palState.some(p=>p.id&&p.id===a.id);
+    if(exists){skipped++;return;}
+    if(_palState.length>=MAX.pal){skipped++;return;}
+    _palState.push({id:a.id,name:fn,category:cat,isTemp:false});
+    added++;
+  });
+  buildPalList();
+  if(added&&skipped)
+    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ('+skipped+' ya estaban)','ok');
+  else if(added)
+    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ✓','ok');
+  else
+    toast('Todos los palistas ya estaban en la lista');
+}
+
+/* ── PALISTAS ── */
+function buildPalList(){
+  const c=$('pal-list');c.innerHTML='';
+  for(let i=0;i<_palState.length;i++)renderPalRow(i,c);
+  // Placeholder row para añadir
+  if(_palState.length<MAX.pal){
+    const ph=document.createElement('div');
+    ph.className='pal-row pal-row-placeholder';
+    ph.style.cursor='pointer';
+    ph.innerHTML=`<div class="pal-row-top"><div class="pal-num" style="background:#f0f0f0;color:#bbb">+</div><span style="font-size:14px;color:#bbb;flex:1">Añadir palista…</span></div>`;
+    ph.onclick=()=>{_palState.push({id:null,name:'',category:null,isTemp:false});buildPalList();setTimeout(()=>{const inp=$('spal-input-'+(_palState.length-1));if(inp)inp.focus();},50);};
+    c.appendChild(ph);
+  }
+}
+
+function renderPalRow(i,container){
+  const s=_palState[i];
+  const row=document.createElement('div');row.className='pal-row';row.id='spal-row-'+i;
+  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">✕</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div><button class="pal-remove-btn" onclick="removePal(${i})" title="Eliminar palista">✕</button></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categoría</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
+  container.appendChild(row);
+}
+
+function removePal(i){_palState.splice(i,1);buildPalList();}
+
+function onPalInput(i){
+  const val=$('spal-input-'+i).value;
+  _palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;
+  $('spal-clear-'+i).classList.toggle('show',val.length>0);
+  showPalCat(i,val.length>0);
+  _showPalDropdown(i,val.toLowerCase().trim());
+}
+
+function openPalDropdown(i){
+  const q=($('spal-input-'+i).value||'').toLowerCase().trim();
+  _showPalDropdown(i,q,!q);
+}
+
+function _showPalDropdown(i,q,showAll=false){
+  const dd=$('spal-dd-'+i);if(!dd)return;
+  const m=showAll&&!q
+    ?_athletes.slice(0,20)
+    :_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  dd.innerHTML=m.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+    const catsArr=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',${JSON.stringify(catsArr)})"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
+function delayPalClose(i){
+  setTimeout(()=>{const dd=$('spal-dd-'+i);if(dd)dd.classList.remove('open');},150);
+}
+
+function selectPalAthlete(i,id,name,cats){
+  _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
+  const inp=$('spal-input-'+i);inp.value=name;inp.classList.add('matched');
+  $('spal-clear-'+i).classList.add('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,true);
+  if(cats.length===1)setPalCatUI(i,cats[0]);else setPalCatUI(i,_palState[i].category);
+}
+
+function clearPal(i){
+  _palState[i]={id:null,name:'',category:null,isTemp:false};
+  const inp=$('spal-input-'+i);inp.value='';inp.classList.remove('matched');
+  $('spal-clear-'+i).classList.remove('show');
+  $('spal-dd-'+i).classList.remove('open');
+  showPalCat(i,false);
+}
+
+function showPalCat(i,show){$('spal-cat-wrap-'+i).style.display=show?'flex':'none';}
+function setPalCat(i,cat){_palState[i].category=cat;setPalCatUI(i,cat);}
+function setPalCatUI(i,cat){
+  const w=$('spal-cat-wrap-'+i);if(!w)return;
+  w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
+}
+
+function startSession(){
+  const name=$('cfg-name').value.trim();
+  if(!name){toast('Introduce un nombre para la sesión','err');return;}
+  if(_palState.length===0){toast('Añade al menos un palista','err');return;}
+  const lugar=$('cfg-lugar').value.trim();
+  const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+  const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp||false}));
+  const cfg={name,lugar,fecha,nPal:palistas.length,nTra:CFG.tra,palistas};
+  sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
+  window.location.href='slalom-session.html';
+}
+
+async function init(){
+  $('loading-overlay').style.display='flex';
+  try{
+    _tok=localStorage.getItem('slt_tok');
+    _uid=localStorage.getItem('slt_uid');
+    _email=localStorage.getItem('slt_email');
+    if(!_tok){window.location.href='login.html';return;}
+    $('top-avatar').textContent=initials(_email||'?');
+    try{
+      const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
+      _athletes=ats||[];
+    }catch(atsErr){
+      console.warn('No se pudieron cargar atletas:',atsErr);
+      _athletes=[];
+    }
+    await loadTeams();
+    const cfgRaw=sessionStorage.getItem('slalom_cfg');
+    if(cfgRaw){
+      const cfg=JSON.parse(cfgRaw);
+      if(cfg.name)$('cfg-name').value=cfg.name;
+      if(cfg.lugar)$('cfg-lugar').value=cfg.lugar;
+      if(cfg.fecha)$('cfg-fecha').value=cfg.fecha;
+      if(cfg.nTra){CFG.tra=cfg.nTra;$('val-tra').textContent=cfg.nTra;}
+      if(cfg.palistas&&cfg.palistas.length){
+        _palState=cfg.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));
+      }
+    }
+    $('cfg-fecha').value=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
+    buildPalList();
+  }catch(e){
+    console.error(e);
+    toast('Error al cargar','err');
+  }finally{
+    $('loading-overlay').style.display='none';
+  }
+}
+init();
+</script>
+</body>
+</html>
