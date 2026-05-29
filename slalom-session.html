@@ -46,13 +46,13 @@
     .chrono-ctx{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.08em;text-align:center}
     .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:4px;line-height:1;text-align:center}
     .chrono-btns{display:flex;gap:10px;width:100%;align-items:stretch}
-    /* Start/Stop: ocupa ~75% del ancho */
-    .chrono-btn-main{flex:3;padding:16px;border-radius:12px;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    /* Start/Stop: más grande, ocupa ~75% del ancho */
+    .chrono-btn-main{flex:3;padding:20px 16px;border-radius:14px;border:none;font-size:20px;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .12s;letter-spacing:0.02em}
     .chrono-btn-main:active{opacity:.82}
     .chrono-btn-main.start{background:#22C55E;color:#fff}
     .chrono-btn-main.stop{background:#EF4444;color:#fff}
     /* Reset: ocupa ~25% del ancho */
-    .chrono-btn-reset{flex:1;padding:16px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.75);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn-reset{flex:1;padding:20px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.75);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
     .chrono-btn-reset:active{opacity:.75}
     .chrono-btn-reset:disabled{opacity:.3;cursor:not-allowed}
     .manga-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
@@ -105,6 +105,7 @@
     .btn-primary:active{opacity:.85}
     .btn-primary:disabled{opacity:.5;cursor:not-allowed}
     .btn-green{background:#0F6E56}
+    .btn-danger{background:#EF4444}
     /* BOTTOM SHEET */
     .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:flex-end}
     .sheet-overlay.open{display:flex}
@@ -230,7 +231,7 @@
     </div>
   </div>
   <div class="action-row ses-block">
-    <button class="btn-primary btn-green" id="btn-save-session" onclick="saveSession()" disabled>&#128190; Guardar sesión</button>
+    <button class="btn-primary btn-danger" id="btn-reset-session" onclick="resetSession()">&#8635; Resetear sesión</button>
   </div>
 </div>
 
@@ -329,9 +330,6 @@ function initSession(cfg){
   clearPenState();
   buildSelPal(cfg);buildSelTra(cfg);
   syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();
-  const btn=$('btn-save-session');
-  btn.textContent='💾 Finalizar y guardar sesión';
-  btn.disabled=false;
   startRefreshInterval();
   if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}
   if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.set({type:'slalom',name:cfg.name,url:'slalom-session.html',startedAt:Date.now()});}
@@ -349,9 +347,6 @@ function initSessionResume(cfg){
   clearPenState();
   buildSelPal(cfg);buildSelTra(cfg);
   syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();
-  const btn=$('btn-save-session');
-  btn.textContent='💾 Finalizar y guardar sesión';
-  btn.disabled=false;
   startRefreshInterval();
   if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}
   if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.set({type:'slalom',name:cfg.name,url:'slalom-session.html',startedAt:Date.now()});}
@@ -531,33 +526,14 @@ function deleteEntry(){
   toast('Tiempo eliminado','ok');
 }
 
-/* GUARDAR SESIÓN */
-async function saveSession(){
-  const hasData=_times.some(pt=>pt.some(t=>t.length>0));
-  if(!hasData){toast('No hay tiempos que guardar','err');return;}
-  showLoad('Guardando sesión...');
-  try{
-    let sesId=_sessionId;
-    if(!sesId){
-      const cfg=_cfg;
-      const sesRow=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,n_pal:cfg.nPal,n_tra:cfg.nTra,palistas:cfg.palistas})});
-      sesId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
-      _sessionId=sesId;
-    }
-    await api('/rest/v1/session_entries?session_id=eq.'+sesId,{method:'DELETE'});
-    const rows=[];
-    for(let pi=0;pi<_cfg.nPal;pi++){
-      for(let ti=0;ti<_cfg.nTra;ti++){
-        _times[pi][ti].forEach(e=>{
-          rows.push({session_id:sesId,pal_index:pi,pal_name:_cfg.palistas[pi].name,pal_cat:_cfg.palistas[pi].category||null,athlete_id:_cfg.palistas[pi].id||null,tramo:ti,manga:e.manga,ms:e.rawMs,pen:e.penMs,dsq:e.dsq||false,cnt2:0,cnt50:0});
-        });
-      }
-    }
-    if(rows.length){await api('/rest/v1/session_entries',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(rows)});}
-    hideLoad();toast('Sesión guardada ✓','ok');
-    $('btn-save-session').textContent='✓ Sesión guardada';$('btn-save-session').disabled=true;
-    if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.clear();}
-  }catch(err){hideLoad();console.error(err);toast('Error al guardar: '+err.message,'err');}
+/* RESETEAR SESIÓN */
+function resetSession(){
+  if(_timerRunning){toast('Para el cronómetro primero','err');return;}
+  if(!confirm('¿Resetear la sesión? Se borrarán todos los tiempos registrados.'))return;
+  stopRefreshInterval();
+  disconnectRealtime();
+  if(typeof ActiveSessionBar!=='undefined'){ActiveSessionBar.clear();}
+  window.location.href='slalom-config.html';
 }
 
 /* REALTIME */
