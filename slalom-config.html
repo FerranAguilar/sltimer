@@ -53,21 +53,38 @@
   .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
   .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
   .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
-  .add-group-btn-outer{width:100%;padding:13px 16px;background:#fff;border:1.5px dashed #b8d3ee;border-radius:14px;font-size:14px;font-weight:600;color:#185FA5;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;transition:background .15s,border-color .15s}
-  .add-group-btn-outer:active{background:#E6F1FB;border-color:#185FA5}
+  /* Botón "Añadir grupo" rediseñado igual que btn-add-group */
+  .btn-add-group-outer{
+    background:#E6F1FB;
+    border:0.5px solid #B5D4F4;
+    border-radius:10px;
+    color:#0C447C;
+    font-size:13px;
+    font-weight:700;
+    padding:9px 14px;
+    cursor:pointer;
+    font-family:inherit;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    width:100%;
+    margin-bottom:12px;
+    transition:background .15s,border-color .15s;
+  }
+  .btn-add-group-outer:active{background:#cde3f6;border-color:#185FA5}
   .start-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;padding:15px;background:#185FA5;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(24,95,165,0.30)}
   .start-btn:active{background:#0C447C}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:flex-end;justify-content:center}
-  .overlay.show{display:flex}
-  .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:80dvh;overflow-y:auto}
+  /* Sheet grupos — mismo diseño que add-group-patch */
+  .sheet-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100}
+  .sheet-backdrop.open{display:block}
+  .group-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;max-height:80dvh;overflow-y:auto;z-index:101;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.15,1);max-width:480px;margin:0 auto}
+  .group-sheet.open{transform:translateY(0)}
+  .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px}
   .sheet-title{font-size:17px;font-weight:700;margin-bottom:4px}
   .sheet-subtitle{font-size:13px;color:#888;margin-bottom:16px}
-  .sheet-close{float:right;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;margin-top:-4px}
-  .team-card{background:#f7f9fc;border:0.5px solid #e0e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .12s}
+  .team-card{background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:background .15s}
   .team-card:active{background:#E6F1FB}
-  .team-mini-avatar{width:22px;height:22px;border-radius:50%;background:#185FA5;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;flex-shrink:0}
-  .team-info{flex:1}
-  .team-name{font-size:14px;font-weight:700}
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#222;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.ok{background:#0F6E56}
@@ -129,27 +146,29 @@
 
   <!-- Palistas -->
   <div class="section-card">
-    <div class="section-label">Palistas</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:0">Palistas</div>
+      <button class="btn-add-group-outer" style="width:auto;margin-bottom:0;padding:6px 12px;font-size:12px" onclick="openGroupSheet()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Añadir grupo
+      </button>
+    </div>
     <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
-
-  <!-- Añadir grupo -->
-  <button class="add-group-btn-outer" onclick="openGroupSheet()">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    Añadir grupo
-  </button>
 
 </div>
 
 <button class="start-btn" onclick="startSession()">Iniciar sesión</button>
 
 <!-- Sheet grupos -->
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeGroupSheet()">
-  <div class="sheet">
-    <button class="sheet-close" onclick="closeGroupSheet()">&#215;</button>
-    <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
-    <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
-    <div id="team-list-sheet"></div>
+<div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
+<div class="group-sheet" id="group-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
+  <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
+  <div id="group-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
+  <div style="margin-top:16px">
+    <button style="width:100%;padding:13px;background:#f2f4f7;border:none;border-radius:12px;font-size:15px;font-weight:600;color:#555;cursor:pointer;font-family:inherit" onclick="closeGroupSheet()">Cancelar</button>
   </div>
 </div>
 
@@ -157,8 +176,8 @@
 
 <script>
 const $=id=>document.getElementById(id);
-const API='https://xjxjxjxjxjxjxjxj.supabase.co';
-const KEY='eyXXXXXX';
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
 const MAX={tra:20,pal:20};
 const CFG={tra:6};
@@ -168,33 +187,30 @@ function initials(e){return(e||'?').split('@')[0].slice(0,2).toUpperCase();}
 function toast(msg,type='',dur=2200){const t=$('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');void t.offsetWidth;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
 async function api(path,opts={}){
-  const r=await fetch(API+path,{...opts,headers:{'apikey':KEY,'Authorization':'Bearer '+_tok,'Content-Type':'application/json',...(opts.headers||{})}});
+  const r=await fetch(SB+path,{...opts,headers:{'apikey':KEY,'Authorization':'Bearer '+_tok,'Content-Type':'application/json',...(opts.headers||{})}});
   if(!r.ok)throw new Error(await r.text());
   const txt=await r.text();return txt?JSON.parse(txt):null;
 }
 
 function stepCfg(key,d){
-  const min=key==='tra'?1:1,max=MAX[key];
+  const min=1,max=MAX[key]||20;
   CFG[key]=Math.min(max,Math.max(min,(CFG[key]||1)+d));
   $('val-'+key).textContent=CFG[key];
 }
 
-/* ── GRUPOS SHEET ── */
+/* ── GRUPOS SHEET — igual que add-group-patch.js ── */
 async function loadTeams(){
   try{
-    // 1. Obtener los equipos del usuario (owner_id es la columna correcta)
-    const teams=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&select=id,name&order=name.asc');
-    if(!(teams||[]).length){_teams=[];return;}
-    // 2. Obtener los atletas de todos esos equipos en una sola query
-    const ids=(teams||[]).map(t=>t.id).join(',');
-    const rows=await api('/rest/v1/team_athletes?team_id=in.('+ids+')&select=team_id,athletes(id,name,surname,categories)');
-    const map={};
-    (rows||[]).forEach(r=>{
-      const a=r.athletes;if(!a)return;
-      if(!map[r.team_id])map[r.team_id]=[];
-      map[r.team_id].push(a);
-    });
-    _teams=(teams||[]).map(t=>({id:t.id,name:t.name,athletes:map[t.id]||[]}));
+    const members=await api('/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.'+_uid);
+    if(!members||!members.length){_teams=[];return;}
+    const results=[];
+    for(const m of members){
+      const team=m.teams;if(!team)continue;
+      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
+      const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
+      results.push({id:team.id,name:team.name,athletes});
+    }
+    _teams=results;
   }catch(e){
     console.warn('loadTeams error:',e);
     _teams=[];
@@ -202,30 +218,42 @@ async function loadTeams(){
 }
 
 function openGroupSheet(){
-  const list=$('team-list-sheet');list.innerHTML='';
-  if(!_teams.length){list.innerHTML='<div style="text-align:center;color:#aaa;padding:24px 0;font-size:14px">No hay grupos disponibles</div>';$('overlay').classList.add('show');return;}
-  _teams.forEach(team=>{
-    const card=document.createElement('div');card.className='team-card';
-    const count=team.athletes.length;
-    card.innerHTML=`
-      <div class="team-info">
-        <div class="team-name">${team.name}</div>
-        <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
-        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+  const list=$('group-list');list.innerHTML='';
+  if(!_teams||!_teams.length){
+    list.innerHTML='<div style="text-align:center;padding:24px 0;color:#aaa;font-size:14px">No perteneces a ningún grupo aún.<br><span style="font-size:12px">Crea o únete a un grupo desde el menú.</span></div>';
+  }else{
+    _teams.forEach(team=>{
+      const card=document.createElement('div');card.className='team-card';
+      const count=team.athletes.length;
+      card.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#1B3A5C">${team.name}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
+          </div>
+          <div style="font-size:22px;color:#185FA5">+</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
           ${team.athletes.slice(0,8).map(a=>{
             const fn=(a.name||'')+(a.surname?' '+a.surname:'');
-            return`<div class="team-mini-avatar" title="${fn}">${fn.slice(0,2).toUpperCase()}</div>`;
-          }).join('')}${count>8?`<div class="team-mini-avatar" style="background:#aaa">+${count-8}</div>`:''}
-        </div>
-      </div>
-      <div style="color:#185FA5;font-size:20px">›</div>`;
-    card.onmousedown=()=>addGroupAthletes(team);
-    list.appendChild(card);
-  });
-  $('overlay').classList.add('show');
+            const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+            return`<span style="font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C;padding:2px 7px;border-radius:100px">${fn}${cats.length?' · '+cats[0]:''}</span>`;
+          }).join('')}
+          ${count>8?`<span style="font-size:11px;color:#aaa">+${count-8} más</span>`:''}
+        </div>`;
+      card.onmousedown=()=>addGroupAthletes(team);
+      card.ontouchstart=()=>{};
+      list.appendChild(card);
+    });
+  }
+  $('group-sheet-backdrop').classList.add('open');
+  $('group-sheet').classList.add('open');
 }
 
-function closeGroupSheet(){$('overlay').classList.remove('show');}
+function closeGroupSheet(){
+  $('group-sheet-backdrop').classList.remove('open');
+  $('group-sheet').classList.remove('open');
+}
 
 function addGroupAthletes(team){
   closeGroupSheet();
