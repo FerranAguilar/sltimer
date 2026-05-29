@@ -4,8 +4,7 @@
 //   ActiveSessionBar.set({ type: 'slalom', name: 'Mi Sesión', url: 'slalom.html', startedAt: Date.now() });
 // Para limpiar al guardar / finalizar la sesión:
 //   ActiveSessionBar.clear();
-// Para inicializar en páginas externas (menu, historial, etc.):
-//   ActiveSessionBar.init();
+// La barra se auto-inicializa en todas las páginas automáticamente.
 
 (function(global) {
   'use strict';
@@ -156,8 +155,8 @@
     clear: unmount,
 
     /**
-     * Inicializar en páginas externas.
-     * Muestra la barra si hay una sesión activa en sessionStorage.
+     * Inicializar manualmente (por compatibilidad, ya no es necesario).
+     * La barra se auto-inicializa al cargar el script.
      */
     init: function() {
       var state = getState();
@@ -169,3 +168,18 @@
   };
 
 })(window);
+
+// Auto-inicialización: se ejecuta en todas las páginas automáticamente.
+// No hace nada si no hay sesión activa en sessionStorage.
+(function() {
+  function autoInit() {
+    if (typeof ActiveSessionBar !== 'undefined') {
+      ActiveSessionBar.init();
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoInit);
+  } else {
+    autoInit();
+  }
+})();
