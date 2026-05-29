@@ -1,252 +1,236 @@
-// ── PATCH: Añadir palistas de un grupo ───────────────────────────────────────
-// Inyecta el botón «Añadir grupo» en la pantalla de configuración
-// y en el sheet de edición de sesión en curso.
+// add-group-patch.js — adds the "Añadir grupo" flow to slalom-config
+// Injects a modal that loads the user's teams and lets the coach
+// add all athletes from a team at once.
 
-/* ── Variables de grupo ──────────────────────────────────────── */
-let _teams = [];          // [{id, name, athletes:[{id,name,surname,categories}]}]
-let _groupSheetTarget = null; // 'config' | 'cfgedit'
+(function () {
+  'use strict';
 
-/* ── Cargar grupos desde Supabase ────────────────────────────── */
-async function loadTeams() {
-  try {
-    // 1. Grupos en los que el usuario es miembro
-    const members = await api(
-      '/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.' + _uid
-    );
-    if (!members || !members.length) { _teams = []; return; }
+  const SUPA_URL = 'https://bazprdygkbhvdlzsmhxh.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenByZHlna2JodmRsenNtaHhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MDMwNzgsImV4cCI6MjA2MjM3OTA3OH0.8ARKHgGvWFfFSAhf_bG3qRYh1YDy9kkUXGNXvxXt3_Q';
 
-    // 2. Para cada grupo, cargar sus palistas
-    const results = [];
-    for (const m of members) {
-      const team = m.teams;
-      if (!team) continue;
-      const rows = await api(
-        '/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.' + team.id
-      );
-      const athletes = (rows || [])
-        .map(r => r.athletes)
-        .filter(Boolean);
-      results.push({ id: team.id, name: team.name, athletes });
-    }
-    _teams = results;
-  } catch (e) {
-    console.warn('loadTeams error:', e);
-    _teams = [];
-  }
-}
-
-/* ── Inyectar botón en pantalla de configuración ─────────────── */
-function injectGroupButton() {
-  // Botón principal (pantalla config)
-  const palListLabel = document.querySelector('#screen-config .section-label:last-of-type');
-  // Buscamos el label «Palistas» que precede al #pal-list
-  const allLabels = document.querySelectorAll('#screen-config .section-label');
-  let targetLabel = null;
-  allLabels.forEach(l => {
-    if (l.textContent.trim().toLowerCase().includes('palista')) targetLabel = l;
-  });
-  if (targetLabel && !document.getElementById('btn-add-group-config')) {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:0';
-    const clone = targetLabel.cloneNode(true);
-    wrap.appendChild(clone);
-    const btn = document.createElement('button');
-    btn.id = 'btn-add-group-config';
-    btn.className = 'btn-add-group';
-    btn.innerHTML = '&#128101; A&#241;adir grupo';
-    btn.onclick = () => openGroupSheet('config');
-    wrap.appendChild(btn);
-    targetLabel.replaceWith(wrap);
-  }
-}
-
-/* ── Inyectar botón en el sheet de edición de sesión ─────────── */
-function injectGroupButtonInCfgSheet() {
-  if (document.getElementById('btn-add-group-cfgedit')) return;
-  // Buscamos el section «Palistas» dentro del cfg-sheet
-  const cfgSheet = document.getElementById('cfg-sheet');
-  if (!cfgSheet) return;
-  const sections = cfgSheet.querySelectorAll('.sheet-section');
-  let palistasSection = null;
-  sections.forEach(s => {
-    if (s.textContent.trim().toLowerCase().includes('palista')) palistasSection = s;
-  });
-  if (!palistasSection) return;
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:0';
-  const lbl = palistasSection.cloneNode(true);
-  lbl.style.margin = '0';
-  wrap.appendChild(lbl);
-  const btn = document.createElement('button');
-  btn.id = 'btn-add-group-cfgedit';
-  btn.className = 'btn-add-group';
-  btn.innerHTML = '&#128101; A&#241;adir grupo';
-  btn.onclick = () => openGroupSheet('cfgedit');
-  wrap.appendChild(btn);
-  palistasSection.replaceWith(wrap);
-}
-
-/* ── Sheet selector de grupo ─────────────────────────────────── */
-function buildGroupSheetDOM() {
-  if (document.getElementById('group-sheet')) return;
-  const backdrop = document.createElement('div');
-  backdrop.id = 'group-sheet-backdrop';
-  backdrop.className = 'sheet-backdrop';
-  backdrop.onclick = closeGroupSheet;
-  document.body.appendChild(backdrop);
-
-  const sheet = document.createElement('div');
-  sheet.id = 'group-sheet';
-  sheet.className = 'sheet';
-  sheet.innerHTML = `
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">&#128101; A&#241;adir palistas del grupo</div>
-    <div class="sheet-subtitle">Selecciona un grupo para a&#241;adir todos sus palistas de golpe.</div>
-    <div id="group-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
-    <div style="margin-top:16px">
-      <button class="btn-primary" style="background:#185FA5" onclick="closeGroupSheet()">Cancelar</button>
-    </div>
-  `;
-  document.body.appendChild(sheet);
-}
-
-function openGroupSheet(target) {
-  _groupSheetTarget = target;
-  buildGroupSheetDOM();
-  const list = document.getElementById('group-list');
-  list.innerHTML = '';
-
-  if (!_teams || !_teams.length) {
-    list.innerHTML = `<div style="text-align:center;padding:24px 0;color:#aaa;font-size:14px">
-      No perteneces a ning&#250;n grupo a&#250;n.<br>
-      <span style="font-size:12px">Crea o &#250;nete a un grupo desde el men&#250;.</span>
-    </div>`;
-  } else {
-    _teams.forEach(team => {
-      const card = document.createElement('div');
-      card.style.cssText = 'background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 14px;cursor:pointer;transition:background .15s';
-      card.onmousedown = () => addGroupAthletes(team);
-      card.ontouchstart = () => {}; // enable :active on iOS
-      const count = team.athletes.length;
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:#1B3A5C">${team.name}</div>
-            <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count !== 1 ? 's' : ''}</div>
-          </div>
-          <div style="font-size:22px">&#43;</div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
-          ${team.athletes.slice(0, 8).map(a => {
-            const fn = a.name + (a.surname ? ' ' + a.surname : '');
-            const cats = (a.categories || []).filter(c => c === 'K1' || c === 'C1');
-            return `<span style="font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C;padding:2px 7px;border-radius:100px">${fn}${cats.length ? ' · ' + cats[0] : ''}</span>`;
-          }).join('')}
-          ${count > 8 ? `<span style="font-size:11px;color:#aaa">+${count - 8} m&#225;s</span>` : ''}
-        </div>
-      `;
-      list.appendChild(card);
-    });
+  function tok() { return localStorage.getItem('sb_access_token'); }
+  function uid() {
+    try { return JSON.parse(localStorage.getItem('sb_user') || '{}').id || null; }
+    catch { return null; }
   }
 
-  document.getElementById('group-sheet-backdrop').classList.add('open');
-  document.getElementById('group-sheet').classList.add('open');
-}
-
-function closeGroupSheet() {
-  const bd = document.getElementById('group-sheet-backdrop');
-  const sh = document.getElementById('group-sheet');
-  if (bd) bd.classList.remove('open');
-  if (sh) sh.classList.remove('open');
-}
-
-/* ── Añadir atletas del grupo al estado actual ───────────────── */
-function addGroupAthletes(team) {
-  closeGroupSheet();
-  let added = 0;
-  let skipped = 0;
-
-  team.athletes.forEach(a => {
-    const fn = a.name + (a.surname ? ' ' + a.surname : '');
-    const cats = (a.categories || []).filter(c => c === 'K1' || c === 'C1');
-    const cat = cats.length === 1 ? cats[0] : null;
-    const newEntry = { id: a.id, name: fn, category: cat, isTemp: false };
-
-    if (_groupSheetTarget === 'config') {
-      // Evitar duplicados
-      const exists = _palState.some(p => p.id && p.id === a.id);
-      if (exists) { skipped++; return; }
-      if (_palState.length >= MAX.pal) { skipped++; return; }
-      _palState.push(newEntry);
-      CFG.pal = _palState.length;
-      added++;
-    } else if (_groupSheetTarget === 'cfgedit') {
-      const exists = _cfgEditPalState.some(p => p.id && p.id === a.id);
-      if (exists) { skipped++; return; }
-      if (_cfgEditPalState.length >= MAX.pal) { skipped++; return; }
-      _cfgEditPalState.push(newEntry);
-      _cfgEditPal = _cfgEditPalState.length;
-      added++;
-    }
-  });
-
-  // Refrescar lista
-  if (_groupSheetTarget === 'config') {
-    buildPalList();
-  } else {
-    document.getElementById('cfg-edit-val-pal').textContent = _cfgEditPal;
-    buildCfgEditPalList();
-  }
-
-  if (added > 0 && skipped > 0) {
-    toast(added + ' palista' + (added !== 1 ? 's' : '') + ' a&#241;adido' + (added !== 1 ? 's' : '') + ' (' + skipped + ' ya estaban)', 'ok');
-  } else if (added > 0) {
-    toast(added + ' palista' + (added !== 1 ? 's' : '') + ' a&#241;adido' + (added !== 1 ? 's' : '') + ' ✓', 'ok');
-  } else {
-    toast('Todos los palistas ya estaban en la lista');
-  }
-}
-
-/* ── Estilo del botón ────────────────────────────────────────── */
-(function injectStyles() {
+  // ── Inject styles ──────────────────────────────────────────────────────────
   const style = document.createElement('style');
   style.textContent = `
-    .btn-add-group {
-      background: #E6F1FB;
-      border: 0.5px solid #B5D4F4;
-      border-radius: 8px;
-      color: #0C447C;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 10px;
+    #add-group-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #b0cdb0;
+      border-radius: 10px;
+      background: transparent;
+      color: #0d5c3a;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      white-space: nowrap;
+      margin-top: 8px;
+      transition: border-color 0.2s, background 0.2s;
       font-family: inherit;
-      transition: background .15s;
     }
-    .btn-add-group:active { background: #cde3f6; }
+    #add-group-btn:hover { border-color: #0d5c3a; background: #f0f8f0; }
+
+    #group-modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 9998;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #group-modal-overlay.open { display: flex; }
+
+    #group-modal {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px 32px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 70vh;
+      overflow-y: auto;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    #group-modal h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a2e1a;
+      margin-bottom: 16px;
+    }
+    .group-team-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.5px solid #d0ddd0;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .group-team-item:hover { border-color: #0d5c3a; background: #f0f8f0; }
+    .group-team-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1a3a2a, #0d5c3a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .group-team-name { font-size: 15px; font-weight: 600; color: #1a2e1a; }
+    .group-team-count { font-size: 13px; color: #666; margin-top: 2px; }
+    .group-modal-close {
+      width: 100%;
+      padding: 13px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #444;
+      cursor: pointer;
+      margin-top: 4px;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .group-modal-close:hover { background: #e0e0e0; }
+    #group-modal-loading { text-align: center; color: #666; padding: 20px 0; font-size: 14px; }
+    #group-modal-empty { text-align: center; color: #999; padding: 20px 0; font-size: 14px; }
   `;
   document.head.appendChild(style);
-})();
 
-/* ── Inicialización: esperar a que el DOM esté listo ─────────── */
-document.addEventListener('DOMContentLoaded', async function () {
-  // loadTeams se llama después de que init() cargue _uid y _tok.
-  // Esperamos a que init() haya terminado antes de inyectar los botones.
-  const waitForInit = () => new Promise(resolve => {
-    const check = () => { if (_uid) resolve(); else setTimeout(check, 100); };
-    check();
+  // ── Wait for DOM ready ─────────────────────────────────────────────────────
+  function onReady(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  onReady(function () {
+    // Find the palistas section card
+    const addPalistaBtn = document.getElementById('add-palista-btn');
+    if (!addPalistaBtn) return;
+
+    // Inject "Añadir grupo" button after the add-palista button
+    const groupBtn = document.createElement('button');
+    groupBtn.id = 'add-group-btn';
+    groupBtn.textContent = '👥 Añadir grupo';
+    groupBtn.addEventListener('click', openGroupModal);
+    addPalistaBtn.parentNode.insertBefore(groupBtn, addPalistaBtn.nextSibling);
+
+    // Inject modal
+    const overlay = document.createElement('div');
+    overlay.id = 'group-modal-overlay';
+    overlay.innerHTML = `
+      <div id="group-modal">
+        <h2>👥 Añadir grupo</h2>
+        <div id="group-modal-body"><div id="group-modal-loading">Cargando equipos…</div></div>
+        <button class="group-modal-close" onclick="document.getElementById('group-modal-overlay').classList.remove('open')">Cancelar</button>
+      </div>
+    `;
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+    document.body.appendChild(overlay);
   });
-  await waitForInit();
-  await loadTeams();
-  injectGroupButton();
-});
 
-// openCfgSheet del patch original llama a buildCfgEditPalList.
-// Necesitamos inyectar el botón cada vez que se abre el sheet.
-const _origOpenCfgSheet = typeof openCfgSheet === 'function' ? openCfgSheet : null;
-function openCfgSheet() {
-  if (_origOpenCfgSheet) _origOpenCfgSheet();
-  // Dar un tick para que el DOM del sheet se actualice
-  setTimeout(injectGroupButtonInCfgSheet, 50);
-}
+  async function openGroupModal() {
+    const overlay = document.getElementById('group-modal-overlay');
+    const body = document.getElementById('group-modal-body');
+    overlay.classList.add('open');
+    body.innerHTML = '<div id="group-modal-loading">Cargando equipos…</div>';
+
+    const t = tok();
+    const u = uid();
+    if (!t || !u) {
+      body.innerHTML = '<div id="group-modal-empty">No se pudo autenticar.</div>';
+      return;
+    }
+
+    try {
+      // Load teams where user is a member
+      const tmRes = await fetch(
+        `${SUPA_URL}/rest/v1/team_members?user_id=eq.${u}&select=team_id`,
+        { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${t}` } }
+      );
+      const memberships = await tmRes.json();
+      if (!memberships.length) {
+        body.innerHTML = '<div id="group-modal-empty">No perteneces a ningún equipo.</div>';
+        return;
+      }
+
+      const teamIds = memberships.map(m => m.team_id);
+      const teamRes = await fetch(
+        `${SUPA_URL}/rest/v1/teams?id=in.(${teamIds.join(',')})&select=id,name`,
+        { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${t}` } }
+      );
+      const teams = await teamRes.json();
+
+      if (!teams.length) {
+        body.innerHTML = '<div id="group-modal-empty">No se encontraron equipos.</div>';
+        return;
+      }
+
+      // For each team, count athletes
+      const athleteCounts = await Promise.all(teams.map(async team => {
+        const r = await fetch(
+          `${SUPA_URL}/rest/v1/team_athletes?team_id=eq.${team.id}&select=athlete_id`,
+          { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${t}` } }
+        );
+        const data = await r.json();
+        return { ...team, count: data.length };
+      }));
+
+      body.innerHTML = athleteCounts.map(team => `
+        <div class="group-team-item" onclick="window._addGroupTeam('${team.id}')">
+          <div class="group-team-icon">⛵</div>
+          <div>
+            <div class="group-team-name">${team.name}</div>
+            <div class="group-team-count">${team.count} palista${team.count !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+      `).join('');
+
+    } catch (e) {
+      body.innerHTML = `<div id="group-modal-empty">Error: ${e.message}</div>`;
+    }
+  }
+
+  window._addGroupTeam = async function (teamId) {
+    const t = tok();
+    if (!t) return;
+
+    // Close modal
+    document.getElementById('group-modal-overlay').classList.remove('open');
+
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/team_athletes?team_id=eq.${teamId}&select=athlete_id,athletes(name,surname,categories)`,
+        { headers: { apikey: SUPA_KEY, Authorization: `Bearer ${t}` } }
+      );
+      const rows = await r.json();
+
+      rows.forEach(row => {
+        const a = row.athletes;
+        if (!a) return;
+        const nombre = [a.name, a.surname].filter(Boolean).join(' ');
+        const cats = a.categories || [];
+        const cat = cats.includes('K1') ? 'K1' : cats.includes('C1') ? 'C1' : cats.includes('C2') ? 'C2' : 'K1';
+        if (typeof window.addPalista === 'function') {
+          window.addPalista(nombre, cat);
+        }
+      });
+    } catch (e) {
+      alert('Error cargando atletas: ' + e.message);
+    }
+  };
+
+})();
