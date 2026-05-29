@@ -4,3 +4,295 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SLTimer – Configurar sesión</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
+    .page{display:flex;flex-direction:column;gap:16px;padding:20px 16px 48px;max-width:480px;margin:0 auto}
+    .section-title{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+    .card{background:#fff;border-radius:14px;border:0.5px solid rgba(0,0,0,0.10);padding:16px;display:flex;flex-direction:column;gap:12px}
+    .field{display:flex;flex-direction:column;gap:4px}
+    .field label{font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.05em}
+    .field input,.field select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;color:#111;background:#fff;-webkit-appearance:none;appearance:none}
+    .field input:focus,.field select:focus{outline:none;border-color:#185FA5}
+    .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .stepper-row{display:flex;align-items:center;justify-content:space-between}
+    .stepper-label{font-size:14px;font-weight:600;color:#333}
+    .stepper-controls{display:flex;align-items:center;gap:10px}
+    .stepper-btn{width:32px;height:32px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;line-height:1}
+    .stepper-btn:active{background:#f0f0f0}
+    .stepper-val{font-size:17px;font-weight:800;color:#185FA5;min-width:24px;text-align:center}
+    .palistas-list{display:flex;flex-direction:column;gap:8px}
+    .pal-row{display:flex;align-items:center;gap:8px}
+    .pal-num{font-size:12px;font-weight:700;color:#aaa;min-width:18px}
+    .pal-input{flex:1;padding:9px 12px;border:1px solid #ddd;border-radius:9px;font-size:14px;font-family:inherit;color:#111;background:#fff}
+    .pal-input:focus{outline:none;border-color:#185FA5}
+    .pal-cat{width:72px;padding:9px 8px;border:1px solid #ddd;border-radius:9px;font-size:13px;font-family:inherit;color:#111;background:#fff;-webkit-appearance:none;appearance:none;text-align:center}
+    .pal-cat:focus{outline:none;border-color:#185FA5}
+    .pal-del{width:30px;height:30px;border-radius:8px;border:1px solid #fcc;background:#fff0f0;color:#e44;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pal-del:active{background:#fee}
+    .btn-add-pal{width:100%;padding:10px;border-radius:10px;border:1px dashed #ccc;background:transparent;color:#888;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .btn-add-pal:active{background:#f5f5f5}
+    .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
+    .btn-primary:active{opacity:.85}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .toggle-row{display:flex;align-items:center;gap:10px}
+    .toggle{position:relative;width:44px;height:26px;cursor:pointer;flex-shrink:0}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-track{position:absolute;inset:0;border-radius:13px;background:#ddd;transition:background .2s}
+    .toggle input:checked+.toggle-track{background:#185FA5}
+    .toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform .2s}
+    .toggle input:checked~.toggle-thumb{transform:translateX(18px)}
+    .toggle-label{font-size:14px;font-weight:600;color:#333;flex:1}
+    .toggle-hint{font-size:12px;color:#aaa;margin-top:-8px;padding-left:54px}
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+    .overlay.show{display:flex}
+    .overlay-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay-text{font-size:13px;color:#888;font-weight:600}
+    .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:500;white-space:nowrap}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-spinner"></div>
+  <div class="overlay-text" id="overlay-text">Cargando...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="/icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-right">
+    <div class="avatar" id="top-avatar">?</div>
+  </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="page">
+
+  <div>
+    <div class="section-title">Sesión</div>
+    <div class="card">
+      <div class="field">
+        <label>Nombre de la sesión</label>
+        <input type="text" id="f-name" placeholder="Ej: Entrenamiento mañana" maxlength="60">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Lugar</label>
+          <input type="text" id="f-lugar" placeholder="Ej: Río Segre" maxlength="60">
+        </div>
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" id="f-fecha">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Configuración</div>
+    <div class="card">
+      <div class="stepper-row">
+        <span class="stepper-label">Número de tramos</span>
+        <div class="stepper-controls">
+          <button class="stepper-btn" onclick="adjustTramos(-1)">&#8722;</button>
+          <span class="stepper-val" id="val-tramos">3</span>
+          <button class="stepper-btn" onclick="adjustTramos(1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Palistas</div>
+    <div class="card">
+      <div class="palistas-list" id="palistas-list"></div>
+      <button class="btn-add-pal" onclick="addPalista()">+ Añadir palista</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Opciones</div>
+    <div class="card">
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="toggle-shared">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-label">Sesión compartida (LIVE)</span>
+      </div>
+      <div class="toggle-hint">Permite ver los tiempos en tiempo real desde otro dispositivo.</div>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="btn-start-session" onclick="startSession()">&#9654; Iniciar sesión</button>
+
+</div>
+
+<script>
+const SUPABASE_URL='https://xorblwcvlkbhpzcegkoh.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
+
+let _tok=null,_uid=null,_email=null;
+let _nTramos=3;
+let _palistas=[{name:'',category:'K1'},{name:'',category:'K1'}];
+
+function $(id){return document.getElementById(id);}
+function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+
+async function api(path,opts={}){
+  const h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_tok||SUPABASE_KEY),'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(SUPABASE_URL+path,{...opts,headers:h});
+  if(!r.ok){const t=await r.text();throw new Error(t);}
+  const ct=r.headers.get('content-type')||'';
+  if(ct.includes('json')&&r.status!==204){return r.json();}
+  return null;
+}
+
+let _toastTimer=null;
+function toast(msg,type='ok'){
+  const t=$('toast');t.textContent=msg;t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function showLoad(msg){$('overlay').classList.add('show');if(msg)$('overlay-text').textContent=msg;}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+/* TRAMOS */
+function adjustTramos(d){
+  _nTramos=Math.max(1,Math.min(6,_nTramos+d));
+  $('val-tramos').textContent=_nTramos;
+}
+
+/* PALISTAS */
+function renderPalistas(){
+  const list=$('palistas-list');
+  list.innerHTML='';
+  _palistas.forEach((p,i)=>{
+    const row=document.createElement('div');
+    row.className='pal-row';
+    row.innerHTML=`
+      <span class="pal-num">${i+1}.</span>
+      <input class="pal-input" type="text" placeholder="Nombre del palista" value="${escHtml(p.name)}" oninput="updatePalName(${i},this.value)" maxlength="40">
+      <select class="pal-cat" onchange="updatePalCat(${i},this.value)">
+        <option value="K1"${p.category==='K1'?' selected':''}>K1</option>
+        <option value="C1"${p.category==='C1'?' selected':''}>C1</option>
+        <option value="C2"${p.category==='C2'?' selected':''}>C2</option>
+        <option value=""${p.category===''?' selected':''}>—</option>
+      </select>
+      ${_palistas.length>1?`<button class="pal-del" onclick="removePalista(${i})">&#215;</button>`:''}
+    `;
+    list.appendChild(row);
+  });
+}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function updatePalName(i,v){_palistas[i].name=v;}
+function updatePalCat(i,v){_palistas[i].category=v;}
+function addPalista(){_palistas.push({name:'',category:'K1'});renderPalistas();}
+function removePalista(i){if(_palistas.length<=1)return;_palistas.splice(i,1);renderPalistas();}
+
+/* INICIAR SESIÓN — crea la sesión en Supabase y redirige con ?id= */
+async function startSession(){
+  const name=($('f-name').value||'').trim();
+  if(!name){toast('Indica un nombre para la sesión','err');$('f-name').focus();return;}
+
+  // Sincronizar nombres actuales del DOM
+  document.querySelectorAll('.pal-input').forEach((inp,i)=>{if(_palistas[i])_palistas[i].name=inp.value.trim();});
+
+  const validPals=_palistas.filter(p=>p.name);
+  if(!validPals.length){toast('Añade al menos un palista','err');return;}
+
+  const btn=$('btn-start-session');
+  btn.disabled=true;
+  btn.textContent='Creando sesión...';
+  showLoad('Creando sesión...');
+
+  try{
+    const shared=$('toggle-shared').checked;
+    const sharedCode=shared?Math.random().toString(36).slice(2,7).toUpperCase():null;
+
+    const payload={
+      user_id:  _uid,
+      name:     name,
+      lugar:    ($('f-lugar').value||'').trim()||null,
+      fecha:    $('f-fecha').value||null,
+      type:     'slalom',
+      n_palistas: validPals.length,
+      n_tramos:   _nTramos,
+      palistas:   validPals,
+      times:    Array.from({length:validPals.length},()=>Array.from({length:_nTramos},()=>[])),
+      mangas:   Array.from({length:validPals.length},()=>Array(_nTramos).fill(1)),
+      shared_code: sharedCode,
+      created_at: new Date().toISOString()
+    };
+
+    const rows=await api('/rest/v1/sessions',{
+      method:'POST',
+      headers:{'Prefer':'return=representation'},
+      body:JSON.stringify(payload)
+    });
+
+    if(!rows||!rows.length||!rows[0].id){throw new Error('No se recibió el ID de sesión');}
+    const sessionId=rows[0].id;
+
+    window.location.href='slalom-session.html?id='+encodeURIComponent(sessionId);
+  }catch(e){
+    console.error(e);
+    toast('Error al crear la sesión','err');
+    btn.disabled=false;
+    btn.textContent='▶ Iniciar sesión';
+    hideLoad();
+  }
+}
+
+/* BOOT */
+async function boot(){
+  showLoad('Cargando...');
+  try{
+    const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='index.html';return;}
+    _tok=session.access_token;_uid=session.user.id;_email=session.user.email;
+    $('top-avatar').textContent=initials(_email);
+
+    // Fecha de hoy por defecto
+    $('f-fecha').value=new Date().toISOString().slice(0,10);
+
+    renderPalistas();
+  }catch(e){console.error(e);toast('Error al cargar','err');}
+  hideLoad();
+}
+
+boot();
+</script>
+</body>
+</html>
