@@ -180,6 +180,15 @@ let _athletesList=[];
 function $(id){return document.getElementById(id);}
 function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
 
+// Construye nombre completo a partir de name + surname
+function fullName(a){ return [a.name, a.surname].filter(Boolean).join(' ').trim(); }
+
+// Devuelve la primera categoría del array, o cadena vacía
+function firstCategory(a){
+  if(Array.isArray(a.categories) && a.categories.length) return a.categories[0];
+  return '';
+}
+
 async function api(path,opts={}){
   const h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_tok||SUPABASE_KEY),'Content-Type':'application/json',...(opts.headers||{})};
   const r=await fetch(SUPABASE_URL+path,{...opts,headers:h});
@@ -225,9 +234,11 @@ function adjustTramos(d){
 
 async function loadAthletes(){
   try{
-    const rows=await api(`/rest/v1/athletes?user_id=eq.${_uid}&select=id,name,category&order=name.asc`);
+    // CORRECCIÓN: columna owner_id (no user_id), seleccionar name+surname+categories
+    const rows=await api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=id,name,surname,categories&order=name.asc`);
     _athletesList=rows||[];
   }catch(e){
+    console.error('Error cargando atletas:', e);
     _athletesList=[];
   }
 }
@@ -237,7 +248,7 @@ function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function filterAthletes(query){
   if(!query||!query.trim()) return _athletesList;
   const q=query.toLowerCase().trim();
-  return _athletesList.filter(a=>(a.name||'').toLowerCase().includes(q));
+  return _athletesList.filter(a=>fullName(a).toLowerCase().includes(q));
 }
 
 function renderSuggestions(idx, query){
@@ -251,9 +262,11 @@ function renderSuggestions(idx, query){
     dropdown.innerHTML='<div class="pal-suggestion-empty">Sin resultados</div>';
   } else {
     matches.forEach(athlete=>{
+    const cat=firstCategory(athlete);
+    const label=fullName(athlete);
       const item=document.createElement('div');
       item.className='pal-suggestion-item';
-      item.innerHTML=`<span class="pal-suggestion-name">${escHtml(athlete.name)}</span><span class="pal-suggestion-cat">${escHtml(athlete.category||'—')}</span>`;
+      item.innerHTML=`<span class="pal-suggestion-name">${escHtml(label)}</span>${cat?`<span class="pal-suggestion-cat">${escHtml(cat)}</span>`:''}`;
       item.addEventListener('mousedown', e=>{
         e.preventDefault();
         selectAthlete(idx, athlete);
@@ -265,14 +278,22 @@ function renderSuggestions(idx, query){
 }
 
 function selectAthlete(idx, athlete){
-  _palistas[idx].name=athlete.name||'';
-  _palistas[idx].category=athlete.category||'K1';
+  const cat=firstCategory(athlete);
+  const label=fullName(athlete);
+  _palistas[idx].name=label;
+  _palistas[idx].category=cat||'K1';
   _palistas[idx]._athleteId=athlete.id;
+  _palistas[idx]._categories=Array.isArray(athlete.categories)?athlete.categories:[];
   const input=document.getElementById(`pal-input-${idx}`);
   const catSelect=document.getElementById(`pal-cat-${idx}`);
   const dropdown=document.getElementById(`pal-suggestions-${idx}`);
-  if(input){input.value=athlete.name||'';input.classList.add('selected');}
-  if(catSelect){catSelect.value=athlete.category||'K1';catSelect.classList.add('auto-set');}
+  if(input){input.value=label;input.classList.add('selected');}
+  if(catSelect){
+    // Si el atleta tiene categoría válida en el select, la marcamos
+    const validCats=['K1','C1','C2',''];
+    catSelect.value=validCats.includes(cat)?cat:'';
+    catSelect.classList.add('auto-set');
+  }
   if(dropdown) dropdown.classList.remove('open');
 }
 
@@ -296,7 +317,7 @@ function renderPalistas(){
           placeholder="Buscar palista..."
           value="${escHtml(p.name)}"
           autocomplete="off"
-          maxlength="40"
+          maxlength="60"
         >
         <div id="pal-suggestions-${i}" class="pal-suggestions"></div>
       </div>
