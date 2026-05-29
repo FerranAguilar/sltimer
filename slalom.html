@@ -75,7 +75,7 @@
     .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:0;line-height:1;display:none}
     .pal-clear.show{display:block}
     .cat-selector{display:flex;gap:6px}
-    .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+    .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12px;text-align:center}
     .cat-btn:active{opacity:.75}
     .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
     .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
@@ -241,7 +241,7 @@
   </div>
 </div>
 
-<!-- Sheet editar configuración de sesión -->
+<!-- Sheet editar configuraci&#243;n de sesi&#243;n -->
 <div class="sheet-backdrop" id="cfg-sheet-backdrop" onclick="closeCfgSheet()"></div>
 <div class="sheet" id="cfg-sheet" style="max-height:90vh;overflow-y:auto">
   <div class="sheet-handle"></div>
@@ -302,7 +302,7 @@
         </div>
       </div>
     </div>
-    <div class="section-label">Palistas</div>
+    <div class="section-label" id="palistas-label">Palistas</div>
     <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
     <button class="btn-primary" onclick="goToSession()">Iniciar sesi&#243;n &#8594;</button>
   </div>
@@ -393,7 +393,7 @@ let _coachName=null;
 const COACH_COLORS=['#1D4ED8','#0F6E56','#7C3AED','#B45309','#9F1239','#0369A1','#047857','#6D28D9'];
 let _coachColorMap={};
 
-// Estado edición cfg en sesión
+// Estado edici&#243;n cfg en sesi&#243;n
 let _cfgEditPal=1,_cfgEditTra=3,_cfgEditPalState=[];
 
 const $=id=>document.getElementById(id);
@@ -869,5 +869,6 @@ window.addEventListener('DOMContentLoaded',init);
 </script>
 <script src="active-session-bar.js"></script>
 <script src="cfg-sheet-patch.js"></script>
+<script src="add-group-patch.js"></script>
 </body>
 </html>
