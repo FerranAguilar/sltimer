@@ -466,7 +466,6 @@ function delayPalClose(i){
 
 function selectPalAthlete(i,id,name,cats){
   if(i===-1){
-    // Añadir al final desde placeholder
     _palState.push({id,name,isTemp:false,category:cats.length===1?cats[0]:null});
     buildPalList();
     return;
@@ -705,7 +704,6 @@ async function saveSession(){
       sesId=Array.isArray(sesRow)?sesRow[0].id:sesRow.id;
       _sessionId=sesId;
     }
-    // Borrar entradas previas si es continuación
     await api('/rest/v1/session_entries?session_id=eq.'+sesId,{method:'DELETE'});
     const rows=[];
     for(let pi=0;pi<_cfg.nPal;pi++){
@@ -762,10 +760,18 @@ async function init(){
     _tok=localStorage.getItem('slt_tok');
     _uid=localStorage.getItem('slt_uid');
     _email=localStorage.getItem('slt_email');
-    if(!_tok){window.location.href='app.html';return;}
+    if(!_tok){window.location.href='login.html';return;}
     $('top-avatar').textContent=initials(_email||'?');
-    const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
-    _athletes=ats||[];
+
+    // Cargar atletas de forma no bloqueante: si falla, se continúa con lista vacía
+    try{
+      const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
+      _athletes=ats||[];
+    }catch(atsErr){
+      console.warn('No se pudieron cargar atletas:', atsErr);
+      _athletes=[];
+    }
+
     const sharedRaw=sessionStorage.getItem('slalom_shared');
     if(sharedRaw)_shared=JSON.parse(sharedRaw);
 
@@ -811,8 +817,12 @@ async function init(){
         buildPalList();
       }
     }
-  }catch(e){console.error(e);toast('Error de inicialización','err');}
-  finally{$('overlay').classList.remove('show');}
+  }catch(e){
+    console.error('Init error:', e);
+    // No mostrar toast de error — la página es usable aunque algo falle
+  }finally{
+    $('overlay').classList.remove('show');
+  }
 }
 
 /* REFRESH */
