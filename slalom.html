@@ -83,11 +83,29 @@
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
     .sel-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px}
-    .sel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
+    .sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
     .sel-col{display:flex;flex-direction:column;gap:5px}
     .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px}
     .sel-select{width:100%;padding:9px 28px 9px 10px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer;transition:border-color .15s;line-height:1.3}
     .sel-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
+
+    /* === SELECTOR PALISTA CON CHIPS === */
+    .pal-picker-wrap{position:relative;display:flex;flex-direction:column;gap:6px}
+    .pal-chips-row{display:flex;flex-wrap:wrap;gap:5px;min-height:32px;align-items:center}
+    .pal-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:100px;
+      padding:4px 10px 4px 10px;font-size:12px;font-weight:700;color:#0C447C;
+      cursor:pointer;transition:background .12s,border-color .12s;
+      animation:chip-in .18s cubic-bezier(.32,1,.6,1);
+    }
+    .pal-chip.active-chip{background:#185FA5;border-color:#185FA5;color:#fff;}
+    .pal-chip:active{opacity:.75}
+    @keyframes chip-in{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+    .pal-chip-num{opacity:.65;font-size:10px}
+    .pal-picker-placeholder{font-size:13px;color:#bbb;font-style:italic;padding:4px 2px;pointer-events:none;user-select:none;}
+    /* =================================== */
+
     .manga-row{display:flex;align-items:center;gap:6px}
     .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:8px 0;line-height:1}
     .manga-btn{width:36px;height:36px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
@@ -329,14 +347,21 @@
     </div>
     <div class="sel-card">
       <div class="sel-grid">
-        <div class="sel-col">
+        <!-- Palista: chips dinámicos (ocupa columna doble) -->
+        <div class="sel-col" style="grid-column:1/-1">
           <div class="sel-label">Palista</div>
-          <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
+          <div class="pal-picker-wrap">
+            <div class="pal-chips-row" id="pal-chips-row">
+              <span class="pal-picker-placeholder" id="pal-chips-placeholder">Selecciona un palista&hellip;</span>
+            </div>
+          </div>
         </div>
+        <!-- Tramo -->
         <div class="sel-col">
           <div class="sel-label">Tramo</div>
           <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
         </div>
+        <!-- Manga -->
         <div class="sel-col">
           <div class="sel-label">Manga</div>
           <div class="manga-row">
@@ -408,6 +433,9 @@ let _coachColorMap={};
 // Estado edición cfg en sesión
 let _cfgEditPal=3,_cfgEditTra=3,_cfgEditPalState=[];
 
+// Chips de palista que han aparecido al menos una vez
+let _chipsSeen = [];
+
 const $=id=>document.getElementById(id);
 function vibrate(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch{}}
 function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
@@ -435,12 +463,50 @@ function handleBack(){if($('screen-session').classList.contains('active')){if(_t
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';$('btn-edit-cfg').classList.toggle('show',isSes);window.scrollTo(0,0);}
 
 /* SESION */
-function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();buildSelPal(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
+function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();_chipsSeen=[];buildSelPalChips(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
+
+/* === CHIPS PALISTA === */
+function buildSelPalChips(cfg){
+  // Renderiza todos los chips desde el inicio (orden original)
+  // Pero solo mostramos el placeholder si ninguno está visto aún
+  _chipsSeen = cfg.palistas.map((_,i)=>i); // todos visibles desde inicio
+  renderChips(cfg);
+}
+
+function renderChips(cfg){
+  const row = $('pal-chips-row');
+  const placeholder = $('pal-chips-placeholder');
+  row.innerHTML = '';
+  row.appendChild(placeholder);
+  let hasAny = _chipsSeen.length > 0;
+  placeholder.style.display = hasAny ? 'none' : 'inline';
+  _chipsSeen.forEach(i=>{
+    const p = cfg.palistas[i];
+    const chip = document.createElement('button');
+    chip.className = 'pal-chip' + (i===_selPal?' active-chip':'');
+    chip.setAttribute('data-pal-idx', i);
+    chip.innerHTML = `<span class="pal-chip-num">${i+1}</span> ${p.name}`;
+    chip.addEventListener('click', ()=>onChipSelect(i));
+    row.appendChild(chip);
+  });
+}
+
+function onChipSelect(i){
+  if(_timerRunning){toast('Para el cron\u00f3metro primero','err');return;}
+  _selPal = i;
+  // Marcar chip activo
+  document.querySelectorAll('.pal-chip').forEach(c=>{
+    c.classList.toggle('active-chip', parseInt(c.getAttribute('data-pal-idx'))===i);
+  });
+  syncMangaVal();
+  updateChronoCtx();
+  resetTimer();
+  clearPenState();
+}
+/* ==================== */
 
 /* SELECTORES */
-function buildSelPal(cfg){const sel=$('sel-pal');sel.innerHTML='';cfg.palistas.forEach((p,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+p.name+(p.category?' ('+p.category+')':'');sel.appendChild(opt);});sel.value=0;}
 function buildSelTra(cfg){const sel=$('sel-tra');sel.innerHTML='';for(let i=0;i<cfg.nTra;i++){const opt=document.createElement('option');opt.value=i;opt.textContent='Tramo '+(i+1);sel.appendChild(opt);}sel.value=0;}
-function onSelPal(){if(_timerRunning){toast('Para el cron\u00f3metro primero','err');$('sel-pal').value=_selPal;return;}_selPal=parseInt($('sel-pal').value);syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
 function onSelTra(){if(_timerRunning){toast('Para el cron\u00f3metro primero','err');$('sel-tra').value=_selTramo;return;}_selTramo=parseInt($('sel-tra').value);syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
 function syncMangaVal(){$('manga-val').textContent=_mangas[_selPal][_selTramo];}
 function adjManga(d){if(_timerRunning){toast('Para el cron\u00f3metro primero','err');return;}
