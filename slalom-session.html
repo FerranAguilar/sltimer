@@ -174,6 +174,16 @@
     <div class="ses-title" id="ses-title"></div>
     <div class="ses-meta" id="ses-meta"></div>
   </div>
+  <div class="selectors-row ses-block">
+    <div class="sel-wrap">
+      <div class="sel-label">Palista</div>
+      <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
+    </div>
+    <div class="sel-wrap">
+      <div class="sel-label">Tramo</div>
+      <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
+    </div>
+  </div>
   <div class="ses-block">
     <div class="chrono-card">
       <div class="chrono-ctx" id="chrono-ctx"></div>
@@ -188,16 +198,6 @@
         <button class="chrono-btn start" id="btn-start" onclick="startStop()">&#9654; Start</button>
         <button class="chrono-btn save" id="btn-save" onclick="saveTime()" disabled>Guardar</button>
       </div>
-    </div>
-  </div>
-  <div class="selectors-row ses-block">
-    <div class="sel-wrap">
-      <div class="sel-label">Palista</div>
-      <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
-    </div>
-    <div class="sel-wrap">
-      <div class="sel-label">Tramo</div>
-      <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
     </div>
   </div>
   <div class="pen-card ses-block">
