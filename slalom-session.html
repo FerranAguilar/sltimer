@@ -37,8 +37,10 @@
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
     .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#555;transition:background .12s;flex-shrink:0}
     .btn-edit-cfg:active{background:#f0f0f0}
+    /* BLOQUE COMÚN — todos los cuadros tienen el mismo ancho */
+    .ses-block{width:100%;max-width:480px;margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}
     /* SESSION */
-    .ses-header{padding:16px 16px 0;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:2px}
+    .ses-header{display:flex;flex-direction:column;gap:2px}
     .ses-title{font-size:19px;font-weight:800;color:#111;line-height:1.2}
     .ses-meta{font-size:12px;color:#888;margin-top:2px}
     .chrono-card{background:#1B3A5C;border-radius:20px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -56,12 +58,12 @@
     .manga-val{font-size:20px;font-weight:800;color:#fff;min-width:28px;text-align:center}
     .manga-btn{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
     .manga-btn:active{background:rgba(255,255,255,0.22)}
-    .selectors-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:480px;margin:0 auto;padding:0 16px}
+    .selectors-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .sel-wrap{display:flex;flex-direction:column;gap:4px}
     .sel-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
     .sel-select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
     .sel-select:focus{outline:none;border-color:#185FA5}
-    .pen-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+    .pen-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
     .pen-row{display:flex;align-items:center;gap:10px}
     .pen-label{font-size:13px;font-weight:700;color:#333;flex:1}
     .pen-val{font-size:17px;font-weight:800;color:#185FA5;min-width:24px;text-align:center}
@@ -76,7 +78,7 @@
     .dsq-toggle input:checked~.dsq-toggle-thumb{transform:translateX(18px)}
     .dsq-label{font-size:13px;font-weight:700;color:#333;flex:1}
     .dsq-val{font-size:12px;font-weight:700;color:#EF4444}
-    .times-section{max-width:480px;margin:0 auto;padding:0 16px}
+    .times-section{}
     .times-table-wrap{overflow-x:auto;border-radius:12px;border:0.5px solid rgba(0,0,0,0.10);background:#fff}
     .times-table{width:100%;border-collapse:collapse;font-size:13px}
     .times-table th{padding:8px 10px;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;text-align:center;border-bottom:0.5px solid #eee}
@@ -96,7 +98,7 @@
     .time-pen-badge{font-size:10px;color:#185FA5;font-weight:700}
     .time-dsq-badge{font-size:10px;color:#EF4444;font-weight:700}
     .time-manga-lbl{font-size:10px;color:#bbb;font-weight:600}
-    .action-row{max-width:480px;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:10px}
+    .action-row{display:flex;flex-direction:column;gap:10px}
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
     .btn-primary:active{opacity:.85}
     .btn-primary:disabled{opacity:.5;cursor:not-allowed}
@@ -168,11 +170,11 @@
 
 <!-- SESIÓN -->
 <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
-  <div class="ses-header">
+  <div class="ses-header ses-block">
     <div class="ses-title" id="ses-title"></div>
     <div class="ses-meta" id="ses-meta"></div>
   </div>
-  <div style="padding:0 16px;max-width:480px;margin:0 auto;width:100%">
+  <div class="ses-block">
     <div class="chrono-card">
       <div class="chrono-ctx" id="chrono-ctx"></div>
       <div class="chrono-display" id="chrono-display">0:00.000</div>
@@ -188,7 +190,7 @@
       </div>
     </div>
   </div>
-  <div class="selectors-row">
+  <div class="selectors-row ses-block">
     <div class="sel-wrap">
       <div class="sel-label">Palista</div>
       <select class="sel-select" id="sel-pal" onchange="onSelPal()"></select>
@@ -198,7 +200,7 @@
       <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
     </div>
   </div>
-  <div class="pen-card">
+  <div class="pen-card ses-block">
     <div class="pen-row">
       <span class="pen-label">Puertas x2</span>
       <button class="pen-btn" onclick="adjustPen('cnt2',-1)">&#8722;</button>
@@ -217,7 +219,7 @@
       <span class="dsq-val" id="dsq-val" style="display:none">DSQ</span>
     </div>
   </div>
-  <div class="times-section">
+  <div class="times-section ses-block">
     <div class="times-table-wrap">
       <table class="times-table">
         <thead><tr id="times-head"></tr></thead>
@@ -225,7 +227,7 @@
       </table>
     </div>
   </div>
-  <div class="action-row">
+  <div class="action-row ses-block">
     <button class="btn-primary btn-green" id="btn-save-session" onclick="saveSession()" disabled>&#128190; Guardar sesión</button>
   </div>
 </div>
