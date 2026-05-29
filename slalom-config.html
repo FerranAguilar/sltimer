@@ -65,7 +65,6 @@
   .sheet-close{float:right;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;margin-top:-4px}
   .team-card{background:#f7f9fc;border:0.5px solid #e0e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .12s}
   .team-card:active{background:#E6F1FB}
-  .team-avatar-row{display:flex;gap:-4px;flex-wrap:nowrap}
   .team-mini-avatar{width:22px;height:22px;border-radius:50%;background:#185FA5;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;flex-shrink:0}
   .team-info{flex:1}
   .team-name{font-size:14px;font-weight:700}
@@ -183,8 +182,8 @@ function stepCfg(key,d){
 /* ── GRUPOS SHEET ── */
 async function loadTeams(){
   try{
-    // 1. Obtener los equipos del usuario
-    const teams=await api('/rest/v1/teams?user_id=eq.'+_uid+'&select=id,name&order=name.asc');
+    // 1. Obtener los equipos del usuario (owner_id es la columna correcta)
+    const teams=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&select=id,name&order=name.asc');
     if(!(teams||[]).length){_teams=[];return;}
     // 2. Obtener los atletas de todos esos equipos en una sola query
     const ids=(teams||[]).map(t=>t.id).join(',');
@@ -254,7 +253,6 @@ function addGroupAthletes(team){
 function buildPalList(){
   const c=$('pal-list');c.innerHTML='';
   for(let i=0;i<_palState.length;i++)renderPalRow(i,c);
-  // Placeholder row para añadir
   if(_palState.length<MAX.pal){
     const ph=document.createElement('div');
     ph.className='pal-row pal-row-placeholder';
