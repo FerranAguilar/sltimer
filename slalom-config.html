@@ -183,33 +183,19 @@ function stepCfg(key,d){
 /* ── GRUPOS SHEET ── */
 async function loadTeams(){
   try{
-    const rows=await api('/rest/v1/team_athletes?select=team_id,athletes(id,name,surname,categories)&user_id=eq.'+_uid);
+    // 1. Obtener los equipos del usuario
+    const teams=await api('/rest/v1/teams?user_id=eq.'+_uid+'&select=id,name&order=name.asc');
+    if(!(teams||[]).length){_teams=[];return;}
+    // 2. Obtener los atletas de todos esos equipos en una sola query
+    const ids=(teams||[]).map(t=>t.id).join(',');
+    const rows=await api('/rest/v1/team_athletes?team_id=in.('+ids+')&select=team_id,athletes(id,name,surname,categories)');
     const map={};
     (rows||[]).forEach(r=>{
       const a=r.athletes;if(!a)return;
-      if(!map[r.team_id])map[r.team_id]={id:r.team_id,athletes:[]};
-      map[r.team_id].athletes.push(a);
+      if(!map[r.team_id])map[r.team_id]=[];
+      map[r.team_id].push(a);
     });
-    const teamIds=Object.keys(map);
-    if(teamIds.length){
-      const teams=await api('/rest/v1/teams?id=in.('+teamIds.join(',')+')'+'&select=id,name');
-      const results=[];
-      (teams||[]).forEach(t=>{
-        if(map[t.id])results.push({id:t.id,name:t.name,athletes:map[t.id].athletes});
-      });
-      _teams=results;
-    } else {
-      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+_uid);
-      const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
-      const results=[];
-      const allTeams=await api('/rest/v1/teams?select=id,name&order=name.asc');
-      for(const team of (allTeams||[])){
-        const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
-        const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
-        results.push({id:team.id,name:team.name,athletes});
-      }
-      _teams=results;
-    }
+    _teams=(teams||[]).map(t=>({id:t.id,name:t.name,athletes:map[t.id]||[]}));
   }catch(e){
     console.warn('loadTeams error:',e);
     _teams=[];
