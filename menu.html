@@ -1,225 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1B3A5C">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SLTimer">
-<link rel="apple-touch-icon" href="/icons/icon-180x180.png">
-<link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1170x2532.png">
-<link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1125x2436.png">
-<link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-828x1792.png">
-<link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1242x2208.png">
-<link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-750x1334.png">
-<link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-<title>SLTimer &#8212; Men&#250;</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
-.topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
-.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
-/* Bell */
-.bell-btn{position:relative;width:34px;height:34px;border-radius:50%;background:#f4f4f4;border:0.5px solid rgba(0,0,0,0.10);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s}
-.bell-btn:active{background:#e8e8e8}
-.bell-btn svg{width:17px;height:17px;fill:none;stroke:#444;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bell-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:#D97706;border-radius:50%;border:1.5px solid #fff;display:none}
-.bell-dot.show{display:block}
-.content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
-.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
-.menu-primary{background:#185FA5;border:none;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:opacity .12s;-webkit-tap-highlight-color:transparent;width:100%;text-align:left;font-family:inherit}
-.menu-primary:active{opacity:.85}
-.menu-primary.shared{background:linear-gradient(135deg,#0F6E56 0%,#0a8a6a 100%)}
-.menu-primary-icon{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.menu-primary-icon svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.menu-primary-info{flex:1;min-width:0}
-.menu-primary-title{font-size:18px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:3px}
-.menu-primary-desc{font-size:12px;color:rgba(255,255,255,0.72);line-height:1.4}
-.menu-primary-arrow{font-size:22px;color:rgba(255,255,255,0.45)}
-.list-group{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
-.list-item{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent;border:none;background:none;width:100%;text-align:left;font-family:inherit}
-.list-item+.list-item{border-top:0.5px solid #f2f2f2}
-.list-item:active{background:#f7f7f7}
-.list-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.list-icon svg{width:18px;height:18px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.list-icon.green{background:#E1F5EE} .list-icon.green svg{stroke:#085041}
-.list-icon.teal{background:#EAF3DE} .list-icon.teal svg{stroke:#3B6D11}
-.list-icon.purple{background:#F0EBFB} .list-icon.purple svg{stroke:#6B21A8}
-.list-icon.gray{background:#f0f0f0} .list-icon.gray svg{stroke:#666}
-.list-icon.red{background:#FCEBEB} .list-icon.red svg{stroke:#A32D2D}
-.list-icon.blue{background:#E6F1FB} .list-icon.blue svg{stroke:#0C447C}
-.list-icon.amber{background:#FEF3C7} .list-icon.amber svg{stroke:#92400E}
-.list-title{font-size:15px;font-weight:600;color:#111;flex:1}
-.list-title.danger{color:#A32D2D}
-.list-badge{background:#185FA5;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px}
-.list-badge.amber{background:#D97706}
-.list-badge.red{background:#A32D2D}
-.list-badge.green{background:#0F6E56}
-.list-sub{font-size:12px;color:#aaa;font-weight:400;margin-left:4px}
-.list-arrow{color:#ccc;font-size:18px;flex-shrink:0}
-.greeting-sub{font-size:13px;color:#888;margin-bottom:3px}
-.greeting-name{font-size:22px;font-weight:700;color:#1B3A5C;letter-spacing:-0.3px}
-.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
-.overlay.show{display:flex}
-.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.overlay p{font-size:14px;color:#666}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
-.toast.show{opacity:1}
-.toast.err{background:#A32D2D}
-/* Live dot para sesión activa */
-.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22C55E;margin-right:5px;vertical-align:middle;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Menú — SLTimer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f0; min-height: 100vh; color: #1a2e1a; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: linear-gradient(135deg, #1a3a2a 0%, #0d5c3a 100%); color: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-icon { font-size: 22px; }
+    .topbar h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+    .topbar-actions { display: flex; gap: 8px; }
+    .icon-btn { background: rgba(255,255,255,0.15); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .icon-btn:hover { background: rgba(255,255,255,0.25); }
+    .main { padding: 16px; max-width: 480px; margin: 0 auto; }
+    .greeting { margin-bottom: 20px; }
+    .greeting h2 { font-size: 22px; font-weight: 700; color: #1a2e1a; }
+    .greeting p { font-size: 14px; color: #666; margin-top: 4px; }
+    .cta-card { background: linear-gradient(135deg, #1a3a2a 0%, #0d5c3a 100%); border-radius: 20px; padding: 24px; margin-bottom: 20px; color: white; cursor: pointer; box-shadow: 0 8px 24px rgba(13,92,58,0.35); transition: transform 0.2s, box-shadow 0.2s; }
+    .cta-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(13,92,58,0.4); }
+    .cta-card:active { transform: scale(0.98); }
+    .cta-icon { font-size: 40px; margin-bottom: 12px; }
+    .cta-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .cta-sub { font-size: 14px; opacity: 0.8; }
+    .section-label { font-size: 13px; font-weight: 700; color: #0d5c3a; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .menu-card { background: white; border-radius: 16px; padding: 18px 16px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; gap: 8px; }
+    .menu-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .menu-card:active { transform: scale(0.97); }
+    .menu-card-icon { font-size: 28px; }
+    .menu-card-title { font-size: 15px; font-weight: 700; color: #1a2e1a; }
+    .menu-card-sub { font-size: 12px; color: #888; }
+    .list-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+    .list-item { display: flex; align-items: center; padding: 14px 16px; gap: 14px; cursor: pointer; border-bottom: 1px solid #f0f4f0; transition: background 0.15s; }
+    .list-item:last-child { border-bottom: none; }
+    .list-item:hover { background: #f8faf8; }
+    .list-item-icon { font-size: 22px; width: 40px; height: 40px; background: #f0f8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .list-item-text { flex: 1; }
+    .list-item-title { font-size: 15px; font-weight: 600; color: #1a2e1a; }
+    .list-item-sub { font-size: 13px; color: #888; margin-top: 2px; }
+    .list-item-arrow { color: #ccc; font-size: 18px; }
+  </style>
 </head>
 <body>
-
-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
-
 <div class="topbar">
-  <a class="topbar-brand" href="menu.html">
-    <img src="icons/icon-192x192.png" alt="SLTimer">
-    <span class="topbar-brand-name">SLTimer</span>
-  </a>
-  <div class="topbar-right">
-    <button class="bell-btn" onclick="window.location.href='notifications.html'" title="Notificaciones">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <div class="bell-dot" id="bell-dot"></div>
-    </button>
-    <div class="avatar" id="top-avatar"></div>
+  <div class="topbar-brand">
+    <span class="topbar-icon">⏱️</span>
+    <h1>SLTimer</h1>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" onclick="window.location.href='notifications.html'" title="Notificaciones">🔔</button>
+    <button class="icon-btn" onclick="window.location.href='ajustes.html'" title="Ajustes">⚙️</button>
   </div>
 </div>
-
-<div class="content">
-  <div>
-    <div class="greeting-sub">Bienvenido/a de nuevo</div>
-    <div class="greeting-name" id="greeting-name">&#191;Qu&#233; hacemos hoy?</div>
+<div class="main">
+  <div class="greeting">
+    <h2>👋 Hola, <span id="user-name">entrenador</span></h2>
+    <p>Qué hacemos hoy?</p>
   </div>
-
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <div class="section-label">Principal</div>
-
-    <!-- Sesión individual -->
-    <button class="menu-primary" onclick="goToApp('nueva-sesion')">
-      <div class="menu-primary-icon">
-        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-      </div>
-      <div class="menu-primary-info">
-        <div class="menu-primary-title">Crear Sesión</div>
-        <div class="menu-primary-desc">Configura palistas, tramos y cronómetro</div>
-      </div>
-      <span class="menu-primary-arrow">&#8250;</span>
-    </button>
-
-    <!-- Sesión compartida (NUEVO) -->
-    <button class="menu-primary shared" onclick="goToApp('sesion-compartida')">
-      <div class="menu-primary-icon" style="font-size:26px;background:rgba(255,255,255,0.15)">
-        &#x1F91D;
-      </div>
-      <div class="menu-primary-info">
-        <div class="menu-primary-title">Sesión Compartida</div>
-        <div class="menu-primary-desc" id="shared-desc">Varios entrenadores registrando tiempos a la vez</div>
-      </div>
-      <span class="menu-primary-arrow">&#8250;</span>
-    </button>
+  <div class="cta-card" onclick="window.location.href='slalom-config.html'">
+    <div class="cta-icon">🏄</div>
+    <div class="cta-title">Crear Sesión</div>
+    <div class="cta-sub">Inicia una nueva sesión de entrenamiento</div>
   </div>
-
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <div class="section-label">Mis datos</div>
-    <div class="list-group">
-      <button class="list-item" onclick="goToApp('historial')"><div class="list-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg></div><span class="list-title">Historial de Sesiones <span class="list-badge" id="hist-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="goToApp('palistas')"><div class="list-icon" style="background:#EAF3DE"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#3B6D11;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><span class="list-title">Mis palistas <span class="list-badge" id="athletes-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="goToApp('grupos')"><div class="list-icon purple"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="list-title">Grupos <span class="list-badge amber" id="groups-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="goToApp('estadisticas')"><div class="list-icon teal"><svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg></div><span class="list-title">Estad&#237;sticas</span><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="window.location.href='notifications.html'">
-        <div class="list-icon amber"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <span class="list-title">Notificaciones <span class="list-badge red" id="notif-badge" style="display:none"></span></span>
-        <span class="list-arrow">&#8250;</span>
-      </button>
+  <div class="section-label">Gestión</div>
+  <div class="grid-2">
+    <div class="menu-card" onclick="window.location.href='athletes.html'">
+      <div class="menu-card-icon">🏄</div>
+      <div class="menu-card-title">Palistas</div>
+      <div class="menu-card-sub">Ver y gestionar</div>
+    </div>
+    <div class="menu-card" onclick="window.location.href='teams.html'">
+      <div class="menu-card-icon">👥</div>
+      <div class="menu-card-title">Equipos</div>
+      <div class="menu-card-sub">Grupos de entreno</div>
+    </div>
+    <div class="menu-card" onclick="window.location.href='historial.html'">
+      <div class="menu-card-icon">📊</div>
+      <div class="menu-card-title">Historial</div>
+      <div class="menu-card-sub">Sesiones pasadas</div>
+    </div>
+    <div class="menu-card" onclick="window.location.href='stats.html'">
+      <div class="menu-card-icon">📈</div>
+      <div class="menu-card-title">Estadísticas</div>
+      <div class="menu-card-sub">Análisis y progreso</div>
     </div>
   </div>
-
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <div class="section-label">Configuraci&#243;n</div>
-    <div class="list-group">
-      <button class="list-item" onclick="goToApp('ajustes')"><div class="list-icon gray"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><span class="list-title">Ajustes</span><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="goToProfile()"><div class="list-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div style="flex:1;min-width:0"><div class="list-title" style="flex:none">Mi perfil</div><div class="list-sub" id="profile-username" style="display:none"></div></div><span class="list-arrow">&#8250;</span></button>
-      <button class="list-item" onclick="doLogout()"><div class="list-icon red"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><span class="list-title danger">Cerrar sesi&#243;n</span></button>
+  <div class="section-label">Acceso rápido</div>
+  <div class="list-card">
+    <div class="list-item" onclick="window.location.href='coach.html'">
+      <div class="list-item-icon">🧑‍🏫</div>
+      <div class="list-item-text">
+        <div class="list-item-title">Modo entrenador</div>
+        <div class="list-item-sub">Vista en tiempo real</div>
+      </div>
+      <span class="list-item-arrow">›</span>
+    </div>
+    <div class="list-item" onclick="window.location.href='ajustes.html'">
+      <div class="list-item-icon">⚙️</div>
+      <div class="list-item-text">
+        <div class="list-item-title">Ajustes</div>
+        <div class="list-item-sub">Configuración de la app</div>
+      </div>
+      <span class="list-item-arrow">›</span>
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
-
 <script>
-const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
-const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
-const ROUTES={
-  'nueva-sesion':'slalom-config.html',
-  'sesion-compartida':'shared-session.html',
-  'historial':'historial.html',
-  'palistas':'athletes.html',
-  'grupos':'teams.html',
-  'estadisticas':'stats.html',
-  'ajustes':'ajustes.html'
-};
-let _tok=null,_uid=null,_email=null,_coachId=null;
-const $=id=>document.getElementById(id);
-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
-function hideLoad(){$('overlay').classList.remove('show');}
-let _tTimer;
-function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
-function initials(str){if(!str)return'?';const parts=str.trim().split(/[\s._\-]+/);if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();return str.slice(0,2).toUpperCase();}
-async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json',...(opts.headers||{})};if(_tok)h['Authorization']='Bearer '+_tok;const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.error_description||JSON.stringify(j));return j;}
-async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_exp')||'0');const ref=localStorage.getItem('slt_ref');if(!ref)return false;if(Date.now()<exp-10*60*1000)return true;try{const d=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:ref})});_tok=d.access_token;localStorage.setItem('slt_tok',d.access_token);localStorage.setItem('slt_ref',d.refresh_token);localStorage.setItem('slt_exp',Date.now()+(d.expires_in||3600)*1000);return true;}catch{clearSession();return false;}}
-function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
-async function doLogout(){showLoad('Cerrando sesion...');try{await api('/auth/v1/logout',{method:'POST'});}catch{}_tok=null;_uid=null;_email=null;clearSession();window.location.href='index.html';}
-function goToApp(section){const dest=ROUTES[section];if(dest)window.location.href=dest;else toast('Seccion no disponible aun',true);}
-function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'coach.html';}
-async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
-async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
-async function loadNotifBadge(){try{const myEmail=localStorage.getItem('slt_email')||'';const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(myEmail)+'&status=eq.pending&select=id');const total=(invites?.length||0);const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}const groupsBadge=$('groups-badge');if(total>0){groupsBadge.textContent=total;groupsBadge.style.display='inline';}}catch{}}
-async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
-function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' \uD83D\uDC4B';}
-
-// Detectar si hay sesión compartida activa y mostrar indicador
-function checkSharedSessionBadge(){
-  const raw=sessionStorage.getItem('slt_shared');
-  if(!raw)return;
-  try{
-    const state=JSON.parse(raw);
-    if(state.code){
-      $('shared-desc').innerHTML='<span class="live-dot"></span>Sesión activa · '+state.code;
-    }
-  }catch{}
-}
-
-window.addEventListener('DOMContentLoaded',async()=>{
-  const hash=window.location.hash.substring(1);
-  if(hash.includes('access_token')){showLoad('Iniciando sesion...');const params=new URLSearchParams(hash);const access_token=params.get('access_token');const refresh_token=params.get('refresh_token');if(access_token){try{const user=await fetch(`${SB}/auth/v1/user`,{headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}}).then(r=>r.json());localStorage.setItem('slt_tok',access_token);localStorage.setItem('slt_ref',refresh_token||'');localStorage.setItem('slt_uid',user.id);localStorage.setItem('slt_email',user.email);localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);history.replaceState(null,'',window.location.pathname);}catch{hideLoad();toast('Error al iniciar sesion',true);setTimeout(()=>window.location.href='index.html',1500);return;}}}
-  _tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');_email=localStorage.getItem('slt_email');
-  if(!_tok){window.location.href='index.html';return;}
-  showLoad('Comprobando sesion...');
-  const ok=await refreshIfNeeded();
-  if(!ok){window.location.href='index.html';return;}
-  hideLoad();
-  renderUser(_email);
-  loadHistCount();
-  loadAthletesCount();
-  loadNotifBadge();
-  loadCoachProfile();
-  checkSharedSessionBadge();
-});
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  const tok=localStorage.getItem('sb_access_token');
+  if(!tok){window.location.href='index.html';}
+  const u=JSON.parse(localStorage.getItem('sb_user')||'{}');
+  const name=u.user_metadata?.name||u.email?.split('@')[0]||'entrenador';
+  document.getElementById('user-name').textContent=name;
 </script>
 <script src="active-session-bar.js"></script>
 </body>
