@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1B3A5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLTimer">
+<link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+<title>SLTimer &#8212; Estad&#237;sticas</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+.topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
+.content{padding:16px 16px 56px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.kpi-card.wide{grid-column:1/-1}
+.kpi-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
+.kpi-value{font-size:28px;font-weight:700;color:#1B3A5C;letter-spacing:-0.5px;line-height:1;font-family:'Bebas Neue',sans-serif}
+.kpi-sub{font-size:12px;color:#aaa;margin-top:2px}
+.c-blue{color:#185FA5}.c-green{color:#0F6E56}.c-orange{color:#854F0B}.c-red{color:#A32D2D}
+
+/* Card genérica */
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
+
+/* Filas stat */
+.stat-row{padding:11px 16px;display:flex;align-items:center;justify-content:space-between}
+.stat-row+.stat-row{border-top:0.5px solid #f2f2f2}
+.stat-name{font-size:13px;color:#666;font-weight:500;display:flex;align-items:center;gap:8px}
+.stat-val{font-size:15px;font-weight:700;color:#1B3A5C;text-align:right}
+.stat-sub{font-size:11px;color:#aaa;font-weight:400;display:block;margin-top:1px}
+.rank-num{width:20px;height:20px;border-radius:6px;background:#f0f0f0;color:#888;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-num.gold{background:#FEF3C7;color:#92400E}
+.rank-num.silver{background:#F1F5F9;color:#475569}
+.rank-num.bronze{background:#FEF0E6;color:#9A3412}
+
+/* Barras de progreso */
+.progress-row{padding:10px 16px;display:flex;flex-direction:column;gap:6px}
+.progress-row+.progress-row{border-top:0.5px solid #f2f2f2}
+.progress-header{display:flex;justify-content:space-between;align-items:center}
+.progress-title{font-size:13px;font-weight:600;color:#111}
+.progress-meta{font-size:12px;color:#aaa}
+.progress-bar-bg{height:6px;background:#f0f0f0;border-radius:100px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:100px;background:#185FA5;transition:width .6s ease}
+.progress-bar-fill.green{background:#0F6E56}
+.progress-bar-fill.orange{background:#B45309}
+.progress-bar-fill.red{background:#A32D2D}
+
+/* Chips palista */
+.chips-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:8px 14px;border-radius:100px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.chip.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.chip:active{opacity:.75}
+
+/* Mini sparkline CSS */
+.spark-wrap{display:flex;align-items:flex-end;gap:3px;height:32px;padding:0 16px 10px}
+.spark-bar{flex:1;border-radius:3px 3px 0 0;background:#185FA5;opacity:.7;min-height:3px;transition:height .4s ease}
+.spark-bar.best{background:#0F6E56;opacity:1}
+
+/* Vacío */
+.empty{text-align:center;padding:36px 20px;color:#bbb;font-size:14px;font-weight:500}
+
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.overlay.show{display:flex}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.err{background:#A32D2D}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay"><div class="spinner"></div><p>Cargando...</p></div>
+
+<div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
+  <div class="topbar-brand">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </div>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Estad&#237;sticas</span>
+</div>
+
+<div class="content">
+
+  <!-- KPI globales -->
+  <div class="section-label">Resumen global</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Sesiones</div>
+      <div class="kpi-value c-blue" id="kpi-ses">&#8212;</div>
+      <div class="kpi-sub" id="kpi-ses-sub"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Tiempos registrados</div>
+      <div class="kpi-value c-blue" id="kpi-ents">&#8212;</div>
+      <div class="kpi-sub" id="kpi-ents-sub"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">DSQ totales</div>
+      <div class="kpi-value" id="kpi-dsq">&#8212;</div>
+      <div class="kpi-sub" id="kpi-dsq-sub"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Palistas distintos</div>
+      <div class="kpi-value" id="kpi-pals">&#8212;</div>
+      <div class="kpi-sub">en todas las sesiones</div>
+    </div>
+    <div class="kpi-card wide">
+      <div class="kpi-label">Penalizaci&#243;n media por tiempo v&#225;lido</div>
+      <div class="kpi-value" id="kpi-pen">&#8212;</div>
+      <div class="kpi-sub">segundos promedio (sin DSQ)</div>
+    </div>
+  </div>
+
+  <!-- Ranking palistas: mejor tiempo global -->
+  <div class="section-label">Ranking &#8212; mejor tiempo neto</div>
+  <div class="card" id="ranking-card"><div class="empty">Sin datos</div></div>
+
+  <!-- Distribución DSQ por tramo -->
+  <div class="section-label">Tasa de DSQ por tramo</div>
+  <div class="card" id="dsq-tramos-card"><div class="empty">Sin datos</div></div>
+
+  <!-- Penalización media por tramo -->
+  <div class="section-label">Penalizaci&#243;n media por tramo</div>
+  <div class="card" id="pen-tramos-card"><div class="empty">Sin datos</div></div>
+
+  <!-- Stats por palista -->
+  <div class="section-label">Detalle por palista</div>
+  <div class="chips-row" id="pal-chips"></div>
+  <div class="card" id="pal-detail-card"><div class="empty">Selecciona un palista</div></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null,_uid=null;
+let _sessions=[],_entries=[];
+const $=id=>document.getElementById(id);
+let _tt;
+function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3000);}
+function showLoad(){$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+function fmtTime(ms){
+  if(ms===null||ms===undefined)return '—';
+  const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);
+  return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
+}
+function fmtPen(ms){return(ms/1000).toFixed(1)+'s';}
+function penColor(s){return s===0?'c-green':s<5?'c-blue':s<15?'c-orange':'c-red';}
+function dsqColor(p){return p===0?'c-green':p<10?'c-blue':p<25?'c-orange':'c-red';}
+
+async function api(path){
+  const r=await fetch(SB+path,{headers:{'apikey':KEY,'Authorization':'Bearer '+_tok}});
+  if(!r.ok)throw new Error(await r.text());
+  return r.json();
+}
+
+/* ── KPI GLOBAL ── */
+function renderKPI(){
+  const nSes=_sessions.length;
+  const valid=_entries.filter(e=>!e.dsq);
+  const nEnts=_entries.length;
+  const nDsq=_entries.filter(e=>e.dsq).length;
+  const dsqPct=nEnts?Math.round(nDsq/nEnts*100):0;
+  const palSet=new Set(_entries.map(e=>e.pal_name));
+  const nPals=palSet.size;
+  const avgPen=valid.length?valid.reduce((s,e)=>s+e.pen,0)/valid.length:0;
+  const avgPenS=avgPen/1000;
+
+  $('kpi-ses').textContent=nSes;
+  $('kpi-ses-sub').textContent=nSes===1?'sesión':nSes+' sesiones';
+  $('kpi-ents').textContent=nEnts;
+  $('kpi-ents-sub').textContent=nDsq>0?nDsq+' DSQ incluídos':'todos válidos';
+  $('kpi-dsq').textContent=nDsq;
+  $('kpi-dsq').className='kpi-value '+dsqColor(dsqPct);
+  $('kpi-dsq-sub').textContent=dsqPct+'% del total';
+  $('kpi-pals').textContent=nPals;
+  $('kpi-pen').textContent=avgPenS.toFixed(1)+'s';
+  $('kpi-pen').className='kpi-value '+penColor(avgPenS);
+}
+
+/* ── RANKING ── */
+function renderRanking(){
+  const card=$('ranking-card');
+  const valid=_entries.filter(e=>!e.dsq&&e.ms>0);
+  if(!valid.length){card.innerHTML='<div class="empty">Sin tiempos válidos</div>';return;}
+  const byPal={};
+  for(const e of valid){
+    const net=e.ms+e.pen;
+    if(!(e.pal_name in byPal)||net<byPal[e.pal_name].net){
+      byPal[e.pal_name]={net,ms:e.ms,pen:e.pen,tramo:e.tramo,sesName:''};
+    }
+  }
+  for(const e of valid){
+    const net=e.ms+e.pen;
+    if(byPal[e.pal_name]&&byPal[e.pal_name].net===net){
+      const ses=_sessions.find(s=>s.id===e.session_id);
+      if(ses)byPal[e.pal_name].sesName=ses.name;
+    }
+  }
+  const sorted=Object.entries(byPal).sort((a,b)=>a[1].net-b[1].net);
+  const rankClasses=['gold','silver','bronze'];
+  let html='';
+  sorted.forEach(([name,d],i)=>{
+    const cls=rankClasses[i]||'';
+    const penStr=d.pen>0?` <span style="font-size:11px;font-weight:500;color:#aaa">(+${fmtPen(d.pen)})</span>`:'';
+    html+=`<div class="stat-row">
+      <span class="stat-name"><span class="rank-num ${cls}">${i+1}</span>${name}</span>
+      <span class="stat-val">${fmtTime(d.ms)}${penStr}<span class="stat-sub">T${d.tramo+1} · ${d.sesName}</span></span>
+    </div>`;
+  });
+  card.innerHTML=html;
+}
+
+/* ── DSQ POR TRAMO ── */
+function renderDsqTramos(){
+  const card=$('dsq-tramos-card');
+  if(!_entries.length){card.innerHTML='<div class="empty">Sin datos</div>';return;}
+  const tramoMap={};
+  for(const e of _entries){
+    const k=e.tramo;
+    if(!(k in tramoMap))tramoMap[k]={total:0,dsq:0};
+    tramoMap[k].total++;
+    if(e.dsq)tramoMap[k].dsq++;
+  }
+  const sorted=Object.entries(tramoMap).sort((a,b)=>Number(a[0])-Number(b[0]));
+  const maxPct=Math.max(...sorted.map(([,v])=>v.total?v.dsq/v.total*100:0),1);
+  let html='';
+  for(const[idx,d] of sorted){
+    const p=d.total?Math.round(d.dsq/d.total*100):0;
+    const barW=Math.round(p/maxPct*100);
+    const col=p===0?'green':p<15?'':'orange';
+    html+=`<div class="progress-row">
+      <div class="progress-header">
+        <span class="progress-title">Tramo ${Number(idx)+1}</span>
+        <span class="progress-meta">${d.dsq} DSQ de ${d.total} &middot; <b>${p}%</b></span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill ${col}" style="width:${barW}%"></div></div>
+    </div>`;
+  }
+  card.innerHTML=html;
+}
+
+/* ── PEN POR TRAMO ── */
+function renderPenTramos(){
+  const card=$('pen-tramos-card');
+  const valid=_entries.filter(e=>!e.dsq);
+  if(!valid.length){card.innerHTML='<div class="empty">Sin tiempos válidos</div>';return;}
+  const tramoMap={};
+  for(const e of valid){
+    const k=e.tramo;
+    if(!(k in tramoMap))tramoMap[k]={sum:0,cnt:0};
+    tramoMap[k].sum+=e.pen;
+    tramoMap[k].cnt++;
+  }
+  const sorted=Object.entries(tramoMap).sort((a,b)=>Number(a[0])-Number(b[0]));
+  const avgPens=sorted.map(([,v])=>v.cnt?v.sum/v.cnt/1000:0);
+  const maxAvg=Math.max(...avgPens,0.1);
+  let html='';
+  sorted.forEach(([idx,d],i)=>{
+    const avg=avgPens[i];
+    const barW=Math.round(avg/maxAvg*100);
+    const col=avg===0?'green':avg<3?'':'orange';
+    html+=`<div class="progress-row">
+      <div class="progress-header">
+        <span class="progress-title">Tramo ${Number(idx)+1}</span>
+        <span class="progress-meta">${d.cnt} tiempos &middot; <b>${avg.toFixed(1)}s media</b></span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill ${col}" style="width:${barW}%"></div></div>
+    </div>`;
+  });
+  card.innerHTML=html;
+}
+
+/* ── CHIPS PALISTA ── */
+let _selPal=null;
+function renderPalChips(){
+  const row=$('pal-chips');
+  const pals=[...new Set(_entries.map(e=>e.pal_name))].sort();
+  if(!pals.length){row.innerHTML='<span style="font-size:13px;color:#bbb">Sin palistas</span>';return;}
+  row.innerHTML=pals.map(n=>`<button class="chip" data-pal="${n}" onclick="selectPal('${n.replace(/'/g,"\\'")}")">${n}</button>`).join('');
+  selectPal(pals[0]);
+}
+function selectPal(name){
+  _selPal=name;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.pal===name));
+  renderPalDetail(name);
+}
+
+/* ── DETALLE PALISTA ── */
+function renderPalDetail(name){
+  const card=$('pal-detail-card');
+  const mine=_entries.filter(e=>e.pal_name===name);
+  if(!mine.length){card.innerHTML='<div class="empty">Sin tiempos para este palista</div>';return;}
+  const valid=mine.filter(e=>!e.dsq&&e.ms>0);
+  const nTotal=mine.length,nDsq=mine.filter(e=>e.dsq).length;
+  const dsqPct=nTotal?Math.round(nDsq/nTotal*100):0;
+  const nets=valid.map(e=>e.ms+e.pen);
+  const bestNet=nets.length?Math.min(...nets):null;
+  const worstNet=nets.length?Math.max(...nets):null;
+  const avgNet=nets.length?nets.reduce((s,v)=>s+v,0)/nets.length:null;
+  const bestEntry=valid.find(e=>e.ms+e.pen===bestNet);
+  const avgPenS=valid.length?valid.reduce((s,e)=>s+e.pen,0)/valid.length/1000:0;
+  const sesList=[...new Set(mine.map(e=>e.session_id))].length;
+  const tramoSet=[...new Set(mine.map(e=>e.tramo))];
+
+  const sesOrder=_sessions.map(s=>s.id);
+  const sparkData=sesOrder.map(sid=>{
+    const sEnts=valid.filter(e=>e.session_id===sid);
+    if(!sEnts.length)return null;
+    return Math.min(...sEnts.map(e=>e.ms+e.pen));
+  }).filter(v=>v!==null);
+
+  let sparkHTML='';
+  if(sparkData.length>1){
+    const minV=Math.min(...sparkData),maxV=Math.max(...sparkData);
+    const range=maxV-minV||1;
+    const bestV=Math.min(...sparkData);
+    sparkHTML=`<div class="spark-wrap">${sparkData.map(v=>{
+      const h=Math.round(10+((maxV-v)/range)*22);
+      const isBest=v===bestV;
+      return`<div class="spark-bar${isBest?' best':''}" style="height:${h}px" title="${fmtTime(v)}"></div>`;
+    }).join('')}</div><div style="padding:0 16px 10px;display:flex;justify-content:space-between;font-size:11px;color:#aaa"><span>Sesión más antigua</span><span>Sesión más reciente</span></div>`;
+  }
+
+  const bEntSes=bestEntry?_sessions.find(s=>s.id===bestEntry.session_id):null;
+  const bestPenStr=bestEntry&&bestEntry.pen>0?` <span style="font-size:11px;color:#aaa">(+${fmtPen(bestEntry.pen)})</span>`:'';
+
+  card.innerHTML=`
+    ${sparkData.length>1?'<div style="padding:14px 16px 0;font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.07em">Evolución mejor tiempo por sesión</div>'+sparkHTML:''}
+    <div class="stat-row"><span class="stat-name">Tiempos totales</span><span class="stat-val">${nTotal}</span></div>
+    <div class="stat-row"><span class="stat-name">Válidos / DSQ</span><span class="stat-val">${valid.length} / <span class="${dsqColor(dsqPct)}">${nDsq} (${dsqPct}%)</span></span></div>
+    <div class="stat-row"><span class="stat-name">Mejor tiempo neto</span><span class="stat-val c-green">${bestNet!==null?fmtTime(bestEntry.ms):'—'}${bestPenStr}<span class="stat-sub">${bEntSes?bEntSes.name+' · T'+(bestEntry.tramo+1):''}</span></span></div>
+    <div class="stat-row"><span class="stat-name">Peor tiempo neto</span><span class="stat-val">${worstNet!==null?fmtTime(worstNet):'—'}</span></div>
+    <div class="stat-row"><span class="stat-name">Tiempo medio neto</span><span class="stat-val">${avgNet!==null?fmtTime(Math.round(avgNet)):'—'}</span></div>
+    <div class="stat-row"><span class="stat-name">Pen. media</span><span class="stat-val ${penColor(avgPenS)}">${avgPenS.toFixed(1)}s</span></div>
+    <div class="stat-row"><span class="stat-name">Sesiones</span><span class="stat-val">${sesList}</span></div>
+    <div class="stat-row"><span class="stat-name">Tramos</span><span class="stat-val">${tramoSet.map(t=>'T'+(t+1)).join(', ')}</span></div>
+  `;
+}
+
+/* ── INIT ── */
+_tok=localStorage.getItem('slt_tok');
+_uid=localStorage.getItem('slt_uid');
+if(!_tok){window.location.href='index.html';}
+
+(async()=>{
+  showLoad();
+  try{
+    const [sessions,entries]=await Promise.all([
+      api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,data,created_at'),
+      api('/rest/v1/session_entries?session_id=in.('+
+        (await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id'))
+          .map(s=>s.id).join(',')
+        +')&select=id,session_id,pal_name,pal_cat,pal_index,tramo,manga,ms,pen,dsq')
+    ]);
+    _sessions=sessions||[];
+    _entries=entries||[];
+    renderKPI();
+    renderRanking();
+    renderDsqTramos();
+    renderPenTramos();
+    renderPalChips();
+  }catch(e){
+    console.error(e);
+    toast('Error al cargar datos',true);
+  }finally{
+    hideLoad();
+  }
+})();
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>

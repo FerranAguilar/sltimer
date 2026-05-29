@@ -308,7 +308,5 @@ function goBack(){window.location.href='athletes.html';}
 window.addEventListener('DOMContentLoaded',async()=>{_tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');_email=localStorage.getItem('slt_email');if(!_tok){window.location.href='index.html';return;}$('owner-avatar').textContent=_email?_email.slice(0,2).toUpperCase():'YO';$('owner-email').textContent=_email||'';const params=new URLSearchParams(window.location.search);_athleteId=params.get('id')||null;if(_athleteId){$('page-title').textContent='Cargando...';await loadAthlete(_athleteId);}await loadGroups();});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
-<script src="active-session-bar.js"></script>
-<script>document.addEventListener("DOMContentLoaded",function(){if(typeof ActiveSessionBar!=="undefined")ActiveSessionBar.init();});</script>
 </body>
 </html>

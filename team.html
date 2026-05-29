@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1B3A5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLTimer">
+<link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+<title>SLTimer — Grupo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.topbar-brand img{width:28px;height:28px;border-radius:7px}
+.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12)}
+.topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:4px 2px 2px}
+.group-header{background:#185FA5;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.group-header-name{font-size:20px;font-weight:700;color:#fff;line-height:1.2}
+.group-header-desc{font-size:13px;color:rgba(255,255,255,0.75)}
+.group-header-meta{display:flex;gap:12px;margin-top:4px}
+.group-stat{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 16px;min-width:64px}
+.group-stat-num{font-size:20px;font-weight:700;color:#fff;line-height:1}
+.group-stat-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.70);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
+.list-group{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
+.list-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border:none;background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer;transition:background .1s}
+.list-item+.list-item{border-top:0.5px solid #f2f2f2}
+.list-item:active{background:#f7f7f7}
+.list-avatar{width:38px;height:38px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid #B5D4F4;text-transform:uppercase}
+.list-avatar.green{background:#E1F5EE;color:#085041;border-color:#A3DEC8}
+.list-avatar.orange{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
+.list-info{flex:1;min-width:0}
+.list-name{font-size:14px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:12px;color:#aaa;margin-top:2px}
+.role-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;flex-shrink:0}
+.role-badge.owner{background:#E6F1FB;color:#0C447C}
+.role-badge.member{background:#f0f0f0;color:#666}
+.cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;display:inline-block}
+.cat-badge.K1{background:#E6F1FB;color:#0C447C}
+.cat-badge.C1{background:#E1F5EE;color:#085041}
+.cat-badge.KXC{background:#FAEEDA;color:#633806}
+.btn-action{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#185FA5;width:100%;transition:background .1s}
+.btn-action:active{background:#f0f5fc}
+.btn-action svg{width:18px;height:18px;fill:none;stroke:#185FA5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-action.danger{color:#A32D2D;border-color:#FECACA}
+.btn-action.danger svg{stroke:#A32D2D}
+.btn-action.danger:active{background:#FEF2F2}
+.invite-item{display:flex;align-items:center;gap:12px;padding:13px 16px}
+.invite-item+.invite-item{border-top:0.5px solid #f2f2f2}
+.invite-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;flex-shrink:0}
+.invite-status.pending{background:#FEF3C7;color:#92400E}
+.invite-status.accepted{background:#E1F5EE;color:#085041}
+.invite-status.rejected{background:#FEE2E2;color:#991B1B}
+.invite-del{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0}
+.invite-del:active{color:#A32D2D}
+.empty-inline{padding:20px;text-align:center;font-size:13px;color:#aaa}
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
+.sheet-backdrop.open{display:block;opacity:1}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:201;padding:0 16px 36px;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);max-width:480px;margin:0 auto}
+.sheet.open{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 20px}
+.sheet-title{font-size:17px;font-weight:700;color:#1B3A5C;margin-bottom:6px}
+.sheet-sub{font-size:13px;color:#aaa;margin-bottom:16px}
+label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
+input[type=text],input[type=search]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+input:focus{outline:none;border-color:#185FA5}
+.ig{margin-bottom:12px}
+.invite-preview{display:none;background:#F0F7FF;border:0.5px solid #B5D4F4;border-radius:10px;padding:11px 14px;margin-bottom:12px;align-items:center;gap:10px}
+.invite-preview.show{display:flex}
+.invite-preview-avatar{width:34px;height:34px;border-radius:50%;background:#185FA5;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase}
+.invite-preview-info{flex:1;min-width:0}
+.invite-preview-name{font-size:14px;font-weight:700;color:#0C447C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invite-preview-email{font-size:12px;color:#5b8fc9;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invite-preview-ok{font-size:18px;color:#185FA5}
+.lookup-spinner{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;flex-shrink:0}
+.lookup-spinner.show{display:inline-block}
+.field-row{display:flex;align-items:center;gap:8px}
+.field-row input{flex:1}
+.ath-dd{background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);margin-top:6px;max-height:200px;overflow-y:auto;display:none}
+.ath-dd.open{display:block}
+.ath-option{padding:11px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+.ath-option:last-child{border-bottom:none}
+.ath-option:active{background:#f7f7f7}
+.ath-option-name{font-weight:600;flex:1}
+.btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;margin-top:4px}
+.btn-primary:active{opacity:.85}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.overlay.show{display:flex}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.ok{background:#0F6E56}
+.toast.err{background:#A32D2D}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+<div class="toast" id="toast"></div>
+
+<!-- SHEET: Invitar entrenador -->
+<div class="sheet-backdrop" id="bd-invite" onclick="closeInviteSheet()"></div>
+<div class="sheet" id="sheet-invite">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Invitar entrenador</div>
+  <div class="sheet-sub">Introduce el email o el @usuario del entrenador</div>
+  <div class="ig">
+    <label>Email o @usuario</label>
+    <div class="field-row">
+      <input id="invite-input" type="text" placeholder="email@ejemplo.com o @usuario" oninput="onInviteInput()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div class="lookup-spinner" id="lookup-spinner"></div>
+    </div>
+  </div>
+  <div class="invite-preview" id="invite-preview">
+    <div class="invite-preview-avatar" id="preview-avatar"></div>
+    <div class="invite-preview-info">
+      <div class="invite-preview-name" id="preview-name"></div>
+      <div class="invite-preview-email" id="preview-email"></div>
+    </div>
+    <span class="invite-preview-ok">✓</span>
+  </div>
+  <button class="btn-primary" id="btn-send-invite" onclick="sendInvite()" disabled>Enviar invitación</button>
+</div>
+
+<!-- SHEET: Añadir palista -->
+<div class="sheet-backdrop" id="bd-athlete" onclick="closeAthleteSheet()"></div>
+<div class="sheet" id="sheet-athlete">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Añadir palista al grupo</div>
+  <div class="sheet-sub">Busca entre tus palistas para compartirlo con el grupo</div>
+  <div class="ig" style="position:relative">
+    <label>Buscar palista</label>
+    <input id="ath-search" type="search" placeholder="Nombre del palista…" oninput="onAthSearch()" autocomplete="off" autocorrect="off">
+    <div class="ath-dd" id="ath-dd"></div>
+  </div>
+  <button class="btn-primary" id="btn-add-ath" onclick="addAthleteToTeam()" disabled>Añadir al grupo</button>
+</div>
+
+<div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='teams.html'">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title" id="topbar-title">Grupo</span>
+</div>
+
+<div class="content" id="content"></div>
+
+<script>
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null, _uid=null, _teamId=null, _team=null, _isOwner=false;
+let _members=[], _athletes=[], _invites=[], _myAthletes=[];
+let _selAthleteId=null;
+let _foundEmail=null, _lookupTimer=null;
+const $=id=>document.getElementById(id);
+
+let _tTimer;
+function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+function initials(a,b){const s=b?a+' '+b:a;if(!s)return'?';const p=s.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:s.slice(0,2)).toUpperCase();}
+
+async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
+
+/* ── SHEETS ── */
+function openInviteSheet(){
+  if(!_isOwner){toast('Solo el propietario puede invitar','err');return;}
+  $('invite-input').value='';
+  $('invite-preview').classList.remove('show');
+  $('btn-send-invite').disabled=true;
+  _foundEmail=null;
+  $('bd-invite').classList.add('open');
+  setTimeout(()=>$('sheet-invite').classList.add('open'),10);
+  setTimeout(()=>$('invite-input').focus(),300);
+}
+function closeInviteSheet(){$('sheet-invite').classList.remove('open');$('bd-invite').classList.remove('open');}
+function openAthleteSheet(){$('ath-search').value='';$('ath-dd').classList.remove('open');$('ath-dd').innerHTML='';_selAthleteId=null;$('btn-add-ath').disabled=true;$('bd-athlete').classList.add('open');setTimeout(()=>$('sheet-athlete').classList.add('open'),10);setTimeout(()=>$('ath-search').focus(),300);}
+function closeAthleteSheet(){$('sheet-athlete').classList.remove('open');$('bd-athlete').classList.remove('open');}
+
+/* ── LOOKUP (debounced 500ms) ── */
+function onInviteInput(){
+  clearTimeout(_lookupTimer);
+  _foundEmail=null;
+  $('invite-preview').classList.remove('show');
+  $('btn-send-invite').disabled=true;
+  $('lookup-spinner').classList.remove('show');
+  const raw=($('invite-input').value||'').trim();
+  if(!raw)return;
+  // Email directo
+  if(raw.includes('@') && !raw.startsWith('@') && raw.includes('.')){
+    _foundEmail=raw.toLowerCase();
+    showPreview(null,_foundEmail);
+    return;
+  }
+  // @usuario → RPC
+  if(raw.startsWith('@') && raw.length>1){
+    $('lookup-spinner').classList.add('show');
+    _lookupTimer=setTimeout(()=>lookupByUsername(raw.slice(1).toLowerCase()),500);
+  }
+}
+
+function showPreview(coachRow,email){
+  const name=coachRow?(coachRow.name||('@'+coachRow.username)):null;
+  const displayEmail=email||'';
+  $('preview-avatar').textContent=name?initials(name):(displayEmail.slice(0,2).toUpperCase());
+  $('preview-name').textContent=name||displayEmail;
+  $('preview-email').textContent=displayEmail;
+  $('invite-preview').classList.add('show');
+  $('btn-send-invite').disabled=false;
+}
+
+/* Llama a la función RPC find_coach_by_username que hace el join con auth.users */
+async function lookupByUsername(username){
+  try{
+    const rows=await api('/rest/v1/rpc/find_coach_by_username',{
+      method:'POST',
+      body:JSON.stringify({p_username:username})
+    });
+    $('lookup-spinner').classList.remove('show');
+    if(!rows||!rows.length){
+      toast('No se encontró ningún entrenador con ese @usuario','err');
+      $('invite-preview').classList.remove('show');
+      $('btn-send-invite').disabled=true;
+      _foundEmail=null;
+      return;
+    }
+    const coach=rows[0];
+    _foundEmail=coach.email.toLowerCase();
+    showPreview(coach,coach.email);
+  }catch(e){
+    $('lookup-spinner').classList.remove('show');
+    toast('Error al buscar: '+e.message,'err');
+  }
+}
+
+/* ── INVITAR ── */
+async function sendInvite(){
+  const email=_foundEmail;
+  if(!email){toast('Introduce un email o @usuario válido','err');return;}
+  const alreadyInvited=_invites.find(i=>i.email.toLowerCase()===email&&i.status==='pending');
+  if(alreadyInvited){toast('Ya hay una invitación pendiente para ese entrenador','err');return;}
+  const btn=$('btn-send-invite');btn.disabled=true;btn.textContent='Enviando...';
+  try{
+    await api('/rest/v1/team_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({team_id:_teamId,invited_by:_uid,email,status:'pending'})});
+    closeInviteSheet();
+    toast('Invitación enviada ✓','ok');
+    await loadData();
+  }catch(e){
+    toast('Error: '+e.message,'err');
+  }finally{
+    btn.disabled=false;btn.textContent='Enviar invitación';
+  }
+}
+
+async function deleteInvite(id){
+  if(!confirm('¿Cancelar esta invitación?'))return;
+  try{
+    await api('/rest/v1/team_invites?id=eq.'+id,{method:'DELETE'});
+    toast('Invitación cancelada');
+    await loadData();
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+/* ── MIEMBROS ── */
+async function removeMember(userId){
+  if(userId===_uid){if(!confirm('¿Salir del grupo?'))return;}
+  else{if(!confirm('¿Eliminar este miembro del grupo?'))return;}
+  try{
+    await api('/rest/v1/team_members?team_id=eq.'+_teamId+'&user_id=eq.'+userId,{method:'DELETE'});
+    toast(userId===_uid?'Has salido del grupo':'Miembro eliminado');
+    if(userId===_uid){window.location.href='teams.html';return;}
+    await loadData();
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+/* ── ATLETAS ── */
+function onAthSearch(){
+  const q=($('ath-search').value||'').toLowerCase().trim();
+  _selAthleteId=null;$('btn-add-ath').disabled=true;
+  const dd=$('ath-dd');
+  if(!q){dd.classList.remove('open');dd.innerHTML='';return;}
+  const inTeam=new Set(_athletes.map(a=>a.id));
+  const matches=_myAthletes.filter(a=>!inTeam.has(a.id)&&((a.name+' '+(a.surname||'')).toLowerCase().includes(q))).slice(0,8);
+  if(!matches.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  const cats=a=>(a.categories||[]).filter(c=>['K1','C1','KXC'].includes(c)).map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+  dd.innerHTML=matches.map(a=>`<div class="ath-option" onmousedown="selectAthlete('${a.id}','${(a.name+(a.surname?' '+a.surname:'')).replace(/'/g,"\\'")}')"><span class="ath-option-name">${a.name+(a.surname?' '+a.surname:'')}</span>${cats(a)}</div>`).join('');
+  dd.classList.add('open');
+}
+function selectAthlete(id,name){
+  _selAthleteId=id;
+  $('ath-search').value=name;
+  $('ath-dd').classList.remove('open');
+  $('btn-add-ath').disabled=false;
+}
+async function addAthleteToTeam(){
+  if(!_selAthleteId){toast('Selecciona un palista primero','err');return;}
+  const btn=$('btn-add-ath');btn.disabled=true;btn.textContent='Añadiendo...';
+  try{
+    await api('/rest/v1/team_athletes',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({team_id:_teamId,athlete_id:_selAthleteId,added_by:_uid})});
+    closeAthleteSheet();
+    toast('Palista añadido al grupo ✓','ok');
+    await loadData();
+  }catch(e){
+    toast('Error: '+e.message,'err');
+  }finally{
+    btn.disabled=false;btn.textContent='Añadir al grupo';
+  }
+}
+async function removeAthlete(athleteId){
+  if(!confirm('¿Quitar este palista del grupo?'))return;
+  try{
+    await api('/rest/v1/team_athletes?team_id=eq.'+_teamId+'&athlete_id=eq.'+athleteId,{method:'DELETE'});
+    toast('Palista eliminado del grupo');
+    await loadData();
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+/* ── ELIMINAR GRUPO ── */
+async function deleteTeam(){
+  if(!confirm('¿Eliminar el grupo permanentemente? Esta acción no se puede deshacer.'))return;
+  if(!confirm('¿Seguro? Se eliminarán todos los miembros y palistas compartidos.'))return;
+  try{
+    await api('/rest/v1/teams?id=eq.'+_teamId,{method:'DELETE'});
+    toast('Grupo eliminado');
+    setTimeout(()=>window.location.href='teams.html',800);
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+/* ── CARGA Y RENDER ── */
+async function loadData(){
+  try{
+    _team=(await api('/rest/v1/teams?id=eq.'+_teamId+'&select=id,name,description,owner_id'))[0];
+    if(!_team){toast('Grupo no encontrado','err');setTimeout(()=>window.location.href='teams.html',1200);return;}
+    _isOwner=_team.owner_id===_uid;
+    $('topbar-title').textContent=_team.name;
+
+    _members=await api('/rest/v1/team_members?team_id=eq.'+_teamId+'&select=user_id,role,joined_at');
+
+    const athRows=await api('/rest/v1/team_athletes?team_id=eq.'+_teamId+'&select=athlete_id,added_by,added_at');
+    if(athRows.length){
+      const ids=athRows.map(r=>r.athlete_id).join(',');
+      const athData=await api('/rest/v1/athletes?id=in.('+ids+')&select=id,name,surname,categories');
+      _athletes=athData.map(a=>{const row=athRows.find(r=>r.athlete_id===a.id);return{...a,added_by:row?.added_by,added_at:row?.added_at};});
+    }else{_athletes=[];}
+
+    _invites=_isOwner?await api('/rest/v1/team_invites?team_id=eq.'+_teamId+'&select=id,email,status,created_at&order=created_at.desc'):[];
+    _myAthletes=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc');
+
+    render();
+  }catch(e){toast('Error al cargar: '+e.message,'err');}
+}
+
+function render(){
+  const wrap=$('content');
+  const memberCount=_members.length;
+  const athCount=_athletes.length;
+
+  let html=`
+  <div class="group-header">
+    <div class="group-header-name">${_team.name}</div>
+    ${_team.description?`<div class="group-header-desc">${_team.description}</div>`:''}
+    <div class="group-header-meta">
+      <div class="group-stat"><div class="group-stat-num">${memberCount}</div><div class="group-stat-label">Entrenador${memberCount!==1?'es':''}</div></div>
+      <div class="group-stat"><div class="group-stat-num">${athCount}</div><div class="group-stat-label">Palista${athCount!==1?'s':''}</div></div>
+    </div>
+  </div>`;
+
+  html+=`<div class="section-label">Miembros</div><div class="list-group">`;
+  if(_members.length){
+    html+=_members.map(m=>{
+      const isMe=m.user_id===_uid;
+      const isOwnerRole=m.role==='owner';
+      const ini=isMe?initials(localStorage.getItem('slt_email')||'?'):'EN';
+      const canRemove=(_isOwner&&!isOwnerRole)||isMe;
+      return`<div class="list-item">
+        <div class="list-avatar ${isOwnerRole?'':'green'}">${ini}</div>
+        <div class="list-info">
+          <div class="list-name">${isMe?'Tú ('+localStorage.getItem('slt_email')+')':'Entrenador'}</div>
+          <div class="list-sub">Unido: ${new Date(m.joined_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
+        </div>
+        <span class="role-badge ${m.role}">${isOwnerRole?'Propietario':'Miembro'}</span>
+        ${canRemove?`<button style="background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0" onclick="removeMember('${m.user_id}')" title="${isMe?'Salir':'Eliminar'}">✕</button>`:''}
+      </div>`;
+    }).join('');
+  }else{
+    html+=`<div class="empty-inline">Sin miembros aún</div>`;
+  }
+  html+=`</div>`;
+
+  if(_isOwner){
+    html+=`<button class="btn-action" onclick="openInviteSheet()">
+      <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Invitar entrenador
+    </button>`;
+  }
+
+  if(_isOwner&&_invites.length){
+    html+=`<div class="section-label">Invitaciones</div><div class="list-group">`;
+    html+=_invites.map(inv=>{
+      return`<div class="invite-item">
+        <div class="list-avatar orange">${inv.email.slice(0,2).toUpperCase()}</div>
+        <div class="list-info">
+          <div class="list-name">${inv.email}</div>
+          <div class="list-sub">${new Date(inv.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
+        </div>
+        <span class="invite-status ${inv.status}">${inv.status==='pending'?'Pendiente':inv.status==='accepted'?'Aceptada':'Rechazada'}</span>
+        ${inv.status==='pending'?`<button class="invite-del" onclick="deleteInvite('${inv.id}')" title="Cancelar">✕</button>`:''}
+      </div>`;
+    }).join('');
+    html+=`</div>`;
+  }
+
+  html+=`<div class="section-label">Palistas del grupo</div>`;
+  if(_athletes.length){
+    html+=`<div class="list-group">`;
+    html+=_athletes.map(a=>{
+      const fn=a.name+(a.surname?' '+a.surname:'');
+      const cats=(a.categories||[]).filter(c=>['K1','C1','KXC'].includes(c)).map(c=>`<span class="cat-badge ${c}">${c}</span>`).join(' ');
+      const canDel=_isOwner||a.added_by===_uid;
+      return`<div class="list-item">
+        <div class="list-avatar green">${initials(a.name,a.surname)}</div>
+        <div class="list-info">
+          <div class="list-name">${fn}</div>
+          <div class="list-sub" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">${cats||'Sin categoría'}</div>
+        </div>
+        ${canDel?`<button style="background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 4px;flex-shrink:0" onclick="removeAthlete('${a.id}')" title="Quitar">✕</button>`:''}
+      </div>`;
+    }).join('');
+    html+=`</div>`;
+  }else{
+    html+=`<div style="background:#fff;border-radius:14px;border:0.5px solid rgba(0,0,0,0.10)"><div class="empty-inline">No hay palistas en este grupo aún</div></div>`;
+  }
+
+  html+=`<button class="btn-action" onclick="openAthleteSheet()">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+    Añadir palista al grupo
+  </button>`;
+
+  html+=`<div class="section-label">Zona de riesgo</div>`;
+  if(_isOwner){
+    html+=`<button class="btn-action danger" onclick="deleteTeam()">
+      <svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6"/><path d="M14,11v6"/><path d="M9,6V4h6v2"/></svg>
+      Eliminar grupo
+    </button>`;
+  }else{
+    html+=`<button class="btn-action danger" onclick="removeMember('${_uid}')">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Salir del grupo
+    </button>`;
+  }
+
+  wrap.innerHTML=html;
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  if(!_tok){window.location.href='index.html';return;}
+  const params=new URLSearchParams(window.location.search);
+  _teamId=params.get('id');
+  if(!_teamId){window.location.href='teams.html';return;}
+  loadData();
+});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
