@@ -51,9 +51,11 @@
     .pal-suggestion-name{font-weight:600;flex:1}
     .pal-suggestion-cat{font-size:12px;font-weight:700;color:#185FA5;background:#e3efff;border-radius:5px;padding:2px 7px}
     .pal-suggestion-empty{padding:10px 12px;font-size:13px;color:#aaa;text-align:center}
-    .pal-cat{width:72px;padding:9px 8px;border:1px solid #ddd;border-radius:9px;font-size:13px;font-family:inherit;color:#111;background:#fff;-webkit-appearance:none;appearance:none;text-align:center}
-    .pal-cat:focus{outline:none;border-color:#185FA5}
-    .pal-cat.auto-set{border-color:#185FA5;background:#f0f6ff;color:#185FA5;font-weight:700}
+    /* Categoría: oculta por defecto, aparece con animación al seleccionar */
+    .pal-cat-wrap{overflow:hidden;width:0;opacity:0;transition:width 0.22s ease, opacity 0.22s ease;flex-shrink:0}
+    .pal-cat-wrap.visible{width:72px;opacity:1}
+    .pal-cat{width:72px;padding:9px 8px;border:1px solid #185FA5;border-radius:9px;font-size:13px;font-family:inherit;color:#185FA5;background:#f0f6ff;font-weight:700;-webkit-appearance:none;appearance:none;text-align:center;cursor:pointer}
+    .pal-cat:focus{outline:none;border-color:#0C447C}
     .pal-del{width:30px;height:30px;border-radius:8px;border:1px solid #fcc;background:#fff0f0;color:#e44;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .pal-del:active{background:#fee}
     .btn-add-pal{width:100%;padding:10px;border-radius:10px;border:1px dashed #ccc;background:transparent;color:#888;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -174,7 +176,6 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 
 let _tok=null,_uid=null,_email=null;
 let _nTramos=3;
-// Empieza con UN solo palista vacío
 let _palistas=[{name:'',category:'K1'}];
 let _athletesList=[];
 
@@ -277,28 +278,29 @@ function renderSuggestions(idx, query){
 
 function selectAthlete(idx, athlete){
   const cat=firstCategory(athlete);
+  // Solo K1 y C1; si la categoría no es ninguna de las dos, por defecto K1
+  const validCat=(cat==='K1'||cat==='C1')?cat:'K1';
   const label=fullName(athlete);
   _palistas[idx].name=label;
-  _palistas[idx].category=cat||'K1';
+  _palistas[idx].category=validCat;
   _palistas[idx]._athleteId=athlete.id;
   _palistas[idx]._categories=Array.isArray(athlete.categories)?athlete.categories:[];
 
   const input=document.getElementById(`pal-input-${idx}`);
   const catSelect=document.getElementById(`pal-cat-${idx}`);
+  const catWrap=document.getElementById(`pal-cat-wrap-${idx}`);
   const dropdown=document.getElementById(`pal-suggestions-${idx}`);
+
   if(input){input.value=label;input.classList.add('selected');}
-  if(catSelect){
-    const validCats=['K1','C1','C2',''];
-    catSelect.value=validCats.includes(cat)?cat:'';
-    catSelect.classList.add('auto-set');
-  }
+  if(catSelect){ catSelect.value=validCat; }
+  // Mostrar la categoría con animación
+  if(catWrap){ catWrap.classList.add('visible'); }
   if(dropdown) dropdown.classList.remove('open');
 
   // Si era el último palista, añadir uno nuevo vacío automáticamente
   if(idx === _palistas.length - 1){
     _palistas.push({name:'',category:'K1'});
     renderPalistas();
-    // Hacer foco en el nuevo campo tras el render
     setTimeout(()=>{
       const newInput=document.getElementById(`pal-input-${idx+1}`);
       if(newInput) newInput.focus();
@@ -315,6 +317,7 @@ function renderPalistas(){
   list.innerHTML='';
   _palistas.forEach((p,i)=>{
     const isLast = i === _palistas.length - 1;
+    const hasPalista = !!p.name;
     const row=document.createElement('div');
     row.className='pal-row';
     row.innerHTML=`
@@ -322,7 +325,7 @@ function renderPalistas(){
       <div class="pal-autocomplete">
         <input
           id="pal-input-${i}"
-          class="pal-input${p.name?' selected':''}"
+          class="pal-input${hasPalista?' selected':''}"
           type="text"
           placeholder="${isLast && i===0 ? 'Buscar palista...' : isLast ? 'Añadir otro...' : 'Buscar palista...'}"
           value="${escHtml(p.name)}"
@@ -331,12 +334,12 @@ function renderPalistas(){
         >
         <div id="pal-suggestions-${i}" class="pal-suggestions"></div>
       </div>
-      <select id="pal-cat-${i}" class="pal-cat${p.name?' auto-set':''}" onchange="updatePalCat(${i},this.value)">
-        <option value="K1"${p.category==='K1'?' selected':''}>K1</option>
-        <option value="C1"${p.category==='C1'?' selected':''}>C1</option>
-        <option value="C2"${p.category==='C2'?' selected':''}>C2</option>
-        <option value=""${p.category===''?' selected':''}>—</option>
-      </select>
+      <div id="pal-cat-wrap-${i}" class="pal-cat-wrap${hasPalista?' visible':''}">
+        <select id="pal-cat-${i}" class="pal-cat" onchange="updatePalCat(${i},this.value)">
+          <option value="K1"${p.category==='K1'?' selected':''}>K1</option>
+          <option value="C1"${p.category==='C1'?' selected':''}>C1</option>
+        </select>
+      </div>
       ${_palistas.length>1?`<button class="pal-del" onclick="removePalista(${i})">&#215;</button>`:''}
     `;
     list.appendChild(row);
@@ -349,8 +352,9 @@ function renderPalistas(){
         _palistas[i].name=input.value;
         _palistas[i]._athleteId=null;
         input.classList.remove('selected');
-        const cat=document.getElementById(`pal-cat-${i}`);
-        if(cat) cat.classList.remove('auto-set');
+        // Si borra el nombre, ocultar la categoría
+        const catWrap=document.getElementById(`pal-cat-wrap-${i}`);
+        if(catWrap && !input.value.trim()) catWrap.classList.remove('visible');
         renderSuggestions(i, input.value);
       });
       input.addEventListener('blur', ()=>{
@@ -365,14 +369,11 @@ function renderPalistas(){
 
 function updatePalCat(i,v){
   _palistas[i].category=v;
-  const catSelect=document.getElementById(`pal-cat-${i}`);
-  if(catSelect) catSelect.classList.remove('auto-set');
 }
 function addPalista(){_palistas.push({name:'',category:'K1'});renderPalistas();}
 function removePalista(i){
   if(_palistas.length<=1)return;
   _palistas.splice(i,1);
-  // Asegurarse de que siempre hay un último vacío
   const last=_palistas[_palistas.length-1];
   if(last && last.name) _palistas.push({name:'',category:'K1'});
   renderPalistas();
@@ -386,7 +387,6 @@ async function startSession(){
   const name=($('f-name').value||'').trim();
   if(!name){toast('Indica un nombre para la sesión','err');$('f-name').focus();return;}
   document.querySelectorAll('.pal-input').forEach((inp,i)=>{if(_palistas[i])_palistas[i].name=inp.value.trim();});
-  // Solo los palistas con nombre (ignorar el último vacío)
   const validPals=_palistas.filter(p=>p.name);
   if(!validPals.length){toast('Añade al menos un palista','err');return;}
   const btn=$('btn-start-session');
