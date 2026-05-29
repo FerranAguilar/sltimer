@@ -1,177 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>SLTimer – Configurar sesión</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#185FA5">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f4f7;min-height:100dvh;color:#111}
-  .top-bar{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.08);position:sticky;top:0;z-index:20}
-  .top-back{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:#185FA5;font-size:20px;line-height:1}
-  .top-title{font-size:17px;font-weight:700;flex:1}
-  .top-avatar{width:32px;height:32px;border-radius:50%;background:#185FA5;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
-  .page{max-width:480px;margin:0 auto;padding:16px 16px 100px}
-  .section-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-  .section-label{font-size:12px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
-  .field-label{font-size:13px;font-weight:600;color:#555;margin-bottom:5px}
-  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
-  input[type=text]:focus,input[type=date]:focus{outline:none;border-color:#185FA5}
-  .stepper-row{display:flex;align-items:center;gap:12px;margin-top:4px}
-  .stepper-label{font-size:14px;color:#555;flex:1}
-  .stepper{display:flex;align-items:center;gap:8px}
-  .step-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid #ddd;background:#fff;font-size:18px;font-weight:300;color:#185FA5;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;transition:background .15s,border-color .15s}
-  .step-btn:active{background:#E6F1FB}
-  .step-val{font-size:16px;font-weight:700;min-width:20px;text-align:center}
-  .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
-  .pal-row-placeholder{border-style:dashed;background:#fafafa}
-  .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
-  .pal-remove-btn:active{color:#e05050}
-  .pal-row-top{display:flex;align-items:center;gap:10px}
-  .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .pal-search-wrap{position:relative;flex:1}
-  .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
-  .pal-input:focus{outline:none;border-color:#185FA5}
-  .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
-  .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
-  .pal-dropdown.open{display:block}
-  .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
-  .pal-option:last-child{border-bottom:none}
-  .pal-option:active{background:#f7f7f7}
-  .pal-option-name{font-weight:600;color:#111;flex:1}
-  .pal-option-cats{display:flex;gap:4px}
-  .cat-badge{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px}
-  .cat-badge.K1{background:#E6F1FB;color:#0C447C}
-  .cat-badge.C1{background:#E1F5EE;color:#085041}
-  .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:2px;display:none}
-  .pal-clear.show{display:block}
-  .cat-selector{display:flex;gap:6px}
-  .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
-  .cat-btn:active{opacity:.75}
-  .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
-  .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
-  .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
-  /* Botón "Añadir grupo" rediseñado igual que btn-add-group */
-  .btn-add-group-outer{
-    background:#E6F1FB;
-    border:0.5px solid #B5D4F4;
-    border-radius:10px;
-    color:#0C447C;
-    font-size:13px;
-    font-weight:700;
-    padding:9px 14px;
-    cursor:pointer;
-    font-family:inherit;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-    width:100%;
-    margin-bottom:12px;
-    transition:background .15s,border-color .15s;
-  }
-  .btn-add-group-outer:active{background:#cde3f6;border-color:#185FA5}
-  .start-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;padding:15px;background:#185FA5;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(24,95,165,0.30)}
-  .start-btn:active{background:#0C447C}
-  .start-btn:disabled{background:#90b8df;cursor:not-allowed}
-  /* Sheet grupos — mismo diseño que add-group-patch */
-  .sheet-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100}
-  .sheet-backdrop.open{display:block}
-  .group-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;max-height:80dvh;overflow-y:auto;z-index:101;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.15,1);max-width:480px;margin:0 auto}
-  .group-sheet.open{transform:translateY(0)}
-  .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px}
-  .sheet-title{font-size:17px;font-weight:700;margin-bottom:4px}
-  .sheet-subtitle{font-size:13px;color:#888;margin-bottom:16px}
-  .team-card{background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:background .15s}
-  .team-card:active{background:#E6F1FB}
-  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#222;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.ok{background:#0F6E56}
-  .toast.err{background:#c0392b}
-  .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-overlay{position:fixed;inset:0;background:rgba(242,244,247,0.85);z-index:300;display:flex;align-items:center;justify-content:center}
-  .loading-card{background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:12px}
-  .loading-card .spinner{width:28px;height:28px;border-color:rgba(24,95,165,0.2);border-top-color:#185FA5}
-  .loading-text{font-size:14px;color:#555}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Configurar sesión · SLTimer</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fa;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+    .topbar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e8eaed;display:flex;align-items:center;padding:0 12px;height:52px;gap:8px}
+    .top-back{background:none;border:none;cursor:pointer;font-size:22px;color:#444;padding:8px;margin-left:-8px;border-radius:8px;line-height:1}
+    .topbar h1{flex:1;font-size:17px;font-weight:600;color:#1a1a1a;text-align:center}
+    .top-avatar{width:34px;height:34px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#1a73e8;cursor:pointer;flex-shrink:0}
+    .content{max-width:480px;margin:0 auto;padding:16px 16px 100px}
+    .card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .card h2{font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+    label{display:block;font-size:14px;font-weight:500;color:#444;margin-bottom:4px}
+    input[type=text],input[type=date]{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 12px;font-size:15px;outline:none;background:#fafafa;transition:border .15s}
+    input[type=text]:focus,input[type=date]:focus{border-color:#1a73e8;background:#fff}
+    .field{margin-bottom:12px}
+    .counter-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+    .counter-row label{margin:0;flex:1}
+    .counter{display:flex;align-items:center;gap:0}
+    .cnt-btn{width:38px;height:38px;border:1.5px solid #e0e0e0;background:#fff;border-radius:10px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;transition:background .12s}
+    .cnt-btn:active{background:#f0f0f0}
+    .cnt-val{width:44px;text-align:center;font-size:17px;font-weight:600;color:#1a1a1a}
+    /* Palistas */
+    .pal-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+    .pal-item{display:flex;align-items:center;gap:8px;background:#f8f9fa;border-radius:12px;padding:8px 10px}
+    .pal-num{width:24px;height:24px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a73e8;flex-shrink:0}
+    .pal-name-input{flex:1;border:none;background:transparent;font-size:14px;font-weight:500;color:#1a1a1a;outline:none;min-width:0}
+    .pal-name-input::placeholder{color:#bbb}
+    .pal-cat-sel{border:1px solid #e0e0e0;border-radius:8px;padding:4px 6px;font-size:12px;color:#555;background:#fff;cursor:pointer;flex-shrink:0;max-width:90px}
+    .pal-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:2px 4px;border-radius:6px;transition:color .12s;flex-shrink:0}
+    .pal-del:active{color:#e53935}
+    .pal-drag{background:none;border:none;cursor:grab;color:#ccc;font-size:16px;padding:2px 4px;flex-shrink:0}
+    .add-pal-row{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-add-pal{flex:1;min-width:120px;background:#f0f4ff;border:1.5px dashed #b0c4f8;border-radius:10px;padding:10px;font-size:14px;font-weight:500;color:#1a73e8;cursor:pointer;transition:background .12s}
+    .btn-add-pal:active{background:#e3eaff}
+    .btn-add-team{flex:1;min-width:120px;background:#f0fff4;border:1.5px dashed #a8d5b5;border-radius:10px;padding:10px;font-size:14px;font-weight:500;color:#2e7d32;cursor:pointer;transition:background .12s}
+    .btn-add-team:active{background:#e0f7e5}
+    .btn-add-athlete{flex:1;min-width:120px;background:#fff8e1;border:1.5px dashed #ffc77a;border-radius:10px;padding:10px;font-size:14px;font-weight:500;color:#e65100;cursor:pointer;transition:background .12s}
+    .btn-add-athlete:active{background:#fff0c2}
+    .start-btn{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:#1a73e8;color:#fff;border:none;border-radius:16px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(26,115,232,.35);transition:background .15s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .start-btn:active{background:#1557b0}
+    .start-btn:disabled{opacity:.6;cursor:not-allowed}
+    .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:100;white-space:nowrap;max-width:calc(100% - 40px);text-align:center}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.err{background:#c62828}
+    .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.9);display:none;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:12px}
+    .loading-spinner{width:36px;height:36px;border:3px solid #e8eaed;border-top-color:#1a73e8;border-radius:50%;animation:spin .8s linear infinite}
+    .loading-text{font-size:14px;color:#666}
+    /* Athletes sheet */
+    .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:none;align-items:flex-end}
+    .sheet-overlay.open{display:flex}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+    .sheet-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 4px}
+    .sheet-title{font-size:16px;font-weight:700;color:#1a1a1a;text-align:center}
+    .sheet-search{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:9px 12px;font-size:15px;outline:none;background:#fafafa}
+    .sheet-search:focus{border-color:#1a73e8}
+    .ath-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #f0f0f0;cursor:pointer;border-radius:8px;transition:background .1s}
+    .ath-item:active{background:#f5f5f5}
+    .ath-avatar{width:36px;height:36px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a73e8;flex-shrink:0}
+    .ath-info{flex:1;min-width:0}
+    .ath-name{font-size:14px;font-weight:600;color:#1a1a1a}
+    .ath-cat{font-size:12px;color:#888}
+    /* Groups sheet */
+    .group-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #f0f0f0;cursor:pointer;border-radius:8px;transition:background .1s}
+    .group-item:active{background:#f5f5f5}
+    .group-icon{width:36px;height:36px;border-radius:10px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .group-info{flex:1;min-width:0}
+    .group-name{font-size:14px;font-weight:600;color:#1a1a1a}
+    .group-count{font-size:12px;color:#888}
+    .cat-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .cat-btn{padding:5px 14px;border-radius:20px;border:1.5px solid #e0e0e0;background:#fff;font-size:13px;color:#555;cursor:pointer;transition:all .12s;font-family:inherit}
+    .cat-btn.active{background:#1a73e8;border-color:#1a73e8;color:#fff;font-weight:600}
+    /* Palista category wrapper */
+    .spal-cat-wrap{display:none;flex-wrap:wrap;gap:5px;padding:4px 0 4px 32px}
+    .spal-cat-wrap.open{display:flex}
+    .spal-cat-btn{padding:3px 10px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;font-size:12px;color:#555;cursor:pointer;transition:all .12s;font-family:inherit}
+    .spal-cat-btn.active{background:#1a73e8;border-color:#1a73e8;color:#fff;font-weight:600}
+    .pal-cat-toggle{background:none;border:none;cursor:pointer;font-size:15px;padding:2px 4px;color:#999;flex-shrink:0;transition:transform .15s}
+    .pal-cat-toggle.open{transform:rotate(180deg)}
+  </style>
 </head>
 <body>
-
 <div class="loading-overlay" id="loading-overlay">
-  <div class="loading-card">
-    <div class="spinner"></div>
-    <div class="loading-text">Cargando…</div>
-  </div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando...</div>
 </div>
 
-<div class="top-bar">
+<div class="topbar">
   <button class="top-back" onclick="window.location.href='menu.html'">&#8592;</button>
-  <div class="top-title">Nueva sesión</div>
+  <h1>Nueva sesión</h1>
   <div class="top-avatar" id="top-avatar" onclick="window.location.href='ajustes.html'">?</div>
 </div>
 
-<div class="page">
-
-  <!-- Nombre y lugar -->
-  <div class="section-card">
-    <div class="section-label">Sesión</div>
-    <div style="margin-bottom:12px">
-      <div class="field-label">Nombre</div>
-      <input type="text" id="cfg-name" placeholder="Ej: Entrenamiento martes" autocomplete="off" autocorrect="off">
+<div class="content">
+  <!-- Info sesión -->
+  <div class="card">
+    <h2>Información</h2>
+    <div class="field">
+      <label for="cfg-name">Nombre de la sesión</label>
+      <input type="text" id="cfg-name" placeholder="Ej: Entreno matinal" autocomplete="off" maxlength="60">
     </div>
-    <div style="margin-bottom:12px">
-      <div class="field-label">Lugar (opcional)</div>
-      <input type="text" id="cfg-lugar" placeholder="Ej: Río Segre" autocomplete="off" autocorrect="off">
+    <div class="field">
+      <label for="cfg-lugar">Lugar (opcional)</label>
+      <input type="text" id="cfg-lugar" placeholder="Ej: Río Segre" autocomplete="off" maxlength="60">
     </div>
-    <div>
-      <div class="field-label">Fecha</div>
+    <div class="field">
+      <label for="cfg-fecha">Fecha</label>
       <input type="date" id="cfg-fecha">
     </div>
   </div>
 
-  <!-- Tramos -->
-  <div class="section-card">
-    <div class="section-label">Tramos</div>
-    <div class="stepper-row">
-      <div class="stepper-label">Número de tramos</div>
-      <div class="stepper">
-        <button class="step-btn" onclick="stepCfg('tra',-1)">−</button>
-        <div class="step-val" id="val-tra">3</div>
-        <button class="step-btn" onclick="stepCfg('tra',1)">+</button>
+  <!-- Config tramos -->
+  <div class="card">
+    <h2>Configuración</h2>
+    <div class="counter-row">
+      <label>Número de tramos</label>
+      <div class="counter">
+        <button class="cnt-btn" onclick="stepCfg('tra',-1)">−</button>
+        <span class="cnt-val" id="val-tra">6</span>
+        <button class="cnt-btn" onclick="stepCfg('tra',1)">+</button>
       </div>
     </div>
   </div>
 
   <!-- Palistas -->
-  <div class="section-card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="section-label" style="margin-bottom:0">Palistas</div>
-      <button class="btn-add-group-outer" style="width:auto;margin-bottom:0;padding:6px 12px;font-size:12px" onclick="openGroupSheet()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Añadir grupo
-      </button>
+  <div class="card">
+    <h2>Palistas</h2>
+    <div class="pal-list" id="pal-list"></div>
+    <div class="add-pal-row">
+      <button class="btn-add-pal" onclick="addPalista()">+ Añadir palista</button>
+      <button class="btn-add-athlete" onclick="openAthleteSheet()">+ Desde atletas</button>
+      <button class="btn-add-team" onclick="openGroupSheet()">+ Desde grupo</button>
     </div>
-    <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
-
 </div>
 
 <button class="start-btn" id="start-btn" onclick="startSession()">Iniciar sesión</button>
-
-<!-- Sheet grupos -->
-<div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
-<div class="group-sheet" id="group-sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
-  <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
-  <div id="group-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
-  <div style="margin-top:16px">
-    <button style="width:100%;padding:13px;background:#f2f4f7;border:none;border-radius:12px;font-size:15px;font-weight:600;color:#555;cursor:pointer;font-family:inherit" onclick="closeGroupSheet()">Cancelar</button>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -212,146 +185,150 @@ async function loadTeams(){
       results.push({id:team.id,name:team.name,athletes});
     }
     _teams=results;
-  }catch(e){
-    console.warn('loadTeams error:',e);
-    _teams=[];
-  }
+  }catch(e){console.warn('No se pudieron cargar grupos:',e);_teams=[];}
 }
 
 function openGroupSheet(){
-  const list=$('group-list');list.innerHTML='';
+  const overlay=document.createElement('div');
+  overlay.className='sheet-overlay open';
+  overlay.id='group-sheet-overlay';
+  overlay.innerHTML=`
+    <div class="sheet" id="group-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Añadir desde grupo</div>
+      <div id="group-list"></div>
+    </div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  document.body.appendChild(overlay);
+  const list=$('group-list');
   if(!_teams||!_teams.length){
-    list.innerHTML='<div style="text-align:center;padding:24px 0;color:#aaa;font-size:14px">No perteneces a ningún grupo aún.<br><span style="font-size:12px">Crea o únete a un grupo desde el menú.</span></div>';
-  }else{
-    _teams.forEach(team=>{
-      const card=document.createElement('div');card.className='team-card';
-      const count=team.athletes.length;
-      card.innerHTML=`
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:#1B3A5C">${team.name}</div>
-            <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
-          </div>
-          <div style="font-size:22px;color:#185FA5">+</div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
-          ${team.athletes.slice(0,8).map(a=>{
-            const fn=(a.name||'')+(a.surname?' '+a.surname:'');
-            const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
-            return`<span style="font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C;padding:2px 7px;border-radius:100px">${fn}${cats.length?' · '+cats[0]:''}</span>`;
-          }).join('')}
-          ${count>8?`<span style="font-size:11px;color:#aaa">+${count-8} más</span>`:''}
-        </div>`;
-      card.onmousedown=()=>addGroupAthletes(team);
-      card.ontouchstart=()=>{};
-      list.appendChild(card);
+    list.innerHTML='<p style="color:#aaa;text-align:center;padding:20px;font-size:14px">No tienes grupos creados</p>';
+    return;
+  }
+  _teams.forEach(team=>{
+    const d=document.createElement('div');
+    d.className='group-item';
+    d.innerHTML=`<div class="group-icon">👥</div><div class="group-info"><div class="group-name">${team.name}</div><div class="group-count">${team.athletes.length} atleta${team.athletes.length!==1?'s':''}</div></div>`;
+    d.onclick=()=>{
+      team.athletes.forEach(a=>{
+        if(!_palState.find(p=>p.id&&p.id===a.id)){
+          _palState.push({id:a.id,name:(a.name||'')+(a.surname?' '+a.surname:''),category:a.categories?.[0]||null,isTemp:false});
+        }
+      });
+      buildPalList();
+      overlay.remove();
+      toast('Grupo añadido','',1500);
+    };
+    list.appendChild(d);
+  });
+}
+
+/* ── ATHLETES SHEET ── */
+function openAthleteSheet(){
+  const overlay=document.createElement('div');
+  overlay.className='sheet-overlay open';
+  overlay.id='ath-sheet-overlay';
+  overlay.innerHTML=`
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Añadir atleta</div>
+      <input class="sheet-search" id="ath-search" placeholder="Buscar atleta…" autocomplete="off">
+      <div id="ath-list"></div>
+    </div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  document.body.appendChild(overlay);
+  let filtered=[..._athletes];
+  function render(){
+    const list=$('ath-list');
+    if(!list)return;
+    list.innerHTML='';
+    if(!filtered.length){list.innerHTML='<p style="color:#aaa;text-align:center;padding:20px;font-size:14px">Sin resultados</p>';return;}
+    filtered.slice(0,40).forEach(a=>{
+      const inList=_palState.some(p=>p.id&&p.id===a.id);
+      const d=document.createElement('div');
+      d.className='ath-item';
+      d.style.opacity=inList?'0.4':'1';
+      const ini=((a.name||'')[0]||'?').toUpperCase();
+      const cats=(a.categories||[]).join(', ');
+      d.innerHTML=`<div class="ath-avatar">${ini}</div><div class="ath-info"><div class="ath-name">${a.name||''} ${a.surname||''}</div><div class="ath-cat">${cats||'Sin categoría'}</div></div>`;
+      if(!inList){
+        d.onclick=()=>{
+          _palState.push({id:a.id,name:(a.name||'')+(a.surname?' '+a.surname:''),category:a.categories?.[0]||null,isTemp:false});
+          buildPalList();
+          overlay.remove();
+        };
+      }
+      list.appendChild(d);
     });
   }
-  $('group-sheet-backdrop').classList.add('open');
-  $('group-sheet').classList.add('open');
+  render();
+  setTimeout(()=>{
+    const inp=$('ath-search');
+    if(inp){
+      inp.focus();
+      inp.addEventListener('input',()=>{
+        const q=inp.value.toLowerCase().trim();
+        filtered=q?_athletes.filter(a=>((a.name||'')+(a.surname||'')).toLowerCase().includes(q)):_athletes;
+        render();
+      });
+    }
+  },50);
 }
 
-function closeGroupSheet(){
-  $('group-sheet-backdrop').classList.remove('open');
-  $('group-sheet').classList.remove('open');
-}
+/* ── PAL LIST ── */
+const CATS=['K1','C1','K2','C2','K4','KL','VK'];
 
-function addGroupAthletes(team){
-  closeGroupSheet();
-  let added=0,skipped=0;
-  team.athletes.forEach(a=>{
-    const fn=(a.name||'')+(a.surname?' '+a.surname:'');
-    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
-    const cat=cats.length===1?cats[0]:null;
-    const exists=_palState.some(p=>p.id&&p.id===a.id);
-    if(exists){skipped++;return;}
-    if(_palState.length>=MAX.pal){skipped++;return;}
-    _palState.push({id:a.id,name:fn,category:cat,isTemp:false});
-    added++;
-  });
-  buildPalList();
-  if(added&&skipped)
-    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ('+skipped+' ya estaban)','ok');
-  else if(added)
-    toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ✓','ok');
-  else
-    toast('Todos los palistas ya estaban en la lista');
-}
-
-/* ── PALISTAS ── */
 function buildPalList(){
-  const c=$('pal-list');c.innerHTML='';
-  for(let i=0;i<_palState.length;i++)renderPalRow(i,c);
-  if(_palState.length<MAX.pal){
-    const ph=document.createElement('div');
-    ph.className='pal-row pal-row-placeholder';
-    ph.style.cursor='pointer';
-    ph.innerHTML=`<div class="pal-row-top"><div class="pal-num" style="background:#f0f0f0;color:#bbb">+</div><span style="font-size:14px;color:#bbb;flex:1">Añadir palista…</span></div>`;
-    ph.onclick=()=>{_palState.push({id:null,name:'',category:null,isTemp:false});buildPalList();setTimeout(()=>{const inp=$('spal-input-'+(_palState.length-1));if(inp)inp.focus();},50);};
-    c.appendChild(ph);
-  }
+  const list=$('pal-list');
+  list.innerHTML='';
+  _palState.forEach((p,i)=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='display:flex;flex-direction:column;gap:0';
+    const row=document.createElement('div');
+    row.className='pal-item';
+
+    const numEl=document.createElement('div');
+    numEl.className='pal-num';numEl.textContent=i+1;
+
+    const nameEl=document.createElement('input');
+    nameEl.className='pal-name-input';nameEl.type='text';
+    nameEl.placeholder='Nombre palista';nameEl.value=p.name;
+    nameEl.addEventListener('input',()=>{_palState[i].name=nameEl.value;});
+
+    const catToggle=document.createElement('button');
+    catToggle.className='pal-cat-toggle'+(p.category?' open':'');
+    catToggle.innerHTML=p.category?`<span style="font-size:11px;background:#e8f0fe;color:#1a73e8;border-radius:10px;padding:2px 7px;font-weight:600">${p.category}</span>`:'🏷';
+    catToggle.title='Categoría';
+    catToggle.onclick=()=>{
+      const cw=wrap.querySelector('.spal-cat-wrap');
+      if(cw){cw.classList.toggle('open');catToggle.classList.toggle('open',cw.classList.contains('open'));}
+    };
+
+    const delBtn=document.createElement('button');
+    delBtn.className='pal-del';delBtn.textContent='×';delBtn.title='Eliminar';
+    delBtn.onclick=()=>{_palState.splice(i,1);buildPalList();};
+
+    row.append(numEl,nameEl,catToggle,delBtn);
+    wrap.appendChild(row);
+
+    const catWrap=document.createElement('div');
+    catWrap.className='spal-cat-wrap'+(p.category?' open':'');
+    catWrap.id='spal-cat-wrap-'+i;
+    CATS.forEach(c=>{
+      const b=document.createElement('button');
+      b.className='spal-cat-btn cat-btn'+(p.category===c?' active':'');
+      b.textContent=c;
+      b.onclick=()=>{
+        _palState[i].category=(_palState[i].category===c)?null:c;
+        buildPalList();
+      };
+      catWrap.appendChild(b);
+    });
+    wrap.appendChild(catWrap);
+    list.appendChild(wrap);
+  });
 }
 
-function renderPalRow(i,container){
-  const s=_palState[i];
-  const row=document.createElement('div');row.className='pal-row';row.id='spal-row-'+i;
-  row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="spal-input-${i}" type="text" placeholder="Buscar palista…" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openPalDropdown(${i})" onblur="delayPalClose(${i})"><button class="pal-clear${s.name?' show':''}" id="spal-clear-${i}" onclick="clearPal(${i})">✕</button><div class="pal-dropdown" id="spal-dd-${i}"></div></div><button class="pal-remove-btn" onclick="removePal(${i})" title="Eliminar palista">✕</button></div><div id="spal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categoría</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setPalCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setPalCat(${i},'C1')">C1</button></div></div>`;
-  container.appendChild(row);
-}
-
-function removePal(i){_palState.splice(i,1);buildPalList();}
-
-function onPalInput(i){
-  const val=$('spal-input-'+i).value;
-  _palState[i].name=val;_palState[i].id=null;_palState[i].isTemp=true;
-  $('spal-clear-'+i).classList.toggle('show',val.length>0);
-  showPalCat(i,val.length>0);
-  _showPalDropdown(i,val.toLowerCase().trim());
-}
-
-function openPalDropdown(i){
-  const q=($('spal-input-'+i).value||'').toLowerCase().trim();
-  _showPalDropdown(i,q,!q);
-}
-
-function _showPalDropdown(i,q,showAll=false){
-  const dd=$('spal-dd-'+i);if(!dd)return;
-  const m=showAll&&!q
-    ?_athletes.slice(0,20)
-    :_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
-  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
-  dd.innerHTML=m.map(a=>{
-    const fn=a.name+(a.surname?' '+a.surname:'');
-    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
-    const catsArr=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
-    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',${JSON.stringify(catsArr)})"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
-  }).join('');
-  dd.classList.add('open');
-}
-
-function delayPalClose(i){
-  setTimeout(()=>{const dd=$('spal-dd-'+i);if(dd)dd.classList.remove('open');},150);
-}
-
-function selectPalAthlete(i,id,name,cats){
-  _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
-  const inp=$('spal-input-'+i);inp.value=name;inp.classList.add('matched');
-  $('spal-clear-'+i).classList.add('show');
-  $('spal-dd-'+i).classList.remove('open');
-  showPalCat(i,true);
-  if(cats.length===1)setPalCatUI(i,cats[0]);else setPalCatUI(i,_palState[i].category);
-}
-
-function clearPal(i){
-  _palState[i]={id:null,name:'',category:null,isTemp:false};
-  const inp=$('spal-input-'+i);inp.value='';inp.classList.remove('matched');
-  $('spal-clear-'+i).classList.remove('show');
-  $('spal-dd-'+i).classList.remove('open');
-  showPalCat(i,false);
-}
-
-function showPalCat(i,show){$('spal-cat-wrap-'+i).style.display=show?'flex':'none';}
-function setPalCat(i,cat){_palState[i].category=cat;setPalCatUI(i,cat);}
 function setPalCatUI(i,cat){
   const w=$('spal-cat-wrap-'+i);if(!w)return;
   w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
@@ -371,7 +348,13 @@ async function startSession(){
   const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp||false}));
 
   try{
-    // Crear la sesión en Supabase y obtener el ID
+    // Refrescar token antes de crear la sesión
+    const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const sb=createClient(SB,KEY);
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='index.html';return;}
+    _tok=session.access_token;
+
     const row=await api('/rest/v1/sessions?select=id',{
       method:'POST',
       headers:{'Prefer':'return=representation'},
@@ -389,10 +372,7 @@ async function startSession(){
     const sessionId=Array.isArray(row)?row[0]?.id:row?.id;
     if(!sessionId)throw new Error('No se recibió ID de sesión');
 
-    // Guardar también en sessionStorage como respaldo
-    const cfg={name,lugar,fecha,nPal:palistas.length,nTra:CFG.tra,palistas};
-    sessionStorage.setItem('slalom_cfg',JSON.stringify(cfg));
-
+    sessionStorage.setItem('slalom_cfg',JSON.stringify({name,lugar,fecha,nPal:palistas.length,nTra:CFG.tra,palistas}));
     window.location.href='slalom-session.html?id='+sessionId;
   }catch(e){
     console.error('Error creando sesión:',e);
@@ -402,13 +382,26 @@ async function startSession(){
   }
 }
 
+async function addPalista(name='',cat=null,id=null,isTemp=false){
+  if(_palState.length>=MAX.pal){toast('Máximo '+MAX.pal+' palistas','err');return;}
+  _palState.push({id,name,category:cat,isTemp});
+  buildPalList();
+  setTimeout(()=>{
+    const inputs=$('pal-list').querySelectorAll('.pal-name-input');
+    if(inputs.length)inputs[inputs.length-1].focus();
+  },50);
+}
+
 async function init(){
   $('loading-overlay').style.display='flex';
   try{
-    _tok=localStorage.getItem('slt_tok');
-    _uid=localStorage.getItem('slt_uid');
-    _email=localStorage.getItem('slt_email');
-    if(!_tok){window.location.href='login.html';return;}
+    const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const sb=createClient(SB,KEY);
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='index.html';return;}
+    _tok=session.access_token;_uid=session.user.id;_email=session.user.email;
+    // Mantener localStorage actualizado para compatibilidad con otras páginas
+    localStorage.setItem('slt_tok',_tok);localStorage.setItem('slt_uid',_uid);localStorage.setItem('slt_email',_email);
     $('top-avatar').textContent=initials(_email||'?');
     try{
       const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
@@ -438,6 +431,7 @@ async function init(){
     $('loading-overlay').style.display='none';
   }
 }
+
 init();
 </script>
 </body>
