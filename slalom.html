@@ -397,6 +397,7 @@ let _cfg=null;
 let _editPi=null,_editTi=null,_editIdx=null;
 let _editCnt2=0,_editCnt50=0,_editDsq=false;
 let _savedSessionId=null;
+let _refreshInterval=null;
 
 // Sesion compartida
 let _shared=null;
@@ -416,6 +417,38 @@ let _toastT;
 function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(()=>el.classList.remove('show'),2500);}
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
 
+/* REFRESH JWT */
+async function refreshSession(){
+  try{
+    const rt=localStorage.getItem('slt_refresh_tok');
+    if(!rt)return;
+    const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      headers:{'apikey':KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:rt})
+    });
+    if(!r.ok)return;
+    const data=await r.json();
+    if(data.access_token){
+      _tok=data.access_token;
+      localStorage.setItem('slt_tok',data.access_token);
+    }
+    if(data.refresh_token){
+      localStorage.setItem('slt_refresh_tok',data.refresh_token);
+    }
+  }catch(e){console.warn('JWT refresh failed:',e);}
+}
+
+function startRefreshInterval(){
+  stopRefreshInterval();
+  // Refresh cada 30 minutos (1800000 ms)
+  _refreshInterval=setInterval(refreshSession,30*60*1000);
+}
+
+function stopRefreshInterval(){
+  if(_refreshInterval){clearInterval(_refreshInterval);_refreshInterval=null;}
+}
+
 /* CONFIG */
 function adjust(key,delta){CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));$('val-'+key).textContent=CFG[key];if(key==='pal')buildPalList();}
 function buildPalList(){const n=CFG.pal;while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});_palState=_palState.slice(0,n);const c=$('pal-list');c.innerHTML='';for(let i=0;i<n;i++)renderPalRow(i,c);}
@@ -431,11 +464,11 @@ function setCatUI(i,cat){const w=$('pal-cat-wrap-'+i);if(!w)return;w.querySelect
 
 /* TRANSICION */
 function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesi\u00f3n','err');return;}const lugar=$('cfg-lugar').value.trim();const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));_savedSessionId=null;initSession(_cfg);}
-function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;disconnectRealtime();showScreen('config');}else{window.location.href='app.html';}}
+function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;stopRefreshInterval();disconnectRealtime();showScreen('config');}else{window.location.href='app.html';}}
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';$('btn-edit-cfg').classList.toggle('show',isSes);window.scrollTo(0,0);}
 
 /* SESION */
-function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();buildSelPal(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
+function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();buildSelPal(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');startRefreshInterval();if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
 
 /* SELECTORES */
 function buildSelPal(cfg){const sel=$('sel-pal');sel.innerHTML='';cfg.palistas.forEach((p,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+p.name+(p.category?' ('+p.category+')':'');sel.appendChild(opt);});sel.value=0;}
@@ -596,8 +629,6 @@ function buildTimesTable(cfg){
 function openEditSheet(pi,ti,idx){
   _editPi=pi;_editTi=ti;_editIdx=idx;
   const e=_times[pi][ti][idx];
-  _editCnt2=Math.round((e.penMs||0)/2000*(_penStack.filter?1:1));
-  // Recalcular cnt2/cnt50 desde penMs - asumimos combinaciones simples
   _editCnt2=0;_editCnt50=0;
   let rem=e.penMs||0;
   _editCnt50=Math.floor(rem/50000);rem-=_editCnt50*50000;
@@ -608,7 +639,6 @@ function openEditSheet(pi,ti,idx){
   $('sheet-subtitle').textContent=p.name+' \u00b7 Tramo '+(ti+1)+' \u00b7 Manga '+e.manga;
   $('edit-cnt2').textContent=_editCnt2;
   $('edit-cnt50').textContent=_editCnt50;
-  // Poblar selects
   const selPal=$('sheet-sel-pal');selPal.innerHTML='';
   _cfg.palistas.forEach((p2,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p2.name;selPal.appendChild(o);});
   selPal.value=pi;
@@ -665,6 +695,8 @@ async function saveSession(){
   if(!hasData){toast('No hay tiempos registrados','err');return;}
   btn.disabled=true;btn.textContent='Guardando...';
   try{
+    // Refresh token antes de guardar para asegurar sesión activa
+    await refreshSession();
     let sesId=_savedSessionId;
     if(!sesId){
       const ses=await api('/rest/v1/sessions',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,fecha:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,shared_code:_shared?_shared.code:null})});
