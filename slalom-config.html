@@ -234,7 +234,7 @@ function adjustTramos(d){
 
 async function loadAthletes(){
   try{
-    const rows=await api(`/rest/v1/athletes?owner_id=eq.${_uid}&select=id,name,surname,categories&order=name.asc`);
+    const rows=await api(`/rest/v1/athletes?user_id=eq.${_uid}&select=id,name,surname,categories&order=name.asc`);
     _athletesList=rows||[];
   }catch(e){
     console.error('Error cargando atletas:', e);
