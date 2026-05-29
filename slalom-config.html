@@ -1,202 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#1B3A5C">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="SLTimer">
-  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
-  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1170x2532.png">
-  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1125x2436.png">
-  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-828x1792.png">
-  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1242x2208.png">
-  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-750x1334.png">
-  <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-  <title>SLTimer &#8212; Eslálom · Configuración</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
-    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
-    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
-    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
-    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
-    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-    .avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;flex-shrink:0;text-transform:uppercase}
-    .content{padding:20px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
-    .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
-    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
-    label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px}
-    input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
-    input:focus{outline:none;border-color:#185FA5}
-    .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
-    .counter-row{display:flex;align-items:center;gap:10px;width:100%}
-    .counter-btn{width:44px;height:44px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
-    .counter-btn:active{background:#f0f0f0}
-    .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:8px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
-    .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
-    .pal-row-placeholder{border-style:dashed;background:#fafafa}
-    .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
-    .pal-remove-btn:active{color:#e05050}
-    .pal-row-top{display:flex;align-items:center;gap:10px}
-    .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .pal-search-wrap{position:relative;flex:1}
-    .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
-    .pal-input:focus{outline:none;border-color:#185FA5}
-    .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
-    .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
-    .pal-dropdown.open{display:block}
-    .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
-    .pal-option:last-child{border-bottom:none}
-    .pal-option:active{background:#f7f7f7}
-    .pal-option-name{font-weight:600;color:#111;flex:1}
-    .pal-option-cats{display:flex;gap:4px}
-    .cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
-    .cat-badge.K1{background:#E6F1FB;color:#0C447C}
-    .cat-badge.C1{background:#E1F5EE;color:#085041}
-    .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:2px;display:none}
-    .pal-clear.show{display:block}
-    .cat-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
-    .cat-selector{display:flex;gap:6px}
-    .cat-btn{padding:6px 16px;border-radius:100px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#888;transition:all .12s}
-    .cat-btn.K1.active{border-color:#185FA5;background:#E6F1FB;color:#0C447C}
-    .cat-btn.C1.active{border-color:#0F6E56;background:#E1F5EE;color:#085041}
-    .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit;transition:opacity .12s}
-    .btn-primary:active{opacity:.85}
-    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-    .btn-secondary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit;transition:background .12s}
-    .btn-secondary:active{background:#f5f5f5}
-    .btn-add-group{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:8px;color:#0C447C;font-size:12px;font-weight:700;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
-    .btn-add-group:active{background:#cde3f6}
-    .pal-header{display:flex;align-items:center;justify-content:space-between}
-    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
-    .sheet-backdrop.open{opacity:1;pointer-events:auto}
-    .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:16px 16px 32px;z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,1,.23,1);max-width:560px;margin:0 auto}
-    .sheet.open{transform:translateY(0)}
-    .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:100px;margin:0 auto 14px}
-    .sheet-title{font-size:16px;font-weight:700;color:#111;margin-bottom:4px}
-    .sheet-subtitle{font-size:13px;color:#aaa;margin-bottom:14px}
-    .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
-    .overlay.show{display:flex}
-    .overlay-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .overlay-text{font-size:13px;color:#888;font-weight:600}
-    .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:500;white-space:nowrap}
-    .toast.show{opacity:1}
-    .toast.err{background:#A32D2D}
-    .toast.ok{background:#0F6E56}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SLTimer – Configurar sesión</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#185FA5">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f4f7;min-height:100dvh;color:#111}
+  .top-bar{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.08);position:sticky;top:0;z-index:20}
+  .top-back{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:#185FA5;font-size:20px;line-height:1}
+  .top-title{font-size:17px;font-weight:700;flex:1}
+  .top-avatar{width:32px;height:32px;border-radius:50%;background:#185FA5;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+  .page{max-width:480px;margin:0 auto;padding:16px 16px 100px}
+  .section-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  .section-label{font-size:12px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+  .field-label{font-size:13px;font-weight:600;color:#555;margin-bottom:5px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+  input[type=text]:focus,input[type=date]:focus{outline:none;border-color:#185FA5}
+  .stepper-row{display:flex;align-items:center;gap:12px;margin-top:4px}
+  .stepper-label{font-size:14px;color:#555;flex:1}
+  .stepper{display:flex;align-items:center;gap:8px}
+  .step-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid #ddd;background:#fff;font-size:18px;font-weight:300;color:#185FA5;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;transition:background .15s,border-color .15s}
+  .step-btn:active{background:#E6F1FB}
+  .step-val{font-size:16px;font-weight:700;min-width:20px;text-align:center}
+  .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .pal-row-placeholder{border-style:dashed;background:#fafafa}
+  .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
+  .pal-remove-btn:active{color:#e05050}
+  .pal-row-top{display:flex;align-items:center;gap:10px}
+  .pal-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pal-search-wrap{position:relative;flex:1}
+  .pal-input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+  .pal-input:focus{outline:none;border-color:#185FA5}
+  .pal-input.matched{border-color:#0F6E56;background:#F0FAF5}
+  .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:180px;overflow-y:auto;display:none}
+  .pal-dropdown.open{display:block}
+  .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+  .pal-option:last-child{border-bottom:none}
+  .pal-option:active{background:#f7f7f7}
+  .pal-option-name{font-weight:600;color:#111;flex:1}
+  .pal-option-cats{display:flex;gap:4px}
+  .cat-badge{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px}
+  .cat-badge.K1{background:#E6F1FB;color:#0C447C}
+  .cat-badge.C1{background:#E1F5EE;color:#085041}
+  .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#bbb;padding:2px;display:none}
+  .pal-clear.show{display:block}
+  .cat-selector{display:flex;gap:6px}
+  .cat-btn{flex:1;padding:7px 4px;border-radius:9px;border:0.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#bbb;cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
+  .cat-btn:active{opacity:.75}
+  .cat-btn.K1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+  .cat-btn.C1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+  .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
+  .pal-header{display:flex;align-items:center;justify-content:space-between}
+  .add-group-btn{font-size:12px;font-weight:600;color:#185FA5;background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;font-family:inherit}
+  .add-group-btn:active{background:#E6F1FB}
+  .start-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;padding:15px;background:#185FA5;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(24,95,165,0.30)}
+  .start-btn:active{background:#0C447C}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:flex-end;justify-content:center}
+  .overlay.show{display:flex}
+  .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:80dvh;overflow-y:auto}
+  .sheet-title{font-size:17px;font-weight:700;margin-bottom:4px}
+  .sheet-subtitle{font-size:13px;color:#888;margin-bottom:16px}
+  .sheet-close{float:right;background:none;border:none;cursor:pointer;font-size:22px;color:#aaa;line-height:1;margin-top:-4px}
+  .team-card{background:#f7f9fc;border:0.5px solid #e0e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .12s}
+  .team-card:active{background:#E6F1FB}
+  .team-avatar-row{display:flex;gap:-4px;flex-wrap:nowrap}
+  .team-mini-avatar{width:22px;height:22px;border-radius:50%;background:#185FA5;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;flex-shrink:0}
+  .team-info{flex:1}
+  .team-name{font-size:14px;font-weight:700}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#222;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.ok{background:#0F6E56}
+  .toast.err{background:#c0392b}
+  .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-overlay{position:fixed;inset:0;background:rgba(242,244,247,0.85);z-index:300;display:flex;align-items:center;justify-content:center}
+  .loading-card{background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:12px}
+  .loading-card .spinner{width:28px;height:28px;border-color:rgba(24,95,165,0.2);border-top-color:#185FA5}
+  .loading-text{font-size:14px;color:#555}
+</style>
 </head>
 <body>
 
-<div class="overlay" id="overlay">
-  <div class="overlay-spinner"></div>
-  <div class="overlay-text" id="overlay-text">Cargando...</div>
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <div class="loading-text">Cargando…</div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <button class="top-back" onclick="history.back()">&#8592;</button>
+  <div class="top-title">Nueva sesión</div>
+  <div class="top-avatar" id="top-avatar" onclick="window.location.href='ajustes.html'">?</div>
+</div>
+
+<div class="page">
+
+  <!-- Nombre y lugar -->
+  <div class="section-card">
+    <div class="section-label">Sesión</div>
+    <div style="margin-bottom:12px">
+      <div class="field-label">Nombre</div>
+      <input type="text" id="cfg-name" placeholder="Ej: Entrenamiento martes" autocomplete="off" autocorrect="off">
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="field-label">Lugar (opcional)</div>
+      <input type="text" id="cfg-lugar" placeholder="Ej: Río Segre" autocomplete="off" autocorrect="off">
+    </div>
+    <div>
+      <div class="field-label">Fecha</div>
+      <input type="date" id="cfg-fecha">
+    </div>
+  </div>
+
+  <!-- Tramos -->
+  <div class="section-card">
+    <div class="section-label">Tramos</div>
+    <div class="stepper-row">
+      <div class="stepper-label">Número de tramos</div>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepCfg('tra',-1)">−</button>
+        <div class="step-val" id="val-tra">6</div>
+        <button class="step-btn" onclick="stepCfg('tra',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Palistas -->
+  <div class="section-card">
+    <div class="pal-header">
+      <div class="section-label">Palistas</div>
+      <button class="add-group-btn" onclick="openGroupSheet()">+ Añadir grupo</button>
+    </div>
+    <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
+</div>
+
+<button class="start-btn" onclick="startSession()">Iniciar sesión</button>
+
+<!-- Sheet grupos -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeGroupSheet()">
+  <div class="sheet">
+    <button class="sheet-close" onclick="closeGroupSheet()">&#215;</button>
+    <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
+    <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
+    <div id="team-list-sheet"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
-
-<div class="sheet" id="group-sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
-  <div class="sheet-subtitle">Selecciona un grupo para añadir todos sus palistas de golpe.</div>
-  <div id="group-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
-  <div style="margin-top:16px">
-    <button class="btn-primary" style="background:#185FA5" onclick="closeGroupSheet()">Cancelar</button>
-  </div>
-</div>
-
-<div class="topbar">
-  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
-  <a class="topbar-brand" href="menu.html">
-    <img src="/icons/icon-192x192.png" alt="SLTimer">
-    <span class="topbar-brand-name">SLTimer</span>
-  </a>
-  <div class="topbar-right">
-    <div class="avatar" id="top-avatar">?</div>
-  </div>
-</div>
-
-<div class="content">
-  <div class="section-label">Datos de la sesión</div>
-  <div class="card">
-    <div><label>Nombre de la sesión</label><input id="cfg-name" type="text" placeholder="Ej: Entrenamiento canal Sevilla"></div>
-    <div><label>Lugar</label><input id="cfg-lugar" type="text" placeholder="Ej: Canal olímpico de Sevilla"></div>
-    <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
-  </div>
-  <div class="section-label">Tramos</div>
-  <!-- Ahora usa la clase .card para tener el mismo ancho que el resto -->
-  <div class="card">
-    <div class="counter-label">Tramos</div>
-    <div class="counter-row">
-      <button class="counter-btn" onclick="adjustCfg('tra',-1)">&#8722;</button>
-      <div class="counter-val" id="val-tra">3</div>
-      <button class="counter-btn" onclick="adjustCfg('tra',1)">+</button>
-    </div>
-  </div>
-  <div class="pal-header">
-    <div class="section-label">Palistas</div>
-    <button class="btn-add-group" onclick="openGroupSheet()">&#128101; Añadir grupo</button>
-  </div>
-  <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
-  <button class="btn-primary" onclick="startSession()">&#9654; Iniciar sesión</button>
-  <button class="btn-secondary" onclick="window.location.href='menu.html'">&#8592; Volver al menú</button>
-</div>
-
 <script>
-const SUPABASE_URL='https://xorblwcvlkbhpzcegkoh.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
+const $=id=>document.getElementById(id);
+const API='https://xjxjxjxjxjxjxjxj.supabase.co';
+const KEY='eyXXXXXX';
 
+const MAX={tra:20,pal:20};
+const CFG={tra:6};
 let _tok=null,_uid=null,_email=null,_athletes=[],_palState=[],_teams=[];
 
-const CFG={tra:3};
-const MIN={tra:1};
-const MAX={tra:8,pal:20};
-
-function $(id){return document.getElementById(id);}
-function initials(s){if(!s)return'?';const p=s.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function initials(e){return(e||'?').split('@')[0].slice(0,2).toUpperCase();}
+function toast(msg,type='',dur=2200){const t=$('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');void t.offsetWidth;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
 async function api(path,opts={}){
-  const h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_tok||SUPABASE_KEY),'Content-Type':'application/json',...(opts.headers||{})};
-  const r=await fetch(SUPABASE_URL+path,{...opts,headers:h});
-  if(!r.ok){const t=await r.text();throw new Error(t);}
-  const ct=r.headers.get('content-type')||'';
-  if(ct.includes('json')&&r.status!==204){return r.json();}
-  return null;
+  const r=await fetch(API+path,{...opts,headers:{'apikey':KEY,'Authorization':'Bearer '+_tok,'Content-Type':'application/json',...(opts.headers||{})}});
+  if(!r.ok)throw new Error(await r.text());
+  const txt=await r.text();return txt?JSON.parse(txt):null;
 }
 
-let _toastTimer=null;
-function toast(msg,type='ok'){
-  const t=$('toast');t.textContent=msg;t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
-  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-function adjustCfg(key,delta){
-  CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
+function stepCfg(key,d){
+  const min=key==='tra'?1:1,max=MAX[key];
+  CFG[key]=Math.min(max,Math.max(min,(CFG[key]||1)+d));
   $('val-'+key).textContent=CFG[key];
 }
 
+/* ── GRUPOS SHEET ── */
 async function loadTeams(){
   try{
-    const members=await api('/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.'+_uid);
-    if(!members||!members.length){_teams=[];return;}
-    const results=[];
-    for(const m of members){
-      const team=m.teams;
-      if(!team)continue;
-      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
+    const rows=await api('/rest/v1/team_athletes?select=team_id,athletes(id,name,surname,categories)&user_id=eq.'+_uid);
+    const map={};
+    (rows||[]).forEach(r=>{
+      const a=r.athletes;if(!a)return;
+      if(!map[r.team_id])map[r.team_id]={id:r.team_id,athletes:[]};
+      map[r.team_id].athletes.push(a);
+    });
+    const teamIds=Object.keys(map);
+    if(teamIds.length){
+      const teams=await api('/rest/v1/teams?id=in.('+teamIds.join(',')+')'+'&select=id,name');
+      const results=[];
+      (teams||[]).forEach(t=>{
+        if(map[t.id])results.push({id:t.id,name:t.name,athletes:map[t.id].athletes});
+      });
+      _teams=results;
+    } else {
+      const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+_uid);
       const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
-      results.push({id:team.id,name:team.name,athletes});
+      const results=[];
+      const allTeams=await api('/rest/v1/teams?select=id,name&order=name.asc');
+      for(const team of (allTeams||[])){
+        const rows=await api('/rest/v1/team_athletes?select=athletes(id,name,surname,categories)&team_id=eq.'+team.id);
+        const athletes=(rows||[]).map(r=>r.athletes).filter(Boolean);
+        results.push({id:team.id,name:team.name,athletes});
+      }
+      _teams=results;
     }
-    _teams=results;
   }catch(e){
     console.warn('loadTeams error:',e);
     _teams=[];
@@ -204,50 +215,36 @@ async function loadTeams(){
 }
 
 function openGroupSheet(){
-  const list=$('group-list');
-  list.innerHTML='';
-  if(!_teams||!_teams.length){
-    list.innerHTML=`<div style="text-align:center;padding:24px 0;color:#aaa;font-size:14px">No perteneces a ningún grupo aún.<br><span style="font-size:12px">Crea o únete a un grupo desde el menú.</span></div>`;
-  }else{
-    _teams.forEach(team=>{
-      const card=document.createElement('div');
-      card.style.cssText='background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 14px;cursor:pointer;transition:background .15s';
-      card.onmousedown=()=>addGroupAthletes(team);
-      card.ontouchstart=()=>{};
-      const count=team.athletes.length;
-      card.innerHTML=`
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:#1B3A5C">${team.name}</div>
-            <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
-          </div>
-          <div style="font-size:22px">&#43;</div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+  const list=$('team-list-sheet');list.innerHTML='';
+  if(!_teams.length){list.innerHTML='<div style="text-align:center;color:#aaa;padding:24px 0;font-size:14px">No hay grupos disponibles</div>';$('overlay').classList.add('show');return;}
+  _teams.forEach(team=>{
+    const card=document.createElement('div');card.className='team-card';
+    const count=team.athletes.length;
+    card.innerHTML=`
+      <div class="team-info">
+        <div class="team-name">${team.name}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:2px">${count} palista${count!==1?'s':''}</div>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
           ${team.athletes.slice(0,8).map(a=>{
-            const fn=a.name+(a.surname?' '+a.surname:'');
-            const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
-            return`<span style="font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C;padding:2px 7px;border-radius:100px">${fn}${cats.length?' · '+cats[0]:''}</span>`;
-          }).join('')}
-          ${count>8?`<span style="font-size:11px;color:#aaa">+${count-8} más</span>`:''}
-        </div>`;
-      list.appendChild(card);
-    });
-  }
-  $('group-sheet-backdrop').classList.add('open');
-  $('group-sheet').classList.add('open');
+            const fn=(a.name||'')+(a.surname?' '+a.surname:'');
+            return`<div class="team-mini-avatar" title="${fn}">${fn.slice(0,2).toUpperCase()}</div>`;
+          }).join('')}${count>8?`<div class="team-mini-avatar" style="background:#aaa">+${count-8}</div>`:''}
+        </div>
+      </div>
+      <div style="color:#185FA5;font-size:20px">›</div>`;
+    card.onmousedown=()=>addGroupAthletes(team);
+    list.appendChild(card);
+  });
+  $('overlay').classList.add('show');
 }
 
-function closeGroupSheet(){
-  $('group-sheet-backdrop').classList.remove('open');
-  $('group-sheet').classList.remove('open');
-}
+function closeGroupSheet(){$('overlay').classList.remove('show');}
 
 function addGroupAthletes(team){
   closeGroupSheet();
   let added=0,skipped=0;
   team.athletes.forEach(a=>{
-    const fn=a.name+(a.surname?' '+a.surname:'');
+    const fn=(a.name||'')+(a.surname?' '+a.surname:'');
     const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
     const cat=cats.length===1?cats[0]:null;
     const exists=_palState.some(p=>p.id&&p.id===a.id);
@@ -257,53 +254,27 @@ function addGroupAthletes(team){
     added++;
   });
   buildPalList();
-  if(added>0&&skipped>0){
+  if(added&&skipped)
     toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ('+skipped+' ya estaban)','ok');
-  }else if(added>0){
+  else if(added)
     toast(added+' palista'+(added!==1?'s':'')+' añadido'+(added!==1?'s':'')+' ✓','ok');
-  }else{
+  else
     toast('Todos los palistas ya estaban en la lista');
-  }
 }
 
+/* ── PALISTAS ── */
 function buildPalList(){
   const c=$('pal-list');c.innerHTML='';
-  _palState.forEach((_,i)=>renderPalRow(i,c));
-  _addPlaceholderRow(c);
-}
-
-function _addPlaceholderRow(container){
-  const row=document.createElement('div');
-  row.className='pal-row pal-row-placeholder';row.id='spal-placeholder';
-  row.innerHTML=`<div class="pal-row-top"><div class="pal-search-wrap" style="flex:1"><input class="pal-input" id="spal-placeholder-input" type="text" placeholder="+ Añadir palista…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalPlaceholderInput()" onfocus="onPalPlaceholderFocus()" onblur="delayPalClose(-1)"><div class="pal-dropdown" id="spal-dd--1"></div></div></div>`;
-  container.appendChild(row);
-}
-
-function onPalPlaceholderFocus(){
-  const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
-  _showPalDropdown(-1,val,true);
-}
-
-function onPalPlaceholderInput(){
-  const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
-  if(!val){_showPalDropdown(-1,'',true);return;}
-  _showPalDropdown(-1,val);
-}
-
-function _showPalDropdown(i,q,showAll=false){
-  const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
-  const dd=$(ddId);if(!dd)return;
-  const m=showAll&&!q
-    ?_athletes.slice(0,20)
-    :_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
-  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
-  dd.innerHTML=m.map(a=>{
-    const fn=a.name+(a.surname?' '+a.surname:'');
-    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
-    const catsArr=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
-    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',${JSON.stringify(catsArr)})"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
-  }).join('');
-  dd.classList.add('open');
+  for(let i=0;i<_palState.length;i++)renderPalRow(i,c);
+  // Placeholder row para añadir
+  if(_palState.length<MAX.pal){
+    const ph=document.createElement('div');
+    ph.className='pal-row pal-row-placeholder';
+    ph.style.cursor='pointer';
+    ph.innerHTML=`<div class="pal-row-top"><div class="pal-num" style="background:#f0f0f0;color:#bbb">+</div><span style="font-size:14px;color:#bbb;flex:1">Añadir palista…</span></div>`;
+    ph.onclick=()=>{_palState.push({id:null,name:'',category:null,isTemp:false});buildPalList();setTimeout(()=>{const inp=$('spal-input-'+(_palState.length-1));if(inp)inp.focus();},50);};
+    c.appendChild(ph);
+  }
 }
 
 function renderPalRow(i,container){
@@ -328,17 +299,26 @@ function openPalDropdown(i){
   _showPalDropdown(i,q,!q);
 }
 
+function _showPalDropdown(i,q,showAll=false){
+  const dd=$('spal-dd-'+i);if(!dd)return;
+  const m=showAll&&!q
+    ?_athletes.slice(0,20)
+    :_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
+  dd.innerHTML=m.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1').map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+    const catsArr=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    return`<div class="pal-option" onmousedown="selectPalAthlete(${i},'${a.id}','${fn.replace(/'/g,"\\'")}',${JSON.stringify(catsArr)})"><span class="pal-option-name">${fn}</span><span class="pal-option-cats">${cats}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
 function delayPalClose(i){
-  const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
-  setTimeout(()=>{const dd=$(ddId);if(dd)dd.classList.remove('open');},150);
+  setTimeout(()=>{const dd=$('spal-dd-'+i);if(dd)dd.classList.remove('open');},150);
 }
 
 function selectPalAthlete(i,id,name,cats){
-  if(i===-1){
-    _palState.push({id,name,isTemp:false,category:cats.length===1?cats[0]:null});
-    buildPalList();
-    return;
-  }
   _palState[i]={id,name,isTemp:false,category:cats.length===1?cats[0]:(_palState[i].category||null)};
   const inp=$('spal-input-'+i);inp.value=name;inp.classList.add('matched');
   $('spal-clear-'+i).classList.add('show');
@@ -375,7 +355,7 @@ function startSession(){
 }
 
 async function init(){
-  $('overlay').classList.add('show');
+  $('loading-overlay').style.display='flex';
   try{
     _tok=localStorage.getItem('slt_tok');
     _uid=localStorage.getItem('slt_uid');
@@ -393,25 +373,24 @@ async function init(){
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
     if(cfgRaw){
       const cfg=JSON.parse(cfgRaw);
-      CFG.tra=cfg.nTra;
-      $('val-tra').textContent=CFG.tra;
-      $('cfg-name').value=cfg.name||'';
-      $('cfg-lugar').value=cfg.lugar||'';
-      $('cfg-fecha').value=cfg.fecha||'';
-      _palState=cfg.palistas.map(p=>({...p,isTemp:false}));
-    }else{
-      $('cfg-fecha').value=new Date().toISOString().slice(0,10);
-      _palState=[{id:null,name:'',category:null,isTemp:false}];
+      if(cfg.name)$('cfg-name').value=cfg.name;
+      if(cfg.lugar)$('cfg-lugar').value=cfg.lugar;
+      if(cfg.fecha)$('cfg-fecha').value=cfg.fecha;
+      if(cfg.nTra){CFG.tra=cfg.nTra;$('val-tra').textContent=cfg.nTra;}
+      if(cfg.palistas&&cfg.palistas.length){
+        _palState=cfg.palistas.map(p=>({id:p.id||null,name:p.name||'',category:p.category||null,isTemp:p.isTemp||false}));
+      }
     }
+    $('cfg-fecha').value=$('cfg-fecha').value||new Date().toISOString().slice(0,10);
     buildPalList();
   }catch(e){
-    console.error('Init error:',e);
+    console.error(e);
+    toast('Error al cargar','err');
   }finally{
-    $('overlay').classList.remove('show');
+    $('loading-overlay').style.display='none';
   }
 }
-
-window.addEventListener('DOMContentLoaded',init);
+init();
 </script>
 </body>
 </html>
