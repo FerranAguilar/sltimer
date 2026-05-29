@@ -35,13 +35,11 @@
     label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px}
     input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
     input:focus{outline:none;border-color:#185FA5}
-    .counter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .counter-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
-    .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+    .counter-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
     .counter-row{display:flex;align-items:center;gap:10px;width:100%}
-    .counter-btn{width:38px;height:38px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
+    .counter-btn{width:44px;height:44px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
     .counter-btn:active{background:#f0f0f0}
-    .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:6px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
+    .counter-val{flex:1;text-align:center;font-size:24px;font-weight:700;color:#111;padding:8px 0;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;line-height:1}
     .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
     .pal-row-placeholder{border-style:dashed;background:#fafafa}
     .pal-remove-btn{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;line-height:1;flex-shrink:0;transition:color .15s}
@@ -74,12 +72,9 @@
     .btn-primary:disabled{opacity:.5;cursor:not-allowed}
     .btn-secondary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit;transition:background .12s}
     .btn-secondary:active{background:#f5f5f5}
-    /* Botón añadir grupo */
     .btn-add-group{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:8px;color:#0C447C;font-size:12px;font-weight:700;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
     .btn-add-group:active{background:#cde3f6}
-    /* Header palistas: label + botón en la misma fila */
     .pal-header{display:flex;align-items:center;justify-content:space-between}
-    /* Sheet backdrop + sheet */
     .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
     .sheet-backdrop.open{opacity:1;pointer-events:auto}
     .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:16px 16px 32px;z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,1,.23,1);max-width:560px;margin:0 auto}
@@ -87,13 +82,11 @@
     .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:100px;margin:0 auto 14px}
     .sheet-title{font-size:16px;font-weight:700;color:#111;margin-bottom:4px}
     .sheet-subtitle{font-size:13px;color:#aaa;margin-bottom:14px}
-    /* OVERLAY */
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
     .overlay.show{display:flex}
     .overlay-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     .overlay-text{font-size:13px;color:#888;font-weight:600}
-    /* TOAST */
     .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:500;white-space:nowrap}
     .toast.show{opacity:1}
     .toast.err{background:#A32D2D}
@@ -102,19 +95,15 @@
 </head>
 <body>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="overlay-spinner"></div>
   <div class="overlay-text" id="overlay-text">Cargando...</div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- SHEET backdrop -->
 <div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
 
-<!-- SHEET selector de grupo -->
 <div class="sheet" id="group-sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-title">&#128101; Añadir palistas del grupo</div>
@@ -125,7 +114,6 @@
   </div>
 </div>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -137,7 +125,6 @@
   </div>
 </div>
 
-<!-- CONFIGURACIÓN -->
 <div class="content">
   <div class="section-label">Datos de la sesión</div>
   <div class="card">
@@ -146,17 +133,15 @@
     <div><label>Fecha</label><input id="cfg-fecha" type="date"></div>
   </div>
   <div class="section-label">Tramos</div>
-  <div class="counter-grid">
-    <div class="counter-box">
-      <div class="counter-label">Tramos</div>
-      <div class="counter-row">
-        <button class="counter-btn" onclick="adjustCfg('tra',-1)">&#8722;</button>
-        <div class="counter-val" id="val-tra">3</div>
-        <button class="counter-btn" onclick="adjustCfg('tra',1)">+</button>
-      </div>
+  <!-- Ahora usa la clase .card para tener el mismo ancho que el resto -->
+  <div class="card">
+    <div class="counter-label">Tramos</div>
+    <div class="counter-row">
+      <button class="counter-btn" onclick="adjustCfg('tra',-1)">&#8722;</button>
+      <div class="counter-val" id="val-tra">3</div>
+      <button class="counter-btn" onclick="adjustCfg('tra',1)">+</button>
     </div>
   </div>
-  <!-- Header palistas con botón añadir grupo -->
   <div class="pal-header">
     <div class="section-label">Palistas</div>
     <button class="btn-add-group" onclick="openGroupSheet()">&#128101; Añadir grupo</button>
@@ -194,16 +179,13 @@ function toast(msg,type='ok'){
   clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-/* CFG */
 function adjustCfg(key,delta){
   CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));
   $('val-'+key).textContent=CFG[key];
 }
 
-/* ── GRUPOS ─────────────────────────────────────────────────── */
 async function loadTeams(){
   try{
-    // FIX: filtrar explícitamente por user_id del usuario autenticado
     const members=await api('/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.'+_uid);
     if(!members||!members.length){_teams=[];return;}
     const results=[];
@@ -284,7 +266,6 @@ function addGroupAthletes(team){
   }
 }
 
-/* PALISTAS DINÁMICOS */
 function buildPalList(){
   const c=$('pal-list');c.innerHTML='';
   _palState.forEach((_,i)=>renderPalRow(i,c));
@@ -298,7 +279,6 @@ function _addPlaceholderRow(container){
   container.appendChild(row);
 }
 
-// FIX: al hacer foco en el placeholder, mostrar todos los palistas (sin necesidad de escribir)
 function onPalPlaceholderFocus(){
   const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
   _showPalDropdown(-1,val,true);
@@ -306,15 +286,10 @@ function onPalPlaceholderFocus(){
 
 function onPalPlaceholderInput(){
   const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
-  if(!val){
-    // Sin texto: mostrar todos
-    _showPalDropdown(-1,'',true);
-    return;
-  }
+  if(!val){_showPalDropdown(-1,'',true);return;}
   _showPalDropdown(-1,val);
 }
 
-// FIX: showAll=true muestra todos los atletas cuando no hay query
 function _showPalDropdown(i,q,showAll=false){
   const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
   const dd=$(ddId);if(!dd)return;
@@ -348,7 +323,6 @@ function onPalInput(i){
   _showPalDropdown(i,val.toLowerCase().trim());
 }
 
-// FIX: al hacer foco en un palista existente, mostrar todos si no hay texto o filtrar si hay texto
 function openPalDropdown(i){
   const q=($('spal-input-'+i).value||'').toLowerCase().trim();
   _showPalDropdown(i,q,!q);
@@ -388,7 +362,6 @@ function setPalCatUI(i,cat){
   w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));
 }
 
-/* INICIAR SESIÓN */
 function startSession(){
   const name=$('cfg-name').value.trim();
   if(!name){toast('Introduce un nombre para la sesión','err');return;}
@@ -401,7 +374,6 @@ function startSession(){
   window.location.href='slalom-session.html';
 }
 
-/* INIT */
 async function init(){
   $('overlay').classList.add('show');
   try{
@@ -410,8 +382,6 @@ async function init(){
     _email=localStorage.getItem('slt_email');
     if(!_tok){window.location.href='login.html';return;}
     $('top-avatar').textContent=initials(_email||'?');
-
-    // Cargar atletas guardados
     try{
       const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
       _athletes=ats||[];
@@ -419,11 +389,7 @@ async function init(){
       console.warn('No se pudieron cargar atletas:',atsErr);
       _athletes=[];
     }
-
-    // Cargar grupos del usuario
     await loadTeams();
-
-    // Pre-rellenar si venimos de volver atrás desde la sesión
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
     if(cfgRaw){
       const cfg=JSON.parse(cfgRaw);
@@ -435,7 +401,6 @@ async function init(){
       _palState=cfg.palistas.map(p=>({...p,isTemp:false}));
     }else{
       $('cfg-fecha').value=new Date().toISOString().slice(0,10);
-      // FIX: añadir un palista vacío por defecto para que el usuario vea el campo inmediatamente
       _palState=[{id:null,name:'',category:null,isTemp:false}];
     }
     buildPalList();
