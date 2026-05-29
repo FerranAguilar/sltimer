@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- PWA core -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1B3A5C">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLTimer">
+<link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+
+<!-- iOS Splash Screens -->
+<link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1242x2208.png">
+<link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="/icons/splash-750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)" href="/icons/splash-1284x2778.png">
+
+<!-- Android / General -->
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+
+<title>SLTimer — Acceso</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center}
+input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+input:focus{outline:none;border-color:#185FA5}
+label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;padding:24px}
+.btn{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit;transition:opacity .15s}
+.btn:active{opacity:.75}
+.btn.primary{background:#185FA5;border-color:#185FA5;color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.ig{margin-bottom:12px}
+.auth-toggle{text-align:center;font-size:14px;color:#888;margin-top:12px}
+.auth-toggle button{background:none;border:none;color:#185FA5;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#aaa;font-size:13px}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:#e0e0e0}
+.btn-google{width:100%;padding:12px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#fff;color:#111;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s}
+.btn-google:active{background:#f5f5f5}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.err{background:#A32D2D}
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.overlay.show{display:flex}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.wrap{width:100%;max-width:380px;padding:24px 16px}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+
+<div class="wrap">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:24px">
+    <img src="icons/icon-192x192.png" style="width:90px;height:90px;border-radius:20px" alt="SLTimer">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#1B3A5C;letter-spacing:1px;margin-top:8px">SLTimer</div>
+    <div style="font-size:14px;color:#888;margin-top:2px" id="auth-sub">Inicia sesión para continuar</div>
+  </div>
+
+  <div class="card">
+    <!-- Botón Google -->
+    <button class="btn-google" id="btn-google" onclick="loginGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+
+    <div class="divider">o con email</div>
+
+    <!-- Email + contraseña -->
+    <div class="ig"><label>Email</label><input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+    <div class="ig"><label>Contraseña</label><input id="auth-pass" type="password" placeholder="••••••••"></div>
+    <div class="ig" id="auth-p2w" style="display:none"><label>Repite la contraseña</label><input id="auth-pass2" type="password" placeholder="••••••••"></div>
+    <button class="btn primary" id="auth-btn" onclick="doAuth()">Entrar</button>
+    <div class="auth-toggle">
+      <span id="auth-ttxt">¿No tienes cuenta?</span>
+      <button onclick="toggleAuthMode()">Regístrate</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+const $ = id => document.getElementById(id);
+
+function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+let _tTimer;
+function toast(msg,err=false){
+  const el=$('toast');el.textContent=msg;
+  el.classList.toggle('err',err);el.classList.add('show');
+  clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+async function api(path, opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text();
+  let j; try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok) throw new Error(j?.message||j?.error_description||JSON.stringify(j));
+  return j;
+}
+
+function saveSession(d){
+  localStorage.setItem('slt_tok', d.access_token);
+  localStorage.setItem('slt_ref', d.refresh_token);
+  localStorage.setItem('slt_uid', d.user?.id);
+  localStorage.setItem('slt_email', d.user?.email);
+  const expiresIn = d.expires_in || 3600;
+  localStorage.setItem('slt_exp', Date.now() + expiresIn * 1000);
+}
+
+async function refreshIfNeeded(){
+  const exp = parseInt(localStorage.getItem('slt_exp')||'0');
+  const ref = localStorage.getItem('slt_ref');
+  if(!ref) return false;
+  if(Date.now() < exp - 10*60*1000) return true;
+  try{
+    const d = await api('/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      body:JSON.stringify({refresh_token: ref})
+    });
+    saveSession(d);
+    return true;
+  }catch{
+    clearSession();
+    return false;
+  }
+}
+
+function clearSession(){
+  ['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));
+}
+
+function loginGoogle(){
+  $('btn-google').disabled=true;
+  showLoad('Redirigiendo a Google...');
+  const redirectTo = encodeURIComponent(window.location.origin + '/menu.html');
+  window.location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
+}
+
+let _mode = 'login';
+function toggleAuthMode(){
+  _mode = _mode==='login' ? 'register' : 'login';
+  const r = _mode==='register';
+  $('auth-sub').textContent = r ? 'Crea tu cuenta' : 'Inicia sesión para continuar';
+  $('auth-btn').textContent = r ? 'Registrarse' : 'Entrar';
+  $('auth-ttxt').textContent = r ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
+  $('auth-p2w').style.display = r ? 'block' : 'none';
+  document.querySelector('.auth-toggle button').textContent = r ? 'Inicia sesión' : 'Regístrate';
+}
+
+async function doAuth(){
+  const email=$('auth-email').value.trim(), pass=$('auth-pass').value;
+  if(!email||!pass){toast('Rellena email y contraseña',true);return;}
+  if(_mode==='register'&&$('auth-pass2').value!==pass){toast('Las contraseñas no coinciden',true);return;}
+  showLoad(_mode==='login'?'Iniciando sesión...':'Creando cuenta...');
+  $('auth-btn').disabled=true;
+  try{
+    const ep = _mode==='login' ? '/token?grant_type=password' : '/signup';
+    const d = await api('/auth/v1'+ep,{method:'POST',body:JSON.stringify({email,password:pass})});
+    if(_mode==='register'&&!d.access_token){
+      hideLoad();$('auth-btn').disabled=false;
+      toast('Cuenta creada. Revisa tu email y luego inicia sesión.');
+      toggleAuthMode();return;
+    }
+    saveSession(d);
+    hideLoad();
+    window.location.href = 'menu.html';
+  }catch(e){hideLoad();$('auth-btn').disabled=false;toast(e.message,true);}
+}
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  const hash=window.location.hash.substring(1);
+  if(hash.includes('access_token')){
+    showLoad('Iniciando sesión...');
+    const params=new URLSearchParams(hash);
+    const access_token=params.get('access_token');
+    const refresh_token=params.get('refresh_token');
+    if(access_token){
+      try{
+        const user=await fetch(`${SB}/auth/v1/user`,{
+          headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}
+        }).then(r=>r.json());
+        localStorage.setItem('slt_tok',access_token);
+        localStorage.setItem('slt_ref',refresh_token||'');
+        localStorage.setItem('slt_uid',user.id);
+        localStorage.setItem('slt_email',user.email);
+        localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);
+        window.location.href='menu.html';
+        return;
+      }catch(e){
+        hideLoad();
+        toast('Error al iniciar sesión con Google',true);
+        return;
+      }
+    }
+  }
+  if(localStorage.getItem('slt_tok')){
+    showLoad('Comprobando sesión...');
+    const ok=await refreshIfNeeded();
+    if(ok){ window.location.href='menu.html'; return; }
+    hideLoad();
+  }
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
+</script>
+
+<script src="active-session-bar.js"></script>
+<script>document.addEventListener("DOMContentLoaded",function(){if(typeof ActiveSessionBar!=="undefined")ActiveSessionBar.init();});</script>
+</body>
+</html>

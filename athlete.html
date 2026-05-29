@@ -1,2 +1,314 @@
 <!DOCTYPE html>
 <html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1B3A5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLTimer">
+<link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+<title>SLTimer &#8212; Palista</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+.topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+.topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn-share-top{background:none;border:0.5px solid #ddd;border-radius:10px;padding:7px 9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;flex-shrink:0;transition:background .1s}
+.btn-share-top:active{background:#f0f0f0}
+.btn-share-top svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn-save{background:#185FA5;border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;font-family:inherit;transition:opacity .12s;flex-shrink:0}
+.btn-save:active{opacity:.8}
+.btn-save:disabled{opacity:.4;cursor:not-allowed}
+.tabs-bar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.10);display:flex;padding:0 16px;gap:0;position:sticky;top:53px;z-index:9}
+.tab-btn{flex:1;padding:12px 8px 10px;font-size:14px;font-weight:600;color:#aaa;background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;font-family:inherit;transition:color .15s,border-color .15s;text-align:center}
+.tab-btn.active{color:#185FA5;border-bottom-color:#185FA5}
+.tab-btn:active{opacity:.7}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.content{padding:16px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto;padding-bottom:40px}
+.avatar-wrap{display:flex;justify-content:center;padding:8px 0 4px}
+.avatar{width:76px;height:76px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #B5D4F4;letter-spacing:-1px;transition:background .2s}
+.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
+.field-row{padding:12px 16px;display:flex;flex-direction:column;gap:5px}
+.field-row+.field-row{border-top:0.5px solid #f2f2f2}
+.field-label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.04em}
+.field-label .opt{font-weight:400;color:#bbb;text-transform:none;letter-spacing:0;font-size:11px}
+.field-input{border:none;outline:none;font-size:15px;color:#111;background:transparent;font-family:inherit;width:100%;padding:0;-webkit-appearance:none}
+.field-input::placeholder{color:#ccc}
+.sex-row{display:flex;gap:8px;margin-top:2px}
+.sex-btn{flex:1;padding:9px 6px;border-radius:10px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;transition:all .12s}
+.sex-btn.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.sex-btn:active{opacity:.75}
+.cat-row{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.cat-btn{padding:9px 20px;border-radius:10px;border:0.5px solid #ddd;background:#fff;font-size:14px;font-weight:700;color:#aaa;cursor:pointer;font-family:inherit;transition:all .15px;letter-spacing:0.03em}
+.cat-btn:active{opacity:.75}
+.cat-btn.k1.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.cat-btn.c1.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+.cat-btn.kxc.active{background:#FAEEDA;border-color:#854F0B;color:#633806}
+.cat-desc{font-size:12px;color:#bbb;margin-top:6px}
+.access-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.access-row+.access-row{border-top:0.5px solid #f2f2f2}
+.mini-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;text-transform:uppercase}
+.mini-avatar.owner{background:#E6F1FB;color:#0C447C}
+.mini-avatar.shared{background:#f0f0f0;color:#666}
+.mini-avatar.group{background:#F0EEF9;color:#4B3FA0}
+.access-info{flex:1;min-width:0}
+.access-name{font-size:14px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.access-sub{font-size:12px;color:#aaa;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge-owner{font-size:11px;font-weight:700;background:#E6F1FB;color:#0C447C;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.badge-in{font-size:11px;font-weight:700;background:#E1F5EE;color:#085041;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.btn-add{background:none;border:0.5px solid #185FA5;color:#185FA5;font-size:13px;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-add:active{background:#E6F1FB}
+.group-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.group-row+.group-row{border-top:0.5px solid #f2f2f2}
+.group-check{width:20px;height:20px;border-radius:6px;border:1.5px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .12s}
+.group-check.checked{background:#185FA5;border-color:#185FA5}
+.group-check svg{width:11px;height:11px;display:none}
+.group-check.checked svg{display:block}
+.group-check:active{opacity:.75}
+.group-name{font-size:14px;font-weight:600;color:#111;flex:1}
+.group-sub{font-size:11px;color:#aaa;margin-top:1px}
+.groups-empty{padding:14px 16px;font-size:13px;color:#bbb;text-align:center}
+.ses-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.ses-icon{width:40px;height:40px;border-radius:11px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ses-icon svg{width:20px;height:20px;fill:none;stroke:#085041;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ses-info{flex:1;min-width:0}
+.ses-name{font-size:15px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ses-sub{font-size:12px;color:#aaa;margin-top:2px}
+.ses-best{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#0F6E56;letter-spacing:0.5px;flex-shrink:0;text-align:right;line-height:1.1}
+.ses-best-lbl{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;text-align:right;font-family:inherit}
+.empty-state{text-align:center;padding:48px 24px;color:#bbb}
+.empty-state p{font-size:14px;font-weight:600;color:#bbb}
+.hist-spinner{display:flex;justify-content:center;padding:40px 0}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px 14px;display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+.stat-val.green{color:#0F6E56}
+.stat-val.red{color:#A32D2D}
+.stat-val.amber{color:#B45309}
+.stat-val.small{font-size:22px}
+.stat-sub{font-size:11px;color:#bbb;font-weight:500;margin-top:1px}
+.stat-spinner{display:flex;justify-content:center;padding:40px 0}
+.chart-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px 14px 10px}
+.chart-svg{width:100%;overflow:visible;display:block}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-legend{display:flex;flex-direction:column;gap:7px;flex:1}
+.donut-legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:#555}
+.donut-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.donut-legend-val{font-weight:700;color:#111;margin-left:auto}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-header-label{font-size:13px;font-weight:700;color:#1B3A5C;text-transform:capitalize;letter-spacing:0.02em}
+.cal-nav-btn{background:none;border:none;cursor:pointer;font-size:18px;color:#185FA5;padding:2px 8px;border-radius:8px;line-height:1;font-family:inherit}
+.cal-nav-btn:active{background:#E6F1FB}
+.cal-nav-btn:disabled{color:#ccc;cursor:default}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day{aspect-ratio:1;border-radius:4px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#ccc;font-weight:600}
+.cal-day.has-session{background:#185FA5;color:#fff}
+.cal-day.today{outline:2px solid #1B3A5C;outline-offset:1px}
+.cal-day.empty{background:transparent}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:2px}
+.cal-dow span{font-size:8px;font-weight:700;color:#ccc;text-align:center;text-transform:uppercase}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.err{background:#A32D2D}
+.toast.ok{background:#0F6E56}
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.overlay.show{display:flex}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.btn-delete{width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:0.5px solid #F7C1C1;background:#FCEBEB;color:#A32D2D;font-family:inherit;transition:opacity .12s}
+.btn-delete:active{opacity:.75}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;animation:slideUp .22s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:17px;font-weight:700;color:#111;margin-bottom:4px}
+.modal-sub{font-size:13px;color:#888;margin-bottom:18px;line-height:1.4}
+.share-input-wrap{position:relative}
+.share-input{width:100%;border:1.5px solid #ddd;border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;color:#111;outline:none;transition:border-color .15s;-webkit-appearance:none}
+.share-input:focus{border-color:#185FA5}
+.share-input.found{border-color:#0F6E56}
+.share-input.notfound{border-color:#C0392B}
+.share-suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #e0e0e0;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:10;overflow:hidden;display:none}
+.share-suggestions.show{display:block}
+.suggestion-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.suggestion-item:hover,.suggestion-item:active{background:#f5f9ff}
+.suggestion-item+.suggestion-item{border-top:0.5px solid #f2f2f2}
+.sug-avatar{width:34px;height:34px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sug-name{font-size:14px;font-weight:600;color:#111;line-height:1.2}
+.sug-username{font-size:12px;color:#888}
+.share-found-info{margin-top:10px;padding:10px 14px;background:#F0FBF5;border-radius:10px;display:none;align-items:center;gap:10px}
+.share-found-info.show{display:flex}
+.share-found-avatar{width:36px;height:36px;border-radius:50%;background:#0F6E56;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.share-found-name{font-size:14px;font-weight:600;color:#111}
+.share-found-sub{font-size:12px;color:#0F6E56}
+.share-can-share{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 14px;background:#f9f9f9;border-radius:12px}
+.share-can-share label{font-size:13px;color:#555;flex:1;cursor:pointer}
+.share-can-share input[type=checkbox]{width:18px;height:18px;accent-color:#185FA5;cursor:pointer}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.btn-modal-cancel{flex:1;background:#f0f0f0;border:none;color:#555;font-size:15px;font-weight:600;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit}
+.btn-modal-cancel:active{background:#e4e4e4}
+.btn-modal-send{flex:2;background:#185FA5;border:none;color:#fff;font-size:15px;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.btn-modal-send:disabled{opacity:.45;cursor:not-allowed}
+.btn-modal-send:not(:disabled):active{opacity:.85}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Guardando...</p></div>
+<div class="topbar">
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <div class="topbar-brand">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </div>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title" id="page-title">Nuevo palista</span>
+  <div class="topbar-actions">
+    <button class="btn-share-top" id="btn-share-top" onclick="openShareModal()" style="display:none" title="Compartir">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <button class="btn-save" id="btn-save" onclick="savePalista()">Guardar</button>
+  </div>
+</div>
+<div class="tabs-bar" id="tabs-bar" style="display:none">
+  <button class="tab-btn active" id="tab-datos" onclick="switchTab('datos')">Datos</button>
+  <button class="tab-btn" id="tab-historial" onclick="switchTab('historial')">Historial</button>
+  <button class="tab-btn" id="tab-estadisticas" onclick="switchTab('estadisticas')">Estad&#237;sticas</button>
+</div>
+<div class="tab-panel active" id="panel-datos">
+  <div class="content">
+    <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
+    <div class="section-label">Datos personales</div>
+    <div class="card">
+      <div class="field-row"><div class="field-label">Nombre</div><input class="field-input" id="inp-name" type="text" placeholder="Ej: Carlos" autocomplete="given-name" oninput="updateAvatar()"></div>
+      <div class="field-row"><div class="field-label">Apellido <span class="opt">(opcional)</span></div><input class="field-input" id="inp-surname" type="text" placeholder="Ej: Garc&#237;a" autocomplete="family-name" oninput="updateAvatar()"></div>
+      <div class="field-row"><div class="field-label">Sexo</div><div class="sex-row"><button class="sex-btn" onclick="setSex(this,'M')">Masculino</button><button class="sex-btn" onclick="setSex(this,'F')">Femenino</button><button class="sex-btn" onclick="setSex(this,'O')">Otro</button></div></div>
+    </div>
+    <div class="section-label">Categor&#237;as</div>
+    <div class="card">
+      <div class="field-row">
+        <div class="field-label">Modalidades en las que compite</div>
+        <div class="cat-row">
+          <button class="cat-btn k1" onclick="toggleCat(this,'K1')">K1</button>
+          <button class="cat-btn c1" onclick="toggleCat(this,'C1')">C1</button>
+          <button class="cat-btn kxc" onclick="toggleCat(this,'KXC')">KXC</button>
+        </div>
+        <div class="cat-desc" id="cat-desc">Selecciona al menos una modalidad</div>
+      </div>
+    </div>
+    <div class="section-label">Grupos</div>
+    <div class="card" id="groups-card">
+      <div class="groups-empty">Cargando grupos...</div>
+    </div>
+    <div class="section-label">Propietario</div>
+    <div class="card" id="access-card">
+      <div class="access-row">
+        <div class="mini-avatar owner" id="owner-avatar"></div>
+        <div class="access-info"><div class="access-name" id="owner-name">T&#250;</div><div class="access-sub" id="owner-email"></div></div>
+        <span class="badge-owner">Propietario</span>
+      </div>
+    </div>
+    <button class="btn-delete" id="btn-delete" style="display:none" onclick="confirmDelete()">Eliminar palista</button>
+  </div>
+</div>
+<div class="tab-panel" id="panel-historial">
+  <div class="content" id="hist-content"><div class="hist-spinner"><div class="spinner"></div></div></div>
+</div>
+<div class="tab-panel" id="panel-estadisticas">
+  <div class="content" id="stat-content"><div class="stat-spinner"><div class="spinner"></div></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-bg" id="share-modal" onclick="handleModalBgClick(event)">
+  <div class="modal-sheet" id="share-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="share-modal-title">Compartir palista</div>
+    <div class="modal-sub">Introduce el email o @usuario del entrenador con quien quieres compartir</div>
+    <div class="share-input-wrap">
+      <input class="share-input" id="share-input" type="text" placeholder="email@ejemplo.com o @usuario" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="onShareInput()">
+      <div class="share-suggestions" id="share-suggestions"></div>
+    </div>
+    <div class="share-found-info" id="share-found-info">
+      <div class="share-found-avatar" id="share-found-avatar"></div>
+      <div>
+        <div class="share-found-name" id="share-found-name"></div>
+        <div class="share-found-sub" id="share-found-sub"></div>
+      </div>
+    </div>
+    <div class="share-can-share">
+      <label for="share-can-share-chk">Permitir que también pueda compartir este palista</label>
+      <input type="checkbox" id="share-can-share-chk" checked>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeShareModal()">Cancelar</button>
+      <button class="btn-modal-send" id="share-send-btn" disabled onclick="sendShareInvite()">Enviar invitación</button>
+    </div>
+  </div>
+</div>
+<script>
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null,_uid=null,_email=null,_athleteId=null,_sex=null,_cats=new Set();
+let _athleteName='';
+let _allTeams=[];
+let _athleteTeamIds=new Set();
+let _foundCoach=null;
+let _searchTimer=null;
+const $=id=>document.getElementById(id);
+function showLoad(msg='Guardando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+let _tTimer;
+function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+function initials(name,surname){const a=name?.trim()[0]||'';const b=surname?.trim()[0]||name?.trim()[1]||'';return(a+b).toUpperCase()||'?';}
+function updateAvatar(){const n=$('inp-name').value;const s=$('inp-surname').value;$('avatar').textContent=initials(n,s);}
+function setSex(btn,val){_sex=val;document.querySelectorAll('.sex-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+const CAT_LABELS={K1:'Kayak',C1:'Canoa',KXC:'Kayak Cross'};
+function toggleCat(btn,cat){if(_cats.has(cat)){_cats.delete(cat);btn.classList.remove('active');}else{_cats.add(cat);btn.classList.add('active');}updateCatDesc();}
+function updateCatDesc(){const desc=$('cat-desc');if(_cats.size===0){desc.textContent='Selecciona al menos una modalidad';desc.style.color='#bbb';}else{desc.textContent=[..._cats].map(c=>`${c} \u2014 ${CAT_LABELS[c]}`).join('  \u00b7  ');desc.style.color='#888';}}
+async function loadGroups(){const card=$('groups-card');try{_allTeams=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&order=name.asc&select=id,name,description');if(_athleteId){const rows=await api('/rest/v1/team_athletes?athlete_id=eq.'+_athleteId+'&select=team_id');_athleteTeamIds=new Set(rows.map(r=>r.team_id));}renderGroups();}catch(e){card.innerHTML='<div class="groups-empty">Error al cargar grupos</div>';}}
+function renderGroups(){const card=$('groups-card');if(!_allTeams.length){card.innerHTML='<div class="groups-empty">No tienes grupos creados a\u00fan</div>';return;}card.innerHTML=_allTeams.map(t=>{const inTeam=_athleteTeamIds.has(t.id);const ini=t.name.slice(0,2).toUpperCase();return`<div class="group-row"><div class="mini-avatar group">${ini}</div><div class="access-info"><div class="group-name">${escHtml(t.name)}</div>${t.description?`<div class="group-sub">${escHtml(t.description)}</div>`:''}</div><div class="group-check${inTeam?' checked':''}" id="gc-${t.id}" onclick="toggleGroup('${t.id}')"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div></div>`;}).join('');}
+async function toggleGroup(teamId){if(!_athleteId){toast('Guarda el palista primero','err');return;}const inTeam=_athleteTeamIds.has(teamId);const el=$('gc-'+teamId);if(el)el.style.opacity='0.5';try{if(inTeam){await api(`/rest/v1/team_athletes?team_id=eq.${teamId}&athlete_id=eq.${_athleteId}`,{method:'DELETE'});_athleteTeamIds.delete(teamId);toast('Eliminado del grupo','ok');}else{await api('/rest/v1/team_athletes',{method:'POST',body:JSON.stringify({team_id:teamId,athlete_id:_athleteId,added_by:_uid})});_athleteTeamIds.add(teamId);toast('A\u00f1adido al grupo \u2713','ok');}renderGroups();}catch(e){toast(e.message,'err');if(el)el.style.opacity='1';}}
+function switchTab(name){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));$('tab-'+name).classList.add('active');$('panel-'+name).classList.add('active');if(name==='historial'&&!_histLoaded)loadHistorial();if(name==='estadisticas'&&!_statLoaded)loadEstadisticas();const hide=name==='historial'||name==='estadisticas';$('btn-save').style.display=hide?'none':'block';if($('btn-share-top'))$('btn-share-top').style.display=(!hide&&_athleteId)?'flex':'none';}
+let _histLoaded=false;
+function fmtTime(ms){if(!ms&&ms!==0)return'\u2014';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
+async function loadHistorial(){const container=$('hist-content');container.innerHTML='<div class="hist-spinner"><div class="spinner"></div></div>';try{const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.desc&select=id,name,lugar,data,created_at');if(!sessions||sessions.length===0){container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';_histLoaded=true;return;}const sesIds=sessions.map(s=>s.id);const entries=await api('/rest/v1/session_entries?session_id=in.('+sesIds.join(',')+')'+'&pal_name=eq.'+encodeURIComponent(_athleteName)+'&select=session_id,ms,pen,dsq,tramo,manga');const sesMap={};for(const e of entries){if(!sesMap[e.session_id])sesMap[e.session_id]={entries:[]};sesMap[e.session_id].entries.push(e);}const activeSessions=sessions.filter(s=>sesMap[s.id]);if(!activeSessions.length){container.innerHTML='<div class="empty-state"><p>Este palista no ha participado en ninguna sesi\u00f3n a\u00fan</p></div>';_histLoaded=true;return;}let html='';for(const s of activeSessions){const ents=sesMap[s.id].entries;const valid=ents.filter(e=>!e.dsq&&e.ms>0);const nDsq=ents.filter(e=>e.dsq).length;const bestNet=valid.length?Math.min(...valid.map(e=>e.ms+e.pen)):null;const bestEntry=bestNet!==null?valid.find(e=>e.ms+e.pen===bestNet):null;const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}):'';const sub=[s.lugar,fecha].filter(Boolean).join(' \u00b7 ');const nTiempos=ents.length;const subInfo=[sub,nTiempos+(nTiempos===1?' tiempo':' tiempos'),nDsq>0?nDsq+' DSQ':null].filter(Boolean).join(' \u00b7 ');const bestHtml=bestEntry?`<div class="ses-best">${fmtTime(bestEntry.ms+(bestEntry.pen||0))}</div><div class="ses-best-lbl">T${bestEntry.tramo+1} \u00b7 mejor</div>`:nDsq===nTiempos?`<div class="ses-best" style="color:#A32D2D;font-size:14px;font-family:inherit;font-weight:800">DSQ</div><div class="ses-best-lbl">todos</div>`:`<div class="ses-best" style="color:#ccc">\u2014</div>`;html+=`<div class="ses-card"><div class="ses-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg></div><div class="ses-info"><div class="ses-name">${s.name}</div><div class="ses-sub">${subInfo||'Sin metadatos'}</div></div><div style="text-align:right;flex-shrink:0">${bestHtml}</div></div>`;}container.innerHTML=html;_histLoaded=true;}catch(e){container.innerHTML='<div class="empty-state"><p>Error al cargar el historial</p></div>';toast('Error: '+e.message,'err');}}
+let _statLoaded=false,_statRaw=null;let _calMonth=null;
+async function loadEstadisticas(){const container=$('stat-content');container.innerHTML='<div class="stat-spinner"><div class="spinner"></div></div>';try{const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=data.asc,created_at.asc&select=id,name,lugar,data,created_at');if(!sessions||!sessions.length){container.innerHTML='<div class="empty-state"><p>Sin sesiones registradas</p></div>';_statLoaded=true;return;}const sesIds=sessions.map(s=>s.id);const entries=await api('/rest/v1/session_entries?session_id=in.('+sesIds.join(',')+')'+'&pal_name=eq.'+encodeURIComponent(_athleteName)+'&select=session_id,tramo,manga,ms,pen,dsq');if(!entries||!entries.length){container.innerHTML='<div class="empty-state"><p>Este palista no tiene tiempos registrados a\u00fan</p></div>';_statLoaded=true;return;}const myTimes=entries.map(e=>({...e,tramo_index:e.tramo}));const sesById={};sessions.forEach(s=>{sesById[s.id]=s;});_statRaw={sessions,sesById,myTimes};const now=new Date();_calMonth={year:now.getFullYear(),month:now.getMonth()};renderEstadisticas();_statLoaded=true;}catch(e){container.innerHTML='<div class="empty-state"><p>Error al cargar estad\u00eddsticas</p></div>';toast('Error: '+e.message,'err');}}
+function calNavPrev(){let {year,month}=_calMonth;month--;if(month<0){month=11;year--;} _calMonth={year,month};renderCalendar();}
+function calNavNext(){const now=new Date();let {year,month}=_calMonth;if(year===now.getFullYear()&&month===now.getMonth())return;month++;if(month>11){month=0;year++;}_calMonth={year,month};renderCalendar();}
+function renderCalendar(){const calCard=$('cal-card');if(!calCard||!_statRaw)return;const {sessions}=_statRaw;const myTimes=_statRaw.myTimes;const sesConEntradas=new Set(myTimes.map(t=>t.session_id));const sesDates=new Set();sessions.filter(s=>sesConEntradas.has(s.id)).forEach(s=>{const ref=s.data||(s.created_at?s.created_at.slice(0,10):null);if(ref)sesDates.add(ref);});const now=new Date();const todayStr=now.toISOString().slice(0,10);const DIAS=['L','M','X','J','V','S','D'];const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];const {year,month}=_calMonth;const isCurrentMonth=(year===now.getFullYear()&&month===now.getMonth());const firstDay=new Date(year,month,1);const daysInMonth=new Date(year,month+1,0).getDate();const startDow=(firstDay.getDay()+6)%7;let cells='';for(let i=0;i<startDow;i++)cells+='<div class="cal-day empty"></div>';for(let d=1;d<=daysInMonth;d++){const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const hasSes=sesDates.has(ds);const isToday=ds===todayStr;cells+=`<div class="cal-day${hasSes?' has-session':''}${isToday?' today':''}">${d}</div>`;}calCard.innerHTML=`<div class="cal-header"><button class="cal-nav-btn" onclick="calNavPrev()">&#8592;</button><span class="cal-header-label">${MESES[month]} ${year}</span><button class="cal-nav-btn" onclick="calNavNext()"${isCurrentMonth?' disabled':''}>&#8594;</button></div><div class="cal-dow">${DIAS.map(d=>`<span>${d}</span>`).join('')}</div><div class="cal-grid">${cells}</div>`;}
+function renderEstadisticas(){if(!_statRaw)return;const {sessions,myTimes}=_statRaw;const container=$('stat-content');const now=new Date();const cutoff=new Date(now);cutoff.setDate(cutoff.getDate()-7);cutoff.setHours(0,0,0,0);const sesConEntradas=new Set(myTimes.map(t=>t.session_id));const sesRecientes=sessions.filter(s=>{if(!sesConEntradas.has(s.id))return false;const ref=s.data?new Date(s.data+'T12:00:00'):new Date(s.created_at);return ref>=cutoff;});const nSesiones7d=sesRecientes.length;const sesPalista=[...sesConEntradas];const totalMangas=myTimes.length;const mediaMangas=sesPalista.length>0?+(totalMangas/sesPalista.length).toFixed(1):0;let dsqPctArr=[];sesPalista.forEach(sid=>{const ents=myTimes.filter(t=>t.session_id===sid);if(!ents.length)return;const nDsq=ents.filter(t=>t.dsq).length;dsqPctArr.push(nDsq/ents.length*100);});const mediaDsqPct=dsqPctArr.length?Math.round(dsqPctArr.reduce((a,b)=>a+b,0)/dsqPctArr.length):0;let penSesSumaS=[];sesPalista.forEach(sid=>{const ents=myTimes.filter(t=>t.session_id===sid&&!t.dsq);if(!ents.length)return;penSesSumaS.push(ents.reduce((acc,t)=>acc+(t.pen||0),0)/1000);});const mediaPenS=penSesSumaS.length?+(penSesSumaS.reduce((a,b)=>a+b,0)/penSesSumaS.length).toFixed(1):0;const kpisHtml=`<div class="section-label">Actividad reciente</div><div class="stat-grid"><div class="stat-box"><div class="stat-label">Sesiones (7 d\u00edas)</div><div class="stat-val${nSesiones7d===0?' red':nSesiones7d>=3?' green':''}">${nSesiones7d}</div><div class="stat-sub">\u00daltimos 7 d\u00edas</div></div><div class="stat-box"><div class="stat-label">Mangas / sesi\u00f3n</div><div class="stat-val">${mediaMangas}</div><div class="stat-sub">Media por sesi\u00f3n</div></div><div class="stat-box"><div class="stat-label">% DSQ / sesi\u00f3n</div><div class="stat-val${mediaDsqPct>30?' red':mediaDsqPct>10?' amber':'green'}">${mediaDsqPct}<span style="font-size:18px">%</span></div><div class="stat-sub">Media por sesi\u00f3n</div></div><div class="stat-box"><div class="stat-label">Pen. / sesi\u00f3n</div><div class="stat-val${mediaPenS>20?' red':mediaPenS>5?' amber':'green'} small">${mediaPenS}<span style="font-size:14px">s</span></div><div class="stat-sub">Media segundos de pen.</div></div></div>`;const sesOrd=sessions.filter(s=>sesConEntradas.has(s.id)).slice(-7);let mangasChartHtml='';if(sesOrd.length>0){const cd=sesOrd.map(s=>({label:s.name.length>10?s.name.slice(0,9)+'\u2026':s.name,n:myTimes.filter(t=>t.session_id===s.id).length}));const maxN=Math.max(...cd.map(d=>d.n),1);const W=300,H=100,pL=6,pR=6,pT=20,pB=32,iW=W-pL-pR,iH=H-pT-pB,nn=cd.length,gap=4;const bW=Math.floor((iW-(nn-1)*gap)/nn);let bars='',lbls='',vals='';cd.forEach((d,i)=>{const x=pL+i*(bW+gap);const bH=Math.max(4,Math.round(d.n/maxN*iH));const y=pT+iH-bH;const cx=x+bW/2;bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="#185FA5"/>`;vals+=`<text x="${cx}" y="${y-4}" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A5C" font-family="-apple-system,sans-serif">${d.n}</text>`;lbls+=`<text x="${cx}" y="${pT+iH+14}" text-anchor="middle" font-size="9" fill="#aaa" font-family="-apple-system,sans-serif">${escHtml(d.label)}</text>`;});mangasChartHtml=`<div class="section-label">Mangas por sesi\u00f3n</div><div class="chart-card"><svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}"><line x1="${pL}" y1="${pT+iH}" x2="${W-pR}" y2="${pT+iH}" stroke="#f0f0f0" stroke-width="1"/>${bars}${vals}${lbls}</svg></div>`;}const sesOrdDsq=sessions.filter(s=>sesConEntradas.has(s.id)).slice(-10);let dsqChartHtml='';if(sesOrdDsq.length>1){const dsqData=sesOrdDsq.map(s=>{const ents=myTimes.filter(t=>t.session_id===s.id);const pct=ents.length?Math.round(ents.filter(t=>t.dsq).length/ents.length*100):0;const label=s.name.length>8?s.name.slice(0,7)+'\u2026':s.name;return{label,pct};});const W=300,H=110,pL=28,pR=8,pT=14,pB=30,iW=W-pL-pR,iH=H-pT-pB,nn=dsqData.length;const xStep=iW/(nn-1);let guides='';[0,50,100].forEach(v=>{const y=pT+iH-Math.round(v/100*iH);guides+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="#f0f0f0" stroke-width="1"/>`;guides+=`<text x="${pL-4}" y="${y+3}" text-anchor="end" font-size="8" fill="#ccc" font-family="-apple-system,sans-serif">${v}</text>`;});let pts='',dots='',xlbls='';dsqData.forEach((d,i)=>{const x=pL+i*xStep;const y=pT+iH-Math.round(d.pct/100*iH);pts+=(i===0?`M${x},${y}`:`L${x},${y}`);dots+=`<circle cx="${x}" cy="${y}" r="3" fill="#A32D2D"/>`;xlbls+=`<text x="${x}" y="${pT+iH+14}" text-anchor="middle" font-size="8" fill="#aaa" font-family="-apple-system,sans-serif">${escHtml(d.label)}</text>`;});dsqChartHtml=`<div class="section-label">% DSQ por sesi\u00f3n</div><div class="chart-card"><svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}">${guides}<path d="${pts}" fill="none" stroke="#A32D2D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${xlbls}</svg></div>`;}const nCero=myTimes.filter(t=>!t.dsq&&(t.pen||0)===0).length;const nMedia=myTimes.filter(t=>!t.dsq&&(t.pen||0)>0&&(t.pen||0)<50000).length;const nNulo=myTimes.filter(t=>t.dsq||(t.pen||0)>=50000).length;const totalD=nCero+nMedia+nNulo;let donutHtml='';if(totalD>0){const slices=[{label:'0 seg',val:nCero,color:'#0F6E56'},{label:'2 - 48 seg',val:nMedia,color:'#B45309'},{label:'Nulo (50+)',val:nNulo,color:'#A32D2D'}];const R=40,cx=50,cy=50,r=26;let startAngle=-Math.PI/2,paths='';slices.forEach(s=>{if(s.val===0)return;const angle=s.val/totalD*2*Math.PI;const endAngle=startAngle+angle;const x1=cx+R*Math.cos(startAngle),y1=cy+R*Math.sin(startAngle);const x2=cx+R*Math.cos(endAngle),y2=cy+R*Math.sin(endAngle);const xi1=cx+r*Math.cos(startAngle),yi1=cy+r*Math.sin(startAngle);const xi2=cx+r*Math.cos(endAngle),yi2=cy+r*Math.sin(endAngle);const lg=angle>Math.PI?1:0;paths+=`<path d="M${xi1.toFixed(1)},${yi1.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${lg},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${xi2.toFixed(1)},${yi2.toFixed(1)} A${r},${r} 0 ${lg},0 ${xi1.toFixed(1)},${yi1.toFixed(1)} Z" fill="${s.color}"/>`;startAngle=endAngle;});const legendHtml=slices.map(s=>{const pct=totalD?Math.round(s.val/totalD*100):0;return`<div class="donut-legend-item"><div class="donut-legend-dot" style="background:${s.color}"></div><span>${s.label}</span><span class="donut-legend-val">${pct}%</span></div>`;}).join('');donutHtml=`<div class="section-label">Distribuci\u00f3n de penalizaciones</div><div class="chart-card"><div class="donut-wrap"><svg width="100" height="100" viewBox="0 0 100 100">${paths}<text x="50" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A5C" font-family="-apple-system,sans-serif">${totalD}</text><text x="50" y="60" text-anchor="middle" font-size="8" fill="#aaa" font-family="-apple-system,sans-serif">mangas</text></svg><div class="donut-legend">${legendHtml}</div></div></div>`;}const calHtml=`<div class="section-label">Calendario de sesiones</div><div class="chart-card" id="cal-card"></div>`;container.innerHTML=`${kpisHtml}${mangasChartHtml}${dsqChartHtml}${donutHtml}${calHtml}`;renderCalendar();}
+function coachInitials(name){if(!name)return'?';const parts=name.trim().split(' ');if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();return name.trim().substring(0,2).toUpperCase();}
+function openShareModal(){if(!_athleteId){toast('Guarda el palista primero','err');return;}_foundCoach=null;$('share-modal-title').textContent='Compartir: '+_athleteName;$('share-input').value='';$('share-input').className='share-input';$('share-suggestions').innerHTML='';$('share-suggestions').classList.remove('show');$('share-found-info').classList.remove('show');$('share-send-btn').disabled=true;$('share-can-share-chk').checked=true;$('share-modal').classList.add('show');setTimeout(()=>$('share-input').focus(),200);}
+function closeShareModal(){$('share-modal').classList.remove('show');clearTimeout(_searchTimer);}
+function handleModalBgClick(evt){if(evt.target===$('share-modal'))closeShareModal();}
+async function onShareInput(){const val=$('share-input').value.trim();_foundCoach=null;$('share-send-btn').disabled=true;$('share-input').className='share-input';$('share-found-info').classList.remove('show');$('share-suggestions').classList.remove('show');$('share-suggestions').innerHTML='';clearTimeout(_searchTimer);if(val.length<2)return;_searchTimer=setTimeout(async()=>{try{const res=await api('/rest/v1/rpc/search_coach',{method:'POST',body:JSON.stringify({query:val})});const coaches=res||[];if(val.startsWith('@')){if(coaches.length>0){const html=coaches.map(c=>{const ini=coachInitials(c.display_name);return`<button class="suggestion-item" onclick='selectCoach(${JSON.stringify(c)})'><div class="sug-avatar">${ini}</div><div><div class="sug-name">${escHtml(c.display_name||'Sin nombre')}</div><div class="sug-username">@${escHtml(c.username||'')}</div></div></button>`;}).join('');$('share-suggestions').innerHTML=html;$('share-suggestions').classList.add('show');}else{$('share-suggestions').innerHTML='<div style="padding:12px 14px;font-size:13px;color:#aaa">No se encontró ningún entrenador con ese usuario</div>';$('share-suggestions').classList.add('show');$('share-input').className='share-input notfound';}}else{const isValidEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);if(!isValidEmail)return;if(coaches.length>0){selectCoach(coaches[0]);}else{_foundCoach={user_id:null,display_name:val,username:null,found_by:'email_pending',email:val};$('share-input').className='share-input found';$('share-found-avatar').textContent='✉';$('share-found-name').textContent=val;$('share-found-sub').textContent='Se enviará una invitación a este email';$('share-found-info').classList.add('show');$('share-send-btn').disabled=false;}}}catch(e){console.error(e);}},350);}
+function selectCoach(coach){_foundCoach=coach;$('share-suggestions').classList.remove('show');const displayVal=coach.username?('@'+coach.username):coach.display_name;$('share-input').value=displayVal;$('share-input').className='share-input found';$('share-found-avatar').textContent=coachInitials(coach.display_name);$('share-found-name').textContent=coach.display_name||displayVal;$('share-found-sub').textContent=coach.username?('@'+coach.username+' · Entrenador registrado'):'Entrenador registrado';$('share-found-info').classList.add('show');$('share-send-btn').disabled=false;}
+async function sendShareInvite(){if(!_foundCoach||!_athleteId)return;const canShare=$('share-can-share-chk').checked;const btn=$('share-send-btn');btn.disabled=true;btn.textContent='Enviando…';try{const isPending=_foundCoach.found_by==='email_pending';if(!isPending&&_foundCoach.user_id){await api('/rest/v1/athlete_access',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({athlete_id:_athleteId,trainer_id:_foundCoach.user_id,granted_by:_uid,can_share:canShare})});const invBody={athlete_id:_athleteId,invited_by:_uid,can_share:canShare,status:'accepted'};if(_foundCoach.username)invBody.to_username=_foundCoach.username;else invBody.to_email=_foundCoach.display_name;try{await api('/rest/v1/athlete_share_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(invBody)});}catch{}toast('Acceso concedido a '+(_foundCoach.display_name||'el entrenador'),'ok');}else{await api('/rest/v1/athlete_share_invites',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({athlete_id:_athleteId,invited_by:_uid,to_email:_foundCoach.email,can_share:canShare})});toast('Invitación enviada a '+_foundCoach.email,'ok');}closeShareModal();}catch(e){toast('Error: '+e.message,'err');btn.disabled=false;btn.textContent='Enviar invitación';}}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));return j;}
+async function savePalista(){const name=$('inp-name').value.trim();if(!name){toast('El nombre es obligatorio','err');return;}if(_cats.size===0){toast('Selecciona al menos una categor\u00eda','err');return;}const payload={name,surname:$('inp-surname').value.trim()||null,sex:_sex,categories:[..._cats],owner_id:_uid};showLoad(_athleteId?'Guardando cambios...':'Creando palista...');$('btn-save').disabled=true;try{let athleteId=_athleteId;if(!athleteId){const res=await api('/rest/v1/athletes',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify(payload)});athleteId=res[0].id;_athleteId=athleteId;$('btn-share-top').style.display='flex';}else{await api(`/rest/v1/athletes?id=eq.${athleteId}`,{method:'PATCH',body:JSON.stringify(payload)});}hideLoad();toast(_athleteId?'Cambios guardados':'Palista creado','ok');setTimeout(()=>window.location.href='athletes.html',1200);}catch(e){hideLoad();$('btn-save').disabled=false;toast(e.message,'err');}}
+async function confirmDelete(){if(!confirm('\u00bfEliminar este palista? Los tiempos registrados se conservar\u00e1n en las sesiones.'))return;showLoad('Eliminando...');try{await api(`/rest/v1/athletes?id=eq.${_athleteId}`,{method:'DELETE'});hideLoad();toast('Palista eliminado','ok');setTimeout(()=>window.location.href='athletes.html',1000);}catch(e){hideLoad();toast(e.message,'err');}}
+async function loadAthlete(id){showLoad('Cargando...');try{const rows=await api(`/rest/v1/athletes?id=eq.${id}&select=*`);if(!rows||rows.length===0)throw new Error('Palista no encontrado');const a=rows[0];_athleteName=(a.name+(a.surname?' '+a.surname:'')).trim();$('page-title').textContent=_athleteName;$('inp-name').value=a.name||'';$('inp-surname').value=a.surname||'';updateAvatar();if(a.sex){const map={M:0,F:1,O:2};const btns=document.querySelectorAll('.sex-btn');if(btns[map[a.sex]])setSex(btns[map[a.sex]],a.sex);}if(a.categories){a.categories.forEach(cat=>{const btn=document.querySelector(`.cat-btn.${cat.toLowerCase()}`);if(btn)toggleCat(btn,cat);});}$('btn-delete').style.display='block';$('tabs-bar').style.display='flex';$('btn-share-top').style.display='flex';hideLoad();}catch(e){hideLoad();toast(e.message,'err');}}
+function goBack(){window.location.href='athletes.html';}
+window.addEventListener('DOMContentLoaded',async()=>{_tok=localStorage.getItem('slt_tok');_uid=localStorage.getItem('slt_uid');_email=localStorage.getItem('slt_email');if(!_tok){window.location.href='index.html';return;}$('owner-avatar').textContent=_email?_email.slice(0,2).toUpperCase():'YO';$('owner-email').textContent=_email||'';const params=new URLSearchParams(window.location.search);_athleteId=params.get('id')||null;if(_athleteId){$('page-title').textContent='Cargando...';await loadAthlete(_athleteId);}await loadGroups();});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+<script src="active-session-bar.js"></script>
+<script>document.addEventListener("DOMContentLoaded",function(){if(typeof ActiveSessionBar!=="undefined")ActiveSessionBar.init();});</script>
+</body>
+</html>
