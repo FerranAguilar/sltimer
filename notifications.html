@@ -11,52 +11,107 @@
 <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-<title>SLTimer — Notificaciones</title>
+<title>SLTimer &mdash; Notificaciones</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh}
 .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
-.topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
-.topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
-.topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
-.topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12)}
-.topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
-.content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;gap:14px;text-align:center}
-.empty-icon{width:60px;height:60px;background:#F0EBFB;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.empty-icon svg{width:26px;height:26px;fill:none;stroke:#6B21A8;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.empty-title{font-size:16px;font-weight:700;color:#111}
-.empty-sub{font-size:13px;color:#aaa;line-height:1.5;max-width:280px}
+.topbar-back{width:34px;height:34px;border-radius:50%;background:#f4f4f4;border:0.5px solid rgba(0,0,0,0.10);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#333;text-decoration:none;font-size:18px;flex-shrink:0}
+.topbar-back:active{background:#e8e8e8}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px}
+.content{padding:20px 16px 40px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.notif-card{background:#fff;border-radius:14px;border:0.5px solid rgba(0,0,0,0.10);overflow:hidden}
+.notif-item{padding:14px 16px;display:flex;gap:12px;align-items:flex-start;border:none;background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer;transition:background .1s}
+.notif-item:active{background:#f7f7f7}
+.notif-item+.notif-item{border-top:0.5px solid #f2f2f2}
+.notif-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.notif-icon.amber{background:#FEF3C7}
+.notif-icon svg{width:18px;height:18px;fill:none;stroke:#92400E;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:14px;font-weight:600;color:#111;margin-bottom:2px}
+.notif-desc{font-size:12px;color:#888;line-height:1.4}
+.notif-actions{display:flex;gap:8px;margin-top:10px}
+.btn-accept{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:700;border:none;background:#185FA5;color:#fff;cursor:pointer;font-family:inherit}
+.btn-decline{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-family:inherit}
+.btn-accept:active{opacity:.85}
+.btn-decline:active{background:#f0f0f0}
+.empty{text-align:center;padding:60px 20px;color:#bbb;font-size:14px}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.err{background:#A32D2D}
 </style>
 </head>
 <body>
-
 <div class="topbar">
-  <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
-  <a class="topbar-brand" href="menu.html">
-    <img src="icons/icon-192x192.png" alt="SLTimer">
-    <span class="topbar-brand-name">SLTimer</span>
-  </a>
-  <div class="topbar-divider"></div>
+  <a class="topbar-back" href="menu.html">&#8592;</a>
   <span class="topbar-title">Notificaciones</span>
 </div>
-
-<div class="content">
-  <div class="empty">
-    <div class="empty-icon">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </div>
-    <div class="empty-title">Sin notificaciones</div>
-    <div class="empty-sub">No tienes notificaciones pendientes</div>
-  </div>
-</div>
-
+<div class="content" id="content"><div class="spinner"></div></div>
+<div class="toast" id="toast"></div>
 <script>
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null,_uid=null,_email=null;
+const $=id=>document.getElementById(id);
+let _tTimer;
+function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json',...(opts.headers||{})};if(_tok)h['Authorization']='Bearer '+_tok;const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||j?.error_description||JSON.stringify(j));return j;}
+async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_exp')||'0');const ref=localStorage.getItem('slt_ref');if(!ref)return false;if(Date.now()<exp-10*60*1000)return true;try{const d=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:ref})});_tok=d.access_token;localStorage.setItem('slt_tok',d.access_token);localStorage.setItem('slt_ref',d.refresh_token);localStorage.setItem('slt_exp',Date.now()+(d.expires_in||3600)*1000);return true;}catch{localStorage.removeItem('slt_tok');return false;}}
+async function loadInvites(){
+  const content=$('content');
+  try{
+    const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(_email)+'&status=eq.pending&select=id,team_id,invited_by,created_at,teams(name)');
+    if(!invites||invites.length===0){content.innerHTML='<div class="empty">No tienes notificaciones pendientes</div>';return;}
+    content.innerHTML='';
+    const card=document.createElement('div');
+    card.className='notif-card';
+    invites.forEach(inv=>{
+      const teamName=inv.teams?.name||'Grupo desconocido';
+      const item=document.createElement('div');
+      item.className='notif-item';
+      item.innerHTML=
+        '<div class="notif-icon amber"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>'+
+        '<div class="notif-body">'+
+          '<div class="notif-title">Invitación a grupo</div>'+
+          '<div class="notif-desc">Te han invitado a unirte a <strong>'+teamName+'</strong></div>'+
+          '<div class="notif-actions">'+
+            '<button class="btn-accept" onclick="respondInvite(\''+inv.id+'\',\''+inv.team_id+'\',true)">Aceptar</button>'+
+            '<button class="btn-decline" onclick="respondInvite(\''+inv.id+'\',\''+inv.team_id+'\',false)">Rechazar</button>'+
+          '</div>'+
+        '</div>';
+      card.appendChild(item);
+    });
+    content.appendChild(card);
+  }catch(e){
+    content.innerHTML='<div class="empty">Error al cargar notificaciones</div>';
+  }
+}
+async function respondInvite(inviteId,teamId,accept){
+  try{
+    if(accept){
+      await api('/rest/v1/team_members',{method:'POST',body:JSON.stringify({team_id:teamId,user_id:_uid,role:'member'}),headers:{'Prefer':'return=minimal'}});
+    }
+    await api('/rest/v1/team_invites?id=eq.'+inviteId,{method:'PATCH',body:JSON.stringify({status:accept?'accepted':'declined'}),headers:{'Prefer':'return=minimal'}});
+    toast(accept?'Te has unido al grupo':'Invitación rechazada');
+    setTimeout(()=>loadInvites(),800);
+  }catch(e){
+    toast(e.message||'Error',true);
+  }
+}
+window.addEventListener('DOMContentLoaded',async()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok){window.location.href='index.html';return;}
+  const ok=await refreshIfNeeded();
+  if(!ok){window.location.href='index.html';return;}
+  loadInvites();
+});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-const tok=localStorage.getItem('slt_tok');
-if(!tok)window.location.href='index.html';
 </script>
+<script src="active-session-bar.js"></script>
 </body>
 </html>
