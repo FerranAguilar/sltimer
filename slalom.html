@@ -79,6 +79,24 @@
     .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit}
     .btn-primary:active{opacity:.85}
+    /* Botón cargar grupo */
+    .btn-load-group{width:100%;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;border:0.5px solid #B5D4F4;background:#E6F1FB;color:#0C447C;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .12s}
+    .btn-load-group:active{background:#d0e8fa}
+    .btn-load-group svg{width:16px;height:16px;fill:none;stroke:#0C447C;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    /* Sheet grupos */
+    .group-sheet-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:0.5px solid #f2f2f2;transition:background .1s;-webkit-tap-highlight-color:transparent}
+    .group-sheet-item:last-child{border-bottom:none}
+    .group-sheet-item:active{background:#f7f9fc}
+    .group-sheet-icon{width:40px;height:40px;border-radius:10px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .group-sheet-icon svg{width:18px;height:18px;fill:none;stroke:#0C447C;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .group-sheet-icon.member{background:#E1F5EE}
+    .group-sheet-icon.member svg{stroke:#085041}
+    .group-sheet-info{flex:1;min-width:0}
+    .group-sheet-name{font-size:14px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .group-sheet-meta{font-size:12px;color:#aaa;margin-top:2px}
+    .group-sheet-arrow{color:#ccc;font-size:18px}
+    .group-sheet-empty{padding:28px 16px;text-align:center;font-size:14px;color:#aaa;line-height:1.5}
+    /* ses-content */
     .ses-content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
@@ -291,6 +309,17 @@
   </div>
 </div>
 
+<!-- Sheet cargar grupo -->
+<div class="sheet-backdrop" id="group-sheet-backdrop" onclick="closeGroupSheet()"></div>
+<div class="sheet" id="group-sheet" style="max-height:85vh;overflow-y:auto">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Cargar palistas de un grupo</div>
+  <div class="sheet-subtitle" id="group-sheet-subtitle" style="font-size:12px;color:#aaa;margin-bottom:14px">Selecciona un grupo para cargar sus palistas autom&#225;ticamente</div>
+  <div id="group-sheet-list" style="display:flex;flex-direction:column;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;overflow:hidden;background:#fff">
+    <div class="group-sheet-empty">Cargando grupos...</div>
+  </div>
+</div>
+
 <div class="topbar">
   <button class="topbar-back" onclick="handleBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -334,6 +363,11 @@
       </div>
     </div>
     <div class="section-label">Palistas</div>
+    <!-- Botón cargar grupo -->
+    <button class="btn-load-group" id="btn-load-group" onclick="openGroupSheet()">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Cargar palistas de un grupo
+    </button>
     <div id="pal-list" style="display:flex;flex-direction:column;gap:8px"></div>
     <button class="btn-primary" onclick="goToSession()">Iniciar sesi&#243;n &#8594;</button>
   </div>
@@ -436,6 +470,9 @@ let _cfgEditPal=3,_cfgEditTra=3,_cfgEditPalState=[];
 // Chips de palista que han aparecido al menos una vez
 let _chipsSeen = [];
 
+// Grupos del usuario (para sheet de carga)
+let _userGroups = [];
+
 const $=id=>document.getElementById(id);
 function vibrate(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch{}}
 function initials(str){if(!str)return'?';const p=str.trim().split(/[\s._\-]+/);return(p.length>=2?p[0][0]+p[1][0]:str.slice(0,2)).toUpperCase();}
@@ -457,6 +494,93 @@ function showCatSelector(i,show){$('pal-cat-wrap-'+i).style.display=show?'flex':
 function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
 function setCatUI(i,cat){const w=$('pal-cat-wrap-'+i);if(!w)return;w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));}
 
+/* === CARGAR GRUPO === */
+async function openGroupSheet(){
+  $('group-sheet-backdrop').classList.add('open');
+  setTimeout(()=>$('group-sheet').classList.add('open'),10);
+  await loadUserGroups();
+}
+function closeGroupSheet(){
+  $('group-sheet').classList.remove('open');
+  $('group-sheet-backdrop').classList.remove('open');
+}
+async function loadUserGroups(){
+  const list=$('group-sheet-list');
+  list.innerHTML='<div class="group-sheet-empty">Cargando grupos...</div>';
+  try{
+    // Grupos propios
+    const owned=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&select=id,name,description&order=name.asc');
+    // Grupos donde soy miembro (rol member)
+    const memberRows=await api('/rest/v1/team_members?user_id=eq.'+_uid+'&role=eq.member&select=team_id');
+    const memberIds=(memberRows||[]).map(r=>r.team_id);
+    let memberTeams=[];
+    if(memberIds.length){
+      memberTeams=await api('/rest/v1/teams?id=in.('+memberIds.join(',')+')'+'&select=id,name,description&order=name.asc');
+    }
+    _userGroups=[
+      ...(owned||[]).map(t=>({...t,_role:'owner'})),
+      ...(memberTeams||[]).map(t=>({...t,_role:'member'}))
+    ];
+    if(!_userGroups.length){
+      list.innerHTML='<div class="group-sheet-empty">No perteneces a ning&#250;n grupo.<br><span style="font-size:12px">Crea o &#250;nete a un grupo desde la secci&#243;n Grupos.</span></div>';
+      return;
+    }
+    list.innerHTML=_userGroups.map(t=>`
+      <div class="group-sheet-item" onclick="loadGroupAthletes('${t.id}','${t.name.replace(/'/g,"\\'")}')">
+        <div class="group-sheet-icon ${t._role}">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="group-sheet-info">
+          <div class="group-sheet-name">${t.name}</div>
+          <div class="group-sheet-meta">${t._role==='owner'?'Propietario':'Miembro'}${t.description?' &middot; '+t.description.slice(0,36)+(t.description.length>36?'&hellip;':''):''}</div>
+        </div>
+        <span class="group-sheet-arrow">&#8250;</span>
+      </div>
+    `).join('');
+  }catch(e){
+    list.innerHTML='<div class="group-sheet-empty">Error al cargar grupos: '+e.message+'</div>';
+  }
+}
+async function loadGroupAthletes(teamId,teamName){
+  const list=$('group-sheet-list');
+  list.innerHTML='<div class="group-sheet-empty">Cargando palistas de <strong>'+teamName+'</strong>...</div>';
+  try{
+    const athRows=await api('/rest/v1/team_athletes?team_id=eq.'+teamId+'&select=athlete_id');
+    if(!athRows||!athRows.length){
+      list.innerHTML='<div class="group-sheet-empty">El grupo <strong>'+teamName+'</strong> no tiene palistas a&#241;adidos todav&#237;a.</div>';
+      return;
+    }
+    const ids=athRows.map(r=>r.athlete_id).join(',');
+    const athData=await api('/rest/v1/athletes?id=in.('+ids+')&select=id,name,surname,categories&order=name.asc');
+    if(!athData||!athData.length){
+      list.innerHTML='<div class="group-sheet-empty">No se encontraron palistas en este grupo.</div>';
+      return;
+    }
+    // Aplicar palistas al formulario
+    closeGroupSheet();
+    applyGroupAthletes(athData,teamName);
+  }catch(e){
+    list.innerHTML='<div class="group-sheet-empty">Error al cargar palistas: '+e.message+'</div>';
+  }
+}
+function applyGroupAthletes(athletes,teamName){
+  // Actualizar número de palistas al número de atletas del grupo
+  const n=athletes.length;
+  CFG.pal=Math.min(MAX.pal,Math.max(MIN.pal,n));
+  $('val-pal').textContent=CFG.pal;
+  // Construir palState con los atletas del grupo
+  _palState=athletes.slice(0,CFG.pal).map(a=>{
+    const name=(a.name+(a.surname?' '+a.surname:'')).trim();
+    const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
+    return{id:a.id,name,isTemp:false,category:cats.length===1?cats[0]:null};
+  });
+  // Rellenar hasta CFG.pal si hay menos atletas
+  while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
+  buildPalList();
+  toast('Grupo \u201c'+teamName+'\u201d cargado ('+athletes.length+' palistas)','ok');
+}
+/* ==================== */
+
 /* TRANSICION */
 function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesi\u00f3n','err');return;}const lugar=$('cfg-lugar').value.trim();const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));_savedSessionId=null;initSession(_cfg);}
 function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;disconnectRealtime();showScreen('config');}else{window.location.href='app.html';}}
@@ -467,9 +591,7 @@ function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses
 
 /* === CHIPS PALISTA === */
 function buildSelPalChips(cfg){
-  // Renderiza todos los chips desde el inicio (orden original)
-  // Pero solo mostramos el placeholder si ninguno está visto aún
-  _chipsSeen = cfg.palistas.map((_,i)=>i); // todos visibles desde inicio
+  _chipsSeen = cfg.palistas.map((_,i)=>i);
   renderChips(cfg);
 }
 
@@ -494,7 +616,6 @@ function renderChips(cfg){
 function onChipSelect(i){
   if(_timerRunning){toast('Para el cron\u00f3metro primero','err');return;}
   _selPal = i;
-  // Marcar chip activo
   document.querySelectorAll('.pal-chip').forEach(c=>{
     c.classList.toggle('active-chip', parseInt(c.getAttribute('data-pal-idx'))===i);
   });
@@ -662,8 +783,6 @@ function buildTimesTable(cfg){
 function openEditSheet(pi,ti,idx){
   _editPi=pi;_editTi=ti;_editIdx=idx;
   const e=_times[pi][ti][idx];
-  _editCnt2=Math.round((e.penMs||0)/2000*(_penStack.filter?1:1));
-  // Recalcular cnt2/cnt50 desde penMs - asumimos combinaciones simples
   _editCnt2=0;_editCnt50=0;
   let rem=e.penMs||0;
   _editCnt50=Math.floor(rem/50000);rem-=_editCnt50*50000;
@@ -674,7 +793,6 @@ function openEditSheet(pi,ti,idx){
   $('sheet-subtitle').textContent=p.name+' \u00b7 Tramo '+(ti+1)+' \u00b7 Manga '+e.manga;
   $('edit-cnt2').textContent=_editCnt2;
   $('edit-cnt50').textContent=_editCnt50;
-  // Poblar selects
   const selPal=$('sheet-sel-pal');selPal.innerHTML='';
   _cfg.palistas.forEach((p2,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p2.name;selPal.appendChild(o);});
   selPal.value=pi;
@@ -736,7 +854,6 @@ async function saveSession(){
       const ses=await api('/rest/v1/sessions',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,fecha:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,shared_code:_shared?_shared.code:null})});
       sesId=ses[0].id;_savedSessionId=sesId;
     }
-    // Borrar tiempos previos si re-guardamos
     await api('/rest/v1/times?session_id=eq.'+sesId,{method:'DELETE'});
     const rows=[];
     for(let pi=0;pi<_cfg.nPal;pi++)for(let ti=0;ti<_cfg.nTra;ti++)_times[pi][ti].forEach(e=>rows.push({session_id:sesId,pal_idx:pi,tra_idx:ti,raw_ms:e.rawMs,pen_ms:e.penMs,total_ms:e.totalMs,dsq:e.dsq,manga:e.manga,ts:new Date(e.ts).toISOString()}));
@@ -783,19 +900,15 @@ function receiveCoachTime(payload){
 async function init(){
   $('overlay').classList.add('show');
   try{
-    // Auth
     _tok=localStorage.getItem('slt_tok');
     _uid=localStorage.getItem('slt_uid');
     _email=localStorage.getItem('slt_email');
     if(!_tok){window.location.href='app.html';return;}
     $('top-avatar').textContent=initials(_email||'?');
-    // Cargar atletas
     const ats=await api('/rest/v1/athletes?select=id,name,surname,categories&order=name.asc');
     _athletes=ats||[];
-    // Compartida?
     const sharedRaw=sessionStorage.getItem('slalom_shared');
     if(sharedRaw)_shared=JSON.parse(sharedRaw);
-    // Cfg de sesion guardada?
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
     if(cfgRaw){
       _cfg=JSON.parse(cfgRaw);
