@@ -203,6 +203,7 @@ function adjustCfg(key,delta){
 /* ── GRUPOS ─────────────────────────────────────────────────── */
 async function loadTeams(){
   try{
+    // FIX: filtrar explícitamente por user_id del usuario autenticado
     const members=await api('/rest/v1/team_members?select=team_id,teams(id,name)&user_id=eq.'+_uid);
     if(!members||!members.length){_teams=[];return;}
     const results=[];
@@ -297,21 +298,29 @@ function _addPlaceholderRow(container){
   container.appendChild(row);
 }
 
+// FIX: al hacer foco en el placeholder, mostrar todos los palistas (sin necesidad de escribir)
 function onPalPlaceholderFocus(){
   const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
-  if(val)_showPalDropdown(-1,val);
+  _showPalDropdown(-1,val,true);
 }
 
 function onPalPlaceholderInput(){
   const val=($('spal-placeholder-input').value||'').toLowerCase().trim();
-  if(!val){$('spal-dd--1').classList.remove('open');$('spal-dd--1').innerHTML='';return;}
+  if(!val){
+    // Sin texto: mostrar todos
+    _showPalDropdown(-1,'',true);
+    return;
+  }
   _showPalDropdown(-1,val);
 }
 
-function _showPalDropdown(i,q){
+// FIX: showAll=true muestra todos los atletas cuando no hay query
+function _showPalDropdown(i,q,showAll=false){
   const ddId=i===-1?'spal-dd--1':'spal-dd-'+i;
   const dd=$(ddId);if(!dd)return;
-  const m=_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  const m=showAll&&!q
+    ?_athletes.slice(0,20)
+    :_athletes.filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
   if(!m.length){dd.classList.remove('open');dd.innerHTML='';return;}
   dd.innerHTML=m.map(a=>{
     const fn=a.name+(a.surname?' '+a.surname:'');
@@ -339,9 +348,10 @@ function onPalInput(i){
   _showPalDropdown(i,val.toLowerCase().trim());
 }
 
+// FIX: al hacer foco en un palista existente, mostrar todos si no hay texto o filtrar si hay texto
 function openPalDropdown(i){
   const q=($('spal-input-'+i).value||'').toLowerCase().trim();
-  if(q)_showPalDropdown(i,q);
+  _showPalDropdown(i,q,!q);
 }
 
 function delayPalClose(i){
@@ -410,7 +420,7 @@ async function init(){
       _athletes=[];
     }
 
-    // Cargar grupos
+    // Cargar grupos del usuario
     await loadTeams();
 
     // Pre-rellenar si venimos de volver atrás desde la sesión
@@ -425,6 +435,8 @@ async function init(){
       _palState=cfg.palistas.map(p=>({...p,isTemp:false}));
     }else{
       $('cfg-fecha').value=new Date().toISOString().slice(0,10);
+      // FIX: añadir un palista vacío por defecto para que el usuario vea el campo inmediatamente
+      _palState=[{id:null,name:'',category:null,isTemp:false}];
     }
     buildPalList();
   }catch(e){
