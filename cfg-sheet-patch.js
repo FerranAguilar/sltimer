@@ -1,6 +1,8 @@
-
 // ── PATCH: Sheet editar configuración de sesión ──────────────────────────────
 // Estas funciones estaban referenciadas en el HTML pero no implementadas.
+// NOTA: NO se redeclaran variables ya existentes en slalom.html (_athletes,
+//       _cfgEditPal, _cfgEditTra, _cfgEditPalState, MIN, MAX).
+//       Se usan directamente las variables globales del HTML padre.
 
 // ── Estilos extra para el modal de grupos ────────────────────────────────────
 (function injectGroupStyles() {
@@ -89,188 +91,58 @@
   document.head.appendChild(s);
 })();
 
-// ── Estado interno del patch ─────────────────────────────────────────────────
-let _cfgEditPal = 0;
-let _cfgEditTra = 0;
-let _cfgEditPalState = [];
-let _athletes = [];
+// ── Inyectar botón "Cargar grupo" y modal en el cfg-sheet existente ───────────
+// El cfg-sheet ya existe en el HTML estático; solo añadimos el botón y el modal.
+(function injectLoadGroupUI() {
+  // Botón "Cargar grupo" — insertarlo antes de #cfg-edit-pal-list
+  const palListEl = document.getElementById('cfg-edit-pal-list');
+  if (palListEl && !document.getElementById('load-group-btn')) {
+    const btn = document.createElement('button');
+    btn.id = 'load-group-btn';
+    btn.type = 'button';
+    btn.textContent = '👥 Cargar grupo';
+    btn.addEventListener('click', openLoadGroupModal);
+    palListEl.parentNode.insertBefore(btn, palListEl);
+  }
 
-const MIN = { pal: 1, tra: 1 };
-const MAX = { pal: 30, tra: 10 };
-
-// ── cfg-sheet HTML (inyectado dinámicamente) ──────────────────────────────────
-(function buildCfgSheetHTML() {
-  // Estilos del cfg-sheet
-  const s = document.createElement('style');
-  s.textContent = `
-    #cfg-sheet-backdrop {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.35); z-index: 300;
-    }
-    #cfg-sheet-backdrop.open { display: block; }
-    #cfg-sheet {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #fff; border-radius: 20px 20px 0 0;
-      padding: 20px 20px 40px; max-height: 90vh; overflow-y: auto;
-      z-index: 301; display: none; flex-direction: column; gap: 14px;
-      transform: translateY(100%); transition: transform .3s ease;
-    }
-    #cfg-sheet.open { display: flex; transform: translateY(0); }
-    .cfg-handle { width: 36px; height: 4px; border-radius: 2px; background: #ddd; margin: 0 auto -4px; }
-    .cfg-section-title { font-size: 16px; font-weight: 800; color: #111; }
-    .cfg-field-wrap { display: flex; flex-direction: column; gap: 4px; }
-    .cfg-field-label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .06em; }
-    .cfg-field-input {
-      width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px;
-      font-size: 14px; font-weight: 600; background: #fff; color: #111; font-family: inherit;
-    }
-    .cfg-field-input:focus { outline: none; border-color: #185FA5; }
-    .cfg-counter-row { display: flex; align-items: center; gap: 10px; }
-    .cfg-counter-label { font-size: 13px; font-weight: 700; color: #333; flex: 1; }
-    .cfg-counter-val { font-size: 17px; font-weight: 800; color: #185FA5; min-width: 28px; text-align: center; }
-    .cfg-counter-btn {
-      width: 34px; height: 34px; border-radius: 8px; border: 1px solid #ddd;
-      background: #fff; font-size: 20px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; color: #444; line-height: 1;
-    }
-    .cfg-counter-btn:active { background: #f0f0f0; }
-    .cfg-divider { height: .5px; background: #eee; }
-    .pal-row { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: .5px solid #f0f0f0; }
-    .pal-row:last-child { border-bottom: none; }
-    .pal-row-top { display: flex; align-items: center; gap: 8px; }
-    .pal-num { font-size: 13px; font-weight: 700; color: #999; min-width: 20px; }
-    .pal-search-wrap { flex: 1; position: relative; }
-    .pal-input {
-      width: 100%; padding: 9px 30px 9px 10px; border: 1px solid #ddd; border-radius: 9px;
-      font-size: 14px; font-family: inherit; color: #111; background: #fff;
-    }
-    .pal-input.matched { border-color: #0F6E56; background: #f0fbf7; }
-    .pal-input:focus { outline: none; border-color: #185FA5; }
-    .pal-clear {
-      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; color: #999; font-size: 15px; cursor: pointer;
-      display: none; padding: 2px;
-    }
-    .pal-clear.show { display: block; }
-    .pal-dropdown {
-      position: absolute; top: 100%; left: 0; right: 0; background: #fff;
-      border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.12);
-      z-index: 400; display: none; max-height: 200px; overflow-y: auto;
-    }
-    .pal-dropdown.open { display: block; }
-    .pal-option {
-      padding: 10px 12px; cursor: pointer; display: flex; align-items: center;
-      justify-content: space-between; gap: 8px;
-    }
-    .pal-option:hover { background: #f5f5f5; }
-    .pal-option-name { font-size: 14px; font-weight: 600; color: #111; }
-    .pal-option-cats { display: flex; gap: 4px; }
-    .cat-badge { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 100px; }
-    .cat-badge.K1 { background: #E6F1FB; color: #0C447C; }
-    .cat-badge.C1 { background: #E1F5EE; color: #085041; }
-    .cat-label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .06em; }
-    .cat-selector { display: flex; gap: 8px; }
-    .cat-btn {
-      flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #ddd;
-      background: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
-    }
-    .cat-btn.K1.active { border-color: #0C447C; background: #E6F1FB; color: #0C447C; }
-    .cat-btn.C1.active { border-color: #085041; background: #E1F5EE; color: #085041; }
-    .cfg-save-btn {
-      width: 100%; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700;
-      cursor: pointer; border: none; background: #185FA5; color: #fff; font-family: inherit;
-    }
-    .cfg-save-btn:active { opacity: .85; }
-  `;
-  document.head.appendChild(s);
-
-  // HTML del sheet
-  const backdrop = document.createElement('div');
-  backdrop.id = 'cfg-sheet-backdrop';
-  backdrop.addEventListener('click', closeCfgSheet);
-  document.body.appendChild(backdrop);
-
-  const sheet = document.createElement('div');
-  sheet.id = 'cfg-sheet';
-  sheet.innerHTML = `
-    <div class="cfg-handle"></div>
-    <div class="cfg-section-title">⚙️ Editar sesión</div>
-
-    <div class="cfg-field-wrap">
-      <div class="cfg-field-label">Nombre</div>
-      <input class="cfg-field-input" id="cfg-edit-name" type="text" placeholder="Nombre de la sesión">
-    </div>
-    <div class="cfg-field-wrap">
-      <div class="cfg-field-label">Lugar</div>
-      <input class="cfg-field-input" id="cfg-edit-lugar" type="text" placeholder="Ubicación">
-    </div>
-
-    <div class="cfg-divider"></div>
-
-    <div class="cfg-counter-row">
-      <span class="cfg-counter-label">Palistas</span>
-      <button class="cfg-counter-btn" onclick="adjCfgEdit('pal',-1)">−</button>
-      <span class="cfg-counter-val" id="cfg-edit-val-pal">0</span>
-      <button class="cfg-counter-btn" onclick="adjCfgEdit('pal',1)">+</button>
-    </div>
-    <div class="cfg-counter-row">
-      <span class="cfg-counter-label">Tramos</span>
-      <button class="cfg-counter-btn" onclick="adjCfgEdit('tra',-1)">−</button>
-      <span class="cfg-counter-val" id="cfg-edit-val-tra">0</span>
-      <button class="cfg-counter-btn" onclick="adjCfgEdit('tra',1)">+</button>
-    </div>
-
-    <div class="cfg-divider"></div>
-    <div class="cfg-section-title" style="font-size:14px">Palistas</div>
-
-    <button id="load-group-btn" onclick="openLoadGroupModal()">👥 Cargar grupo</button>
-
-    <div id="cfg-edit-pal-list"></div>
-
-    <button class="cfg-save-btn" onclick="applyCfgEdit()">💾 Guardar cambios</button>
-  `;
-  document.body.appendChild(sheet);
-
-  // Modal de grupos
-  const overlay = document.createElement('div');
-  overlay.id = 'load-group-overlay';
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-  overlay.innerHTML = `
-    <div id="load-group-modal">
-      <h2>👥 Cargar grupo</h2>
-      <p class="lg-subtitle">Selecciona el modo y el grupo a cargar.</p>
-      <div class="lg-mode-row">
-        <button class="lg-mode-btn active" id="lg-mode-replace" onclick="setLgMode('replace')">🔄 Reemplazar lista</button>
-        <button class="lg-mode-btn" id="lg-mode-append" onclick="setLgMode('append')">➕ Añadir a lista</button>
+  // Modal de grupos (appended al body)
+  if (!document.getElementById('load-group-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.id = 'load-group-overlay';
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+    overlay.innerHTML = `
+      <div id="load-group-modal">
+        <h2>👥 Cargar grupo</h2>
+        <p class="lg-subtitle">Selecciona el modo y el grupo a cargar.</p>
+        <div class="lg-mode-row">
+          <button class="lg-mode-btn active" id="lg-mode-replace" onclick="setLgMode('replace')">🔄 Reemplazar lista</button>
+          <button class="lg-mode-btn" id="lg-mode-append" onclick="setLgMode('append')">➕ Añadir a lista</button>
+        </div>
+        <div id="load-group-body"><div class="lg-status">Cargando grupos…</div></div>
+        <button class="lg-close-btn" onclick="document.getElementById('load-group-overlay').classList.remove('open')">Cancelar</button>
       </div>
-      <div id="load-group-body"><div class="lg-status">Cargando grupos…</div></div>
-      <button class="lg-close-btn" onclick="document.getElementById('load-group-overlay').classList.remove('open')">Cancelar</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
+    `;
+    document.body.appendChild(overlay);
+  }
 })();
 
 // ── Modo reemplazar / añadir ──────────────────────────────────────────────────
-let _lgMode = 'replace'; // 'replace' | 'append'
+var _lgMode = 'replace'; // 'replace' | 'append'
 function setLgMode(mode) {
   _lgMode = mode;
   document.getElementById('lg-mode-replace').classList.toggle('active', mode === 'replace');
   document.getElementById('lg-mode-append').classList.toggle('active', mode === 'append');
 }
 
-// ── Credenciales Supabase (mismas que slalom-session.html) ───────────────────
-const _CFG_SUPA_URL = 'https://xorblwcvlkbhpzcegkoh.supabase.co';
-const _CFG_SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvcmhsd2N2bGtiaHB6Y2Vna29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NzU4NzgsImV4cCI6MjA2MTI1MTg3OH0.wbLkIqPr6X_aQv_7hjCCgcnFN4GEaxvvJT2F8mBwgPA';
-
+// ── Helper API (usa las credenciales ya definidas en slalom.html) ─────────────
 async function _cfgApi(path) {
-  const tok = typeof _tok !== 'undefined' ? _tok : null;
   const h = {
-    apikey: _CFG_SUPA_KEY,
-    Authorization: 'Bearer ' + (tok || _CFG_SUPA_KEY)
+    'apikey': KEY,
+    'Authorization': 'Bearer ' + (_tok || KEY)
   };
-  const r = await fetch(_CFG_SUPA_URL + path, { headers: h });
+  const r = await fetch(SB + path, { headers: h });
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
@@ -283,20 +155,17 @@ async function openLoadGroupModal() {
   body.innerHTML = '<div class="lg-status">Cargando grupos…</div>';
   setLgMode('replace');
 
-  const uid = typeof _uid !== 'undefined' ? _uid : null;
-  if (!uid) {
+  if (!_uid) {
     body.innerHTML = '<div class="lg-status">No se pudo identificar al usuario.</div>';
     return;
   }
 
   try {
-    // Obtener equipos del entrenador (owner) y también donde es miembro
     const [ownedTeams, memberTeams] = await Promise.all([
-      _cfgApi(`/rest/v1/teams?coach_id=eq.${uid}&select=id,name`),
-      _cfgApi(`/rest/v1/team_members?user_id=eq.${uid}&select=team_id,teams(id,name)`)
+      _cfgApi(`/rest/v1/teams?coach_id=eq.${_uid}&select=id,name`),
+      _cfgApi(`/rest/v1/team_members?user_id=eq.${_uid}&select=team_id,teams(id,name)`)
     ]);
 
-    // Unir y deduplicar
     const teamMap = {};
     ownedTeams.forEach(t => { teamMap[t.id] = t; });
     memberTeams.forEach(m => {
@@ -309,7 +178,6 @@ async function openLoadGroupModal() {
       return;
     }
 
-    // Contar atletas por equipo
     const withCounts = await Promise.all(teams.map(async t => {
       try {
         const rows = await _cfgApi(`/rest/v1/team_athletes?team_id=eq.${t.id}&select=athlete_id`);
@@ -333,7 +201,7 @@ async function openLoadGroupModal() {
 }
 
 // ── Seleccionar equipo → cargar palistas ──────────────────────────────────────
-window._lgSelectTeam = async function (teamId, teamName) {
+window._lgSelectTeam = async function(teamId, teamName) {
   document.getElementById('load-group-overlay').classList.remove('open');
 
   try {
@@ -352,17 +220,15 @@ window._lgSelectTeam = async function (teamId, teamName) {
       });
 
     if (!incoming.length) {
-      if (typeof toast === 'function') toast('El grupo no tiene palistas', 'err');
+      toast('El grupo no tiene palistas', 'err');
       return;
     }
 
     if (_lgMode === 'replace') {
-      // Reemplazar toda la lista de palistas
       _cfgEditPalState = incoming;
       _cfgEditPal = incoming.length;
       document.getElementById('cfg-edit-val-pal').textContent = _cfgEditPal;
     } else {
-      // Añadir a la lista existente (evitar duplicados por nombre)
       const existingNames = new Set(_cfgEditPalState.map(p => p.name.toLowerCase()));
       const toAdd = incoming.filter(p => !existingNames.has(p.name.toLowerCase()));
       _cfgEditPalState = [..._cfgEditPalState, ...toAdd];
@@ -375,10 +241,10 @@ window._lgSelectTeam = async function (teamId, teamName) {
     const msg = _lgMode === 'replace'
       ? `Grupo "${teamName}" cargado (${incoming.length} palistas)`
       : `${incoming.length} palistas añadidos de "${teamName}"`;
-    if (typeof toast === 'function') toast(msg, 'ok');
+    toast(msg, 'ok');
 
   } catch (e) {
-    if (typeof toast === 'function') toast('Error cargando grupo', 'err');
+    toast('Error cargando grupo', 'err');
     console.error(e);
   }
 };
@@ -398,13 +264,6 @@ function openCfgSheet() {
   document.getElementById('cfg-edit-lugar').value = _cfg.lugar || '';
   document.getElementById('cfg-edit-val-pal').textContent = _cfgEditPal;
   document.getElementById('cfg-edit-val-tra').textContent = _cfgEditTra;
-
-  // Cargar atletas para el autocomplete si no están cargados aún
-  if (!_athletes.length && typeof _uid !== 'undefined' && _uid) {
-    _cfgApi(`/rest/v1/athletes?coach_id=eq.${_uid}&select=id,name,surname,categories`)
-      .then(rows => { _athletes = rows || []; })
-      .catch(() => {});
-  }
 
   buildCfgEditPalList();
   document.getElementById('cfg-sheet-backdrop').classList.add('open');
@@ -590,10 +449,9 @@ function applyCfgEdit() {
   if (_cfg.fecha) parts.push(new Date(_cfg.fecha + 'T12:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }));
   document.getElementById('ses-meta').textContent = parts.join(' · ');
 
-  buildSelPal(_cfg);
+  // Reconstruir chips de palista y selector de tramo
+  buildSelPalChips(_cfg);
   buildSelTra(_cfg);
-  document.getElementById('sel-pal').value = _selPal;
-  document.getElementById('sel-tra').value = _selTramo;
   syncMangaVal();
   updateChronoCtx();
   buildTimesTable(_cfg);
