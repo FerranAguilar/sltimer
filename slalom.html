@@ -79,11 +79,9 @@
     .cat-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em}
     .btn-primary{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#185FA5;color:#fff;font-family:inherit}
     .btn-primary:active{opacity:.85}
-    /* Botón cargar grupo */
     .btn-load-group{width:100%;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;border:0.5px solid #B5D4F4;background:#E6F1FB;color:#0C447C;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .12s}
     .btn-load-group:active{background:#d0e8fa}
     .btn-load-group svg{width:16px;height:16px;fill:none;stroke:#0C447C;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-    /* Sheet grupos */
     .group-sheet-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:0.5px solid #f2f2f2;transition:background .1s;-webkit-tap-highlight-color:transparent}
     .group-sheet-item:last-child{border-bottom:none}
     .group-sheet-item:active{background:#f7f9fc}
@@ -96,7 +94,6 @@
     .group-sheet-meta{font-size:12px;color:#aaa;margin-top:2px}
     .group-sheet-arrow{color:#ccc;font-size:18px}
     .group-sheet-empty{padding:28px 16px;text-align:center;font-size:14px;color:#aaa;line-height:1.5}
-    /* ses-content */
     .ses-content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
     .ses-title{font-size:17px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ses-meta{font-size:12px;color:#aaa;margin-top:2px}
@@ -106,8 +103,6 @@
     .sel-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px}
     .sel-select{width:100%;padding:9px 28px 9px 10px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer;transition:border-color .15s;line-height:1.3}
     .sel-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
-
-    /* === SELECTOR PALISTA CON CHIPS === */
     .pal-picker-wrap{position:relative;display:flex;flex-direction:column;gap:6px}
     .pal-chips-row{display:flex;flex-wrap:wrap;gap:5px;min-height:32px;align-items:center}
     .pal-chip{
@@ -122,8 +117,6 @@
     @keyframes chip-in{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
     .pal-chip-num{opacity:.65;font-size:10px}
     .pal-picker-placeholder{font-size:13px;color:#bbb;font-style:italic;padding:4px 2px;pointer-events:none;user-select:none;}
-    /* =================================== */
-
     .manga-row{display:flex;align-items:center;gap:6px}
     .manga-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:8px 0;line-height:1}
     .manga-btn{width:36px;height:36px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
@@ -205,7 +198,6 @@
     .sheet-btn-save:active{opacity:.85}
     .sheet-btn-del{width:48px;height:48px;border-radius:12px;border:0.5px solid #FECACA;background:#FEF2F2;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
     .sheet-btn-del:active{background:#FEE2E2}
-    /* Sheet editar configuracion */
     .cfg-sheet-input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none;margin-bottom:2px}
     .cfg-sheet-input:focus{outline:none;border-color:#185FA5}
     .cfg-counter-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:2px}
@@ -355,7 +347,6 @@
       </div>
     </div>
     <div class="section-label">Palistas</div>
-    <!-- Botón cargar grupo -->
     <button class="btn-load-group" id="btn-load-group" onclick="openGroupSheet()">
       <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Cargar palistas de un grupo
@@ -373,7 +364,6 @@
     </div>
     <div class="sel-card">
       <div class="sel-grid">
-        <!-- Palista: chips dinámicos (ocupa columna doble) -->
         <div class="sel-col" style="grid-column:1/-1">
           <div class="sel-label">Palista</div>
           <div class="pal-picker-wrap">
@@ -382,12 +372,10 @@
             </div>
           </div>
         </div>
-        <!-- Tramo -->
         <div class="sel-col">
           <div class="sel-label">Tramo</div>
           <select class="sel-select" id="sel-tra" onchange="onSelTra()"></select>
         </div>
-        <!-- Manga -->
         <div class="sel-col">
           <div class="sel-label">Manga</div>
           <div class="manga-row">
@@ -449,20 +437,14 @@ let _editPi=null,_editTi=null,_editIdx=null;
 let _editCnt2=0,_editCnt50=0,_editDsq=false;
 let _savedSessionId=null;
 
-// Sesion compartida
 let _shared=null;
 let _realtimeWs=null;
 let _coachName=null;
 const COACH_COLORS=['#1D4ED8','#0F6E56','#7C3AED','#B45309','#9F1239','#0369A1','#047857','#6D28D9'];
 let _coachColorMap={};
 
-// Estado edición cfg en sesión
 let _cfgEditPal=1,_cfgEditTra=3,_cfgEditPalState=[];
-
-// Chips de palista que han aparecido al menos una vez
 let _chipsSeen = [];
-
-// Grupos del usuario (para sheet de carga)
 let _userGroups = [];
 
 const $=id=>document.getElementById(id);
@@ -473,7 +455,6 @@ let _toastT;
 function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(()=>el.classList.remove('show'),2500);}
 async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};const r=await fetch(SB+path,{...opts,headers:h});const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}if(!r.ok)throw new Error(j?.message||JSON.stringify(j));return j;}
 
-/* CONFIG */
 function adjust(key,delta){CFG[key]=Math.min(MAX[key],Math.max(MIN[key],CFG[key]+delta));$('val-'+key).textContent=CFG[key];if(key==='pal')buildPalList();}
 function buildPalList(){const n=CFG.pal;while(_palState.length<n)_palState.push({id:null,name:'',category:null,isTemp:false});_palState=_palState.slice(0,n);const c=$('pal-list');c.innerHTML='';for(let i=0;i<n;i++)renderPalRow(i,c);}
 function renderPalRow(i,container){const s=_palState[i];const row=document.createElement('div');row.className='pal-row';row.id='pal-row-'+i;row.innerHTML=`<div class="pal-row-top"><div class="pal-num">${i+1}</div><div class="pal-search-wrap"><input class="pal-input${s.name&&!s.isTemp?' matched':''}" id="pal-input-${i}" type="text" placeholder="Buscar palista\u2026" value="${s.name||''}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="onPalInput(${i})" onfocus="openDropdown(${i})" onblur="delayClose(${i})"><button class="pal-clear${s.name?' show':''}" id="pal-clear-${i}" onclick="clearPal(${i})">\u2715</button><div class="pal-dropdown" id="pal-dd-${i}"></div></div></div><div id="pal-cat-wrap-${i}" style="display:${s.name?'flex':'none'};flex-direction:column;gap:4px"><div class="cat-label">Categor\u00eda</div><div class="cat-selector"><button class="cat-btn K1${s.category==='K1'?' active':''}" onclick="setCat(${i},'K1')">K1</button><button class="cat-btn C1${s.category==='C1'?' active':''}" onclick="setCat(${i},'C1')">C1</button></div></div>`;container.appendChild(row);}
@@ -486,7 +467,6 @@ function showCatSelector(i,show){$('pal-cat-wrap-'+i).style.display=show?'flex':
 function setCat(i,cat){_palState[i].category=cat;setCatUI(i,cat);}
 function setCatUI(i,cat){const w=$('pal-cat-wrap-'+i);if(!w)return;w.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(cat)));}
 
-/* === CARGAR GRUPO === */
 async function openGroupSheet(){
   $('group-sheet-backdrop').classList.add('open');
   setTimeout(()=>$('group-sheet').classList.add('open'),10);
@@ -500,9 +480,7 @@ async function loadUserGroups(){
   const list=$('group-sheet-list');
   list.innerHTML='<div class="group-sheet-empty">Cargando grupos...</div>';
   try{
-    // Grupos propios
     const owned=await api('/rest/v1/teams?owner_id=eq.'+_uid+'&select=id,name,description&order=name.asc');
-    // Grupos donde soy miembro (rol member)
     const memberRows=await api('/rest/v1/team_members?user_id=eq.'+_uid+'&role=eq.member&select=team_id');
     const memberIds=(memberRows||[]).map(r=>r.team_id);
     let memberTeams=[];
@@ -548,7 +526,6 @@ async function loadGroupAthletes(teamId,teamName){
       list.innerHTML='<div class="group-sheet-empty">No se encontraron palistas en este grupo.</div>';
       return;
     }
-    // Aplicar palistas al formulario
     closeGroupSheet();
     applyGroupAthletes(athData,teamName);
   }catch(e){
@@ -556,41 +533,31 @@ async function loadGroupAthletes(teamId,teamName){
   }
 }
 function applyGroupAthletes(athletes,teamName){
-  // Actualizar número de palistas al número de atletas del grupo
   const n=athletes.length;
   CFG.pal=Math.min(MAX.pal,Math.max(MIN.pal,n));
   $('val-pal').textContent=CFG.pal;
-  // Construir palState con los atletas del grupo
   _palState=athletes.slice(0,CFG.pal).map(a=>{
     const name=(a.name+(a.surname?' '+a.surname:'')).trim();
     const cats=(a.categories||[]).filter(c=>c==='K1'||c==='C1');
     return{id:a.id,name,isTemp:false,category:cats.length===1?cats[0]:null};
   });
-  // Rellenar hasta CFG.pal si hay menos atletas
   while(_palState.length<CFG.pal)_palState.push({id:null,name:'',category:null,isTemp:false});
   buildPalList();
   toast('Grupo \u201c'+teamName+'\u201d cargado ('+athletes.length+' palistas)','ok');
 }
-/* ==================== */
 
-/* TRANSICION */
 function goToSession(){const name=$('cfg-name').value.trim();if(!name){toast('Introduce un nombre para la sesi\u00f3n','err');return;}const lugar=$('cfg-lugar').value.trim();const fecha=$('cfg-fecha').value||new Date().toISOString().slice(0,10);const palistas=_palState.map((s,i)=>({name:s.name.trim()||'Palista '+(i+1),category:s.category,id:s.id||null,isTemp:s.isTemp}));_cfg={name,lugar,fecha,nPal:CFG.pal,nTra:CFG.tra,palistas};sessionStorage.setItem('slalom_cfg',JSON.stringify(_cfg));_savedSessionId=null;initSession(_cfg);}
 function handleBack(){if($('screen-session').classList.contains('active')){if(_timerRunning){toast('Para el cron\u00f3metro antes de salir','err');return;}if(!confirm('\u00bfVolver a la configuraci\u00f3n? Se perder\u00e1n los tiempos no guardados.'))return;disconnectRealtime();showScreen('config');}else{window.location.href='app.html';}}
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('screen-'+name).classList.add('active');const isSes=name==='session';$('topbar-div').style.display=isSes?'block':'none';$('topbar-title').style.display=isSes?'block':'none';$('btn-edit-cfg').classList.toggle('show',isSes);window.scrollTo(0,0);}
 
-/* SESION */
 function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();_chipsSeen=[];buildSelPalChips(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
 
-/* === RESTAURAR SESIÓN DESDE HISTORIAL === */
 function restoreSession(resume){
   const cfg=resume.cfg;
   _cfg=cfg;
   _savedSessionId=resume.sessionId||null;
-
-  // Reconstruir _times desde session_entries agrupados por pal_idx y tra_idx
   _times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));
   _mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
-
   const entries=resume.times||[];
   entries.forEach(e=>{
     const pi=e.pal_idx,ti=e.tra_idx;
@@ -600,12 +567,9 @@ function restoreSession(resume){
       const totalMs=e.dsq?null:(e.total_ms!=null?e.total_ms:rawMs+penMs);
       const manga=e.manga||1;
       _times[pi][ti].push({rawMs,penMs,totalMs,dsq:!!e.dsq,manga,ts:e.ts?new Date(e.ts).getTime():Date.now()});
-      // Actualizar manga siguiente al mayor registrado + 1
       if(manga>=_mangas[pi][ti])_mangas[pi][ti]=manga+1;
     }
   });
-
-  // También restaurar desde estructura mangas si viene del resume
   if(resume.mangas){
     resume.mangas.forEach((palMangas,pi)=>{
       if(!Array.isArray(palMangas))return;
@@ -614,14 +578,12 @@ function restoreSession(resume){
       });
     });
   }
-
   $('topbar-title').textContent=cfg.name;
   $('ses-title').textContent=cfg.name;
   const parts=[];
   if(cfg.lugar)parts.push(cfg.lugar);
   if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
   $('ses-meta').textContent=parts.join(' \u00b7 ');
-
   _selPal=0;_selTramo=0;
   clearPenState();
   _chipsSeen=[];
@@ -631,22 +593,17 @@ function restoreSession(resume){
   updateChronoCtx();
   buildTimesTable(cfg);
   resetTimer();
-
   const btn=$('btn-save-session');
   btn.textContent='\ud83d\udcbe Actualizar sesi\u00f3n guardada';
   btn.disabled=false;
-
   showScreen('session');
   toast('Sesi\u00f3n cargada \u2713','ok');
 }
-/* ======================================= */
 
-/* === CHIPS PALISTA === */
 function buildSelPalChips(cfg){
   _chipsSeen = cfg.palistas.map((_,i)=>i);
   renderChips(cfg);
 }
-
 function renderChips(cfg){
   const row = $('pal-chips-row');
   const placeholder = $('pal-chips-placeholder');
@@ -664,7 +621,6 @@ function renderChips(cfg){
     row.appendChild(chip);
   });
 }
-
 function onChipSelect(i){
   if(_timerRunning){toast('Para el cron\u00f3metro primero','err');return;}
   _selPal = i;
@@ -676,9 +632,7 @@ function onChipSelect(i){
   resetTimer();
   clearPenState();
 }
-/* ==================== */
 
-/* SELECTORES */
 function buildSelTra(cfg){const sel=$('sel-tra');sel.innerHTML='';for(let i=0;i<cfg.nTra;i++){const opt=document.createElement('option');opt.value=i;opt.textContent='Tramo '+(i+1);sel.appendChild(opt);}sel.value=0;}
 function onSelTra(){if(_timerRunning){toast('Para el cron\u00f3metro primero','err');$('sel-tra').value=_selTramo;return;}_selTramo=parseInt($('sel-tra').value);syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
 function syncMangaVal(){$('manga-val').textContent=_mangas[_selPal][_selTramo];}
@@ -687,7 +641,6 @@ const cur=_mangas[_selPal][_selTramo];
 _mangas[_selPal][_selTramo]=Math.max(1,cur+d);
 syncMangaVal();updateChronoCtx();resetTimer();clearPenState();}
 
-/* CRONOMETRO */
 function toggleTimer(){
   if(!_timerRunning){
     _timerStart=Date.now()-_timerElapsed;
@@ -732,7 +685,6 @@ function updateChronoCtx(){
   $('chrono-manga').textContent='Manga '+manga;
 }
 
-/* PENALIZACIONES */
 function clearPenState(){
   _penMs=0;_penStack=[];_isDsq=false;
   $('btn-dsq').classList.remove('active-dsq');
@@ -779,7 +731,6 @@ function updatePenUI(){
   updateChronoDisplay();
 }
 
-/* GUARDAR TIEMPO */
 function saveTime(){
   const rawMs=_timerElapsed;
   const pi=_selPal,ti=_selTramo;
@@ -793,7 +744,6 @@ function saveTime(){
   toast(_isDsq?'DSQ registrado':'Tiempo guardado \u2713','ok');
 }
 
-/* TABLA DE TIEMPOS */
 function buildTimesTable(cfg){
   const head=$('times-head');
   const body=$('times-body');
@@ -831,7 +781,6 @@ function buildTimesTable(cfg){
   }
 }
 
-/* EDIT SHEET */
 function openEditSheet(pi,ti,idx){
   _editPi=pi;_editTi=ti;_editIdx=idx;
   const e=_times[pi][ti][idx];
@@ -903,7 +852,8 @@ async function saveSession(){
   try{
     let sesId=_savedSessionId;
     if(!sesId){
-      const ses=await api('/rest/v1/sessions',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,fecha:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,shared_code:_shared?_shared.code:null})});
+      // CORREGIDO: campo 'data' (tipo date) en lugar de 'fecha'
+      const ses=await api('/rest/v1/sessions',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,shared_code:_shared?_shared.code:null})});
       sesId=ses[0].id;_savedSessionId=sesId;
     }
     await api('/rest/v1/times?session_id=eq.'+sesId,{method:'DELETE'});
@@ -919,7 +869,6 @@ async function saveSession(){
   }
 }
 
-/* REALTIME / COMPARTIDA */
 function connectRealtime(){
   if(!_shared)return;
   disconnectRealtime();
@@ -948,7 +897,6 @@ function receiveCoachTime(payload){
   toast('Tiempo recibido de entrenador','ok');
 }
 
-/* INIT */
 async function init(){
   $('overlay').classList.add('show');
   try{
@@ -962,7 +910,6 @@ async function init(){
     const sharedRaw=sessionStorage.getItem('slalom_shared');
     if(sharedRaw)_shared=JSON.parse(sharedRaw);
 
-    // --- RESTAURAR SESIÓN DESDE HISTORIAL ---
     const resumeRaw=sessionStorage.getItem('slalom_resume');
     if(resumeRaw){
       sessionStorage.removeItem('slalom_resume');
@@ -970,7 +917,6 @@ async function init(){
       restoreSession(resume);
       return;
     }
-    // ----------------------------------------
 
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
     if(cfgRaw){
@@ -989,8 +935,6 @@ async function init(){
   }catch(e){console.error(e);toast('Error de inicializaci\u00f3n','err');}
   finally{$('overlay').classList.remove('show');}
 }
-
-/* CFG SHEET (funciones inyectadas via cfg-sheet-patch.js) */
 
 window.addEventListener('DOMContentLoaded',init);
 </script>
