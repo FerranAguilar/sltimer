@@ -21,14 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function openCfgSheet() {
   if (!_cfg) return;
 
-  // Cargar valores actuales
   document.getElementById('cfg-edit-name').value = _cfg.name || '';
   document.getElementById('cfg-edit-lugar').value = _cfg.lugar || '';
+
   _cfgTmpTra = _cfg.nTra;
   document.getElementById('cfg-edit-val-tra').textContent = _cfgTmpTra;
 
-  // Clonar palistas para editar sin mutar _cfg
   _cfgTmpPals = _cfg.palistas.map(p => ({ ...p }));
+  syncCfgPalCounter();
   renderCfgPalList();
 
   document.getElementById('cfg-sheet-backdrop').classList.add('open');
@@ -41,11 +41,28 @@ function closeCfgSheet() {
   document.getElementById('cfg-sheet-backdrop').classList.remove('open');
 }
 
-/* ── AJUSTAR TRAMOS ── */
+/* ── CONTADOR DE PALISTAS (solo muestra el nº actual) ── */
+function syncCfgPalCounter() {
+  const el = document.getElementById('cfg-edit-val-pal');
+  if (el) el.textContent = _cfgTmpPals.length;
+}
+
+/* ── AJUSTAR CONTADORES ── */
 function adjCfgEdit(key, delta) {
   if (key === 'tra') {
     _cfgTmpTra = Math.min(12, Math.max(1, _cfgTmpTra + delta));
     document.getElementById('cfg-edit-val-tra').textContent = _cfgTmpTra;
+  }
+  if (key === 'pal' && delta > 0) {
+    if (_cfgTmpPals.length >= 20) return;
+    _cfgTmpPals.push({ id: null, name: '', category: null, isTemp: false });
+    syncCfgPalCounter();
+    renderCfgPalList();
+    // Scroll al final de la lista para ver el nuevo palista
+    setTimeout(() => {
+      const list = document.getElementById('cfg-edit-pal-list');
+      if (list) list.scrollTop = list.scrollHeight;
+    }, 50);
   }
 }
 
@@ -172,6 +189,7 @@ function applyCfgEdit() {
   if (!newName) { toast('Introduce un nombre para la sesi\u00f3n', 'err'); return; }
 
   const newNTra = _cfgTmpTra;
+  const newNPal = _cfgTmpPals.length;
   const newPalistas = _cfgTmpPals.map((p, i) => ({
     name: (p.name || '').trim() || ('Palista ' + (i + 1)),
     category: p.category || null,
@@ -179,12 +197,10 @@ function applyCfgEdit() {
     isTemp: p.isTemp
   }));
 
-  /* Ajustar la matriz _times y _mangas si cambia nTra */
+  /* Ajustar _times y _mangas si cambia nTra */
   if (newNTra !== _cfg.nTra) {
     for (let pi = 0; pi < _cfg.nPal; pi++) {
-      // Añadir columnas si hay más tramos
       while (_times[pi].length < newNTra) { _times[pi].push([]); _mangas[pi].push(1); }
-      // Recortar si hay menos (preguntar si hay datos)
       if (newNTra < _cfg.nTra) {
         _times[pi] = _times[pi].slice(0, newNTra);
         _mangas[pi] = _mangas[pi].slice(0, newNTra);
@@ -192,10 +208,19 @@ function applyCfgEdit() {
     }
   }
 
+  /* Añadir filas nuevas en _times y _mangas para palistas nuevos */
+  if (newNPal > _cfg.nPal) {
+    for (let pi = _cfg.nPal; pi < newNPal; pi++) {
+      _times.push(Array.from({ length: newNTra }, () => []));
+      _mangas.push(Array(newNTra).fill(1));
+    }
+  }
+
   /* Actualizar _cfg */
   _cfg.name = newName;
   _cfg.lugar = newLugar;
   _cfg.nTra = newNTra;
+  _cfg.nPal = newNPal;
   _cfg.palistas = newPalistas;
 
   /* Refrescar UI */
@@ -206,17 +231,11 @@ function applyCfgEdit() {
   if (_cfg.fecha) parts.push(new Date(_cfg.fecha + 'T12:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }));
   document.getElementById('ses-meta').textContent = parts.join(' \u00b7 ');
 
-  // Reconstruir chips de palistas
   _chipsSeen = newPalistas.map((_, i) => i);
   renderChips(_cfg);
-
-  // Reconstruir selector de tramos
   buildSelTra(_cfg);
-
-  // Reconstruir tabla
   buildTimesTable(_cfg);
 
-  // Si el palista/tramo activo ya no es válido, reset
   if (_selPal >= _cfg.nPal) { _selPal = 0; }
   if (_selTramo >= _cfg.nTra) { _selTramo = 0; document.getElementById('sel-tra').value = 0; }
   syncMangaVal();
