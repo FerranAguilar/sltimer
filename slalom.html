@@ -200,12 +200,13 @@
     .sheet-btn-del:active{background:#FEE2E2}
     .cfg-sheet-input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none;margin-bottom:2px}
     .cfg-sheet-input:focus{outline:none;border-color:#185FA5}
-    .cfg-counter-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:2px}
+    .cfg-counter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
     .cfg-counter-box{background:#f7f9fc;border:0.5px solid #e8eef5;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:7px}
     .cfg-counter-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em}
     .cfg-counter-row{display:flex;align-items:center;gap:8px;width:100%}
     .cfg-counter-btn{width:34px;height:34px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#444;font-family:inherit}
     .cfg-counter-btn:active{background:#f0f0f0}
+    .cfg-counter-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
     .cfg-counter-val{flex:1;text-align:center;font-size:22px;font-weight:700;color:#111;padding:5px 0;background:#fff;border:1px solid #e8eef5;border-radius:8px;line-height:1}
     .cfg-pal-list{display:flex;flex-direction:column;gap:8px;margin-top:4px;max-height:260px;overflow-y:auto}
     .sheet-btn-apply{flex:1;padding:14px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
@@ -283,6 +284,14 @@
         <button class="cfg-counter-btn" onclick="adjCfgEdit('tra',-1)">&#8722;</button>
         <div class="cfg-counter-val" id="cfg-edit-val-tra">3</div>
         <button class="cfg-counter-btn" onclick="adjCfgEdit('tra',1)">+</button>
+      </div>
+    </div>
+    <div class="cfg-counter-box">
+      <div class="cfg-counter-label">N&#186; Palistas</div>
+      <div class="cfg-counter-row">
+        <button class="cfg-counter-btn" disabled>&#8722;</button>
+        <div class="cfg-counter-val" id="cfg-edit-val-pal">0</div>
+        <button class="cfg-counter-btn" onclick="adjCfgEdit('pal',1)">+</button>
       </div>
     </div>
   </div>
@@ -852,7 +861,6 @@ async function saveSession(){
   try{
     let sesId=_savedSessionId;
     if(!sesId){
-      // CORREGIDO: campo 'data' (tipo date) en lugar de 'fecha'
       const ses=await api('/rest/v1/sessions',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,shared_code:_shared?_shared.code:null})});
       sesId=ses[0].id;_savedSessionId=sesId;
     }
