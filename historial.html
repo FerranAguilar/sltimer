@@ -373,14 +373,14 @@ function renderDetail(){
         <div class="det-stat"><div class="det-stat-val">${bestMs!==null?fmtTime(bestMs):'\u2014'}</div><div class="det-stat-lbl">Mejor</div></div>
       </div>
     </div>
-    <button class="btn-resume-ses" onclick="resumeSession()">▶ Continuar sesi\u00f3n</button>
+    <button class="btn-resume-ses" onclick="resumeSession()">&#9654; Continuar sesi\u00f3n</button>
     <div class="export-row">
-      <button class="btn-export btn-pdf" onclick="exportPDF()">📄 PDF</button>
-      <button class="btn-export btn-xls" onclick="exportXLS()">📊 Excel</button>
-      <button class="btn-edit-ses" onclick="toggleEditMode()">✏️ ${_editMode?'Salir edici\u00f3n':'Editar sesi\u00f3n'}</button>
-      <button class="btn-del-ses" onclick="deleteCurrentSession()">🗑️</button>
+      <button class="btn-export btn-pdf" onclick="exportPDF()">&#128196; PDF</button>
+      <button class="btn-export btn-xls" onclick="exportXLS()">&#128202; Excel</button>
+      <button class="btn-edit-ses" onclick="toggleEditMode()">&#9999;&#65039; ${_editMode?'Salir edici\u00f3n':'Editar sesi\u00f3n'}</button>
+      <button class="btn-del-ses" onclick="deleteCurrentSession()">&#128465;&#65039;</button>
     </div>
-    <div class="edit-mode-bar${_editMode?' show':''}">✏️ Modo edici\u00f3n \u2014 los cambios se guardan al instante</div>
+    <div class="edit-mode-bar${_editMode?' show':''}">&#9999;&#65039; Modo edici\u00f3n \u2014 los cambios se guardan al instante</div>
     <div class="section-label">Tiempos</div>
     ${tableHTML}
     ${_editMode?'<button class="btn-add-time" onclick="openNewEntrySheet()">+ A\u00f1adir tiempo</button>':''}
@@ -418,18 +418,22 @@ function resumeSession(){
     palistas
   };
 
-  // Construir times: array[nPal][nTra][]
+  // Construir times con la estructura que espera restoreSession() en slalom.html:
+  // { rawMs, penMs, totalMs, dsq, manga, ts }
   const times=Array.from({length:nPal},()=>Array.from({length:nTra},()=>[]));
   _entries.forEach(e=>{
     const pi=e.pal_index,ti=e.tramo;
     if(pi>=0&&pi<nPal&&ti>=0&&ti<nTra){
+      const rawMs = e.ms || 0;
+      const penMs = e.pen || 0;
+      const totalMs = e.dsq ? null : rawMs + penMs;
       times[pi][ti].push({
-        manga:e.manga,
-        ms:e.ms,
-        pen:e.pen,
-        dsq:e.dsq||false,
-        cnt2:e.cnt2||0,
-        cnt50:e.cnt50||0
+        rawMs,
+        penMs,
+        totalMs,
+        dsq: e.dsq || false,
+        manga: e.manga,
+        ts: Date.now()
       });
     }
   });
