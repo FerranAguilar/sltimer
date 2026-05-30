@@ -581,6 +581,66 @@ function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.clas
 /* SESION */
 function initSession(cfg){_cfg=cfg;$('topbar-title').textContent=cfg.name;$('ses-title').textContent=cfg.name;const parts=[];if(cfg.lugar)parts.push(cfg.lugar);if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));$('ses-meta').textContent=parts.join(' \u00b7 ');_times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));_mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));_selPal=0;_selTramo=0;clearPenState();_chipsSeen=[];buildSelPalChips(cfg);buildSelTra(cfg);syncMangaVal();updateChronoCtx();buildTimesTable(cfg);resetTimer();const btn=$('btn-save-session');btn.textContent='\ud83d\udcbe Finalizar y guardar sesi\u00f3n';btn.disabled=false;showScreen('session');if(_shared){$('live-pill').classList.add('show');$('live-pill-code').textContent=_shared.code;connectRealtime();}}
 
+/* === RESTAURAR SESIÓN DESDE HISTORIAL === */
+function restoreSession(resume){
+  const cfg=resume.cfg;
+  _cfg=cfg;
+  _savedSessionId=resume.sessionId||null;
+
+  // Reconstruir _times desde session_entries agrupados por pal_idx y tra_idx
+  _times=Array.from({length:cfg.nPal},()=>Array.from({length:cfg.nTra},()=>[]));
+  _mangas=Array.from({length:cfg.nPal},()=>Array(cfg.nTra).fill(1));
+
+  const entries=resume.times||[];
+  entries.forEach(e=>{
+    const pi=e.pal_idx,ti=e.tra_idx;
+    if(pi<cfg.nPal&&ti<cfg.nTra){
+      const rawMs=e.raw_ms!=null?e.raw_ms:(e.ms!=null?e.ms:0);
+      const penMs=e.pen_ms!=null?e.pen_ms:0;
+      const totalMs=e.dsq?null:(e.total_ms!=null?e.total_ms:rawMs+penMs);
+      const manga=e.manga||1;
+      _times[pi][ti].push({rawMs,penMs,totalMs,dsq:!!e.dsq,manga,ts:e.ts?new Date(e.ts).getTime():Date.now()});
+      // Actualizar manga siguiente al mayor registrado + 1
+      if(manga>=_mangas[pi][ti])_mangas[pi][ti]=manga+1;
+    }
+  });
+
+  // También restaurar desde estructura mangas si viene del resume
+  if(resume.mangas){
+    resume.mangas.forEach((palMangas,pi)=>{
+      if(!Array.isArray(palMangas))return;
+      palMangas.forEach((m,ti)=>{
+        if(pi<cfg.nPal&&ti<cfg.nTra&&m>_mangas[pi][ti])_mangas[pi][ti]=m;
+      });
+    });
+  }
+
+  $('topbar-title').textContent=cfg.name;
+  $('ses-title').textContent=cfg.name;
+  const parts=[];
+  if(cfg.lugar)parts.push(cfg.lugar);
+  if(cfg.fecha)parts.push(new Date(cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('ses-meta').textContent=parts.join(' \u00b7 ');
+
+  _selPal=0;_selTramo=0;
+  clearPenState();
+  _chipsSeen=[];
+  buildSelPalChips(cfg);
+  buildSelTra(cfg);
+  syncMangaVal();
+  updateChronoCtx();
+  buildTimesTable(cfg);
+  resetTimer();
+
+  const btn=$('btn-save-session');
+  btn.textContent='\ud83d\udcbe Actualizar sesi\u00f3n guardada';
+  btn.disabled=false;
+
+  showScreen('session');
+  toast('Sesi\u00f3n cargada \u2713','ok');
+}
+/* ======================================= */
+
 /* === CHIPS PALISTA === */
 function buildSelPalChips(cfg){
   _chipsSeen = cfg.palistas.map((_,i)=>i);
@@ -901,6 +961,17 @@ async function init(){
     _athletes=ats||[];
     const sharedRaw=sessionStorage.getItem('slalom_shared');
     if(sharedRaw)_shared=JSON.parse(sharedRaw);
+
+    // --- RESTAURAR SESIÓN DESDE HISTORIAL ---
+    const resumeRaw=sessionStorage.getItem('slalom_resume');
+    if(resumeRaw){
+      sessionStorage.removeItem('slalom_resume');
+      const resume=JSON.parse(resumeRaw);
+      restoreSession(resume);
+      return;
+    }
+    // ----------------------------------------
+
     const cfgRaw=sessionStorage.getItem('slalom_cfg');
     if(cfgRaw){
       _cfg=JSON.parse(cfgRaw);
