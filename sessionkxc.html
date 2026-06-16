@@ -134,6 +134,50 @@
     .sheet-btn-del:active{background:#FEE2E2}
     .sh-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 
+    /* ── Editar configuración (sheet) ── */
+    .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#555;transition:background .12s;flex-shrink:0;font-size:17px}
+    .btn-edit-cfg:active{background:#f0f0f0}
+    .cfg-field{margin-bottom:12px}
+    .cfg-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px}
+    .cfg-field input{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+    .cfg-field input:focus{outline:none;border-color:#C05621}
+    .cfg-counter{display:flex;align-items:center;gap:10px}
+    .cfg-counter-btn{width:38px;height:38px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#C05621;font-family:inherit}
+    .cfg-counter-btn:active{background:#f0f0f0}
+    .cfg-counter-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
+    .cfg-counter-val{min-width:46px;text-align:center;font-size:22px;font-weight:700;color:#111;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+    .cfg-toggle-row{display:flex;align-items:center;gap:12px;background:#fafbfc;border:0.5px solid #e6e9ee;border-radius:12px;padding:12px 14px;margin-bottom:12px}
+    .cfg-toggle-label{flex:1}
+    .cfg-toggle-title{font-size:14px;font-weight:600;color:#111}
+    .cfg-toggle-desc{font-size:11px;color:#aaa;margin-top:2px}
+    .cfg-switch{position:relative;width:51px;height:31px;flex-shrink:0}
+    .cfg-switch input{opacity:0;width:0;height:0;position:absolute}
+    .cfg-slider{position:absolute;inset:0;background:#ddd;border-radius:31px;cursor:pointer;transition:background .2s}
+    .cfg-slider:before{content:'';position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+    .cfg-switch input:checked+.cfg-slider{background:#C05621}
+    .cfg-switch input:checked+.cfg-slider:before{transform:translateX(20px)}
+    .cfg-pal-list{display:flex;flex-direction:column;gap:8px;max-height:34vh;overflow-y:auto;padding:2px}
+    .cfg-pal-row{background:#fafbfc;border:0.5px solid #e6e9ee;border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
+    .cfg-pal-num{width:24px;height:24px;border-radius:50%;background:#FFF3E0;color:#C05621;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cfg-pal-search{position:relative;flex:1}
+    .cfg-pal-input{width:100%;padding:8px 28px 8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+    .cfg-pal-input:focus{outline:none;border-color:#C05621}
+    .cfg-pal-input.matched{border-color:#C05621;background:#FFF8F3}
+    .cfg-pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#bbb;padding:0;line-height:1;display:none}
+    .cfg-pal-clear.show{display:block}
+    .cfg-pal-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:60;max-height:170px;overflow-y:auto;display:none}
+    .cfg-pal-dd.open{display:block}
+    .cfg-pal-opt{padding:9px 11px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+    .cfg-pal-opt:last-child{border-bottom:none}
+    .cfg-pal-opt:active{background:#f7f7f7}
+    .cfg-pal-opt-name{font-weight:600;color:#111;flex:1}
+    .cfg-pal-remove{background:none;border:none;cursor:pointer;font-size:15px;color:#ccc;padding:0 2px;flex-shrink:0;line-height:1}
+    .cfg-pal-remove:active{color:#A32D2D}
+    .cfg-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
+    .cfg-badge.KXC{background:#FAEEDA;color:#633806}
+    .cfg-add-pal{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border:2px dashed #e0c3b0;border-radius:10px;background:transparent;color:#C05621;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+    .cfg-add-pal:active{background:#fdf3ec}
+
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
     .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#C05621;border-radius:50%;animation:spin .7s linear infinite}
@@ -185,6 +229,50 @@
   </div>
 </div>
 
+<!-- SHEET EDICIÓN DE CONFIGURACIÓN -->
+<div class="sheet-backdrop" id="cfg-backdrop" onclick="closeCfgSheet()"></div>
+<div class="sheet" id="cfg-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Editar configuraci&#243;n</div>
+  <div class="sheet-sub">Cambia los datos de la sesi&#243;n durante el registro</div>
+  <div class="cfg-field">
+    <label>Nombre de la sesi&#243;n</label>
+    <input id="cfg-edit-name" type="text" placeholder="Nombre de la sesi&#243;n" autocomplete="off">
+  </div>
+  <div class="cfg-field">
+    <label>Lugar</label>
+    <input id="cfg-edit-lugar" type="text" placeholder="Lugar (opcional)" autocomplete="off">
+  </div>
+  <div class="cfg-field">
+    <label>Fecha</label>
+    <input id="cfg-edit-fecha" type="date">
+  </div>
+  <div class="cfg-field">
+    <label>N&#250;mero de puertas</label>
+    <div class="cfg-counter">
+      <button class="cfg-counter-btn" id="cfg-pue-minus" onclick="cfgAdjPuertas(-1)">&#8722;</button>
+      <div class="cfg-counter-val" id="cfg-edit-val-pue">6</div>
+      <button class="cfg-counter-btn" id="cfg-pue-plus" onclick="cfgAdjPuertas(1)">+</button>
+    </div>
+  </div>
+  <div class="cfg-toggle-row">
+    <div class="cfg-toggle-label">
+      <div class="cfg-toggle-title">Zona de Roll</div>
+      <div class="cfg-toggle-desc">El circuito incluye una zona de esquimotaje</div>
+    </div>
+    <label class="cfg-switch">
+      <input type="checkbox" id="cfg-edit-roll">
+      <span class="cfg-slider"></span>
+    </label>
+  </div>
+  <div class="sheet-section">Palistas (KXC)</div>
+  <div class="cfg-pal-list" id="cfg-edit-pal-list"></div>
+  <button class="cfg-add-pal" onclick="cfgAddPal()"><span style="font-size:16px;line-height:1">+</span> A&#241;adir palista</button>
+  <div class="sheet-actions">
+    <button class="sheet-btn-save" id="cfg-save-btn" onclick="applyCfgEdit()">Aplicar cambios</button>
+  </div>
+</div>
+
 <div class="topbar">
   <button class="topbar-back" onclick="goBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -193,6 +281,7 @@
   </a>
   <div class="topbar-divider"></div>
   <span class="topbar-title" id="topbar-title">Cron&#243;metro KXC</span>
+  <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
   <button class="btn-finish" onclick="finishSession()">Finalizar</button>
 </div>
 
@@ -261,6 +350,7 @@ let _tok=null,_uid=null,_email=null;
 let _cfg=null;               // {name,lugar,fecha,nPal,nPuertas,roll,palistas:[...]}
 let _sessionId=null;
 let _entries=[];             // tiempos guardados
+let _athletes=[];            // palistas KXC del usuario (para el editor de config)
 let _selPal=0,_manga=1,_mangaManual=false;
 
 // Cronómetro
@@ -307,6 +397,7 @@ function rollPosLabel(pos,nPuertas){
 function buildContextSelectors(){
   const sp=$('sel-pal');sp.innerHTML='';
   _cfg.palistas.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.name;sp.appendChild(o);});
+  if(_selPal>=_cfg.palistas.length)_selPal=0;
   sp.value=_selPal;
 }
 function onCtxChange(){
@@ -679,6 +770,167 @@ async function shDelete(){
   }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
 }
 
+/* ───────────────────────── EDITAR CONFIGURACIÓN ───────────────────────── */
+let _cfgPue=6;
+let _cfgRoll=false;
+let _cfgPals=[];   // [{rid,id,name,isTemp}]
+let _cfgSeq=0;
+
+function openCfgSheet(){
+  if(!_cfg)return;
+  $('cfg-edit-name').value=_cfg.name||'';
+  $('cfg-edit-lugar').value=_cfg.lugar||'';
+  $('cfg-edit-fecha').value=_cfg.fecha||new Date().toISOString().slice(0,10);
+  _cfgPue=_cfg.nPuertas;
+  cfgRenderPuertas();
+  _cfgRoll=!!_cfg.roll;
+  $('cfg-edit-roll').checked=_cfgRoll;
+  _cfgPals=_cfg.palistas.map(p=>({rid:_cfgSeq++,id:p.id||null,name:p.name||'',isTemp:p.isTemp!==undefined?p.isTemp:!p.id}));
+  cfgRenderPals();
+  $('cfg-backdrop').classList.add('open');
+  setTimeout(()=>$('cfg-sheet').classList.add('open'),10);
+}
+function closeCfgSheet(){$('cfg-sheet').classList.remove('open');$('cfg-backdrop').classList.remove('open');}
+
+function cfgRenderPuertas(){
+  $('cfg-edit-val-pue').textContent=_cfgPue;
+  $('cfg-pue-minus').disabled=_cfgPue<=1;
+  $('cfg-pue-plus').disabled=_cfgPue>=20;
+}
+function cfgAdjPuertas(d){_cfgPue=Math.min(20,Math.max(1,_cfgPue+d));cfgRenderPuertas();}
+
+function cfgRenderPals(){
+  const c=$('cfg-edit-pal-list');c.innerHTML='';
+  _cfgPals.forEach((p,i)=>{
+    const filled=p.name.trim().length>0;
+    const row=document.createElement('div');row.className='cfg-pal-row';row.id='cfgpal-row-'+p.rid;
+    row.innerHTML=`
+      <div class="cfg-pal-num">${i+1}</div>
+      <div class="cfg-pal-search">
+        <input class="cfg-pal-input${filled&&!p.isTemp?' matched':''}" id="cfgpal-input-${p.rid}" type="text" placeholder="Buscar o escribir nombre\u2026" value="${escHtml(p.name).replace(/"/g,'&quot;')}" autocomplete="off" autocorrect="off" spellcheck="false" oninput="cfgPalInput(${p.rid})" onfocus="cfgOpenDd(${p.rid})" onblur="cfgDelayClose(${p.rid})">
+        <button class="cfg-pal-clear${filled?' show':''}" id="cfgpal-clear-${p.rid}" onclick="cfgClearPal(${p.rid})">&#x2715;</button>
+        <div class="cfg-pal-dd" id="cfgpal-dd-${p.rid}"></div>
+      </div>
+      <button class="cfg-pal-remove" onclick="cfgRemovePal(${p.rid})" title="Quitar">&#x2715;</button>
+    `;
+    c.appendChild(row);
+  });
+}
+function cfgAddPal(){
+  if(_cfgPals.length>=30){toast('M\u00e1ximo 30 palistas','err');return;}
+  _cfgPals.push({rid:_cfgSeq++,id:null,name:'',isTemp:false});
+  cfgRenderPals();
+  setTimeout(()=>{const last=_cfgPals[_cfgPals.length-1];const inp=$('cfgpal-input-'+last.rid);if(inp)inp.focus();},40);
+}
+function cfgRemovePal(rid){
+  _cfgPals=_cfgPals.filter(p=>p.rid!==rid);
+  if(_cfgPals.length===0)_cfgPals.push({rid:_cfgSeq++,id:null,name:'',isTemp:false});
+  cfgRenderPals();
+}
+function cfgPalInput(rid){
+  const p=_cfgPals.find(x=>x.rid===rid);if(!p)return;
+  const val=$('cfgpal-input-'+rid).value;
+  p.name=val;p.id=null;p.isTemp=true;
+  $('cfgpal-clear-'+rid).classList.toggle('show',val.length>0);
+  $('cfgpal-input-'+rid).classList.remove('matched');
+  cfgOpenDd(rid);
+}
+function cfgOpenDd(rid){
+  const inp=$('cfgpal-input-'+rid);if(!inp)return;
+  const q=(inp.value||'').toLowerCase().trim();
+  const dd=$('cfgpal-dd-'+rid);
+  if(!q){dd.classList.remove('open');dd.innerHTML='';return;}
+  const usedIds=new Set(_cfgPals.filter(x=>x.rid!==rid&&x.id).map(x=>x.id));
+  const matches=_athletes.filter(a=>!usedIds.has(a.id)).filter(a=>((a.name||'')+' '+(a.surname||'')).toLowerCase().includes(q)).slice(0,8);
+  let html=matches.map(a=>{
+    const fn=a.name+(a.surname?' '+a.surname:'');
+    const cats=(a.categories||[]).filter(c=>c==='KXC').map(c=>`<span class="cfg-badge ${c}">${c}</span>`).join('');
+    return `<div class="cfg-pal-opt" onmousedown="cfgSelectAth(${rid},'${a.id}','${escHtml(fn).replace(/'/g,"\\'")}')"><span class="cfg-pal-opt-name">${escHtml(fn)}</span>${cats}</div>`;
+  }).join('');
+  html+=`<div class="cfg-pal-opt" onmousedown="cfgKeepTemp(${rid})"><span class="cfg-pal-opt-name" style="color:#C05621">+ Usar &#8220;${escHtml(inp.value.trim())}&#8221; como temporal</span></div>`;
+  dd.innerHTML=html;dd.classList.add('open');
+}
+function cfgDelayClose(rid){setTimeout(()=>{const dd=$('cfgpal-dd-'+rid);if(dd)dd.classList.remove('open');},150);}
+function cfgSelectAth(rid,id,name){
+  const p=_cfgPals.find(x=>x.rid===rid);if(!p)return;
+  p.id=id;p.name=name;p.isTemp=false;
+  cfgRenderPals();
+}
+function cfgKeepTemp(rid){
+  const p=_cfgPals.find(x=>x.rid===rid);if(!p)return;
+  const inp=$('cfgpal-input-'+rid);
+  p.name=(inp.value||'').trim();p.id=null;p.isTemp=true;
+  $('cfgpal-dd-'+rid).classList.remove('open');
+  cfgRenderPals();
+}
+function cfgClearPal(rid){
+  const p=_cfgPals.find(x=>x.rid===rid);if(!p)return;
+  p.id=null;p.name='';p.isTemp=false;
+  cfgRenderPals();
+}
+
+function applyCfgEdit(){
+  const newName=$('cfg-edit-name').value.trim();
+  if(!newName){toast('Introduce un nombre para la sesi\u00f3n','err');return;}
+  const validPals=_cfgPals.filter(p=>p.name.trim().length>0);
+  if(validPals.length===0){toast('A\u00f1ade al menos un palista','err');return;}
+  const newLugar=$('cfg-edit-lugar').value.trim();
+  const newFecha=$('cfg-edit-fecha').value||_cfg.fecha;
+  const newPue=_cfgPue;
+  const newRoll=$('cfg-edit-roll').checked;
+  const newPalistas=validPals.map(p=>({name:p.name.trim(),category:'KXC',id:p.id||null,isTemp:p.isTemp||!p.id}));
+
+  // Si se reduce el nº de puertas, ajustar la posición del roll si se queda fuera de rango
+  if(_rollPos>newPue)_rollPos=newPue;
+
+  _cfg.name=newName;
+  _cfg.lugar=newLugar;
+  _cfg.fecha=newFecha;
+  _cfg.nPuertas=newPue;
+  _cfg.roll=newRoll;
+  _cfg.nPal=newPalistas.length;
+  _cfg.palistas=newPalistas;
+
+  // Persistir cfg
+  const stored=Object.assign({},_cfg);
+  if(_sessionId)stored._sessionId=_sessionId;
+  sessionStorage.setItem('kxc_cfg',JSON.stringify(stored));
+  const resume=sessionStorage.getItem('kxc_resume');
+  if(resume){try{const r=JSON.parse(resume);r.cfg=_cfg;sessionStorage.setItem('kxc_resume',JSON.stringify(r));}catch{}}
+
+  // Sincronizar con Supabase si la sesión ya existe (n_tra guarda el nº de puertas)
+  if(_sessionId){
+    api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas})}).catch(e=>toast('No se pudo sincronizar: '+e.message,'err'));
+  }
+
+  // Refrescar UI
+  $('topbar-title').textContent=newName;
+  $('ses-title').textContent=newName;
+  const parts=[];
+  if(newLugar)parts.push(newLugar);
+  if(newFecha)parts.push(new Date(newFecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  parts.push(_cfg.nPuertas+' puertas');
+  if(_cfg.roll)parts.push('con roll');
+  $('ses-meta').textContent=parts.join(' \u00b7 ');
+
+  if(_selPal>=_cfg.nPal)_selPal=0;
+
+  // Mostrar/ocultar elementos del roll y reconstruir la rejilla
+  $('roll-hint').style.display=_cfg.roll?'block':'none';
+  $('legend-roll').style.display=_cfg.roll?'flex':'none';
+  if(_cfg.roll&&(_rollPos===undefined||_rollPos<0))_rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
+  clearGatesUI();
+  buildContextSelectors();
+  buildGates();
+  _mangaManual=false;
+  syncManga();
+  updatePenInfo();
+  renderTimes();
+
+  closeCfgSheet();
+  toast('Configuraci\u00f3n actualizada \u2713','ok');
+}
+
 /* ── FINALIZAR ── */
 function finishSession(){
   if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
@@ -705,6 +957,12 @@ async function loadExistingEntries(){
   if(!_sessionId)return;
   try{_entries=await api('/rest/v1/session_entries?session_id=eq.'+_sessionId+'&order=pal_index.asc,manga.asc&select=*')||[];}
   catch{_entries=[];}
+}
+async function loadAthletes(){
+  try{
+    const rows=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc')||[];
+    _athletes=rows.filter(a=>Array.isArray(a.categories)&&a.categories.includes('KXC'));
+  }catch{_athletes=[];}
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
@@ -745,6 +1003,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
   }
 
   buildGates();
+
+  loadAthletes();
 
   if(_sessionId){showLoad('Cargando tiempos...');await loadExistingEntries();hideLoad();}
 
