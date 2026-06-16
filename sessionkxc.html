@@ -52,36 +52,38 @@
     .chrono-btn.reset{background:rgba(255,255,255,0.16);color:#fff;flex:0 0 90px}
     .chrono-btn:disabled{opacity:.4;cursor:not-allowed}
 
-    /* Selector de puertas */
+    /* Selector de puertas (+ roll integrado) */
     .gates-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px}
-    .gates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px}
-    .gate-btn{position:relative;aspect-ratio:1;border-radius:11px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#1B3A5C;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;-webkit-tap-highlight-color:transparent}
+    .gates-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .gate-btn{position:relative;width:54px;height:54px;border-radius:11px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#1B3A5C;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0}
     .gate-btn:active{transform:scale(.94)}
     .gate-btn.failed{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
-    .gate-btn .gate-mark{position:absolute;top:3px;right:5px;font-size:11px;font-family:-apple-system,sans-serif;font-weight:700}
-    .gates-legend{display:flex;gap:14px;margin-top:12px;font-size:11px;color:#888}
+    /* Ficha Roll, dentro de la rejilla y arrastrable */
+    .roll-chip{width:54px;height:54px;border-radius:11px;border:1.5px solid #0F6E56;background:#E1F5EE;color:#085041;font-family:'Bebas Neue',sans-serif;font-size:24px;cursor:grab;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,background .12s,border-color .12s,box-shadow .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0;touch-action:none;user-select:none;-webkit-user-select:none}
+    .roll-chip:active{cursor:grabbing}
+    .roll-chip.fail{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
+    .roll-chip.dragging{opacity:.45;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+    .roll-chip .roll-state-mark{position:absolute;bottom:2px;right:5px;font-size:11px;font-family:-apple-system,sans-serif;font-weight:800;line-height:1}
+    /* Hueco resaltado donde caerá la R al arrastrar */
+    .drop-slot{width:8px;height:54px;border-radius:6px;background:transparent;flex-shrink:0;transition:background .12s,width .12s}
+    .drop-slot.active{background:#0F6E56;width:14px}
+    .roll-hint{font-size:11px;color:#aaa;margin-top:10px;line-height:1.4}
+    .gates-legend{display:flex;gap:14px;margin-top:10px;font-size:11px;color:#888;flex-wrap:wrap}
     .gates-legend span{display:flex;align-items:center;gap:5px}
     .legend-dot{width:11px;height:11px;border-radius:3px;border:1.5px solid #d8e0ea;background:#f7f9fc}
     .legend-dot.failed{background:#FEE2E2;border-color:#EF4444}
+    .legend-dot.roll{background:#E1F5EE;border-color:#0F6E56}
 
-    /* Roll */
-    .roll-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
-    .roll-head{display:flex;align-items:center;gap:10px}
-    .roll-icon{width:34px;height:34px;border-radius:9px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-    .roll-head-info{flex:1;min-width:0}
-    .roll-title{font-size:14px;font-weight:700;color:#111}
-    .roll-sub{font-size:11px;color:#aaa;margin-top:1px}
+    /* Roll en el sheet de edición */
     .roll-state-btns{display:flex;gap:8px}
     .roll-state-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#888;cursor:pointer;font-family:inherit;transition:all .12s}
     .roll-state-btn:active{opacity:.8}
     .roll-state-btn.ok.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
     .roll-state-btn.fail.active{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
-    .roll-pos-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em}
-    .roll-pos-display{font-size:13px;font-weight:600;color:#1B3A5C;text-align:center;background:#f7f9fc;border:1px solid #e8eef5;border-radius:9px;padding:9px}
-    .roll-pos-stepper{display:flex;align-items:center;gap:8px}
     .roll-pos-btn{width:40px;height:40px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#C05621;flex-shrink:0;font-family:inherit}
     .roll-pos-btn:active{background:#f0f0f0}
     .roll-pos-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
+    .roll-pos-stepper{display:flex;align-items:center;gap:8px}
     .roll-pos-val{flex:1;text-align:center;font-size:13px;font-weight:600;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:9px;padding:11px 4px;line-height:1.2}
 
     /* DSQ */
@@ -229,39 +231,15 @@
     </div>
   </div>
 
-  <!-- PUERTAS -->
+  <!-- PUERTAS + ROLL -->
   <div class="section-label">Puertas &middot; toca para marcar falta</div>
   <div class="gates-card">
     <div class="gates-grid" id="gates-grid"></div>
+    <div class="roll-hint" id="roll-hint" style="display:none">Arrastra la ficha <b>R</b> para colocarla entre las puertas donde est&#225; el roll. T&#243;cala para alternar OK / fallido.</div>
     <div class="gates-legend">
       <span><span class="legend-dot"></span>OK</span>
       <span><span class="legend-dot failed"></span>Fallada</span>
-    </div>
-  </div>
-
-  <!-- ROLL -->
-  <div id="roll-wrap" style="display:none">
-    <div class="section-label">Roll</div>
-    <div class="roll-card">
-      <div class="roll-head">
-        <div class="roll-icon">&#128257;</div>
-        <div class="roll-head-info">
-          <div class="roll-title">Zona de Roll</div>
-          <div class="roll-sub">Esquimotaje obligatorio en el circuito</div>
-        </div>
-      </div>
-      <div class="roll-state-btns">
-        <button class="roll-state-btn ok active" id="roll-ok" onclick="setRoll('ok')">Roll OK</button>
-        <button class="roll-state-btn fail" id="roll-fail" onclick="setRoll('fail')">Roll fallido</button>
-      </div>
-      <div>
-        <div class="roll-pos-label" style="margin-bottom:6px">Posici&#243;n en el circuito</div>
-        <div class="roll-pos-stepper">
-          <button class="roll-pos-btn" id="roll-pos-minus" onclick="adjRollPos(-1)">&#8722;</button>
-          <div class="roll-pos-val" id="roll-pos-val">&#8212;</div>
-          <button class="roll-pos-btn" id="roll-pos-plus" onclick="adjRollPos(1)">+</button>
-        </div>
-      </div>
+      <span id="legend-roll" style="display:none"><span class="legend-dot roll"></span>Roll</span>
     </div>
   </div>
 
@@ -352,17 +330,43 @@ function adjManga(d){
   _manga=Math.max(1,_manga+d);_mangaManual=true;syncManga();
 }
 
-/* ── PUERTAS ── */
+/* ── PUERTAS + ROLL (rejilla unificada) ── */
+// _rollPos = índice de la puerta tras la cual está la R.
+//   0          → antes de P1 (Salida → P1)
+//   k (1..n-1) → entre Pk y P(k+1)
+//   n          → tras Pn (Pn → Meta)
+// La rejilla se reconstruye como una secuencia: [R?] P1 P2 ... Pn, insertando
+// la ficha R en su posición. Se puede arrastrar para cambiar _rollPos.
 function buildGates(){
-  const grid=$('gates-grid');grid.innerHTML='';
+  const grid=$('gates-grid');
+  grid.innerHTML='';
   for(let i=0;i<_cfg.nPuertas;i++){
+    // Si el roll va justo antes de esta puerta, inserta la ficha R aquí
+    if(_cfg.roll && _rollPos===i) grid.appendChild(makeRollChip());
     const b=document.createElement('button');
-    b.className='gate-btn';b.id='gate-'+i;
-    b.innerHTML=(i+1);
+    b.className='gate-btn'+(_gateFails.has(i)?' failed':'');
+    b.id='gate-'+i;
+    b.textContent=(i+1);
     b.onclick=()=>toggleGate(i);
     grid.appendChild(b);
   }
+  // Roll al final del circuito (tras la última puerta)
+  if(_cfg.roll && _rollPos>=_cfg.nPuertas) grid.appendChild(makeRollChip());
 }
+
+function makeRollChip(){
+  const chip=document.createElement('div');
+  chip.className='roll-chip'+(_rollState==='fail'?' fail':'');
+  chip.id='roll-chip';
+  chip.innerHTML='R<span class="roll-state-mark">'+(_rollState==='fail'?'\u2717':'\u2713')+'</span>';
+  chip.title='Toca para OK/fallido \u00b7 arrastra para mover';
+  // Tap → alterna estado (si no se ha arrastrado)
+  chip.onclick=()=>{ if(!_rollDragMoved) toggleRollState(); };
+  // Drag (puntero unificado: ratón + táctil)
+  chip.addEventListener('pointerdown',onRollPointerDown);
+  return chip;
+}
+
 function toggleGate(i){
   if(_dsq)return;
   if(_gateFails.has(i)){_gateFails.delete(i);$('gate-'+i).classList.remove('failed');}
@@ -374,22 +378,73 @@ function clearGatesUI(){
   document.querySelectorAll('.gate-btn').forEach(b=>b.classList.remove('failed'));
 }
 
-/* ── ROLL ── */
-function setRoll(state){
+function toggleRollState(){
   if(_dsq)return;
-  _rollState=state;
-  $('roll-ok').classList.toggle('active',state==='ok');
-  $('roll-fail').classList.toggle('active',state==='fail');
+  _rollState=_rollState==='ok'?'fail':'ok';
+  const chip=$('roll-chip');
+  if(chip){
+    chip.classList.toggle('fail',_rollState==='fail');
+    chip.innerHTML='R<span class="roll-state-mark">'+(_rollState==='fail'?'\u2717':'\u2713')+'</span>';
+  }
   updatePenInfo();
 }
-function renderRollPos(){
-  $('roll-pos-val').textContent=rollPosLabel(_rollPos,_cfg.nPuertas);
-  $('roll-pos-minus').disabled=_rollPos<=0;
-  $('roll-pos-plus').disabled=_rollPos>=_cfg.nPuertas;
+
+/* ── DRAG de la ficha R ── */
+let _rollDragging=false,_rollDragMoved=false;
+function onRollPointerDown(e){
+  if(_dsq)return;
+  e.preventDefault();
+  _rollDragging=true;_rollDragMoved=false;
+  const chip=$('roll-chip');
+  chip.classList.add('dragging');
+  buildDropSlots();
+  document.addEventListener('pointermove',onRollPointerMove);
+  document.addEventListener('pointerup',onRollPointerUp);
 }
-function adjRollPos(d){
-  _rollPos=Math.min(_cfg.nPuertas,Math.max(0,_rollPos+d));
-  renderRollPos();
+// Inserta huecos de inserción (drop-slots) entre las puertas para resaltar destino
+function buildDropSlots(){
+  const grid=$('gates-grid');
+  const gates=[...grid.querySelectorAll('.gate-btn')];
+  // slot antes de cada puerta + uno al final → posiciones 0..nPuertas
+  gates.forEach((g,idx)=>{
+    const slot=document.createElement('div');
+    slot.className='drop-slot';slot.dataset.pos=idx;
+    grid.insertBefore(slot,g);
+  });
+  const endSlot=document.createElement('div');
+  endSlot.className='drop-slot';endSlot.dataset.pos=_cfg.nPuertas;
+  grid.appendChild(endSlot);
+}
+function removeDropSlots(){
+  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.remove());
+}
+function nearestSlot(x,y){
+  let best=null,bestD=Infinity;
+  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>{
+    const r=s.getBoundingClientRect();
+    const cx=r.left+r.width/2,cy=r.top+r.height/2;
+    const d=Math.hypot(cx-x,cy-y);
+    if(d<bestD){bestD=d;best=s;}
+  });
+  return best;
+}
+function onRollPointerMove(e){
+  if(!_rollDragging)return;
+  _rollDragMoved=true;
+  const slot=nearestSlot(e.clientX,e.clientY);
+  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.classList.toggle('active',s===slot));
+}
+function onRollPointerUp(e){
+  if(!_rollDragging)return;
+  _rollDragging=false;
+  document.removeEventListener('pointermove',onRollPointerMove);
+  document.removeEventListener('pointerup',onRollPointerUp);
+  if(_rollDragMoved){
+    const slot=nearestSlot(e.clientX,e.clientY);
+    if(slot)_rollPos=parseInt(slot.dataset.pos);
+  }
+  removeDropSlots();
+  buildGates();           // reconstruye con la R en su nueva posición
 }
 
 /* ── DSQ ── */
@@ -437,7 +492,7 @@ function resetChrono(){
     const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');}
   _elapsed=0;renderChrono();
   clearGatesUI();
-  if(_cfg.roll)setRoll('ok');
+  if(_cfg.roll){_rollState='ok';buildGates();}
   if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent='Marcar como DSQ';}
   updatePenInfo();
 }
@@ -680,15 +735,16 @@ window.addEventListener('DOMContentLoaded',async()=>{
   $('ses-meta').textContent=parts.join(' \u00b7 ');
 
   buildContextSelectors();
-  buildGates();
 
-  // Roll: mostrar solo si el circuito lo incluye, y colocarlo por defecto a mitad
+  // Roll: si el circuito lo incluye, posicionarlo por defecto a mitad ANTES de construir la rejilla
   if(_cfg.roll){
-    $('roll-wrap').style.display='block';
+    _rollState='ok';
     _rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
-    renderRollPos();
-    setRoll('ok');
+    $('roll-hint').style.display='block';
+    $('legend-roll').style.display='flex';
   }
+
+  buildGates();
 
   if(_sessionId){showLoad('Cargando tiempos...');await loadExistingEntries();hideLoad();}
 
