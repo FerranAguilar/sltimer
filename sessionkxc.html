@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <title>SLTimer &#8212; Cron&#243;metro Kayak Cross</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+    .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .btn-finish{background:#0F6E56;border:none;color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex-shrink:0;transition:opacity .12s}
+    .btn-finish:active{opacity:.8}
+
+    .content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
+    .ses-head{display:flex;flex-direction:column;gap:2px}
+    .ses-title{font-size:18px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ses-meta{font-size:12px;color:#aaa}
+    .kx-badge{display:inline-flex;align-items:center;gap:4px;background:#FFF3E0;border:0.5px solid #F6AD7B;border-radius:100px;padding:2px 9px;font-size:11px;font-weight:700;color:#C05621;margin-top:4px;align-self:flex-start}
+    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+
+    /* Contexto: palista */
+    .ctx-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+    .ctx-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em}
+    .ctx-select{width:100%;padding:10px 28px 10px 10px;border:1px solid #ddd;border-radius:9px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+    .ctx-select:focus{outline:none;border-color:#C05621;background-color:#fff}
+
+    /* Cronómetro */
+    .chrono-card{background:#1B3A5C;border-radius:18px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:14px}
+    .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:2px;line-height:1;font-variant-numeric:tabular-nums}
+    .chrono-display.running{color:#FFB68A}
+    .chrono-pen-info{font-size:13px;color:rgba(255,255,255,0.65);min-height:18px}
+    .chrono-controls{display:flex;gap:10px;width:100%}
+    .chrono-btn{flex:1;padding:16px;border-radius:13px;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn:active{opacity:.85}
+    .chrono-btn.start{background:#22C55E;color:#fff}
+    .chrono-btn.stop{background:#EF4444;color:#fff}
+    .chrono-btn.reset{background:rgba(255,255,255,0.16);color:#fff;flex:0 0 90px}
+    .chrono-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Selector de puertas */
+    .gates-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px}
+    .gates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px}
+    .gate-btn{position:relative;aspect-ratio:1;border-radius:11px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#1B3A5C;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;-webkit-tap-highlight-color:transparent}
+    .gate-btn:active{transform:scale(.94)}
+    .gate-btn.failed{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
+    .gate-btn .gate-mark{position:absolute;top:3px;right:5px;font-size:11px;font-family:-apple-system,sans-serif;font-weight:700}
+    .gates-legend{display:flex;gap:14px;margin-top:12px;font-size:11px;color:#888}
+    .gates-legend span{display:flex;align-items:center;gap:5px}
+    .legend-dot{width:11px;height:11px;border-radius:3px;border:1.5px solid #d8e0ea;background:#f7f9fc}
+    .legend-dot.failed{background:#FEE2E2;border-color:#EF4444}
+
+    /* Roll */
+    .roll-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+    .roll-head{display:flex;align-items:center;gap:10px}
+    .roll-icon{width:34px;height:34px;border-radius:9px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .roll-head-info{flex:1;min-width:0}
+    .roll-title{font-size:14px;font-weight:700;color:#111}
+    .roll-sub{font-size:11px;color:#aaa;margin-top:1px}
+    .roll-state-btns{display:flex;gap:8px}
+    .roll-state-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid #ddd;background:#f9f9f9;font-size:13px;font-weight:700;color:#888;cursor:pointer;font-family:inherit;transition:all .12s}
+    .roll-state-btn:active{opacity:.8}
+    .roll-state-btn.ok.active{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+    .roll-state-btn.fail.active{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
+    .roll-pos-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em}
+    .roll-pos-display{font-size:13px;font-weight:600;color:#1B3A5C;text-align:center;background:#f7f9fc;border:1px solid #e8eef5;border-radius:9px;padding:9px}
+    .roll-pos-stepper{display:flex;align-items:center;gap:8px}
+    .roll-pos-btn{width:40px;height:40px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#C05621;flex-shrink:0;font-family:inherit}
+    .roll-pos-btn:active{background:#f0f0f0}
+    .roll-pos-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
+    .roll-pos-val{flex:1;text-align:center;font-size:13px;font-weight:600;color:#1B3A5C;background:#f7f9fc;border:1px solid #e8eef5;border-radius:9px;padding:11px 4px;line-height:1.2}
+
+    /* DSQ */
+    .dsq-btn{width:100%;padding:13px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:8px}
+    .dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
+
+    /* Tabla de tiempos guardados */
+    .times-table{width:100%;border-collapse:collapse;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
+    .times-table th{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:0.5px solid #f0f0f0;text-align:left;background:#fafafa}
+    .times-table td{padding:9px 12px;font-size:13px;color:#111;border-bottom:0.5px solid #f5f5f5;vertical-align:top}
+    .times-table tr:last-child td{border-bottom:none}
+    .time-val{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.5px;color:#1B3A5C}
+    .time-val.best{color:#0F6E56}
+    .time-val.dsq{color:#991B1B;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:0.06em}
+    .pal-cell{font-weight:700;font-size:13px}
+    .faults-badge{display:inline-block;font-size:10px;font-weight:700;background:#FEE2E2;color:#991B1B;border-radius:5px;padding:1px 6px;margin-left:4px;vertical-align:middle}
+    .roll-badge{display:inline-block;font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:4px;vertical-align:middle}
+    .roll-badge.ok{background:#E1F5EE;color:#085041}
+    .roll-badge.fail{background:#FEE2E2;color:#991B1B}
+    .manga-lbl{font-size:9px;color:#bbb;font-weight:600;display:block;margin-top:1px}
+    .tap-entry{cursor:pointer}
+    .empty-times{padding:24px;text-align:center;font-size:13px;color:#bbb}
+
+    /* Sheet edición */
+    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
+    .sheet-backdrop.open{display:block;opacity:1}
+    .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:201;padding:0 16px 32px;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);max-width:480px;margin:0 auto;max-height:88vh;overflow-y:auto}
+    .sheet.open{transform:translateY(0)}
+    .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 18px}
+    .sheet-title{font-size:15px;font-weight:700;color:#1B3A5C;margin-bottom:4px}
+    .sheet-sub{font-size:12px;color:#aaa;margin-bottom:14px}
+    .sheet-section{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.07em;margin:14px 0 6px}
+    .sheet-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    .sheet-select{flex:1;padding:9px 28px 9px 10px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+    .sheet-select:focus{outline:none;border-color:#C05621;background-color:#fff}
+    .sheet-time-input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;color:#1B3A5C;background:#f7f9fc;text-align:center;-webkit-appearance:none}
+    .sheet-time-input:focus{outline:none;border-color:#C05621;background:#fff}
+    .sheet-gates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px}
+    .sheet-gate-btn{aspect-ratio:1;border-radius:9px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#1B3A5C;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .sheet-gate-btn.failed{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
+    .sheet-dsq-btn{width:100%;padding:12px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:8px}
+    .sheet-dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
+    .sheet-actions{display:flex;gap:10px;margin-top:16px}
+    .sheet-btn-save{flex:1;padding:14px;border-radius:12px;border:none;background:#C05621;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+    .sheet-btn-save:active{opacity:.85}
+    .sheet-btn-save:disabled{opacity:.6;cursor:not-allowed}
+    .sheet-btn-del{width:48px;height:48px;border-radius:12px;border:0.5px solid #FECACA;background:#FEF2F2;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .sheet-btn-del:active{background:#FEE2E2}
+    .sh-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+    .overlay.show{display:flex}
+    .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#C05621;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay p{font-size:14px;color:#666}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90vw;text-align:center}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+<div class="toast" id="toast"></div>
+
+<!-- SHEET EDICIÓN -->
+<div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+<div class="sheet" id="edit-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Editar tiempo</div>
+  <div class="sheet-sub" id="sh-sub"></div>
+  <div class="sheet-section">Palista / Manga</div>
+  <div class="sheet-row">
+    <select class="sheet-select" id="sh-pal"></select>
+    <select class="sheet-select" id="sh-manga" style="flex:0 0 80px"></select>
+  </div>
+  <div class="sheet-section">Tiempo bruto (MM:SS.d)</div>
+  <input class="sheet-time-input" id="sh-time" type="text" placeholder="00:00.0" maxlength="8">
+  <div class="sheet-section">Puertas falladas</div>
+  <div class="sheet-gates-grid" id="sh-gates"></div>
+  <div class="sheet-section" id="sh-roll-section">Roll</div>
+  <div class="sheet-row" id="sh-roll-row">
+    <button class="roll-state-btn ok" id="sh-roll-ok" onclick="shSetRoll('ok')">Roll OK</button>
+    <button class="roll-state-btn fail" id="sh-roll-fail" onclick="shSetRoll('fail')">Roll fallido</button>
+  </div>
+  <div class="roll-pos-stepper" id="sh-roll-pos-row" style="margin-bottom:6px">
+    <button class="roll-pos-btn" onclick="shAdjRollPos(-1)">&#8722;</button>
+    <div class="roll-pos-val" id="sh-roll-pos">&#8212;</div>
+    <button class="roll-pos-btn" onclick="shAdjRollPos(1)">+</button>
+  </div>
+  <div class="sheet-section">Estado</div>
+  <button class="sheet-dsq-btn" id="sh-dsq-btn" onclick="shToggleDsq()">
+    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt">Marcar como DSQ</span>
+  </button>
+  <div class="sheet-actions">
+    <button class="sheet-btn-del" id="sh-del-btn" onclick="shDelete()" title="Eliminar">&#128465;</button>
+    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()">Guardar cambios</button>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title" id="topbar-title">Cron&#243;metro KXC</span>
+  <button class="btn-finish" onclick="finishSession()">Finalizar</button>
+</div>
+
+<div class="content">
+  <div class="ses-head">
+    <div class="ses-title" id="ses-title">Sesi&#243;n</div>
+    <div class="ses-meta" id="ses-meta"></div>
+    <div class="kx-badge">&#9889; Kayak Cross</div>
+  </div>
+
+  <!-- CONTEXTO -->
+  <div class="section-label">Palista actual</div>
+  <div class="ctx-card">
+    <div class="ctx-label">Palista</div>
+    <select class="ctx-select" id="sel-pal" onchange="onCtxChange()"></select>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+      <div style="flex:1">
+        <div class="ctx-label" style="margin-bottom:4px">Manga</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="roll-pos-btn" id="manga-minus" onclick="adjManga(-1)">&#8722;</button>
+          <div class="roll-pos-val" id="manga-val" style="padding:9px 4px">1</div>
+          <button class="roll-pos-btn" onclick="adjManga(1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-label" id="manga-hint" style="margin-top:2px;text-transform:none;font-weight:400;color:#bbb">Manga autom&#225;tica seg&#250;n lo guardado</div>
+  </div>
+
+  <!-- CRONÓMETRO -->
+  <div class="chrono-card">
+    <div class="chrono-display" id="chrono-display">00:00.0</div>
+    <div class="chrono-pen-info" id="chrono-pen-info"></div>
+    <div class="chrono-controls">
+      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()">Iniciar</button>
+      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()">Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- PUERTAS -->
+  <div class="section-label">Puertas &middot; toca para marcar falta</div>
+  <div class="gates-card">
+    <div class="gates-grid" id="gates-grid"></div>
+    <div class="gates-legend">
+      <span><span class="legend-dot"></span>OK</span>
+      <span><span class="legend-dot failed"></span>Fallada</span>
+    </div>
+  </div>
+
+  <!-- ROLL -->
+  <div id="roll-wrap" style="display:none">
+    <div class="section-label">Roll</div>
+    <div class="roll-card">
+      <div class="roll-head">
+        <div class="roll-icon">&#128257;</div>
+        <div class="roll-head-info">
+          <div class="roll-title">Zona de Roll</div>
+          <div class="roll-sub">Esquimotaje obligatorio en el circuito</div>
+        </div>
+      </div>
+      <div class="roll-state-btns">
+        <button class="roll-state-btn ok active" id="roll-ok" onclick="setRoll('ok')">Roll OK</button>
+        <button class="roll-state-btn fail" id="roll-fail" onclick="setRoll('fail')">Roll fallido</button>
+      </div>
+      <div>
+        <div class="roll-pos-label" style="margin-bottom:6px">Posici&#243;n en el circuito</div>
+        <div class="roll-pos-stepper">
+          <button class="roll-pos-btn" id="roll-pos-minus" onclick="adjRollPos(-1)">&#8722;</button>
+          <div class="roll-pos-val" id="roll-pos-val">&#8212;</div>
+          <button class="roll-pos-btn" id="roll-pos-plus" onclick="adjRollPos(1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DSQ -->
+  <button class="dsq-btn" id="dsq-btn" onclick="toggleDsq()">
+    <span id="dsq-icon">&#9634;</span><span id="dsq-txt">Marcar como DSQ</span>
+  </button>
+
+  <!-- TIEMPOS GUARDADOS -->
+  <div class="section-label">Tiempos guardados <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">&middot; toca para editar</span></div>
+  <div id="times-wrap"><div class="empty-times">A&#250;n no hay tiempos registrados</div></div>
+</div>
+
+<script>
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+let _tok=null,_uid=null,_email=null;
+let _cfg=null;               // {name,lugar,fecha,nPal,nPuertas,roll,palistas:[...]}
+let _sessionId=null;
+let _entries=[];             // tiempos guardados
+let _selPal=0,_manga=1,_mangaManual=false;
+
+// Cronómetro
+let _running=false,_startTs=0,_elapsed=0,_raf=null;
+// Estado del registro actual
+let _gateFails=new Set();    // índices (0-based) de puertas falladas
+let _rollState='ok';         // 'ok' | 'fail'  (solo si _cfg.roll)
+let _rollPos=1;              // posición: roll va "entre puerta N y N+1" → guardamos N (1..nPuertas-1); 0 = antes de la 1ª
+let _dsq=false;
+
+// Sheet edición
+let _shEntryId=null,_shGateFails=new Set(),_shRollState='ok',_shRollPos=1,_shDsq=false;
+
+const $=id=>document.getElementById(id);
+let _tTimer;
+function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function fmtTime(ms){if(ms===null||ms===undefined)return'\u2014';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
+function msFromStr(s){s=s.trim();const m1=s.match(/^(\d{1,2}):(\d{2})\.(\d)$/);if(m1)return(parseInt(m1[1])*600+parseInt(m1[2])*10+parseInt(m1[3]))*100;const m2=s.match(/^(\d{1,3})\.(\d)$/);if(m2)return(parseInt(m2[1])*10+parseInt(m2[2]))*100;return null;}
+
+async function api(path,opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));
+  return j;
+}
+
+/* ── Roll: descripción de posición ── */
+// _rollPos guarda el índice de la puerta tras la cual está el roll.
+//  0            → antes de la puerta 1 (Salida → P1)
+//  k (1..n-1)   → entre Pk y P(k+1)
+//  n            → tras la última puerta (Pn → Meta)
+function rollPosLabel(pos,nPuertas){
+  if(pos<=0)return 'Salida \u2192 P1';
+  if(pos>=nPuertas)return 'P'+nPuertas+' \u2192 Meta';
+  return 'P'+pos+' \u2192 P'+(pos+1);
+}
+
+/* ── SELECTOR DE PALISTA ── */
+function buildContextSelectors(){
+  const sp=$('sel-pal');sp.innerHTML='';
+  _cfg.palistas.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.name;sp.appendChild(o);});
+  sp.value=_selPal;
+}
+function onCtxChange(){
+  _selPal=parseInt($('sel-pal').value);
+  _mangaManual=false;
+  syncManga();
+}
+
+/* La siguiente manga = (máxima manga ya guardada en este palista) + 1 */
+function nextManga(pi){
+  const ents=_entries.filter(e=>e.pal_index===pi);
+  return ents.length?Math.max(...ents.map(e=>e.manga))+1:1;
+}
+function syncManga(){
+  if(!_mangaManual)_manga=nextManga(_selPal);
+  $('manga-val').textContent=_manga;
+  $('manga-minus').disabled=_manga<=1;
+  $('manga-hint').textContent=_mangaManual?'Manga ajustada manualmente':'Manga autom\u00e1tica seg\u00fan lo guardado';
+}
+function adjManga(d){
+  _manga=Math.max(1,_manga+d);_mangaManual=true;syncManga();
+}
+
+/* ── PUERTAS ── */
+function buildGates(){
+  const grid=$('gates-grid');grid.innerHTML='';
+  for(let i=0;i<_cfg.nPuertas;i++){
+    const b=document.createElement('button');
+    b.className='gate-btn';b.id='gate-'+i;
+    b.innerHTML=(i+1);
+    b.onclick=()=>toggleGate(i);
+    grid.appendChild(b);
+  }
+}
+function toggleGate(i){
+  if(_dsq)return;
+  if(_gateFails.has(i)){_gateFails.delete(i);$('gate-'+i).classList.remove('failed');}
+  else{_gateFails.add(i);$('gate-'+i).classList.add('failed');}
+  updatePenInfo();
+}
+function clearGatesUI(){
+  _gateFails.clear();
+  document.querySelectorAll('.gate-btn').forEach(b=>b.classList.remove('failed'));
+}
+
+/* ── ROLL ── */
+function setRoll(state){
+  if(_dsq)return;
+  _rollState=state;
+  $('roll-ok').classList.toggle('active',state==='ok');
+  $('roll-fail').classList.toggle('active',state==='fail');
+  updatePenInfo();
+}
+function renderRollPos(){
+  $('roll-pos-val').textContent=rollPosLabel(_rollPos,_cfg.nPuertas);
+  $('roll-pos-minus').disabled=_rollPos<=0;
+  $('roll-pos-plus').disabled=_rollPos>=_cfg.nPuertas;
+}
+function adjRollPos(d){
+  _rollPos=Math.min(_cfg.nPuertas,Math.max(0,_rollPos+d));
+  renderRollPos();
+}
+
+/* ── DSQ ── */
+function toggleDsq(){
+  _dsq=!_dsq;
+  $('dsq-btn').classList.toggle('on',_dsq);
+  $('dsq-icon').textContent=_dsq?'\u26d4':'\u25a1';
+  $('dsq-txt').textContent=_dsq?'Descalificado (toca para quitar)':'Marcar como DSQ';
+  if(_dsq){clearGatesUI();}
+  updatePenInfo();
+}
+function updatePenInfo(){
+  if(_dsq){$('chrono-pen-info').textContent='DSQ \u2014 sin tiempo v\u00e1lido';return;}
+  const nf=_gateFails.size;
+  const parts=[];
+  parts.push(nf+(nf===1?' puerta fallada':' puertas falladas'));
+  if(_cfg.roll&&_rollState==='fail')parts.push('roll fallido');
+  $('chrono-pen-info').textContent=parts.join(' \u00b7 ');
+}
+
+/* ── CRONÓMETRO ── */
+function renderChrono(){
+  const ms=_elapsed;
+  const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);
+  $('chrono-display').textContent=`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
+}
+function tick(){if(!_running)return;_elapsed=Date.now()-_startTs;renderChrono();_raf=requestAnimationFrame(tick);}
+function toggleChrono(){if(_running)stopChrono();else startChrono();}
+function startChrono(){
+  _running=true;_startTs=Date.now()-_elapsed;
+  $('chrono-display').classList.add('running');
+  const b=$('btn-startstop');b.textContent='Parar';b.classList.remove('start');b.classList.add('stop');
+  _raf=requestAnimationFrame(tick);
+}
+async function stopChrono(){
+  _running=false;if(_raf)cancelAnimationFrame(_raf);
+  _elapsed=Date.now()-_startTs;renderChrono();
+  $('chrono-display').classList.remove('running');
+  const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');
+  await saveCurrentTime();
+}
+function resetChrono(){
+  if(_running){_running=false;if(_raf)cancelAnimationFrame(_raf);
+    $('chrono-display').classList.remove('running');
+    const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');}
+  _elapsed=0;renderChrono();
+  clearGatesUI();
+  if(_cfg.roll)setRoll('ok');
+  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent='Marcar como DSQ';}
+  updatePenInfo();
+}
+
+/* ── GUARDAR TIEMPO ── */
+async function ensureSession(){
+  if(_sessionId)return _sessionId;
+  const row=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},
+    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas})});
+  _sessionId=Array.isArray(row)?row[0].id:row.id;
+  const raw=sessionStorage.getItem('kxc_cfg');
+  if(raw){try{const c=JSON.parse(raw);c._sessionId=_sessionId;sessionStorage.setItem('kxc_cfg',JSON.stringify(c));}catch{}}
+  return _sessionId;
+}
+
+// Empaquetamos el detalle KXC dentro de los campos existentes de session_entries:
+//   ms      → tiempo bruto
+//   pen     → nº de faltas de puerta * 1000 (para reutilizar el formato de "segundos")
+//   cnt2    → nº de puertas falladas
+//   cnt50   → 1 si roll fallido, 0 si ok
+//   tramo   → posición del roll (0..nPuertas); -1 si no hay roll en el circuito
+//   pal_cat → 'KXC'
+//   manga   → manga
+function buildPayloadFromState(){
+  const nFaults=_gateFails.size;
+  const rollFail=(_cfg.roll&&_rollState==='fail')?1:0;
+  const pal=_cfg.palistas[_selPal];
+  return {
+    pal_index:_selPal,
+    pal_name:pal.name,
+    pal_cat:'KXC',
+    athlete_id:(pal.id&&!pal.isTemp)?pal.id:null,
+    tramo:_cfg.roll?_rollPos:-1,
+    manga:_manga,
+    ms:_dsq?0:_elapsed,
+    pen:nFaults*1000,
+    dsq:_dsq,
+    cnt2:nFaults,
+    cnt50:rollFail
+  };
+}
+
+async function saveCurrentTime(){
+  if(!_dsq&&_elapsed<=0){toast('El tiempo es 0, no se guarda','err');return;}
+  showLoad('Guardando tiempo...');
+  try{
+    await ensureSession();
+    const row={session_id:_sessionId,...buildPayloadFromState()};
+    const inserted=await api('/rest/v1/session_entries?select=*',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify([row])});
+    const saved=Array.isArray(inserted)?inserted[0]:inserted;
+    _entries.push(saved);
+    hideLoad();
+    toast('Tiempo guardado \u2713','ok');
+    _mangaManual=false;
+    resetChrono();
+    syncManga();
+    renderTimes();
+  }catch(e){
+    hideLoad();
+    toast('Error al guardar: '+e.message,'err');
+  }
+}
+
+/* ── TABLA DE TIEMPOS ── */
+function renderTimes(){
+  const wrap=$('times-wrap');
+  if(!_entries.length){wrap.innerHTML='<div class="empty-times">A\u00fan no hay tiempos registrados</div>';return;}
+  const nPal=_cfg.nPal;
+  let palNames={};
+  _cfg.palistas.forEach((p,i)=>{palNames[i]={name:p.name};});
+  _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name};});
+
+  let html='<table class="times-table"><thead><tr><th>Palista</th><th>Mangas</th></tr></thead><tbody>';
+  for(let pi=0;pi<nPal;pi++){
+    const pn=palNames[pi]||{name:'Palista '+(pi+1)};
+    const ents=_entries.filter(e=>e.pal_index===pi).sort((a,b)=>a.manga-b.manga);
+    if(!ents.length){
+      html+=`<tr><td><span class="pal-cell">${escHtml((pn.name||'').split(' ')[0])}</span></td><td><span style="color:#ddd;font-size:12px">\u2014</span></td></tr>`;
+      continue;
+    }
+    const vld=ents.filter(e=>!e.dsq);
+    const best=vld.length?Math.min(...vld.map(e=>e.ms)):Infinity;
+    const cells=ents.map(e=>{
+      if(e.dsq)return`<span class="tap-entry" onclick="openEditSheet('${e.id}')"><span class="time-val dsq">DSQ</span><span class="manga-lbl">M${e.manga}</span></span>`;
+      const isBest=e.ms===best&&vld.length>0;
+      const nf=e.cnt2||0;
+      const faults=nf>0?`<span class="faults-badge">${nf} P</span>`:'';
+      const rollFail=(e.cnt50===1);
+      const roll=(e.tramo!==null&&e.tramo>=0)?`<span class="roll-badge ${rollFail?'fail':'ok'}">R${rollFail?'\u2717':'\u2713'}</span>`:'';
+      return`<span class="tap-entry" onclick="openEditSheet('${e.id}')"><span class="time-val${isBest?' best':''}">${fmtTime(e.ms)}</span>${faults}${roll}<span class="manga-lbl">M${e.manga}</span></span>`;
+    }).join('<br>');
+    html+=`<tr><td><span class="pal-cell">${escHtml((pn.name||'').split(' ')[0])}</span></td><td>${cells}</td></tr>`;
+  }
+  html+='</tbody></table>';
+  wrap.innerHTML=html;
+}
+
+/* ── SHEET EDICIÓN ── */
+function buildSheetSelectors(pi,manga){
+  const sp=$('sh-pal');sp.innerHTML='';
+  let palNames={};
+  _cfg.palistas.forEach((p,i)=>{palNames[i]=p.name;});
+  _entries.forEach(e=>{if(!(e.pal_index in palNames))palNames[e.pal_index]=e.pal_name;});
+  const maxPal=Math.max(_cfg.nPal,...Object.keys(palNames).map(Number).map(n=>n+1));
+  for(let i=0;i<maxPal;i++){const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+(palNames[i]||'Palista '+(i+1));sp.appendChild(o);}
+  sp.value=pi;
+  const sm=$('sh-manga');sm.innerHTML='';
+  for(let i=1;i<=20;i++){const o=document.createElement('option');o.value=i;o.textContent='M'+i;sm.appendChild(o);}
+  sm.value=manga;
+}
+function buildSheetGates(){
+  const grid=$('sh-gates');grid.innerHTML='';
+  for(let i=0;i<_cfg.nPuertas;i++){
+    const b=document.createElement('button');
+    b.className='sheet-gate-btn'+(_shGateFails.has(i)?' failed':'');
+    b.id='sh-gate-'+i;b.textContent=(i+1);
+    b.onclick=()=>{if(_shDsq)return;if(_shGateFails.has(i)){_shGateFails.delete(i);b.classList.remove('failed');}else{_shGateFails.add(i);b.classList.add('failed');}};
+    grid.appendChild(b);
+  }
+}
+function shRenderRollPos(){$('sh-roll-pos').textContent=rollPosLabel(_shRollPos,_cfg.nPuertas);}
+function shAdjRollPos(d){_shRollPos=Math.min(_cfg.nPuertas,Math.max(0,_shRollPos+d));shRenderRollPos();}
+function shSetRoll(state){if(_shDsq)return;_shRollState=state;$('sh-roll-ok').classList.toggle('active',state==='ok');$('sh-roll-fail').classList.toggle('active',state==='fail');}
+function openEditSheet(entryId){
+  const e=_entries.find(x=>x.id===entryId);
+  if(!e)return;
+  _shEntryId=entryId;
+  $('sh-sub').textContent=e.pal_name+' \u00b7 M'+e.manga;
+  buildSheetSelectors(e.pal_index,e.manga);
+  $('sh-time').value=e.dsq?'':fmtTime(e.ms);
+  // reconstruir faltas de puerta: si tenemos cnt2 pero no el detalle, marcamos las primeras N
+  _shGateFails=new Set();
+  const nf=e.cnt2||0;
+  for(let i=0;i<nf&&i<_cfg.nPuertas;i++)_shGateFails.add(i);
+  buildSheetGates();
+  // roll
+  const hasRoll=_cfg.roll;
+  $('sh-roll-section').style.display=hasRoll?'block':'none';
+  $('sh-roll-row').style.display=hasRoll?'flex':'none';
+  $('sh-roll-pos-row').style.display=hasRoll?'flex':'none';
+  _shRollState=(e.cnt50===1)?'fail':'ok';
+  _shRollPos=(e.tramo!==null&&e.tramo>=0)?e.tramo:1;
+  shSetRoll(_shRollState);shRenderRollPos();
+  _shDsq=e.dsq||false;updateShDsq();
+  openSheet();
+}
+function openSheet(){$('sheet-backdrop').classList.add('open');setTimeout(()=>$('edit-sheet').classList.add('open'),10);}
+function closeSheet(){$('edit-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');}
+function shToggleDsq(){_shDsq=!_shDsq;if(_shDsq){_shGateFails.clear();buildSheetGates();}updateShDsq();}
+function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
+function shSetLoading(on){const s=$('sh-save-btn'),d=$('sh-del-btn');if(on){s.disabled=true;s.innerHTML='<div class="sh-spinner"></div> Guardando...';if(d)d.disabled=true;}else{s.disabled=false;s.textContent='Guardar cambios';if(d)d.disabled=false;}}
+
+async function shSave(){
+  const newPi=parseInt($('sh-pal').value);
+  const newManga=parseInt($('sh-manga').value);
+  const timeStr=$('sh-time').value.trim();
+  let newMs=0;
+  if(!_shDsq){newMs=msFromStr(timeStr);if(newMs===null){toast('Formato inv\u00e1lido. Usa MM:SS.d','err');return;}}
+  const nFaults=_shGateFails.size;
+  const rollFail=(_cfg.roll&&_shRollState==='fail')?1:0;
+  let pInfo=null;
+  if(_cfg.palistas[newPi])pInfo={name:_cfg.palistas[newPi].name,aid:(_cfg.palistas[newPi].id&&!_cfg.palistas[newPi].isTemp)?_cfg.palistas[newPi].id:null};
+  else{const ex=_entries.find(e=>e.pal_index===newPi);pInfo=ex?{name:ex.pal_name,aid:ex.athlete_id}:{name:'Palista '+(newPi+1),aid:null};}
+
+  shSetLoading(true);
+  try{
+    const idx=_entries.findIndex(e=>e.id===_shEntryId);
+    if(idx===-1)throw new Error('Entrada no encontrada');
+    const patch={pal_index:newPi,pal_name:pInfo.name,pal_cat:'KXC',athlete_id:pInfo.aid,tramo:_cfg.roll?_shRollPos:-1,manga:newManga,ms:newMs,pen:nFaults*1000,dsq:_shDsq,cnt2:nFaults,cnt50:rollFail};
+    await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(patch)});
+    _entries[idx]={..._entries[idx],...patch};
+    closeSheet();syncManga();renderTimes();
+    toast('Cambios guardados \u2713','ok');
+  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
+}
+async function shDelete(){
+  if(!confirm('\u00bfEliminar este tiempo?'))return;
+  shSetLoading(true);
+  try{
+    await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
+    _entries=_entries.filter(e=>e.id!==_shEntryId);
+    closeSheet();syncManga();renderTimes();
+    toast('Tiempo eliminado','ok');
+  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
+}
+
+/* ── FINALIZAR ── */
+function finishSession(){
+  if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
+  if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
+  sessionStorage.removeItem('kxc_cfg');
+  sessionStorage.removeItem('kxc_resume');
+  window.location.href='historial.html';
+}
+function goBack(){
+  if(_running){if(!confirm('El cron\u00f3metro est\u00e1 en marcha. \u00bfSalir igualmente?'))return;}
+  window.location.href='menu.html';
+}
+
+/* ── INIT ── */
+function loadConfig(){
+  const resume=sessionStorage.getItem('kxc_resume');
+  if(resume){try{const r=JSON.parse(resume);_cfg=r.cfg;_sessionId=r.sessionId||null;return true;}catch{}}
+  const raw=sessionStorage.getItem('kxc_cfg');
+  if(raw){try{const c=JSON.parse(raw);_cfg=c;_sessionId=c._sessionId||null;return true;}catch{}}
+  return false;
+}
+
+async function loadExistingEntries(){
+  if(!_sessionId)return;
+  try{_entries=await api('/rest/v1/session_entries?session_id=eq.'+_sessionId+'&order=pal_index.asc,manga.asc&select=*')||[];}
+  catch{_entries=[];}
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok){window.location.href='index.html';return;}
+
+  if(!loadConfig()){
+    toast('No hay configuraci\u00f3n de sesi\u00f3n','err');
+    setTimeout(()=>window.location.href='cross.html',1200);
+    return;
+  }
+
+  // normalizar cfg
+  _cfg.nPal=_cfg.nPal||(_cfg.palistas?_cfg.palistas.length:0);
+  _cfg.nPuertas=_cfg.nPuertas||6;
+  _cfg.roll=!!_cfg.roll;
+  _cfg.palistas=_cfg.palistas||[];
+
+  $('topbar-title').textContent=_cfg.name;
+  $('ses-title').textContent=_cfg.name;
+  const parts=[];
+  if(_cfg.lugar)parts.push(_cfg.lugar);
+  if(_cfg.fecha)parts.push(new Date(_cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  parts.push(_cfg.nPuertas+' puertas');
+  if(_cfg.roll)parts.push('con roll');
+  $('ses-meta').textContent=parts.join(' \u00b7 ');
+
+  buildContextSelectors();
+  buildGates();
+
+  // Roll: mostrar solo si el circuito lo incluye, y colocarlo por defecto a mitad
+  if(_cfg.roll){
+    $('roll-wrap').style.display='block';
+    _rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
+    renderRollPos();
+    setRoll('ok');
+  }
+
+  if(_sessionId){showLoad('Cargando tiempos...');await loadExistingEntries();hideLoad();}
+
+  renderChrono();
+  syncManga();
+  updatePenInfo();
+  renderTimes();
+});
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
