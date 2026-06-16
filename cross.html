@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <title>SLTimer &#8212; Configurar Kayak Cross</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+    .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:#FFF3E0;color:#C05621;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:0.5px solid #F6AD7B;flex-shrink:0;text-transform:uppercase}
+
+    .content{padding:20px 16px 120px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
+    .page-title{font-size:22px;font-weight:700;color:#1B3A5C;letter-spacing:-0.3px}
+    .page-sub{font-size:13px;color:#888;margin-top:3px}
+    .kx-badge{display:inline-flex;align-items:center;gap:4px;background:#FFF3E0;border:0.5px solid #F6AD7B;border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;color:#C05621;margin-top:8px}
+    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+
+    .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px}
+    label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px}
+    input[type=text],input[type=date]{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;background:#fff;color:#111;font-family:inherit;-webkit-appearance:none}
+    input:focus{outline:none;border-color:#C05621}
+
+    /* Contador (puertas) */
+    .counter-box{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px}
+    .counter-box-info{flex:1;min-width:0}
+    .counter-box-title{font-size:15px;font-weight:600;color:#111}
+    .counter-box-desc{font-size:12px;color:#aaa;margin-top:2px}
+    .counter-row{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .counter-btn{width:38px;height:38px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#C05621;font-family:inherit}
+    .counter-btn:active{background:#f0f0f0}
+    .counter-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
+    .counter-val{min-width:42px;text-align:center;font-size:24px;font-weight:700;color:#111;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+
+    /* Toggle Roll */
+    .toggle-row{display:flex;align-items:center;gap:12px;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px}
+    .toggle-label{flex:1}
+    .toggle-label-title{font-size:15px;font-weight:600;color:#111}
+    .toggle-label-desc{font-size:12px;color:#aaa;margin-top:2px}
+    .toggle-switch{position:relative;width:51px;height:31px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-slider{position:absolute;inset:0;background:#ddd;border-radius:31px;cursor:pointer;transition:background .2s}
+    .toggle-slider:before{content:'';position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+    .toggle-switch input:checked+.toggle-slider{background:#C05621}
+    .toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
+
+    /* Palistas */
+    .pal-list{display:flex;flex-direction:column;gap:8px}
+    .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .pal-row.temp{border-style:dashed;border-color:#e3d3cf;background:#fffdfc}
+    .pal-row-top{display:flex;align-items:center;gap:10px}
+    .pal-num{width:26px;height:26px;border-radius:50%;background:#FFF3E0;color:#C05621;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pal-num.empty{background:#f0f0f0;color:#bbb}
+    .pal-search-wrap{position:relative;flex:1}
+    .pal-input{width:100%;padding:9px 30px 9px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#111;-webkit-appearance:none}
+    .pal-input:focus{outline:none;border-color:#C05621}
+    .pal-input.matched{border-color:#C05621;background:#FFF8F3}
+    .pal-input.temp-filled{border-color:#B45309;background:#FFFBF3}
+    .pal-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#bbb;padding:0;line-height:1;display:none}
+    .pal-clear.show{display:block}
+    .pal-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:0.5px solid #ddd;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:50;max-height:200px;overflow-y:auto;display:none}
+    .pal-dropdown.open{display:block}
+    .pal-option{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid #f5f5f5}
+    .pal-option:last-child{border-bottom:none}
+    .pal-option:active{background:#f7f7f7}
+    .pal-option-name{font-weight:600;color:#111;flex:1}
+    .pal-option-new{color:#C05621;font-weight:600}
+    .pal-option-cats{display:flex;gap:4px}
+    .cat-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px}
+    .cat-badge.KXC{background:#FAEEDA;color:#633806}
+    .pal-remove{background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0 2px;flex-shrink:0;line-height:1}
+    .pal-remove:active{color:#A32D2D}
+
+    .add-pal-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border:2px dashed #e0c3b0;border-radius:12px;background:transparent;color:#C05621;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}
+    .add-pal-btn:active{border-color:#C05621;background:#fdf3ec}
+    .pal-empty-hint{font-size:12px;color:#bbb;text-align:center;padding:4px 0 2px}
+
+    /* Barra inferior fija */
+    .bottom-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:0.5px solid rgba(0,0,0,0.10);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:20}
+    .bottom-bar-inner{max-width:480px;margin:0 auto}
+    .btn-start{width:100%;padding:15px;border-radius:13px;border:none;background:#C05621;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .12s}
+    .btn-start:active{opacity:.85}
+    .btn-start:disabled{opacity:.45;cursor:not-allowed}
+
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+    .overlay.show{display:flex}
+    .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#C05621;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay p{font-size:14px;color:#666}
+    .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+<div class="toast" id="toast"></div>
+
+<div class="topbar">
+  <button class="topbar-back" onclick="window.location.href='app.html'">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Configurar Kayak Cross</span>
+  <div class="topbar-right"><div class="avatar" id="top-avatar"></div></div>
+</div>
+
+<div class="content">
+  <div>
+    <div class="page-title">Nueva sesi&#243;n de Kayak Cross</div>
+    <div class="page-sub">Configura los datos, las puertas y los palistas</div>
+    <div class="kx-badge">&#9889; Kayak Cross</div>
+  </div>
+
+  <!-- DATOS -->
+  <div class="section-label">Datos de la sesi&#243;n</div>
+  <div class="card">
+    <div>
+      <label>Nombre de la sesi&#243;n</label>
+      <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento ma&#241;ana" autocomplete="off">
+    </div>
+    <div>
+      <label>Fecha</label>
+      <input id="cfg-fecha" type="date">
+    </div>
+  </div>
+
+  <!-- PUERTAS -->
+  <div class="section-label">Puertas</div>
+  <div class="counter-box">
+    <div class="counter-box-info">
+      <div class="counter-box-title">N&#250;mero de puertas</div>
+      <div class="counter-box-desc">Puertas del circuito de cross</div>
+    </div>
+    <div class="counter-row">
+      <button class="counter-btn" id="puertas-minus" onclick="adjustPuertas(-1)">&#8722;</button>
+      <div class="counter-val" id="puertas-val">6</div>
+      <button class="counter-btn" id="puertas-plus" onclick="adjustPuertas(1)">+</button>
+    </div>
+  </div>
+
+  <!-- ROLL -->
+  <div class="section-label">Circuito</div>
+  <div class="toggle-row">
+    <div class="toggle-label">
+      <div class="toggle-label-title">Zona de Roll</div>
+      <div class="toggle-label-desc">El circuito incluye una zona de esquimotaje</div>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="roll-toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <!-- PALISTAS -->
+  <div class="section-label">Palistas (KXC)</div>
+  <div class="pal-list" id="pal-list"></div>
+  <button class="add-pal-btn" id="add-pal-btn" onclick="addPalRow()">
+    <span style="font-size:17px;line-height:1">+</span> A&#241;adir palista
+  </button>
+  <div class="pal-empty-hint" id="pal-empty-hint" style="display:none">No tienes palistas con categor&#237;a KXC. Puedes escribir un nombre temporal.</div>
+</div>
+
+<!-- BARRA INFERIOR -->
+<div class="bottom-bar">
+  <div class="bottom-bar-inner">
+    <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; Iniciar cron&#243;metro</button>
+  </div>
+</div>
+
+<script>
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+const MIN_PUERTAS = 1, MAX_PUERTAS = 20;
+const MAX_PAL = 30;
+
+let _tok = null, _uid = null, _email = null;
+let _athletes = [];            // palistas KXC del usuario
+let _nPuertas = 6;
+let _roll = false;
+// Cada fila: { rid, id, name, category, isTemp }
+let _pals = [];
+let _rowSeq = 0;
+
+const $ = id => document.getElementById(id);
+
+function initials(str){
+  if(!str) return '?';
+  const p = str.trim().split(/[\s._\-]+/);
+  return (p.length >= 2 ? p[0][0] + p[1][0] : str.slice(0,2)).toUpperCase();
+}
+let _tTimer;
+function toast(msg, type=''){
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.classList.add('show');
+  clearTimeout(_tTimer);
+  _tTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function showLoad(msg='Cargando...'){ $('overlay-msg').textContent = msg; $('overlay').classList.add('show'); }
+function hideLoad(){ $('overlay').classList.remove('show'); }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function api(path, opts={}){
+  const h = {'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok, ...(opts.headers||{})};
+  const r = await fetch(SB + path, {...opts, headers:h});
+  const t = await r.text();
+  let j; try{ j = JSON.parse(t); }catch{ j = t; }
+  if(!r.ok) throw new Error(j?.message || j?.hint || JSON.stringify(j));
+  return j;
+}
+
+/* ── PUERTAS ── */
+function adjustPuertas(delta){
+  _nPuertas = Math.min(MAX_PUERTAS, Math.max(MIN_PUERTAS, _nPuertas + delta));
+  $('puertas-val').textContent = _nPuertas;
+  $('puertas-minus').disabled = _nPuertas <= MIN_PUERTAS;
+  $('puertas-plus').disabled  = _nPuertas >= MAX_PUERTAS;
+}
+
+/* ── PALISTAS ── */
+function addPalRow(){
+  if(_pals.length >= MAX_PAL){ toast('M\u00e1ximo '+MAX_PAL+' palistas', 'err'); return; }
+  _pals.push({ rid: _rowSeq++, id:null, name:'', category:'KXC', isTemp:false });
+  renderPals();
+  setTimeout(() => {
+    const last = _pals[_pals.length-1];
+    const inp = $('pal-input-' + last.rid);
+    if(inp) inp.focus();
+  }, 40);
+}
+
+function removePalRow(rid){
+  _pals = _pals.filter(p => p.rid !== rid);
+  if(_pals.length === 0){ _pals.push({ rid:_rowSeq++, id:null, name:'', category:'KXC', isTemp:false }); }
+  renderPals();
+}
+
+function renderPals(){
+  const c = $('pal-list');
+  c.innerHTML = '';
+  _pals.forEach((p, i) => {
+    const filled = p.name.trim().length > 0;
+    const row = document.createElement('div');
+    row.className = 'pal-row' + (p.isTemp && filled ? ' temp' : '');
+    row.id = 'pal-row-' + p.rid;
+
+    const inputCls = 'pal-input' + (filled && !p.isTemp ? ' matched' : (filled && p.isTemp ? ' temp-filled' : ''));
+    const showRemove = _pals.length > 1 || filled;
+
+    row.innerHTML = `
+      <div class="pal-row-top">
+        <div class="pal-num ${filled ? '' : 'empty'}">${i+1}</div>
+        <div class="pal-search-wrap">
+          <input class="${inputCls}" id="pal-input-${p.rid}" type="text"
+            placeholder="Buscar o escribir nombre\u2026"
+            value="${escHtml(p.name)}"
+            autocomplete="off" autocorrect="off" spellcheck="false"
+            oninput="onPalInput(${p.rid})"
+            onfocus="openDropdown(${p.rid})"
+            onblur="delayClose(${p.rid})">
+          <button class="pal-clear ${filled ? 'show' : ''}" id="pal-clear-${p.rid}" onclick="clearPal(${p.rid})">&#x2715;</button>
+          <div class="pal-dropdown" id="pal-dd-${p.rid}"></div>
+        </div>
+        ${showRemove ? `<button class="pal-remove" onclick="removePalRow(${p.rid})" title="Quitar">&#x2715;</button>` : ''}
+      </div>
+    `;
+    c.appendChild(row);
+  });
+}
+
+function onPalInput(rid){
+  const p = _pals.find(x => x.rid === rid);
+  if(!p) return;
+  const val = $('pal-input-' + rid).value;
+  p.name = val;
+  p.id = null;
+  p.isTemp = true;
+  $('pal-clear-' + rid).classList.toggle('show', val.length > 0);
+  const inp = $('pal-input-' + rid);
+  inp.classList.remove('matched');
+  inp.classList.toggle('temp-filled', val.trim().length > 0);
+  openDropdown(rid);
+}
+
+function openDropdown(rid){
+  const inp = $('pal-input-' + rid);
+  if(!inp) return;
+  const q = (inp.value || '').toLowerCase().trim();
+  const dd = $('pal-dd-' + rid);
+  if(!q){ dd.classList.remove('open'); dd.innerHTML=''; return; }
+
+  // ids ya usados en otras filas
+  const usedIds = new Set(_pals.filter(x => x.rid !== rid && x.id).map(x => x.id));
+  const matches = _athletes
+    .filter(a => !usedIds.has(a.id))
+    .filter(a => ((a.name||'') + ' ' + (a.surname||'')).toLowerCase().includes(q))
+    .slice(0, 8);
+
+  let html = matches.map(a => {
+    const fn = a.name + (a.surname ? ' ' + a.surname : '');
+    const cats = (a.categories||[]).filter(c => c === 'KXC')
+      .map(c => `<span class="cat-badge ${c}">${c}</span>`).join('');
+    return `<div class="pal-option" onmousedown="selectAthlete(${rid},'${a.id}','${escHtml(fn).replace(/'/g,"\\'")}')">
+      <span class="pal-option-name">${escHtml(fn)}</span>
+      <span class="pal-option-cats">${cats}</span>
+    </div>`;
+  }).join('');
+
+  // opción temporal
+  html += `<div class="pal-option" onmousedown="keepTemp(${rid})">
+      <span class="pal-option-name pal-option-new">+ Usar &#8220;${escHtml(inp.value.trim())}&#8221; como palista temporal</span>
+    </div>`;
+
+  dd.innerHTML = html;
+  dd.classList.add('open');
+}
+
+function delayClose(rid){
+  setTimeout(() => { const dd = $('pal-dd-' + rid); if(dd) dd.classList.remove('open'); }, 150);
+}
+
+function selectAthlete(rid, id, name){
+  const p = _pals.find(x => x.rid === rid);
+  if(!p) return;
+  p.id = id; p.name = name; p.isTemp = false; p.category = 'KXC';
+  renderPals();
+}
+
+function keepTemp(rid){
+  const p = _pals.find(x => x.rid === rid);
+  if(!p) return;
+  const inp = $('pal-input-' + rid);
+  p.name = (inp.value || '').trim();
+  p.id = null; p.isTemp = true; p.category = 'KXC';
+  $('pal-dd-' + rid).classList.remove('open');
+  renderPals();
+}
+
+function clearPal(rid){
+  const p = _pals.find(x => x.rid === rid);
+  if(!p) return;
+  p.id = null; p.name = ''; p.category = 'KXC'; p.isTemp = false;
+  renderPals();
+}
+
+/* ── INICIAR SESIÓN ── */
+function startSession(){
+  const name = $('cfg-name').value.trim();
+  if(!name){ toast('Introduce un nombre para la sesi\u00f3n', 'err'); return; }
+  const fecha = $('cfg-fecha').value || new Date().toISOString().slice(0,10);
+
+  const validPals = _pals.filter(p => p.name.trim().length > 0);
+  if(validPals.length === 0){ toast('A\u00f1ade al menos un palista', 'err'); return; }
+
+  const palistas = validPals.map(p => ({
+    name: p.name.trim(),
+    category: 'KXC',
+    id: p.id || null,
+    isTemp: p.isTemp || !p.id
+  }));
+
+  const cfg = {
+    type: 'kxc',
+    name,
+    lugar: '',
+    fecha,
+    nPal: palistas.length,
+    nPuertas: _nPuertas,
+    roll: _roll,
+    palistas
+  };
+
+  sessionStorage.setItem('kxc_cfg', JSON.stringify(cfg));
+  sessionStorage.removeItem('kxc_resume');
+
+  window.location.href = 'cronokxc.html';
+}
+
+/* ── CARGA INICIAL ── */
+async function loadAthletes(){
+  try{
+    const rows = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
+    // Solo palistas con categoría KXC
+    _athletes = rows.filter(a => Array.isArray(a.categories) && a.categories.includes('KXC'));
+  }catch(e){
+    _athletes = [];
+  }
+  $('pal-empty-hint').style.display = _athletes.length ? 'none' : 'block';
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  _tok = localStorage.getItem('slt_tok');
+  _uid = localStorage.getItem('slt_uid');
+  _email = localStorage.getItem('slt_email');
+  if(!_tok){ window.location.href = 'index.html'; return; }
+
+  $('top-avatar').textContent = initials((_email||'').split('@')[0]);
+  $('cfg-fecha').value = new Date().toISOString().slice(0,10);
+
+  $('roll-toggle').addEventListener('change', e => { _roll = e.target.checked; });
+
+  adjustPuertas(0);
+  _pals.push({ rid:_rowSeq++, id:null, name:'', category:'KXC', isTemp:false });
+  renderPals();
+
+  showLoad('Cargando palistas...');
+  await loadAthletes();
+  hideLoad();
+});
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
