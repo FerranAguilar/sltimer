@@ -336,6 +336,7 @@ function renderDetail(){
   const valid=_entries.filter(e=>!e.dsq&&e.ms>0);
   const bestMs=valid.length?Math.min(...valid.map(e=>e.ms+e.pen)):null;
   let palNames={};
+  if(s.palistas&&Array.isArray(s.palistas)){s.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category};});}
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
   for(let i=0;i<nPal;i++)if(!palNames[i])palNames[i]={name:'Palista '+(i+1),cat:null};
 
@@ -394,10 +395,16 @@ function resumeSession(){
   const s=_curSes;
   const nPal=s.n_pal,nTra=s.n_tra;
 
-  // Usar palistas guardados en la sesión si existen; si no, reconstruir desde entries
+  // Reconstruir palistas: usar los guardados en la sesión si existen y cuadran;
+  // si no, reconstruir desde los tiempos registrados (entries).
   let palistas;
   if(s.palistas && Array.isArray(s.palistas) && s.palistas.length===nPal){
-    palistas=s.palistas;
+    palistas=s.palistas.map(p=>({
+      name:p.name,
+      category:p.category||null,
+      id:p.id||null,
+      isTemp:p.isTemp!==undefined?p.isTemp:!p.id
+    }));
   } else {
     let palMap={};
     _entries.forEach(e=>{
@@ -418,50 +425,25 @@ function resumeSession(){
     palistas
   };
 
-  // Construir times con la estructura que espera restoreSession() en slalom.html:
-  // { rawMs, penMs, totalMs, dsq, manga, ts }
-  const times=Array.from({length:nPal},()=>Array.from({length:nTra},()=>[]));
-  _entries.forEach(e=>{
-    const pi=e.pal_index,ti=e.tramo;
-    if(pi>=0&&pi<nPal&&ti>=0&&ti<nTra){
-      const rawMs = e.ms || 0;
-      const penMs = e.pen || 0;
-      const totalMs = e.dsq ? null : rawMs + penMs;
-      times[pi][ti].push({
-        rawMs,
-        penMs,
-        totalMs,
-        dsq: e.dsq || false,
-        manga: e.manga,
-        ts: Date.now()
-      });
-    }
-  });
-
-  // Construir mangas: siguiente manga para cada [pal][tramo]
-  const mangas=Array.from({length:nPal},()=>Array(nTra).fill(1));
-  for(let pi=0;pi<nPal;pi++){
-    for(let ti=0;ti<nTra;ti++){
-      const ents=times[pi][ti];
-      mangas[pi][ti]=ents.length?Math.max(...ents.map(e=>e.manga))+1:1;
-    }
-  }
-
+  // slalom-session.html recarga los tiempos desde Supabase usando sessionId,
+  // así que basta con pasar el id de la sesión y la configuración de palistas.
   sessionStorage.setItem('slalom_resume',JSON.stringify({
     sessionId:s.id,
-    cfg,
-    times,
-    mangas
+    cfg
   }));
 
-  window.location.href='slalom.html';
+  // Limpiar cualquier config nueva previa para que no interfiera
+  sessionStorage.removeItem('slalom_cfg');
+
+  window.location.href='slalom-session.html';
 }
 
 /* ── SHEET ── */
 function buildSheetSelectors(curPi,curTi){
   const sp=$('sh-pal');sp.innerHTML='';
   let palNames={};
-  _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]=e.pal_name;});
+  if(_curSes.palistas&&Array.isArray(_curSes.palistas)){_curSes.palistas.forEach((p,i)=>{palNames[i]=p.name;});}
+  _entries.forEach(e=>{if(!(e.pal_index in palNames))palNames[e.pal_index]=e.pal_name;});
   for(let i=0;i<_curSes.n_pal;i++){const opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+(palNames[i]||'Palista '+(i+1));sp.appendChild(opt);}
   sp.value=curPi;
   const st=$('sh-tra');st.innerHTML='';
@@ -543,7 +525,8 @@ async function shSave(){
     if(newMs===null){toast('Formato inv\u00e1lido. Usa MM:SS.d','err');return;}
   }
   let palNames={};
-  _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat,aid:e.athlete_id};});
+  if(_curSes.palistas&&Array.isArray(_curSes.palistas)){_curSes.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category,aid:(p.id&&!p.isTemp)?p.id:null};});}
+  _entries.forEach(e=>{if(!(e.pal_index in palNames))palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat,aid:e.athlete_id};});
   const pInfo=palNames[newPi]||{name:'Palista '+(newPi+1),cat:null,aid:null};
 
   shSetLoading(true);
@@ -599,6 +582,7 @@ async function exportPDF(){
   doc.text('Generado con SLTimer \u2014 '+new Date().toLocaleDateString('es-ES'),14,30);
   const nTra=s.n_tra,nPal=s.n_pal;
   let palNames={};
+  if(s.palistas&&Array.isArray(s.palistas)){s.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category};});}
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
   for(let i=0;i<nPal;i++)if(!palNames[i])palNames[i]={name:'Palista '+(i+1),cat:null};
   const head=[['Palista',...Array.from({length:nTra},(_,i)=>'T'+(i+1))]];
@@ -631,6 +615,7 @@ async function exportXLS(){
   const nTra=s.n_tra,nPal=s.n_pal;
   const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES'):'';
   let palNames={};
+  if(s.palistas&&Array.isArray(s.palistas)){s.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category};});}
   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
   for(let i=0;i<nPal;i++)if(!palNames[i])palNames[i]={name:'Palista '+(i+1),cat:null};
   const summaryHeader=['Palista','Categor\u00eda',...Array.from({length:nTra},(_,i)=>'Tramo '+(i+1))];
