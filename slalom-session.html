@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B3A5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLTimer">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <title>SLTimer &#8212; Cron&#243;metro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;min-height:100vh;-webkit-tap-highlight-color:transparent}
+    .topbar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.12);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+    .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
+    .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+    .topbar-brand img{width:28px;height:28px;border-radius:7px;display:block}
+    .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
+    .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
+    .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .btn-finish{background:#0F6E56;border:none;color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex-shrink:0;transition:opacity .12s}
+    .btn-finish:active{opacity:.8}
+
+    .content{padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto}
+    .ses-head{display:flex;flex-direction:column;gap:2px}
+    .ses-title{font-size:18px;font-weight:700;color:#1B3A5C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ses-meta{font-size:12px;color:#aaa}
+    .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+
+    /* Contexto: palista / tramo / manga */
+    .ctx-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+    .ctx-row{display:flex;gap:10px}
+    .ctx-field{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .ctx-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em}
+    .ctx-select{width:100%;padding:10px 28px 10px 10px;border:1px solid #ddd;border-radius:9px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+    .ctx-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
+    .manga-row{display:flex;align-items:center;gap:8px}
+    .manga-stepper{display:flex;align-items:center;gap:6px;flex:1}
+    .manga-btn{width:34px;height:34px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#185FA5;flex-shrink:0;font-family:inherit}
+    .manga-btn:active{background:#f0f0f0}
+    .manga-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
+    .manga-val{flex:1;text-align:center;font-size:16px;font-weight:700;color:#111;background:#f7f9fc;border:1px solid #e8eef5;border-radius:8px;padding:7px 0;line-height:1}
+    .manga-hint{font-size:11px;color:#bbb;text-align:center;margin-top:2px}
+
+    /* Cronómetro */
+    .chrono-card{background:#1B3A5C;border-radius:18px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:14px}
+    .chrono-display{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:2px;line-height:1;font-variant-numeric:tabular-nums}
+    .chrono-display.running{color:#7FE3C0}
+    .chrono-pen-info{font-size:13px;color:rgba(255,255,255,0.65);min-height:18px}
+    .chrono-controls{display:flex;gap:10px;width:100%}
+    .chrono-btn{flex:1;padding:16px;border-radius:13px;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .12s}
+    .chrono-btn:active{opacity:.85}
+    .chrono-btn.start{background:#22C55E;color:#fff}
+    .chrono-btn.stop{background:#EF4444;color:#fff}
+    .chrono-btn.reset{background:rgba(255,255,255,0.16);color:#fff;flex:0 0 90px}
+    .chrono-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Penalizaciones */
+    .pen-row{display:flex;gap:10px}
+    .pen-box{flex:1;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
+    .pen-title{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;text-align:center}
+    .pen-stepper{display:flex;align-items:center;gap:8px;width:100%}
+    .pen-btn{width:36px;height:36px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0;font-family:inherit}
+    .pen-btn:active{background:#f0f0f0}
+    .pen-val{flex:1;text-align:center;font-size:20px;font-weight:700;color:#111}
+    .dsq-btn{width:100%;padding:13px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:8px}
+    .dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
+
+    /* Tabla de tiempos guardados */
+    .times-table{width:100%;border-collapse:collapse;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
+    .times-table th{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:0.5px solid #f0f0f0;text-align:left;background:#fafafa}
+    .times-table td{padding:9px 12px;font-size:13px;color:#111;border-bottom:0.5px solid #f5f5f5;vertical-align:top}
+    .times-table tr:last-child td{border-bottom:none}
+    .time-val{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.5px;color:#1B3A5C}
+    .time-val.best{color:#0F6E56}
+    .time-val.dsq{color:#991B1B;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:0.06em}
+    .time-pen{display:inline-block;font-size:9px;font-weight:700;background:#FEE2E2;color:#991B1B;border-radius:4px;padding:1px 4px;margin-left:3px;vertical-align:middle}
+    .cat-chip{font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;display:inline-block}
+    .cat-chip.K1{background:#E6F1FB;color:#0C447C}
+    .cat-chip.C1{background:#E1F5EE;color:#085041}
+    .cat-chip.KXC{background:#FAEEDA;color:#633806}
+    .pal-cell{font-weight:700;font-size:13px}
+    .manga-lbl{font-size:9px;color:#bbb;font-weight:600;display:block;margin-top:1px}
+    .tap-entry{cursor:pointer}
+    .empty-times{padding:24px;text-align:center;font-size:13px;color:#bbb}
+
+    /* Sheet edición */
+    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.40);z-index:200;display:none;opacity:0;transition:opacity .22s}
+    .sheet-backdrop.open{display:block;opacity:1}
+    .sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:201;padding:0 16px 32px;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);max-width:480px;margin:0 auto}
+    .sheet.open{transform:translateY(0)}
+    .sheet-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 18px}
+    .sheet-title{font-size:15px;font-weight:700;color:#1B3A5C;margin-bottom:4px}
+    .sheet-sub{font-size:12px;color:#aaa;margin-bottom:14px}
+    .sheet-section{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.07em;margin:14px 0 6px}
+    .sheet-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    .sheet-select{flex:1;padding:9px 28px 9px 10px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:#1B3A5C;background:#f7f9fc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+    .sheet-select:focus{outline:none;border-color:#185FA5;background-color:#fff}
+    .sheet-time-input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;color:#1B3A5C;background:#f7f9fc;text-align:center;-webkit-appearance:none}
+    .sheet-time-input:focus{outline:none;border-color:#185FA5;background:#fff}
+    .pen-stepper-sheet{display:flex;gap:8px}
+    .pen-step-box{flex:1;background:#f9f9f9;border:0.5px solid #eee;border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+    .pen-step-label{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;text-align:center}
+    .pen-step-row{display:flex;align-items:center;gap:6px;width:100%}
+    .pen-step-btn{width:32px;height:32px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;flex-shrink:0}
+    .pen-step-btn:active{background:#f0f0f0}
+    .pen-step-val{flex:1;text-align:center;font-size:16px;font-weight:700;color:#111;background:#fff;border:1px solid #e8eef5;border-radius:7px;padding:4px 0;line-height:1}
+    .sheet-dsq-btn{width:100%;padding:12px;border-radius:12px;border:0.5px solid #D1D5DB;background:#F3F4F6;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:8px}
+    .sheet-dsq-btn.on{background:#7F1D1D;border-color:#7F1D1D;color:#fff}
+    .sheet-actions{display:flex;gap:10px;margin-top:16px}
+    .sheet-btn-save{flex:1;padding:14px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+    .sheet-btn-save:active{opacity:.85}
+    .sheet-btn-save:disabled{opacity:.6;cursor:not-allowed}
+    .sheet-btn-del{width:48px;height:48px;border-radius:12px;border:0.5px solid #FECACA;background:#FEF2F2;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .sheet-btn-del:active{background:#FEE2E2}
+    .sh-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+
+    .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+    .overlay.show{display:flex}
+    .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .overlay p{font-size:14px;color:#666}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90vw;text-align:center}
+    .toast.show{opacity:1}
+    .toast.err{background:#A32D2D}
+    .toast.ok{background:#0F6E56}
+  </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+<div class="toast" id="toast"></div>
+
+<!-- SHEET EDICIÓN -->
+<div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+<div class="sheet" id="edit-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Editar tiempo</div>
+  <div class="sheet-sub" id="sh-sub"></div>
+  <div class="sheet-section">Palista / Tramo / Manga</div>
+  <div class="sheet-row">
+    <select class="sheet-select" id="sh-pal"></select>
+    <select class="sheet-select" id="sh-tra"></select>
+    <select class="sheet-select" id="sh-manga" style="flex:0 0 80px"></select>
+  </div>
+  <div class="sheet-section">Tiempo bruto (MM:SS.d)</div>
+  <input class="sheet-time-input" id="sh-time" type="text" placeholder="00:00.0" maxlength="8">
+  <div class="sheet-section">Penalizaciones</div>
+  <div class="pen-stepper-sheet">
+    <div class="pen-step-box">
+      <div class="pen-step-label">+2 seg &middot; Toque</div>
+      <div class="pen-step-row">
+        <button class="pen-step-btn" onclick="shAdjPen(2,-1)">&minus;</button>
+        <div class="pen-step-val" id="sh-cnt2">0</div>
+        <button class="pen-step-btn" onclick="shAdjPen(2,1)">+</button>
+      </div>
+    </div>
+    <div class="pen-step-box">
+      <div class="pen-step-label">+50 seg &middot; Error</div>
+      <div class="pen-step-row">
+        <button class="pen-step-btn" onclick="shAdjPen(50,-1)">&minus;</button>
+        <div class="pen-step-val" id="sh-cnt50">0</div>
+        <button class="pen-step-btn" onclick="shAdjPen(50,1)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="sheet-section">Estado</div>
+  <button class="sheet-dsq-btn" id="sh-dsq-btn" onclick="shToggleDsq()">
+    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt">Marcar como DSQ</span>
+  </button>
+  <div class="sheet-actions">
+    <button class="sheet-btn-del" id="sh-del-btn" onclick="shDelete()" title="Eliminar">&#128465;</button>
+    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()">Guardar cambios</button>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="topbar-back" onclick="goBack()">&#8592;</button>
+  <a class="topbar-brand" href="menu.html">
+    <img src="icons/icon-192x192.png" alt="SLTimer">
+    <span class="topbar-brand-name">SLTimer</span>
+  </a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title" id="topbar-title">Cron&#243;metro</span>
+  <button class="btn-finish" onclick="finishSession()">Finalizar</button>
+</div>
+
+<div class="content">
+  <div class="ses-head">
+    <div class="ses-title" id="ses-title">Sesi&#243;n</div>
+    <div class="ses-meta" id="ses-meta"></div>
+  </div>
+
+  <!-- CONTEXTO -->
+  <div class="section-label">Registro actual</div>
+  <div class="ctx-card">
+    <div class="ctx-row">
+      <div class="ctx-field">
+        <div class="ctx-label">Palista</div>
+        <select class="ctx-select" id="sel-pal" onchange="onCtxChange()"></select>
+      </div>
+      <div class="ctx-field">
+        <div class="ctx-label">Tramo</div>
+        <select class="ctx-select" id="sel-tra" onchange="onCtxChange()"></select>
+      </div>
+    </div>
+    <div class="ctx-field">
+      <div class="ctx-label">Manga</div>
+      <div class="manga-row">
+        <div class="manga-stepper">
+          <button class="manga-btn" id="manga-minus" onclick="adjManga(-1)">&#8722;</button>
+          <div class="manga-val" id="manga-val">1</div>
+          <button class="manga-btn" id="manga-plus" onclick="adjManga(1)">+</button>
+        </div>
+      </div>
+      <div class="manga-hint" id="manga-hint">Manga autom&#225;tica seg&#250;n lo guardado</div>
+    </div>
+  </div>
+
+  <!-- CRONÓMETRO -->
+  <div class="chrono-card">
+    <div class="chrono-display" id="chrono-display">00:00.0</div>
+    <div class="chrono-pen-info" id="chrono-pen-info"></div>
+    <div class="chrono-controls">
+      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()">Iniciar</button>
+      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()">Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- PENALIZACIONES -->
+  <div class="section-label">Penalizaciones (antes de parar)</div>
+  <div class="pen-row">
+    <div class="pen-box">
+      <div class="pen-title">+2 seg &middot; Toque</div>
+      <div class="pen-stepper">
+        <button class="pen-btn" onclick="adjPen(2,-1)">&minus;</button>
+        <div class="pen-val" id="cnt2">0</div>
+        <button class="pen-btn" onclick="adjPen(2,1)">+</button>
+      </div>
+    </div>
+    <div class="pen-box">
+      <div class="pen-title">+50 seg &middot; Error</div>
+      <div class="pen-stepper">
+        <button class="pen-btn" onclick="adjPen(50,-1)">&minus;</button>
+        <div class="pen-val" id="cnt50">0</div>
+        <button class="pen-btn" onclick="adjPen(50,1)">+</button>
+      </div>
+    </div>
+  </div>
+  <button class="dsq-btn" id="dsq-btn" onclick="toggleDsq()">
+    <span id="dsq-icon">&#9634;</span><span id="dsq-txt">Marcar como DSQ</span>
+  </button>
+
+  <!-- TIEMPOS GUARDADOS -->
+  <div class="section-label">Tiempos guardados <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">&middot; toca para editar</span></div>
+  <div id="times-wrap"><div class="empty-times">A&#250;n no hay tiempos registrados</div></div>
+</div>
+
+<script>
+const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+let _tok=null,_uid=null,_email=null;
+let _cfg=null;               // {name,lugar,fecha,nPal,nTra,palistas:[{name,category,id,isTemp}]}
+let _sessionId=null;         // id de la fila en sessions
+let _entries=[];             // tiempos guardados (filas session_entries con id)
+let _selPal=0,_selTramo=0,_manga=1,_mangaManual=false;
+
+// Cronómetro
+let _running=false,_startTs=0,_elapsed=0,_raf=null;
+let _cnt2=0,_cnt50=0,_dsq=false;
+
+// Sheet edición
+let _shEntryId=null,_shCnt2=0,_shCnt50=0,_shDsq=false;
+
+const $=id=>document.getElementById(id);
+let _tTimer;
+function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function fmtTime(ms){if(ms===null||ms===undefined)return'\u2014';const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;}
+function msFromStr(s){s=s.trim();const m1=s.match(/^(\d{1,2}):(\d{2})\.(\d)$/);if(m1)return(parseInt(m1[1])*600+parseInt(m1[2])*10+parseInt(m1[3]))*100;const m2=s.match(/^(\d{1,3})\.(\d)$/);if(m2)return(parseInt(m2[1])*10+parseInt(m2[2]))*100;return null;}
+
+async function api(path,opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));
+  return j;
+}
+
+/* ── SELECTORES DE CONTEXTO ── */
+function buildContextSelectors(){
+  const sp=$('sel-pal');sp.innerHTML='';
+  _cfg.palistas.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.name;sp.appendChild(o);});
+  sp.value=_selPal;
+  const st=$('sel-tra');st.innerHTML='';
+  for(let i=0;i<_cfg.nTra;i++){const o=document.createElement('option');o.value=i;o.textContent='Tramo '+(i+1);st.appendChild(o);}
+  st.value=_selTramo;
+}
+function onCtxChange(){
+  _selPal=parseInt($('sel-pal').value);
+  _selTramo=parseInt($('sel-tra').value);
+  _mangaManual=false;
+  syncManga();
+}
+
+/* La siguiente manga = (máxima manga ya guardada en este palista+tramo) + 1 */
+function nextManga(pi,ti){
+  const ents=_entries.filter(e=>e.pal_index===pi&&e.tramo===ti);
+  return ents.length?Math.max(...ents.map(e=>e.manga))+1:1;
+}
+function syncManga(){
+  if(!_mangaManual)_manga=nextManga(_selPal,_selTramo);
+  $('manga-val').textContent=_manga;
+  $('manga-minus').disabled=_manga<=1;
+  $('manga-hint').textContent=_mangaManual?'Manga ajustada manualmente':'Manga autom\u00e1tica seg\u00fan lo guardado';
+}
+function adjManga(d){
+  const v=Math.max(1,_manga+d);
+  _manga=v;_mangaManual=true;
+  syncManga();
+}
+
+/* ── PENALIZACIONES (registro actual) ── */
+function adjPen(seg,d){
+  if(_dsq)return;
+  if(seg===2)_cnt2=Math.max(0,_cnt2+d);else _cnt50=Math.max(0,_cnt50+d);
+  $('cnt2').textContent=_cnt2;$('cnt50').textContent=_cnt50;
+  updatePenInfo();
+}
+function toggleDsq(){
+  _dsq=!_dsq;
+  if(_dsq){_cnt2=0;_cnt50=0;$('cnt2').textContent=0;$('cnt50').textContent=0;}
+  $('dsq-btn').classList.toggle('on',_dsq);
+  $('dsq-icon').textContent=_dsq?'\u26d4':'\u25a1';
+  $('dsq-txt').textContent=_dsq?'Descalificado (toca para quitar)':'Marcar como DSQ';
+  document.querySelectorAll('.pen-btn').forEach(b=>b.disabled=_dsq);
+  updatePenInfo();
+}
+function updatePenInfo(){
+  const penS=_cnt2*2+_cnt50*50;
+  $('chrono-pen-info').textContent=_dsq?'DSQ \u2014 sin tiempo v\u00e1lido':(penS>0?'Penalizaci\u00f3n: +'+penS+'s':'Sin penalizaci\u00f3n');
+}
+
+/* ── CRONÓMETRO ── */
+function renderChrono(){
+  const ms=_elapsed;
+  const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);
+  $('chrono-display').textContent=`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
+}
+function tick(){
+  if(!_running)return;
+  _elapsed=Date.now()-_startTs;
+  renderChrono();
+  _raf=requestAnimationFrame(tick);
+}
+function toggleChrono(){
+  if(_running)stopChrono();else startChrono();
+}
+function startChrono(){
+  _running=true;
+  _startTs=Date.now()-_elapsed;
+  $('chrono-display').classList.add('running');
+  const b=$('btn-startstop');b.textContent='Parar';b.classList.remove('start');b.classList.add('stop');
+  _raf=requestAnimationFrame(tick);
+}
+async function stopChrono(){
+  _running=false;
+  if(_raf)cancelAnimationFrame(_raf);
+  _elapsed=Date.now()-_startTs;
+  renderChrono();
+  $('chrono-display').classList.remove('running');
+  const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');
+  // Guardado automático al parar
+  await saveCurrentTime();
+}
+function resetChrono(){
+  if(_running){_running=false;if(_raf)cancelAnimationFrame(_raf);
+    $('chrono-display').classList.remove('running');
+    const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');}
+  _elapsed=0;renderChrono();
+  _cnt2=0;_cnt50=0;$('cnt2').textContent=0;$('cnt50').textContent=0;
+  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent='Marcar como DSQ';document.querySelectorAll('.pen-btn').forEach(b=>b.disabled=false);}
+  updatePenInfo();
+}
+
+/* ── GUARDAR TIEMPO (instantáneo en Supabase) ── */
+async function ensureSession(){
+  if(_sessionId)return _sessionId;
+  const row=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},
+    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas})});
+  _sessionId=Array.isArray(row)?row[0].id:row.id;
+  // persistir id en sessionStorage por si se recarga
+  const raw=sessionStorage.getItem('slalom_cfg');
+  if(raw){try{const c=JSON.parse(raw);c._sessionId=_sessionId;sessionStorage.setItem('slalom_cfg',JSON.stringify(c));}catch{}}
+  return _sessionId;
+}
+
+async function saveCurrentTime(){
+  const ms=_dsq?0:_elapsed;
+  if(!_dsq&&ms<=0){toast('El tiempo es 0, no se guarda','err');return;}
+  const pen=(_cnt2*2+_cnt50*50)*1000;
+  const pal=_cfg.palistas[_selPal];
+  showLoad('Guardando tiempo...');
+  try{
+    await ensureSession();
+    const row={
+      session_id:_sessionId,
+      pal_index:_selPal,
+      pal_name:pal.name,
+      pal_cat:pal.category||null,
+      athlete_id:(pal.id&&!pal.isTemp)?pal.id:null,
+      tramo:_selTramo,
+      manga:_manga,
+      ms,
+      pen,
+      dsq:_dsq,
+      cnt2:_cnt2,
+      cnt50:_cnt50
+    };
+    const inserted=await api('/rest/v1/session_entries?select=*',{method:'POST',headers:{'Prefer':'return=representation'},body:JSON.stringify([row])});
+    const saved=Array.isArray(inserted)?inserted[0]:inserted;
+    _entries.push(saved);
+    hideLoad();
+    toast('Tiempo guardado \u2713','ok');
+    // Preparar el siguiente: avanzar manga automáticamente y limpiar
+    _mangaManual=false;
+    resetChrono();
+    syncManga();
+    renderTimes();
+  }catch(e){
+    hideLoad();
+    toast('Error al guardar: '+e.message,'err');
+  }
+}
+
+/* ── TABLA DE TIEMPOS ── */
+function renderTimes(){
+  const wrap=$('times-wrap');
+  if(!_entries.length){wrap.innerHTML='<div class="empty-times">A\u00fan no hay tiempos registrados</div>';return;}
+  const nPal=_cfg.nPal,nTra=_cfg.nTra;
+  let palNames={};
+  _cfg.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category};});
+  _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
+
+  let html='<table class="times-table"><thead><tr><th>Palista</th>';
+  for(let ti=0;ti<nTra;ti++)html+=`<th>T${ti+1}</th>`;
+  html+='</tr></thead><tbody>';
+  for(let pi=0;pi<nPal;pi++){
+    const pn=palNames[pi]||{name:'Palista '+(pi+1),cat:null};
+    const cat=pn.cat?`<span class="cat-chip ${pn.cat}">${pn.cat}</span>`:'';
+    html+=`<tr><td><span class="pal-cell">${escHtml((pn.name||'').split(' ')[0])}</span> ${cat}</td>`;
+    for(let ti=0;ti<nTra;ti++){
+      const ents=_entries.filter(e=>e.pal_index===pi&&e.tramo===ti).sort((a,b)=>a.manga-b.manga);
+      if(!ents.length){html+='<td><span style="color:#ddd;font-size:12px">\u2014</span></td>';continue;}
+      const vld=ents.filter(e=>!e.dsq);
+      const best=vld.length?Math.min(...vld.map(e=>e.ms+e.pen)):Infinity;
+      const cells=ents.map(e=>{
+        if(e.dsq)return`<span class="tap-entry" onclick="openEditSheet('${e.id}')"><span class="time-val dsq">DSQ</span><span class="manga-lbl">M${e.manga}</span></span>`;
+        const tot=e.ms+e.pen,isBest=tot===best&&vld.length>0;
+        const pen=e.pen>0?`<span class="time-pen">+${e.pen/1000}s</span>`:'';
+        return`<span class="tap-entry" onclick="openEditSheet('${e.id}')"><span class="time-val${isBest?' best':''}">${fmtTime(e.ms)}${pen}</span><span class="manga-lbl">M${e.manga}</span></span>`;
+      }).join('<br>');
+      html+=`<td>${cells}</td>`;
+    }
+    html+='</tr>';
+  }
+  html+='</tbody></table>';
+  wrap.innerHTML=html;
+}
+
+/* ── SHEET EDICIÓN ── */
+function buildSheetSelectors(pi,ti,manga){
+  const sp=$('sh-pal');sp.innerHTML='';
+  let palNames={};
+  _cfg.palistas.forEach((p,i)=>{palNames[i]=p.name;});
+  _entries.forEach(e=>{if(!(e.pal_index in palNames))palNames[e.pal_index]=e.pal_name;});
+  const maxPal=Math.max(_cfg.nPal,...Object.keys(palNames).map(Number).map(n=>n+1));
+  for(let i=0;i<maxPal;i++){const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+(palNames[i]||'Palista '+(i+1));sp.appendChild(o);}
+  sp.value=pi;
+  const st=$('sh-tra');st.innerHTML='';
+  for(let i=0;i<_cfg.nTra;i++){const o=document.createElement('option');o.value=i;o.textContent='Tramo '+(i+1);st.appendChild(o);}
+  st.value=ti;
+  const sm=$('sh-manga');sm.innerHTML='';
+  for(let i=1;i<=20;i++){const o=document.createElement('option');o.value=i;o.textContent='M'+i;sm.appendChild(o);}
+  sm.value=manga;
+}
+function openEditSheet(entryId){
+  const e=_entries.find(x=>x.id===entryId);
+  if(!e)return;
+  _shEntryId=entryId;
+  $('sh-sub').textContent=e.pal_name+' \u00b7 Tramo '+(e.tramo+1)+' \u00b7 M'+e.manga;
+  buildSheetSelectors(e.pal_index,e.tramo,e.manga);
+  $('sh-time').value=e.dsq?'':fmtTime(e.ms);
+  _shCnt2=e.cnt2||0;_shCnt50=e.cnt50||0;_shDsq=e.dsq||false;
+  $('sh-cnt2').textContent=_shCnt2;$('sh-cnt50').textContent=_shCnt50;
+  updateShDsq();
+  openSheet();
+}
+function openSheet(){$('sheet-backdrop').classList.add('open');setTimeout(()=>$('edit-sheet').classList.add('open'),10);}
+function closeSheet(){$('edit-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');}
+function shAdjPen(seg,d){if(_shDsq)return;if(seg===2)_shCnt2=Math.max(0,_shCnt2+d);else _shCnt50=Math.max(0,_shCnt50+d);$('sh-cnt2').textContent=_shCnt2;$('sh-cnt50').textContent=_shCnt50;}
+function shToggleDsq(){_shDsq=!_shDsq;if(_shDsq){_shCnt2=0;_shCnt50=0;$('sh-cnt2').textContent=0;$('sh-cnt50').textContent=0;}updateShDsq();}
+function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=_shDsq);}
+function shSetLoading(on){const s=$('sh-save-btn'),d=$('sh-del-btn');if(on){s.disabled=true;s.innerHTML='<div class="sh-spinner"></div> Guardando...';if(d)d.disabled=true;}else{s.disabled=false;s.textContent='Guardar cambios';if(d)d.disabled=false;}}
+
+async function shSave(){
+  const newPi=parseInt($('sh-pal').value);
+  const newTi=parseInt($('sh-tra').value);
+  const newManga=parseInt($('sh-manga').value);
+  const timeStr=$('sh-time').value.trim();
+  const newPen=(_shCnt2*2+_shCnt50*50)*1000;
+  let newMs=0;
+  if(!_shDsq){newMs=msFromStr(timeStr);if(newMs===null){toast('Formato inv\u00e1lido. Usa MM:SS.d','err');return;}}
+  // nombre/cat del palista destino
+  let pInfo=null;
+  if(_cfg.palistas[newPi])pInfo={name:_cfg.palistas[newPi].name,cat:_cfg.palistas[newPi].category,aid:(_cfg.palistas[newPi].id&&!_cfg.palistas[newPi].isTemp)?_cfg.palistas[newPi].id:null};
+  else{const ex=_entries.find(e=>e.pal_index===newPi);pInfo=ex?{name:ex.pal_name,cat:ex.pal_cat,aid:ex.athlete_id}:{name:'Palista '+(newPi+1),cat:null,aid:null};}
+
+  shSetLoading(true);
+  try{
+    const idx=_entries.findIndex(e=>e.id===_shEntryId);
+    if(idx===-1)throw new Error('Entrada no encontrada');
+    const patch={pal_index:newPi,pal_name:pInfo.name,pal_cat:pInfo.cat,athlete_id:pInfo.aid,tramo:newTi,manga:newManga,ms:newMs,pen:newPen,dsq:_shDsq,cnt2:_shCnt2,cnt50:_shCnt50};
+    await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(patch)});
+    _entries[idx]={..._entries[idx],...patch};
+    closeSheet();
+    syncManga();
+    renderTimes();
+    toast('Cambios guardados \u2713','ok');
+  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
+}
+async function shDelete(){
+  if(!confirm('\u00bfEliminar este tiempo?'))return;
+  shSetLoading(true);
+  try{
+    await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
+    _entries=_entries.filter(e=>e.id!==_shEntryId);
+    closeSheet();
+    syncManga();
+    renderTimes();
+    toast('Tiempo eliminado','ok');
+  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
+}
+
+/* ── FINALIZAR ── */
+function finishSession(){
+  if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
+  if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
+  sessionStorage.removeItem('slalom_cfg');
+  sessionStorage.removeItem('slalom_resume');
+  window.location.href='historial.html';
+}
+function goBack(){
+  if(_running){if(!confirm('El cron\u00f3metro est\u00e1 en marcha. \u00bfSalir igualmente?'))return;}
+  window.location.href='menu.html';
+}
+
+/* ── INIT ── */
+function loadConfig(){
+  // 1) Reanudación desde historial.html
+  const resume=sessionStorage.getItem('slalom_resume');
+  if(resume){
+    try{
+      const r=JSON.parse(resume);
+      _cfg=r.cfg;_sessionId=r.sessionId||null;
+      return true;
+    }catch{}
+  }
+  // 2) Config nueva desde slalom.html
+  const raw=sessionStorage.getItem('slalom_cfg');
+  if(raw){
+    try{const c=JSON.parse(raw);_cfg=c;_sessionId=c._sessionId||null;return true;}catch{}
+  }
+  return false;
+}
+
+async function loadExistingEntries(){
+  if(!_sessionId)return;
+  try{
+    _entries=await api('/rest/v1/session_entries?session_id=eq.'+_sessionId+'&order=pal_index.asc,tramo.asc,manga.asc&select=*')||[];
+  }catch{_entries=[];}
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok){window.location.href='index.html';return;}
+
+  if(!loadConfig()){
+    toast('No hay configuraci\u00f3n de sesi\u00f3n','err');
+    setTimeout(()=>window.location.href='slalom.html',1200);
+    return;
+  }
+
+  // normalizar cfg
+  _cfg.nPal=_cfg.nPal||(_cfg.palistas?_cfg.palistas.length:0);
+  _cfg.nTra=_cfg.nTra||3;
+  _cfg.palistas=_cfg.palistas||[];
+
+  $('topbar-title').textContent=_cfg.name;
+  $('ses-title').textContent=_cfg.name;
+  const parts=[];
+  if(_cfg.lugar)parts.push(_cfg.lugar);
+  if(_cfg.fecha)parts.push(new Date(_cfg.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}));
+  $('ses-meta').textContent=parts.join(' \u00b7 ');
+
+  buildContextSelectors();
+
+  if(_sessionId){showLoad('Cargando tiempos...');await loadExistingEntries();hideLoad();}
+
+  renderChrono();
+  syncManga();
+  updatePenInfo();
+  renderTimes();
+});
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
