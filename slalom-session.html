@@ -23,6 +23,9 @@
     .topbar-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;letter-spacing:0.5px;line-height:1}
     .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0}
     .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .btn-share-code{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:none;align-items:center;justify-content:center;color:#185FA5;transition:background .12s;flex-shrink:0;font-size:18px}
+    .btn-share-code.show{display:flex}
+    .btn-share-code:active{background:#f0f0f0}
     .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#555;transition:background .12s;flex-shrink:0;font-size:17px}
     .btn-edit-cfg:active{background:#f0f0f0}
     .btn-finish{background:#0F6E56;border:none;color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex-shrink:0;transition:opacity .12s}
@@ -157,6 +160,17 @@
     .cfg-add-pal{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border:2px dashed #b5cbe0;border-radius:10px;background:transparent;color:#185FA5;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
     .cfg-add-pal:active{background:#f0f6fc}
 
+    /* ── Modal código compartida ── */
+    .code-modal-bd{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+    .code-modal-bd.open{display:flex}
+    .code-modal{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+    .code-modal-title{font-size:17px;font-weight:700;color:#1B3A5C;text-align:center}
+    .code-modal-sub{font-size:13px;color:#888;text-align:center;line-height:1.45}
+    .code-big{background:#1B3A5C;border-radius:14px;padding:18px;text-align:center}
+    .code-big-val{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;letter-spacing:6px;line-height:1}
+    .code-copy{padding:11px;border-radius:10px;border:1px solid #ddd;background:#f7f9fc;color:#185FA5;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .code-close{padding:13px;border-radius:12px;border:none;background:#f0f0f0;color:#555;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
     .spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
@@ -250,6 +264,17 @@
   </div>
 </div>
 
+<!-- MODAL CÓDIGO COMPARTIDA -->
+<div class="code-modal-bd" id="code-modal-bd" onclick="if(event.target===this)closeCodeModal()">
+  <div class="code-modal">
+    <div class="code-modal-title">Sesi&#243;n compartida</div>
+    <div class="code-modal-sub">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
+    <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+    <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+    <button class="code-close" onclick="closeCodeModal()">Cerrar</button>
+  </div>
+</div>
+
 <div class="topbar">
   <button class="topbar-back" onclick="goBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -258,6 +283,7 @@
   </a>
   <div class="topbar-divider"></div>
   <span class="topbar-title" id="topbar-title">Cron&#243;metro</span>
+  <button class="btn-share-code" id="btn-share-code" onclick="openCodeModal()" title="C&#243;digo de sesi&#243;n compartida">&#128279;</button>
   <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
   <button class="btn-finish" onclick="finishSession()">Finalizar</button>
 </div>
@@ -344,6 +370,8 @@ let _running=false,_startTs=0,_elapsed=0,_raf=null;
 let _cnt2=0,_cnt50=0,_dsq=false;
 
 let _shEntryId=null,_shCnt2=0,_shCnt50=0,_shDsq=false;
+
+let _sharedCode=null;
 
 const $=id=>document.getElementById(id);
 let _tTimer;
@@ -444,7 +472,7 @@ function resetChrono(){
 async function ensureSession(){
   if(_sessionId)return _sessionId;
   const row=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},
-    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas})});
+    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nTra,palistas:_cfg.palistas,type:'slalom'})});
   _sessionId=Array.isArray(row)?row[0].id:row.id;
   const raw=sessionStorage.getItem('slalom_cfg');
   if(raw){try{const c=JSON.parse(raw);c._sessionId=_sessionId;sessionStorage.setItem('slalom_cfg',JSON.stringify(c));}catch{}}
@@ -738,11 +766,37 @@ function applyCfgEdit(){
   toast('Configuraci\u00f3n actualizada \u2713','ok');
 }
 
+/* ── CÓDIGO SESIÓN COMPARTIDA ── */
+function initSharedCode(){
+  try{
+    const raw=sessionStorage.getItem('slt_shared');
+    if(!raw)return;
+    const st=JSON.parse(raw);
+    if(st&&st.code&&(!st.sessionId||!_sessionId||st.sessionId===_sessionId)){
+      _sharedCode=st.code;
+      $('btn-share-code').classList.add('show');
+    }
+  }catch{}
+}
+function openCodeModal(){
+  if(!_sharedCode)return;
+  $('code-big-val').textContent=_sharedCode;
+  $('code-modal-bd').classList.add('open');
+}
+function closeCodeModal(){$('code-modal-bd').classList.remove('open');}
+function copyShareCode(){
+  const c=_sharedCode||'';
+  navigator.clipboard?.writeText(c)
+    .then(()=>toast('C\u00f3digo copiado \u2713','ok'))
+    .catch(()=>toast('Copia manual: '+c));
+}
+
 function finishSession(){
   if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
   if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
   sessionStorage.removeItem('slalom_cfg');
   sessionStorage.removeItem('slalom_resume');
+  sessionStorage.removeItem('slt_shared');
   window.location.href='historial.html';
 }
 function goBack(){
@@ -797,6 +851,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   syncManga();
   updatePenInfo();
   renderTimes();
+  initSharedCode();
 });
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
