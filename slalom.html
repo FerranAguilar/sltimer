@@ -47,6 +47,14 @@
     .counter-btn:disabled{opacity:.35;cursor:not-allowed;color:#999}
     .counter-val{min-width:42px;text-align:center;font-size:24px;font-weight:700;color:#111;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
 
+    /* Toggle sesión compartida */
+    .toggle-switch{position:relative;width:51px;height:31px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-slider{position:absolute;inset:0;background:#ddd;border-radius:31px;cursor:pointer;transition:background .2s}
+    .toggle-slider:before{content:'';position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+    .toggle-switch input:checked+.toggle-slider{background:#185FA5}
+    .toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
+
     /* Palistas */
     .pal-list{display:flex;flex-direction:column;gap:8px}
     .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
@@ -94,6 +102,17 @@
     .btn-start{width:100%;padding:15px;border-radius:13px;border:none;background:#185FA5;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .12s}
     .btn-start:active{opacity:.85}
     .btn-start:disabled{opacity:.45;cursor:not-allowed}
+
+    /* Modal código compartida */
+    .code-modal-bd{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+    .code-modal-bd.open{display:flex}
+    .code-modal{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+    .code-modal-title{font-size:17px;font-weight:700;color:#1B3A5C;text-align:center}
+    .code-modal-sub{font-size:13px;color:#888;text-align:center;line-height:1.45}
+    .code-big{background:#1B3A5C;border-radius:14px;padding:18px;text-align:center}
+    .code-big-val{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;letter-spacing:6px;line-height:1}
+    .code-copy{padding:9px;border-radius:10px;border:1px solid #ddd;background:#f7f9fc;color:#185FA5;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .code-go{padding:14px;border-radius:12px;border:none;background:#0F6E56;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
@@ -155,6 +174,19 @@
     </div>
   </div>
 
+  <!-- SESIÓN COMPARTIDA -->
+  <div class="section-label">Sesi&#243;n compartida</div>
+  <div class="counter-box">
+    <div class="counter-box-info">
+      <div class="counter-box-title">Sesi&#243;n compartida</div>
+      <div class="counter-box-desc">Otros entrenadores podr&#225;n registrar tiempos a la vez con un c&#243;digo</div>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="shared-toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
   <!-- PALISTAS -->
   <div class="section-label">Palistas</div>
   <div class="pal-list" id="pal-list"></div>
@@ -167,6 +199,17 @@
 <div class="bottom-bar">
   <div class="bottom-bar-inner">
     <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; Iniciar cron&#243;metro</button>
+  </div>
+</div>
+
+<!-- MODAL CÓDIGO COMPARTIDA -->
+<div class="code-modal-bd" id="code-modal-bd">
+  <div class="code-modal">
+    <div class="code-modal-title">Sesi&#243;n compartida creada</div>
+    <div class="code-modal-sub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
+    <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+    <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+    <button class="code-go" onclick="goToChrono()">&#9654; Iniciar cron&#243;metro &#8594;</button>
   </div>
 </div>
 
@@ -185,6 +228,8 @@ let _nTra = 3;
 //  isTemp   → nombre escrito a mano (no existe en athletes)
 let _pals = [];
 let _rowSeq = 0;               // id incremental de fila para el DOM
+let _coachName = null;
+let _pendingCode = null;
 
 const $ = id => document.getElementById(id);
 
@@ -363,7 +408,6 @@ function selectAthlete(rid, id, name){
   const p = _pals.find(x => x.rid === rid);
   if(!p) return;
   p.id = id; p.name = name; p.isTemp = false;
-  const ath = _athletes.find(a => a.id === id);
   const cats = catsForRow(p);
   // si sólo tiene una categoría, la dejamos seleccionada automáticamente
   p.category = (cats.length === 1) ? cats[0] : (cats.includes(p.category) ? p.category : null);
@@ -394,37 +438,109 @@ function setCat(rid, cat){
   renderCatSelector(rid);
 }
 
-/* ── INICIAR SESIÓN ── */
-function startSession(){
+/* ── CÓDIGO COMPARTIDA ── */
+function generateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+async function loadCoachName(){
+  try{
+    const rows = await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=name,username&limit=1');
+    if(rows && rows.length) _coachName = rows[0].name || rows[0].username || null;
+  }catch{}
+}
+
+/* ── CONSTRUIR CONFIG ── */
+function buildCfg(){
   const name = $('cfg-name').value.trim();
-  if(!name){ toast('Introduce un nombre para la sesi\u00f3n', 'err'); return; }
+  if(!name){ toast('Introduce un nombre para la sesi\u00f3n', 'err'); return null; }
   const fecha = $('cfg-fecha').value || new Date().toISOString().slice(0,10);
 
   // Sólo se guardan los recuadros con un palista introducido
   const validPals = _pals.filter(p => p.name.trim().length > 0);
-  if(validPals.length === 0){ toast('A\u00f1ade al menos un palista', 'err'); return; }
+  if(validPals.length === 0){ toast('A\u00f1ade al menos un palista', 'err'); return null; }
 
-  const palistas = validPals.map((p, i) => ({
+  const palistas = validPals.map(p => ({
     name: p.name.trim(),
     category: p.category || null,
     id: p.id || null,
     isTemp: p.isTemp || !p.id
   }));
 
-  // Config con el mismo formato que espera el cronómetro / shared-session
-  const cfg = {
-    name,
-    lugar: '',
-    fecha,
-    nPal: palistas.length,
-    nTra: _nTra,
-    palistas
-  };
+  return { name, lugar:'', fecha, nPal:palistas.length, nTra:_nTra, palistas };
+}
 
-  // No se guarda en Supabase aún: el guardado ocurre al finalizar la sesión.
-  sessionStorage.setItem('slalom_cfg', JSON.stringify(cfg));
-  sessionStorage.removeItem('slalom_resume');  // nueva sesión, no es reanudación
+/* ── INICIAR SESIÓN ── */
+async function startSession(){
+  const cfg = buildCfg();
+  if(!cfg) return;
 
+  const shared = $('shared-toggle').checked;
+
+  if(!shared){
+    // Flujo normal: el guardado en Supabase ocurre al finalizar la sesión
+    sessionStorage.setItem('slalom_cfg', JSON.stringify(cfg));
+    sessionStorage.removeItem('slalom_resume');  // nueva sesión, no es reanudación
+    sessionStorage.removeItem('slt_shared');
+    window.location.href = 'slalom-session.html';
+    return;
+  }
+
+  // Flujo compartido: crear la sesión y generar el código ahora
+  showLoad('Creando sesi\u00f3n compartida...');
+  try{
+    const sesRow = await api('/rest/v1/sessions?select=id',{
+      method:'POST', headers:{'Prefer':'return=representation'},
+      body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,
+        n_pal:cfg.nPal,n_tra:cfg.nTra,palistas:cfg.palistas,type:'slalom'})
+    });
+    const sessionId = Array.isArray(sesRow) ? sesRow[0].id : sesRow.id;
+
+    let code = generateCode(), attempts = 0, sharedSessionId = null;
+    while(attempts < 5){
+      try{
+        const shRow = await api('/rest/v1/shared_sessions?select=id,code',{
+          method:'POST', headers:{'Prefer':'return=representation'},
+          body:JSON.stringify({code,session_id:sessionId,created_by:_uid,is_active:true})
+        });
+        sharedSessionId = Array.isArray(shRow) ? shRow[0].id : shRow.id;
+        code = Array.isArray(shRow) ? shRow[0].code : shRow.code;
+        break;
+      }catch{ code = generateCode(); attempts++; }
+    }
+    if(!sharedSessionId) throw new Error('No se pudo generar un c\u00f3digo \u00fanico');
+
+    await api('/rest/v1/session_coaches',{
+      method:'POST', headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify({session_id:sessionId,shared_session_id:sharedSessionId,
+        coach_id:_uid,coach_name:_coachName||_email})
+    });
+
+    // El cronómetro ya encontrará la sesión creada gracias a _sessionId
+    const storedCfg = Object.assign({}, cfg, { _sessionId: sessionId });
+    sessionStorage.setItem('slalom_cfg', JSON.stringify(storedCfg));
+    sessionStorage.removeItem('slalom_resume');
+    sessionStorage.setItem('slt_shared', JSON.stringify({
+      sharedSessionId, sessionId, code, isOwner:true, cfg
+    }));
+
+    hideLoad();
+    _pendingCode = code;
+    $('code-big-val').textContent = code;
+    $('code-modal-bd').classList.add('open');
+  }catch(e){
+    hideLoad();
+    toast('Error al crear la sesi\u00f3n: ' + e.message, 'err');
+  }
+}
+
+function copyShareCode(){
+  const code = _pendingCode || '';
+  navigator.clipboard?.writeText(code)
+    .then(() => toast('C\u00f3digo copiado \u2713', 'ok'))
+    .catch(() => toast('Copia manual: ' + code));
+}
+function goToChrono(){
   window.location.href = 'slalom-session.html';
 }
 
@@ -452,6 +568,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   showLoad('Cargando palistas...');
   await loadAthletes();
+  await loadCoachName();
   hideLoad();
 });
 
