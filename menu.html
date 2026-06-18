@@ -76,9 +76,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.err{background:#A32D2D}
-/* Live dot para sesión activa */
-.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22C55E;margin-right:5px;vertical-align:middle;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* Modal unirse */
+.join-bd{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.join-bd.open{display:flex}
+.join-modal{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+.join-title{font-size:17px;font-weight:700;color:#1B3A5C;text-align:center}
+.join-sub{font-size:13px;color:#888;text-align:center;line-height:1.45}
+.join-input{padding:14px;border:1.5px solid #ddd;border-radius:12px;font-size:28px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#1B3A5C;text-align:center;-webkit-appearance:none}
+.join-input:focus{outline:none;border-color:#185FA5}
+.join-input.err{border-color:#A32D2D;background:#FEF2F2}
+.join-actions{display:flex;gap:8px}
+.join-cancel{flex:1;padding:13px;border-radius:12px;border:none;background:#f0f0f0;color:#555;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.join-go{flex:2;padding:13px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.join-go:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -108,7 +118,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div style="display:flex;flex-direction:column;gap:8px">
     <div class="section-label">Principal</div>
 
-    <!-- Sesión individual -->
+    <!-- Crear sesión -->
     <button class="menu-primary" onclick="goToApp('nueva-sesion')">
       <div class="menu-primary-icon">
         <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
@@ -120,14 +130,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <span class="menu-primary-arrow">&#8250;</span>
     </button>
 
-    <!-- Sesión compartida (NUEVO) -->
-    <button class="menu-primary shared" onclick="goToApp('sesion-compartida')">
+    <!-- Unirme a sesión compartida -->
+    <button class="menu-primary shared" onclick="openJoinModal()">
       <div class="menu-primary-icon" style="font-size:26px;background:rgba(255,255,255,0.15)">
-        &#x1F91D;
+        &#128279;
       </div>
       <div class="menu-primary-info">
-        <div class="menu-primary-title">Sesión Compartida</div>
-        <div class="menu-primary-desc" id="shared-desc">Varios entrenadores registrando tiempos a la vez</div>
+        <div class="menu-primary-title">Unirme a sesión compartida</div>
+        <div class="menu-primary-desc">Introduce el código que te ha dado el entrenador principal</div>
       </div>
       <span class="menu-primary-arrow">&#8250;</span>
     </button>
@@ -160,19 +170,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="toast" id="toast"></div>
 
+<!-- MODAL UNIRSE A SESIÓN COMPARTIDA -->
+<div class="join-bd" id="join-bd" onclick="if(event.target===this)closeJoinModal()">
+  <div class="join-modal">
+    <div class="join-title">Unirme a sesi&#243;n compartida</div>
+    <div class="join-sub">Introduce el c&#243;digo de 6 caracteres que te ha dado el entrenador principal</div>
+    <input class="join-input" id="join-code" type="text" maxlength="6" placeholder="ABC123"
+      autocomplete="off" autocorrect="off" spellcheck="false" oninput="onJoinInput()">
+    <div class="join-actions">
+      <button class="join-cancel" onclick="closeJoinModal()">Cancelar</button>
+      <button class="join-go" id="join-go" disabled onclick="doJoin()">Unirme &#8594;</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 const ROUTES={
   'nueva-sesion':'app.html',
-  'sesion-compartida':'shared-session.html',
   'historial':'historial.html',
   'palistas':'athletes.html',
   'grupos':'teams.html',
   'estadisticas':'stats.html',
   'ajustes':'ajustes.html'
 };
-let _tok=null,_uid=null,_email=null,_coachId=null;
+let _tok=null,_uid=null,_email=null,_coachId=null,_coachName=null;
 const $=id=>document.getElementById(id);
 function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
 function hideLoad(){$('overlay').classList.remove('show');}
@@ -188,19 +211,66 @@ function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'
 async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
 async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
 async function loadNotifBadge(){try{const myEmail=localStorage.getItem('slt_email')||'';const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(myEmail)+'&status=eq.pending&select=id');const total=(invites?.length||0);const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}const groupsBadge=$('groups-badge');if(total>0){groupsBadge.textContent=total;groupsBadge.style.display='inline';}}catch{}}
-async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
+async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;_coachName=rows[0].name||rows[0].username||null;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
 function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' \uD83D\uDC4B';}
 
-// Detectar si hay sesión compartida activa y mostrar indicador
-function checkSharedSessionBadge(){
-  const raw=sessionStorage.getItem('slt_shared');
-  if(!raw)return;
+/* ── UNIRSE A SESIÓN COMPARTIDA ── */
+function openJoinModal(){
+  $('join-code').value='';
+  $('join-code').classList.remove('err');
+  $('join-go').disabled=true;
+  $('join-bd').classList.add('open');
+  setTimeout(()=>$('join-code').focus(),200);
+}
+function closeJoinModal(){ $('join-bd').classList.remove('open'); }
+function onJoinInput(){
+  const v=$('join-code').value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,6);
+  $('join-code').value=v;
+  $('join-code').classList.remove('err');
+  $('join-go').disabled=v.length!==6;
+}
+async function doJoin(){
+  const code=$('join-code').value.trim().toUpperCase();
+  if(code.length!==6)return;
+  showLoad('Buscando sesi\u00f3n...');
   try{
-    const state=JSON.parse(raw);
-    if(state.code){
-      $('shared-desc').innerHTML='<span class="live-dot"></span>Sesión activa · '+state.code;
+    const rows=await api('/rest/v1/shared_sessions?code=eq.'+code+'&is_active=eq.true&select=id,session_id,created_by,code');
+    if(!rows||!rows.length){
+      hideLoad(); $('join-code').classList.add('err');
+      toast('C\u00f3digo no encontrado o sesi\u00f3n cerrada',true); return;
     }
-  }catch{}
+    const shared=rows[0];
+    const sesRows=await api('/rest/v1/sessions?id=eq.'+shared.session_id+'&select=id,name,lugar,data,n_pal,n_tra,palistas,type');
+    const ses=sesRows[0];
+    if(!ses){ hideLoad(); toast('Sesi\u00f3n no encontrada',true); return; }
+
+    // Registrarme como entrenador (idempotente: si ya estoy, ignoramos el error)
+    try{
+      await api('/rest/v1/session_coaches',{method:'POST',headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({session_id:ses.id,shared_session_id:shared.id,
+          coach_id:_uid,coach_name:_coachName||_email})});
+    }catch{}
+
+    const cfg={name:ses.name,lugar:ses.lugar||'',fecha:ses.data,
+      nPal:ses.n_pal,palistas:ses.palistas||[]};
+    const sharedState={sharedSessionId:shared.id,sessionId:ses.id,code:shared.code,isOwner:false,cfg};
+
+    if(ses.type==='kxc'){
+      cfg.type='kxc'; cfg.nPuertas=ses.n_tra; cfg.roll=false;
+      const stored=Object.assign({},cfg,{_sessionId:ses.id});
+      sessionStorage.setItem('kxc_cfg',JSON.stringify(stored));
+      sessionStorage.removeItem('kxc_resume');
+      sessionStorage.setItem('slt_shared',JSON.stringify(sharedState));
+      hideLoad(); window.location.href='sessionkxc.html';
+    }else{
+      cfg.nTra=ses.n_tra;
+      const stored=Object.assign({},cfg,{_sessionId:ses.id});
+      sessionStorage.setItem('slalom_cfg',JSON.stringify(stored));
+      sessionStorage.removeItem('slalom_resume');
+      sessionStorage.setItem('slt_shared',JSON.stringify(sharedState));
+      hideLoad(); window.location.href='slalom-session.html';
+    }
+  }catch(e){ hideLoad(); toast('Error: '+e.message,true); }
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
@@ -217,7 +287,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
   loadAthletesCount();
   loadNotifBadge();
   loadCoachProfile();
-  checkSharedSessionBadge();
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
