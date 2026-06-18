@@ -135,6 +135,9 @@
     .sh-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 
     /* ── Editar configuración (sheet) ── */
+    .btn-share-code{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:none;align-items:center;justify-content:center;color:#C05621;transition:background .12s;flex-shrink:0;font-size:18px}
+    .btn-share-code.show{display:flex}
+    .btn-share-code:active{background:#f0f0f0}
     .btn-edit-cfg{background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#555;transition:background .12s;flex-shrink:0;font-size:17px}
     .btn-edit-cfg:active{background:#f0f0f0}
     .cfg-field{margin-bottom:12px}
@@ -177,6 +180,17 @@
     .cfg-badge.KXC{background:#FAEEDA;color:#633806}
     .cfg-add-pal{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border:2px dashed #e0c3b0;border-radius:10px;background:transparent;color:#C05621;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
     .cfg-add-pal:active{background:#fdf3ec}
+
+    /* ── Modal código compartida ── */
+    .code-modal-bd{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+    .code-modal-bd.open{display:flex}
+    .code-modal{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+    .code-modal-title{font-size:17px;font-weight:700;color:#1B3A5C;text-align:center}
+    .code-modal-sub{font-size:13px;color:#888;text-align:center;line-height:1.45}
+    .code-big{background:#1B3A5C;border-radius:14px;padding:18px;text-align:center}
+    .code-big-val{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;letter-spacing:6px;line-height:1}
+    .code-copy{padding:11px;border-radius:10px;border:1px solid #ddd;background:#fdf3ec;color:#C05621;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .code-close{padding:13px;border-radius:12px;border:none;background:#f0f0f0;color:#555;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 
     .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
     .overlay.show{display:flex}
@@ -273,6 +287,17 @@
   </div>
 </div>
 
+<!-- MODAL CÓDIGO COMPARTIDA -->
+<div class="code-modal-bd" id="code-modal-bd" onclick="if(event.target===this)closeCodeModal()">
+  <div class="code-modal">
+    <div class="code-modal-title">Sesi&#243;n compartida</div>
+    <div class="code-modal-sub">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
+    <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+    <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+    <button class="code-close" onclick="closeCodeModal()">Cerrar</button>
+  </div>
+</div>
+
 <div class="topbar">
   <button class="topbar-back" onclick="goBack()">&#8592;</button>
   <a class="topbar-brand" href="menu.html">
@@ -281,6 +306,7 @@
   </a>
   <div class="topbar-divider"></div>
   <span class="topbar-title" id="topbar-title">Cron&#243;metro KXC</span>
+  <button class="btn-share-code" id="btn-share-code" onclick="openCodeModal()" title="C&#243;digo de sesi&#243;n compartida">&#128279;</button>
   <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
   <button class="btn-finish" onclick="finishSession()">Finalizar</button>
 </div>
@@ -364,6 +390,9 @@ let _dsq=false;
 // Sheet edición
 let _shEntryId=null,_shGateFails=new Set(),_shRollState='ok',_shRollPos=1,_shDsq=false;
 
+// Código compartida
+let _sharedCode=null;
+
 const $=id=>document.getElementById(id);
 let _tTimer;
 function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
@@ -383,10 +412,6 @@ async function api(path,opts={}){
 }
 
 /* ── Roll: descripción de posición ── */
-// _rollPos guarda el índice de la puerta tras la cual está el roll.
-//  0            → antes de la puerta 1 (Salida → P1)
-//  k (1..n-1)   → entre Pk y P(k+1)
-//  n            → tras la última puerta (Pn → Meta)
 function rollPosLabel(pos,nPuertas){
   if(pos<=0)return 'Salida \u2192 P1';
   if(pos>=nPuertas)return 'P'+nPuertas+' \u2192 Meta';
@@ -422,17 +447,10 @@ function adjManga(d){
 }
 
 /* ── PUERTAS + ROLL (rejilla unificada) ── */
-// _rollPos = índice de la puerta tras la cual está la R.
-//   0          → antes de P1 (Salida → P1)
-//   k (1..n-1) → entre Pk y P(k+1)
-//   n          → tras Pn (Pn → Meta)
-// La rejilla se reconstruye como una secuencia: [R?] P1 P2 ... Pn, insertando
-// la ficha R en su posición. Se puede arrastrar para cambiar _rollPos.
 function buildGates(){
   const grid=$('gates-grid');
   grid.innerHTML='';
   for(let i=0;i<_cfg.nPuertas;i++){
-    // Si el roll va justo antes de esta puerta, inserta la ficha R aquí
     if(_cfg.roll && _rollPos===i) grid.appendChild(makeRollChip());
     const b=document.createElement('button');
     b.className='gate-btn'+(_gateFails.has(i)?' failed':'');
@@ -441,7 +459,6 @@ function buildGates(){
     b.onclick=()=>toggleGate(i);
     grid.appendChild(b);
   }
-  // Roll al final del circuito (tras la última puerta)
   if(_cfg.roll && _rollPos>=_cfg.nPuertas) grid.appendChild(makeRollChip());
 }
 
@@ -451,9 +468,7 @@ function makeRollChip(){
   chip.id='roll-chip';
   chip.innerHTML='R<span class="roll-state-mark">'+(_rollState==='fail'?'\u2717':'\u2713')+'</span>';
   chip.title='Toca para OK/fallido \u00b7 arrastra para mover';
-  // Tap → alterna estado (si no se ha arrastrado)
   chip.onclick=()=>{ if(!_rollDragMoved) toggleRollState(); };
-  // Drag (puntero unificado: ratón + táctil)
   chip.addEventListener('pointerdown',onRollPointerDown);
   return chip;
 }
@@ -492,11 +507,9 @@ function onRollPointerDown(e){
   document.addEventListener('pointermove',onRollPointerMove);
   document.addEventListener('pointerup',onRollPointerUp);
 }
-// Inserta huecos de inserción (drop-slots) entre las puertas para resaltar destino
 function buildDropSlots(){
   const grid=$('gates-grid');
   const gates=[...grid.querySelectorAll('.gate-btn')];
-  // slot antes de cada puerta + uno al final → posiciones 0..nPuertas
   gates.forEach((g,idx)=>{
     const slot=document.createElement('div');
     slot.className='drop-slot';slot.dataset.pos=idx;
@@ -535,7 +548,7 @@ function onRollPointerUp(e){
     if(slot)_rollPos=parseInt(slot.dataset.pos);
   }
   removeDropSlots();
-  buildGates();           // reconstruye con la R en su nueva posición
+  buildGates();
 }
 
 /* ── DSQ ── */
@@ -592,21 +605,13 @@ function resetChrono(){
 async function ensureSession(){
   if(_sessionId)return _sessionId;
   const row=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},
-    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas})});
+    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,type:'kxc'})});
   _sessionId=Array.isArray(row)?row[0].id:row.id;
   const raw=sessionStorage.getItem('kxc_cfg');
   if(raw){try{const c=JSON.parse(raw);c._sessionId=_sessionId;sessionStorage.setItem('kxc_cfg',JSON.stringify(c));}catch{}}
   return _sessionId;
 }
 
-// Empaquetamos el detalle KXC dentro de los campos existentes de session_entries:
-//   ms      → tiempo bruto
-//   pen     → nº de faltas de puerta * 1000 (para reutilizar el formato de "segundos")
-//   cnt2    → nº de puertas falladas
-//   cnt50   → 1 si roll fallido, 0 si ok
-//   tramo   → posición del roll (0..nPuertas); -1 si no hay roll en el circuito
-//   pal_cat → 'KXC'
-//   manga   → manga
 function buildPayloadFromState(){
   const nFaults=_gateFails.size;
   const rollFail=(_cfg.roll&&_rollState==='fail')?1:0;
@@ -714,12 +719,10 @@ function openEditSheet(entryId){
   $('sh-sub').textContent=e.pal_name+' \u00b7 M'+e.manga;
   buildSheetSelectors(e.pal_index,e.manga);
   $('sh-time').value=e.dsq?'':fmtTime(e.ms);
-  // reconstruir faltas de puerta: si tenemos cnt2 pero no el detalle, marcamos las primeras N
   _shGateFails=new Set();
   const nf=e.cnt2||0;
   for(let i=0;i<nf&&i<_cfg.nPuertas;i++)_shGateFails.add(i);
   buildSheetGates();
-  // roll
   const hasRoll=_cfg.roll;
   $('sh-roll-section').style.display=hasRoll?'block':'none';
   $('sh-roll-row').style.display=hasRoll?'flex':'none';
@@ -880,7 +883,6 @@ function applyCfgEdit(){
   const newRoll=$('cfg-edit-roll').checked;
   const newPalistas=validPals.map(p=>({name:p.name.trim(),category:'KXC',id:p.id||null,isTemp:p.isTemp||!p.id}));
 
-  // Si se reduce el nº de puertas, ajustar la posición del roll si se queda fuera de rango
   if(_rollPos>newPue)_rollPos=newPue;
 
   _cfg.name=newName;
@@ -891,19 +893,16 @@ function applyCfgEdit(){
   _cfg.nPal=newPalistas.length;
   _cfg.palistas=newPalistas;
 
-  // Persistir cfg
   const stored=Object.assign({},_cfg);
   if(_sessionId)stored._sessionId=_sessionId;
   sessionStorage.setItem('kxc_cfg',JSON.stringify(stored));
   const resume=sessionStorage.getItem('kxc_resume');
   if(resume){try{const r=JSON.parse(resume);r.cfg=_cfg;sessionStorage.setItem('kxc_resume',JSON.stringify(r));}catch{}}
 
-  // Sincronizar con Supabase si la sesión ya existe (n_tra guarda el nº de puertas)
   if(_sessionId){
     api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas})}).catch(e=>toast('No se pudo sincronizar: '+e.message,'err'));
   }
 
-  // Refrescar UI
   $('topbar-title').textContent=newName;
   $('ses-title').textContent=newName;
   const parts=[];
@@ -915,7 +914,6 @@ function applyCfgEdit(){
 
   if(_selPal>=_cfg.nPal)_selPal=0;
 
-  // Mostrar/ocultar elementos del roll y reconstruir la rejilla
   $('roll-hint').style.display=_cfg.roll?'block':'none';
   $('legend-roll').style.display=_cfg.roll?'flex':'none';
   if(_cfg.roll&&(_rollPos===undefined||_rollPos<0))_rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
@@ -931,12 +929,38 @@ function applyCfgEdit(){
   toast('Configuraci\u00f3n actualizada \u2713','ok');
 }
 
+/* ── CÓDIGO SESIÓN COMPARTIDA ── */
+function initSharedCode(){
+  try{
+    const raw=sessionStorage.getItem('slt_shared');
+    if(!raw)return;
+    const st=JSON.parse(raw);
+    if(st&&st.code&&(!st.sessionId||!_sessionId||st.sessionId===_sessionId)){
+      _sharedCode=st.code;
+      $('btn-share-code').classList.add('show');
+    }
+  }catch{}
+}
+function openCodeModal(){
+  if(!_sharedCode)return;
+  $('code-big-val').textContent=_sharedCode;
+  $('code-modal-bd').classList.add('open');
+}
+function closeCodeModal(){$('code-modal-bd').classList.remove('open');}
+function copyShareCode(){
+  const c=_sharedCode||'';
+  navigator.clipboard?.writeText(c)
+    .then(()=>toast('C\u00f3digo copiado \u2713','ok'))
+    .catch(()=>toast('Copia manual: '+c));
+}
+
 /* ── FINALIZAR ── */
 function finishSession(){
   if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
   if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
   sessionStorage.removeItem('kxc_cfg');
   sessionStorage.removeItem('kxc_resume');
+  sessionStorage.removeItem('slt_shared');
   window.location.href='historial.html';
 }
 function goBack(){
@@ -994,7 +1018,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   buildContextSelectors();
 
-  // Roll: si el circuito lo incluye, posicionarlo por defecto a mitad ANTES de construir la rejilla
   if(_cfg.roll){
     _rollState='ok';
     _rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
@@ -1012,6 +1035,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   syncManga();
   updatePenInfo();
   renderTimes();
+  initSharedCode();
 });
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
