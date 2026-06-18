@@ -510,9 +510,21 @@ function goToChrono(){
 /* ── CARGA INICIAL ── */
 async function loadAthletes(){
   try{
-    const rows = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
+    const owned = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
+    // Palistas compartidos conmigo
+    let sharedIds = [];
+    try{
+      const access = await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+      sharedIds = (access||[]).map(a => a.athlete_id);
+    }catch{}
+    let shared = [];
+    const notOwned = sharedIds.filter(id => !owned.find(a => a.id === id));
+    if(notOwned.length){
+      shared = await api('/rest/v1/athletes?id=in.('+notOwned.join(',')+')&select=id,name,surname,categories&order=name.asc') || [];
+    }
+    const all = [...owned, ...shared];
     // Solo palistas con categoría KXC
-    _athletes = rows.filter(a => Array.isArray(a.categories) && a.categories.includes('KXC'));
+    _athletes = all.filter(a => Array.isArray(a.categories) && a.categories.includes('KXC'));
   }catch(e){
     _athletes = [];
   }
