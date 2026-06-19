@@ -58,15 +58,11 @@
     .gate-btn{position:relative;width:54px;height:54px;border-radius:11px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#1B3A5C;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0}
     .gate-btn:active{transform:scale(.94)}
     .gate-btn.failed{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
-    /* Ficha Roll, dentro de la rejilla y arrastrable */
-    .roll-chip{width:54px;height:54px;border-radius:11px;border:1.5px solid #0F6E56;background:#E1F5EE;color:#085041;font-family:'Bebas Neue',sans-serif;font-size:24px;cursor:grab;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,background .12s,border-color .12s,box-shadow .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0;touch-action:none;user-select:none;-webkit-user-select:none}
-    .roll-chip:active{cursor:grabbing}
+    /* Ficha Roll: en sesión solo alterna OK/fallido (no se arrastra) */
+    .roll-chip{width:54px;height:54px;border-radius:11px;border:1.5px solid #0F6E56;background:#E1F5EE;color:#085041;font-family:'Bebas Neue',sans-serif;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0;user-select:none;-webkit-user-select:none}
+    .roll-chip:active{transform:scale(.94)}
     .roll-chip.fail{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
-    .roll-chip.dragging{opacity:.45;box-shadow:0 4px 14px rgba(0,0,0,.18)}
     .roll-chip .roll-state-mark{position:absolute;bottom:2px;right:5px;font-size:11px;font-family:-apple-system,sans-serif;font-weight:800;line-height:1}
-    /* Hueco resaltado donde caerá la R al arrastrar */
-    .drop-slot{width:8px;height:54px;border-radius:6px;background:transparent;flex-shrink:0;transition:background .12s,width .12s}
-    .drop-slot.active{background:#0F6E56;width:14px}
     .roll-hint{font-size:11px;color:#aaa;margin-top:10px;line-height:1.4}
     .gates-legend{display:flex;gap:14px;margin-top:10px;font-size:11px;color:#888;flex-wrap:wrap}
     .gates-legend span{display:flex;align-items:center;gap:5px}
@@ -159,6 +155,17 @@
     .cfg-slider:before{content:'';position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
     .cfg-switch input:checked+.cfg-slider{background:#C05621}
     .cfg-switch input:checked+.cfg-slider:before{transform:translateX(20px)}
+    /* Posición de roll dentro del sheet de configuración (arrastre) */
+    .cfg-roll-pos{display:none;margin-bottom:12px}
+    .cfg-roll-pos.show{display:block}
+    .cfg-roll-pos-cur{font-size:12px;color:#C05621;font-weight:600;margin:2px 0 10px}
+    .cfg-gates-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .cfg-gate-chip{width:44px;height:44px;border-radius:10px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#1B3A5C;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cfg-roll-chip{width:44px;height:44px;border-radius:10px;border:1.5px solid #0F6E56;background:#E1F5EE;color:#085041;font-family:'Bebas Neue',sans-serif;font-size:20px;cursor:grab;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:none;user-select:none;-webkit-user-select:none;transition:opacity .12s,box-shadow .12s}
+    .cfg-roll-chip:active{cursor:grabbing}
+    .cfg-roll-chip.dragging{opacity:.45;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+    .cfg-drop-slot{width:7px;height:44px;border-radius:5px;background:transparent;flex-shrink:0;transition:background .12s,width .12s}
+    .cfg-drop-slot.active{background:#0F6E56;width:12px}
     .cfg-pal-list{display:flex;flex-direction:column;gap:8px;max-height:34vh;overflow-y:auto;padding:2px}
     .cfg-pal-row{background:#fafbfc;border:0.5px solid #e6e9ee;border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
     .cfg-pal-num{width:24px;height:24px;border-radius:50%;background:#FFF3E0;color:#C05621;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -275,9 +282,15 @@
       <div class="cfg-toggle-desc">El circuito incluye una zona de esquimotaje</div>
     </div>
     <label class="cfg-switch">
-      <input type="checkbox" id="cfg-edit-roll">
+      <input type="checkbox" id="cfg-edit-roll" onchange="cfgOnRollToggle(this.checked)">
       <span class="cfg-slider"></span>
     </label>
+  </div>
+  <div class="cfg-roll-pos" id="cfg-roll-pos">
+    <label style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px">Posici&#243;n de la zona de Roll</label>
+    <div class="cfg-roll-pos-cur" id="cfg-roll-pos-cur">&#8212;</div>
+    <div class="cfg-gates-grid" id="cfg-roll-gates"></div>
+    <div style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.4">Arrastra la <b>R</b> para mover la zona de roll. Es fija para toda la sesi&#243;n.</div>
   </div>
   <div class="sheet-section">Palistas (KXC)</div>
   <div class="cfg-pal-list" id="cfg-edit-pal-list"></div>
@@ -350,7 +363,7 @@
   <div class="section-label">Puertas &middot; toca para marcar falta</div>
   <div class="gates-card">
     <div class="gates-grid" id="gates-grid"></div>
-    <div class="roll-hint" id="roll-hint" style="display:none">Arrastra la ficha <b>R</b> para colocarla entre las puertas donde est&#225; el roll. T&#243;cala para alternar OK / fallido.</div>
+    <div class="roll-hint" id="roll-hint" style="display:none">La zona de <b>R</b>oll est&#225; fijada en la configuraci&#243;n. T&#243;cala para alternar OK / fallido. Para cambiar su posici&#243;n, usa la edici&#243;n de un tiempo o el bot&#243;n de configuraci&#243;n.</div>
     <div class="gates-legend">
       <span><span class="legend-dot"></span>OK</span>
       <span><span class="legend-dot failed"></span>Fallada</span>
@@ -373,7 +386,7 @@ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 
 let _tok=null,_uid=null,_email=null;
-let _cfg=null;               // {name,lugar,fecha,nPal,nPuertas,roll,palistas:[...]}
+let _cfg=null;               // {name,lugar,fecha,nPal,nPuertas,roll,rollPos,palistas:[...]}
 let _sessionId=null;
 let _entries=[];             // tiempos guardados
 let _athletes=[];            // palistas KXC del usuario (para el editor de config)
@@ -384,7 +397,7 @@ let _running=false,_startTs=0,_elapsed=0,_raf=null;
 // Estado del registro actual
 let _gateFails=new Set();    // índices (0-based) de puertas falladas
 let _rollState='ok';         // 'ok' | 'fail'  (solo si _cfg.roll)
-let _rollPos=1;              // posición: roll va "entre puerta N y N+1" → guardamos N (1..nPuertas-1); 0 = antes de la 1ª
+let _rollPos=1;              // posición FIJA de la sesión (entre puerta N y N+1); 0 = antes de la 1ª
 let _dsq=false;
 
 // Sheet edición
@@ -446,7 +459,7 @@ function adjManga(d){
   _manga=Math.max(1,_manga+d);_mangaManual=true;syncManga();
 }
 
-/* ── PUERTAS + ROLL (rejilla unificada) ── */
+/* ── PUERTAS + ROLL (rejilla unificada; R NO se arrastra en sesión) ── */
 function buildGates(){
   const grid=$('gates-grid');
   grid.innerHTML='';
@@ -467,9 +480,8 @@ function makeRollChip(){
   chip.className='roll-chip'+(_rollState==='fail'?' fail':'');
   chip.id='roll-chip';
   chip.innerHTML='R<span class="roll-state-mark">'+(_rollState==='fail'?'\u2717':'\u2713')+'</span>';
-  chip.title='Toca para OK/fallido \u00b7 arrastra para mover';
-  chip.onclick=()=>{ if(!_rollDragMoved) toggleRollState(); };
-  chip.addEventListener('pointerdown',onRollPointerDown);
+  chip.title='Toca para alternar OK / fallido';
+  chip.onclick=()=>toggleRollState();
   return chip;
 }
 
@@ -493,62 +505,6 @@ function toggleRollState(){
     chip.innerHTML='R<span class="roll-state-mark">'+(_rollState==='fail'?'\u2717':'\u2713')+'</span>';
   }
   updatePenInfo();
-}
-
-/* ── DRAG de la ficha R ── */
-let _rollDragging=false,_rollDragMoved=false;
-function onRollPointerDown(e){
-  if(_dsq)return;
-  e.preventDefault();
-  _rollDragging=true;_rollDragMoved=false;
-  const chip=$('roll-chip');
-  chip.classList.add('dragging');
-  buildDropSlots();
-  document.addEventListener('pointermove',onRollPointerMove);
-  document.addEventListener('pointerup',onRollPointerUp);
-}
-function buildDropSlots(){
-  const grid=$('gates-grid');
-  const gates=[...grid.querySelectorAll('.gate-btn')];
-  gates.forEach((g,idx)=>{
-    const slot=document.createElement('div');
-    slot.className='drop-slot';slot.dataset.pos=idx;
-    grid.insertBefore(slot,g);
-  });
-  const endSlot=document.createElement('div');
-  endSlot.className='drop-slot';endSlot.dataset.pos=_cfg.nPuertas;
-  grid.appendChild(endSlot);
-}
-function removeDropSlots(){
-  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.remove());
-}
-function nearestSlot(x,y){
-  let best=null,bestD=Infinity;
-  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>{
-    const r=s.getBoundingClientRect();
-    const cx=r.left+r.width/2,cy=r.top+r.height/2;
-    const d=Math.hypot(cx-x,cy-y);
-    if(d<bestD){bestD=d;best=s;}
-  });
-  return best;
-}
-function onRollPointerMove(e){
-  if(!_rollDragging)return;
-  _rollDragMoved=true;
-  const slot=nearestSlot(e.clientX,e.clientY);
-  $('gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.classList.toggle('active',s===slot));
-}
-function onRollPointerUp(e){
-  if(!_rollDragging)return;
-  _rollDragging=false;
-  document.removeEventListener('pointermove',onRollPointerMove);
-  document.removeEventListener('pointerup',onRollPointerUp);
-  if(_rollDragMoved){
-    const slot=nearestSlot(e.clientX,e.clientY);
-    if(slot)_rollPos=parseInt(slot.dataset.pos);
-  }
-  removeDropSlots();
-  buildGates();
 }
 
 /* ── DSQ ── */
@@ -605,7 +561,7 @@ function resetChrono(){
 async function ensureSession(){
   if(_sessionId)return _sessionId;
   const row=await api('/rest/v1/sessions?select=id',{method:'POST',headers:{'Prefer':'return=representation'},
-    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,type:'kxc'})});
+    body:JSON.stringify({user_id:_uid,name:_cfg.name,lugar:_cfg.lugar||null,data:_cfg.fecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,type:'kxc',roll:!!_cfg.roll,roll_pos:_cfg.roll?_rollPos:null})});
   _sessionId=Array.isArray(row)?row[0].id:row.id;
   const raw=sessionStorage.getItem('kxc_cfg');
   if(raw){try{const c=JSON.parse(raw);c._sessionId=_sessionId;sessionStorage.setItem('kxc_cfg',JSON.stringify(c));}catch{}}
@@ -728,7 +684,7 @@ function openEditSheet(entryId){
   $('sh-roll-row').style.display=hasRoll?'flex':'none';
   $('sh-roll-pos-row').style.display=hasRoll?'flex':'none';
   _shRollState=(e.cnt50===1)?'fail':'ok';
-  _shRollPos=(e.tramo!==null&&e.tramo>=0)?e.tramo:1;
+  _shRollPos=(e.tramo!==null&&e.tramo>=0)?e.tramo:_rollPos;
   shSetRoll(_shRollState);shRenderRollPos();
   _shDsq=e.dsq||false;updateShDsq();
   openSheet();
@@ -776,6 +732,7 @@ async function shDelete(){
 /* ───────────────────────── EDITAR CONFIGURACIÓN ───────────────────────── */
 let _cfgPue=6;
 let _cfgRoll=false;
+let _cfgRollPos=3;
 let _cfgPals=[];   // [{rid,id,name,isTemp}]
 let _cfgSeq=0;
 
@@ -788,6 +745,9 @@ function openCfgSheet(){
   cfgRenderPuertas();
   _cfgRoll=!!_cfg.roll;
   $('cfg-edit-roll').checked=_cfgRoll;
+  _cfgRollPos=(_cfg.rollPos!==undefined&&_cfg.rollPos!==null)?_cfg.rollPos:Math.floor(_cfgPue/2);
+  if(_cfgRollPos>_cfgPue)_cfgRollPos=_cfgPue;
+  cfgRenderRollPos();
   _cfgPals=_cfg.palistas.map(p=>({rid:_cfgSeq++,id:p.id||null,name:p.name||'',isTemp:p.isTemp!==undefined?p.isTemp:!p.id}));
   cfgRenderPals();
   $('cfg-backdrop').classList.add('open');
@@ -800,7 +760,81 @@ function cfgRenderPuertas(){
   $('cfg-pue-minus').disabled=_cfgPue<=1;
   $('cfg-pue-plus').disabled=_cfgPue>=20;
 }
-function cfgAdjPuertas(d){_cfgPue=Math.min(20,Math.max(1,_cfgPue+d));cfgRenderPuertas();}
+function cfgAdjPuertas(d){_cfgPue=Math.min(20,Math.max(1,_cfgPue+d));if(_cfgRollPos>_cfgPue)_cfgRollPos=_cfgPue;cfgRenderPuertas();if(_cfgRoll)cfgRenderRollPos();}
+
+/* ── Posición de roll en el sheet de config (arrastre) ── */
+function cfgOnRollToggle(on){
+  _cfgRoll=on;
+  $('cfg-roll-pos').classList.toggle('show',on);
+  if(on){
+    if(_cfgRollPos===undefined||_cfgRollPos<0)_cfgRollPos=Math.floor(_cfgPue/2);
+    if(_cfgRollPos>_cfgPue)_cfgRollPos=_cfgPue;
+    cfgRenderRollPos();
+  }
+}
+function cfgRenderRollPos(){
+  const grid=$('cfg-roll-gates');
+  grid.innerHTML='';
+  for(let i=0;i<_cfgPue;i++){
+    if(_cfgRollPos===i)grid.appendChild(cfgMakeRollChip());
+    const g=document.createElement('div');
+    g.className='cfg-gate-chip';
+    g.textContent=(i+1);
+    grid.appendChild(g);
+  }
+  if(_cfgRollPos>=_cfgPue)grid.appendChild(cfgMakeRollChip());
+  $('cfg-roll-pos-cur').textContent='Posici\u00f3n actual: '+rollPosLabel(_cfgRollPos,_cfgPue);
+}
+function cfgMakeRollChip(){
+  const chip=document.createElement('div');
+  chip.className='cfg-roll-chip';
+  chip.id='cfg-roll-chip';
+  chip.textContent='R';
+  chip.addEventListener('pointerdown',cfgRollPointerDown);
+  return chip;
+}
+let _cfgRollDragging=false;
+function cfgRollPointerDown(e){
+  e.preventDefault();
+  _cfgRollDragging=true;
+  $('cfg-roll-chip').classList.add('dragging');
+  cfgBuildDropSlots();
+  document.addEventListener('pointermove',cfgRollPointerMove);
+  document.addEventListener('pointerup',cfgRollPointerUp);
+}
+function cfgBuildDropSlots(){
+  const grid=$('cfg-roll-gates');
+  const gates=[...grid.querySelectorAll('.cfg-gate-chip')];
+  gates.forEach(g=>{const slot=document.createElement('div');slot.className='cfg-drop-slot';grid.insertBefore(slot,g);});
+  let idx=0;
+  grid.querySelectorAll('.cfg-drop-slot').forEach(s=>{s.dataset.pos=idx++;});
+  const endSlot=document.createElement('div');endSlot.className='cfg-drop-slot';endSlot.dataset.pos=_cfgPue;
+  grid.appendChild(endSlot);
+}
+function cfgRemoveDropSlots(){$('cfg-roll-gates').querySelectorAll('.cfg-drop-slot').forEach(s=>s.remove());}
+function cfgNearestSlot(x,y){
+  let best=null,bestD=Infinity;
+  $('cfg-roll-gates').querySelectorAll('.cfg-drop-slot').forEach(s=>{
+    const r=s.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;
+    const d=Math.hypot(cx-x,cy-y);if(d<bestD){bestD=d;best=s;}
+  });
+  return best;
+}
+function cfgRollPointerMove(e){
+  if(!_cfgRollDragging)return;
+  const slot=cfgNearestSlot(e.clientX,e.clientY);
+  $('cfg-roll-gates').querySelectorAll('.cfg-drop-slot').forEach(s=>s.classList.toggle('active',s===slot));
+}
+function cfgRollPointerUp(e){
+  if(!_cfgRollDragging)return;
+  _cfgRollDragging=false;
+  document.removeEventListener('pointermove',cfgRollPointerMove);
+  document.removeEventListener('pointerup',cfgRollPointerUp);
+  const slot=cfgNearestSlot(e.clientX,e.clientY);
+  if(slot)_cfgRollPos=parseInt(slot.dataset.pos);
+  cfgRemoveDropSlots();
+  cfgRenderRollPos();
+}
 
 function cfgRenderPals(){
   const c=$('cfg-edit-pal-list');c.innerHTML='';
@@ -881,17 +915,21 @@ function applyCfgEdit(){
   const newFecha=$('cfg-edit-fecha').value||_cfg.fecha;
   const newPue=_cfgPue;
   const newRoll=$('cfg-edit-roll').checked;
+  const newRollPos=newRoll?Math.min(_cfgRollPos,newPue):null;
   const newPalistas=validPals.map(p=>({name:p.name.trim(),category:'KXC',id:p.id||null,isTemp:p.isTemp||!p.id}));
-
-  if(_rollPos>newPue)_rollPos=newPue;
 
   _cfg.name=newName;
   _cfg.lugar=newLugar;
   _cfg.fecha=newFecha;
   _cfg.nPuertas=newPue;
   _cfg.roll=newRoll;
+  _cfg.rollPos=newRollPos;
   _cfg.nPal=newPalistas.length;
   _cfg.palistas=newPalistas;
+
+  // Posición fija de la sesión = la configurada
+  _rollPos=newRoll?(newRollPos!==null?newRollPos:Math.floor(newPue/2)):1;
+  if(_rollPos>newPue)_rollPos=newPue;
 
   const stored=Object.assign({},_cfg);
   if(_sessionId)stored._sessionId=_sessionId;
@@ -900,7 +938,7 @@ function applyCfgEdit(){
   if(resume){try{const r=JSON.parse(resume);r.cfg=_cfg;sessionStorage.setItem('kxc_resume',JSON.stringify(r));}catch{}}
 
   if(_sessionId){
-    api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas})}).catch(e=>toast('No se pudo sincronizar: '+e.message,'err'));
+    api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,roll:!!_cfg.roll,roll_pos:_cfg.roll?_cfg.rollPos:null})}).catch(e=>toast('No se pudo sincronizar: '+e.message,'err'));
   }
 
   $('topbar-title').textContent=newName;
@@ -916,7 +954,7 @@ function applyCfgEdit(){
 
   $('roll-hint').style.display=_cfg.roll?'block':'none';
   $('legend-roll').style.display=_cfg.roll?'flex':'none';
-  if(_cfg.roll&&(_rollPos===undefined||_rollPos<0))_rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
+  _rollState='ok';
   clearGatesUI();
   buildContextSelectors();
   buildGates();
@@ -1020,7 +1058,9 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   if(_cfg.roll){
     _rollState='ok';
-    _rollPos=Math.max(0,Math.floor(_cfg.nPuertas/2));
+    // Posición FIJA tomada de la configuración (no se calcula ni se arrastra aquí)
+    _rollPos=(_cfg.rollPos!==undefined&&_cfg.rollPos!==null)?_cfg.rollPos:Math.floor(_cfg.nPuertas/2);
+    if(_rollPos>_cfg.nPuertas)_rollPos=_cfg.nPuertas;
     $('roll-hint').style.display='block';
     $('legend-roll').style.display='flex';
   }
