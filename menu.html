@@ -210,7 +210,7 @@ function goToApp(section){const dest=ROUTES[section];if(dest)window.location.hre
 function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'coach.html';}
 async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
 async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
-async function loadNotifBadge(){try{const myEmail=localStorage.getItem('slt_email')||'';const invites=await api('/rest/v1/team_invites?email=eq.'+encodeURIComponent(myEmail)+'&status=eq.pending&select=id');const total=(invites?.length||0);const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}const groupsBadge=$('groups-badge');if(total>0){groupsBadge.textContent=total;groupsBadge.style.display='inline';}}catch{}}
+async function loadNotifBadge(){try{const res=await api('/rest/v1/rpc/get_my_notifications',{method:'POST',body:JSON.stringify({})});const nTeam=(res&&res.team_invites?res.team_invites.length:0);const nAth=(res&&res.athlete_invites?res.athlete_invites.length:0);const total=nTeam+nAth;const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}const groupsBadge=$('groups-badge');if(nTeam>0){groupsBadge.textContent=nTeam;groupsBadge.style.display='inline';}}catch{}}
 async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;_coachName=rows[0].name||rows[0].username||null;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
 function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' \uD83D\uDC4B';}
 
@@ -240,11 +240,10 @@ async function doJoin(){
       toast('C\u00f3digo no encontrado o sesi\u00f3n cerrada',true); return;
     }
     const shared=rows[0];
-    const sesRows=await api('/rest/v1/sessions?id=eq.'+shared.session_id+'&select=id,name,lugar,data,n_pal,n_tra,palistas,type');
+    const sesRows=await api('/rest/v1/sessions?id=eq.'+shared.session_id+'&select=id,name,lugar,data,n_pal,n_tra,palistas,type,roll,roll_pos');
     const ses=sesRows[0];
     if(!ses){ hideLoad(); toast('Sesi\u00f3n no encontrada',true); return; }
 
-    // Registrarme como entrenador (idempotente: si ya estoy, ignoramos el error)
     try{
       await api('/rest/v1/session_coaches',{method:'POST',headers:{'Prefer':'return=minimal'},
         body:JSON.stringify({session_id:ses.id,shared_session_id:shared.id,
@@ -256,7 +255,7 @@ async function doJoin(){
     const sharedState={sharedSessionId:shared.id,sessionId:ses.id,code:shared.code,isOwner:false,cfg};
 
     if(ses.type==='kxc'){
-      cfg.type='kxc'; cfg.nPuertas=ses.n_tra; cfg.roll=false;
+      cfg.type='kxc'; cfg.nPuertas=ses.n_tra; cfg.roll=!!ses.roll; cfg.rollPos=(ses.roll_pos!==null&&ses.roll_pos!==undefined)?ses.roll_pos:null;
       const stored=Object.assign({},cfg,{_sessionId:ses.id});
       sessionStorage.setItem('kxc_cfg',JSON.stringify(stored));
       sessionStorage.removeItem('kxc_resume');
