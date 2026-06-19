@@ -60,6 +60,20 @@
     .toggle-switch input:checked+.toggle-slider{background:#C05621}
     .toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
 
+    /* Rejilla de posición de Roll (en configuración) */
+    .roll-pos-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:none}
+    .roll-pos-card.show{display:block}
+    .roll-pos-title{font-size:13px;font-weight:700;color:#111;margin-bottom:2px}
+    .roll-pos-cur{font-size:12px;color:#C05621;font-weight:600;margin-bottom:12px}
+    .gates-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .gate-chip{width:48px;height:48px;border-radius:11px;border:1.5px solid #d8e0ea;background:#f7f9fc;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#1B3A5C;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .roll-chip{width:48px;height:48px;border-radius:11px;border:1.5px solid #0F6E56;background:#E1F5EE;color:#085041;font-family:'Bebas Neue',sans-serif;font-size:22px;cursor:grab;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,box-shadow .12s;-webkit-tap-highlight-color:transparent;flex-shrink:0;touch-action:none;user-select:none;-webkit-user-select:none}
+    .roll-chip:active{cursor:grabbing}
+    .roll-chip.dragging{opacity:.45;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+    .drop-slot{width:8px;height:48px;border-radius:6px;background:transparent;flex-shrink:0;transition:background .12s,width .12s}
+    .drop-slot.active{background:#0F6E56;width:14px}
+    .roll-pos-hint{font-size:11px;color:#aaa;margin-top:10px;line-height:1.4}
+
     /* Palistas */
     .pal-list{display:flex;flex-direction:column;gap:8px}
     .pal-row{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
@@ -183,6 +197,14 @@
     </label>
   </div>
 
+  <!-- POSICIÓN DEL ROLL (arrastre) -->
+  <div class="roll-pos-card" id="roll-pos-card">
+    <div class="roll-pos-title">Posici&#243;n de la zona de Roll</div>
+    <div class="roll-pos-cur" id="roll-pos-cur">&#8212;</div>
+    <div class="gates-grid" id="roll-gates-grid"></div>
+    <div class="roll-pos-hint">Arrastra la ficha <b>R</b> y su&#233;ltala entre las puertas donde est&#225; la zona de roll. Esta posici&#243;n ser&#225; fija durante toda la sesi&#243;n.</div>
+  </div>
+
   <!-- SESIÓN COMPARTIDA -->
   <div class="section-label">Sesi&#243;n compartida</div>
   <div class="toggle-row">
@@ -234,6 +256,7 @@ let _tok = null, _uid = null, _email = null;
 let _athletes = [];            // palistas KXC del usuario
 let _nPuertas = 6;
 let _roll = false;
+let _rollPos = 3;              // posición del roll: "entre puerta N y N+1"; 0 = salida→P1; nPuertas = Pn→meta
 // Cada fila: { rid, id, name, category, isTemp }
 let _pals = [];
 let _rowSeq = 0;
@@ -275,6 +298,100 @@ function adjustPuertas(delta){
   $('puertas-val').textContent = _nPuertas;
   $('puertas-minus').disabled = _nPuertas <= MIN_PUERTAS;
   $('puertas-plus').disabled  = _nPuertas >= MAX_PUERTAS;
+  // Reajustar posición de roll si se sale de rango
+  if(_rollPos > _nPuertas) _rollPos = _nPuertas;
+  if(_roll) buildRollGates();
+}
+
+/* ── ROLL: posición con arrastre ── */
+function rollPosLabel(pos, n){
+  if(pos <= 0) return 'Salida \u2192 P1';
+  if(pos >= n) return 'P' + n + ' \u2192 Meta';
+  return 'P' + pos + ' \u2192 P' + (pos + 1);
+}
+function onRollToggle(on){
+  _roll = on;
+  $('roll-pos-card').classList.toggle('show', on);
+  if(on){
+    if(_rollPos === undefined || _rollPos < 0) _rollPos = Math.floor(_nPuertas/2);
+    if(_rollPos > _nPuertas) _rollPos = _nPuertas;
+    buildRollGates();
+  }
+}
+function buildRollGates(){
+  const grid = $('roll-gates-grid');
+  grid.innerHTML = '';
+  for(let i=0;i<_nPuertas;i++){
+    if(_rollPos === i) grid.appendChild(makeRollChip());
+    const g = document.createElement('div');
+    g.className = 'gate-chip';
+    g.textContent = (i+1);
+    grid.appendChild(g);
+  }
+  if(_rollPos >= _nPuertas) grid.appendChild(makeRollChip());
+  $('roll-pos-cur').textContent = 'Posici\u00f3n actual: ' + rollPosLabel(_rollPos, _nPuertas);
+}
+function makeRollChip(){
+  const chip = document.createElement('div');
+  chip.className = 'roll-chip';
+  chip.id = 'roll-chip';
+  chip.textContent = 'R';
+  chip.title = 'Arrastra para colocar la zona de roll';
+  chip.addEventListener('pointerdown', onRollPointerDown);
+  return chip;
+}
+let _rollDragging=false;
+function onRollPointerDown(e){
+  e.preventDefault();
+  _rollDragging=true;
+  const chip=$('roll-chip');
+  chip.classList.add('dragging');
+  buildDropSlots();
+  document.addEventListener('pointermove',onRollPointerMove);
+  document.addEventListener('pointerup',onRollPointerUp);
+}
+function buildDropSlots(){
+  const grid=$('roll-gates-grid');
+  const gates=[...grid.querySelectorAll('.gate-chip')];
+  gates.forEach(g=>{
+    const slot=document.createElement('div');
+    slot.className='drop-slot';
+    grid.insertBefore(slot,g);
+  });
+  // posiciones: slot antes de cada puerta = i ; slot final = nPuertas
+  let idx=0;
+  grid.querySelectorAll('.drop-slot').forEach(s=>{ s.dataset.pos=idx++; });
+  const endSlot=document.createElement('div');
+  endSlot.className='drop-slot';endSlot.dataset.pos=_nPuertas;
+  grid.appendChild(endSlot);
+}
+function removeDropSlots(){
+  $('roll-gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.remove());
+}
+function nearestSlot(x,y){
+  let best=null,bestD=Infinity;
+  $('roll-gates-grid').querySelectorAll('.drop-slot').forEach(s=>{
+    const r=s.getBoundingClientRect();
+    const cx=r.left+r.width/2,cy=r.top+r.height/2;
+    const d=Math.hypot(cx-x,cy-y);
+    if(d<bestD){bestD=d;best=s;}
+  });
+  return best;
+}
+function onRollPointerMove(e){
+  if(!_rollDragging)return;
+  const slot=nearestSlot(e.clientX,e.clientY);
+  $('roll-gates-grid').querySelectorAll('.drop-slot').forEach(s=>s.classList.toggle('active',s===slot));
+}
+function onRollPointerUp(e){
+  if(!_rollDragging)return;
+  _rollDragging=false;
+  document.removeEventListener('pointermove',onRollPointerMove);
+  document.removeEventListener('pointerup',onRollPointerUp);
+  const slot=nearestSlot(e.clientX,e.clientY);
+  if(slot)_rollPos=parseInt(slot.dataset.pos);
+  removeDropSlots();
+  buildRollGates();
 }
 
 /* ── PALISTAS ── */
@@ -349,7 +466,6 @@ function openDropdown(rid){
   const dd = $('pal-dd-' + rid);
   if(!q){ dd.classList.remove('open'); dd.innerHTML=''; return; }
 
-  // ids ya usados en otras filas
   const usedIds = new Set(_pals.filter(x => x.rid !== rid && x.id).map(x => x.id));
   const matches = _athletes
     .filter(a => !usedIds.has(a.id))
@@ -366,7 +482,6 @@ function openDropdown(rid){
     </div>`;
   }).join('');
 
-  // opción temporal
   html += `<div class="pal-option" onmousedown="keepTemp(${rid})">
       <span class="pal-option-name pal-option-new">+ Usar &#8220;${escHtml(inp.value.trim())}&#8221; como palista temporal</span>
     </div>`;
@@ -431,7 +546,7 @@ function buildCfg(){
     isTemp: p.isTemp || !p.id
   }));
 
-  return { type:'kxc', name, lugar:'', fecha, nPal:palistas.length, nPuertas:_nPuertas, roll:_roll, palistas };
+  return { type:'kxc', name, lugar:'', fecha, nPal:palistas.length, nPuertas:_nPuertas, roll:_roll, rollPos:(_roll?_rollPos:null), palistas };
 }
 
 /* ── INICIAR SESIÓN ── */
@@ -442,7 +557,6 @@ async function startSession(){
   const shared = $('shared-toggle').checked;
 
   if(!shared){
-    // Flujo normal
     sessionStorage.setItem('kxc_cfg', JSON.stringify(cfg));
     sessionStorage.removeItem('kxc_resume');
     sessionStorage.removeItem('slt_shared');
@@ -450,13 +564,13 @@ async function startSession(){
     return;
   }
 
-  // Flujo compartido: crear la sesión y generar el código ahora
   showLoad('Creando sesi\u00f3n compartida...');
   try{
     const sesRow = await api('/rest/v1/sessions?select=id',{
       method:'POST', headers:{'Prefer':'return=representation'},
       body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,
-        n_pal:cfg.nPal,n_tra:cfg.nPuertas,palistas:cfg.palistas,type:'kxc'})
+        n_pal:cfg.nPal,n_tra:cfg.nPuertas,palistas:cfg.palistas,type:'kxc',
+        roll:!!cfg.roll,roll_pos:cfg.roll?cfg.rollPos:null})
     });
     const sessionId = Array.isArray(sesRow) ? sesRow[0].id : sesRow.id;
 
@@ -511,7 +625,6 @@ function goToChrono(){
 async function loadAthletes(){
   try{
     const owned = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
-    // Palistas compartidos conmigo
     let sharedIds = [];
     try{
       const access = await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
@@ -523,7 +636,6 @@ async function loadAthletes(){
       shared = await api('/rest/v1/athletes?id=in.('+notOwned.join(',')+')&select=id,name,surname,categories&order=name.asc') || [];
     }
     const all = [...owned, ...shared];
-    // Solo palistas con categoría KXC
     _athletes = all.filter(a => Array.isArray(a.categories) && a.categories.includes('KXC'));
   }catch(e){
     _athletes = [];
@@ -540,9 +652,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   $('top-avatar').textContent = initials((_email||'').split('@')[0]);
   $('cfg-fecha').value = new Date().toISOString().slice(0,10);
 
-  $('roll-toggle').addEventListener('change', e => { _roll = e.target.checked; });
+  $('roll-toggle').addEventListener('change', e => { onRollToggle(e.target.checked); });
 
   adjustPuertas(0);
+  _rollPos = Math.floor(_nPuertas/2);
   _pals.push({ rid:_rowSeq++, id:null, name:'', category:'KXC', isTemp:false });
   renderPals();
 
