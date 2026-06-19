@@ -25,6 +25,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .content{padding:16px 16px 56px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
 .section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
 
+/* Filtro tipo */
+.filter-row{display:flex;gap:8px}
+.filter-btn{flex:1;padding:9px 6px;border-radius:10px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
+.filter-btn.active{background:#185FA5;border-color:#185FA5;color:#fff}
+.filter-btn:active{opacity:.75}
+
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .kpi-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
@@ -37,16 +43,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* Card genérica */
 .card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;overflow:hidden}
 
-/* Filas stat */
-.stat-row{padding:11px 16px;display:flex;align-items:center;justify-content:space-between}
+/* Gráfico de actividad (barras) */
+.chart-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px 14px 10px}
+.chart-svg{width:100%;overflow:visible;display:block}
+
+/* Filas stat / comparativa */
+.stat-row{padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .stat-row+.stat-row{border-top:0.5px solid #f2f2f2}
-.stat-name{font-size:13px;color:#666;font-weight:500;display:flex;align-items:center;gap:8px}
-.stat-val{font-size:15px;font-weight:700;color:#1B3A5C;text-align:right}
+.stat-name{font-size:13px;color:#666;font-weight:500;min-width:0}
+.stat-name b{color:#111;font-weight:700}
+.stat-val{font-size:15px;font-weight:700;color:#1B3A5C;text-align:right;flex-shrink:0}
 .stat-sub{font-size:11px;color:#aaa;font-weight:400;display:block;margin-top:1px}
-.rank-num{width:20px;height:20px;border-radius:6px;background:#f0f0f0;color:#888;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.rank-num.gold{background:#FEF3C7;color:#92400E}
-.rank-num.silver{background:#F1F5F9;color:#475569}
-.rank-num.bronze{background:#FEF0E6;color:#9A3412}
+
+/* Comparativa sesiones */
+.ses-row{padding:12px 16px;display:flex;flex-direction:column;gap:7px}
+.ses-row+.ses-row{border-top:0.5px solid #f2f2f2}
+.ses-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ses-row-name{font-size:14px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.ses-type-chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;flex-shrink:0;text-transform:uppercase;letter-spacing:.03em}
+.ses-type-chip.slalom{background:#E6F1FB;color:#0C447C}
+.ses-type-chip.kxc{background:#FAEEDA;color:#633806}
+.ses-row-date{font-size:11px;color:#aaa;flex-shrink:0}
+.ses-row-metrics{display:flex;gap:8px}
+.ses-metric{flex:1;background:#f7f9fc;border-radius:8px;padding:6px 8px;text-align:center}
+.ses-metric-val{font-size:15px;font-weight:700;color:#1B3A5C;font-family:'Bebas Neue',sans-serif;letter-spacing:0.5px;line-height:1}
+.ses-metric-val.green{color:#0F6E56}.ses-metric-val.orange{color:#B45309}.ses-metric-val.red{color:#A32D2D}
+.ses-metric-lbl{font-size:9px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.04em;margin-top:2px}
 
 /* Barras de progreso */
 .progress-row{padding:10px 16px;display:flex;flex-direction:column;gap:6px}
@@ -60,19 +82,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .progress-bar-fill.orange{background:#B45309}
 .progress-bar-fill.red{background:#A32D2D}
 
-/* Chips palista */
-.chips-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.chips-row::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:8px 14px;border-radius:100px;border:0.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;color:#888;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.chip.active{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
-.chip:active{opacity:.75}
-
-/* Mini sparkline CSS */
-.spark-wrap{display:flex;align-items:flex-end;gap:3px;height:32px;padding:0 16px 10px}
-.spark-bar{flex:1;border-radius:3px 3px 0 0;background:#185FA5;opacity:.7;min-height:3px;transition:height .4s ease}
-.spark-bar.best{background:#0F6E56;opacity:1}
-
-/* Vacío */
 .empty{text-align:center;padding:36px 20px;color:#bbb;font-size:14px;font-weight:500}
 
 .overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
@@ -100,6 +109,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="content">
 
+  <!-- FILTRO TIPO -->
+  <div class="filter-row" id="filter-row">
+    <button class="filter-btn active" data-type="all"    onclick="setFilter(this,'all')">Todas</button>
+    <button class="filter-btn"        data-type="slalom" onclick="setFilter(this,'slalom')">Es&#769;lalom</button>
+    <button class="filter-btn"        data-type="kxc"    onclick="setFilter(this,'kxc')">Kayak Cross</button>
+  </div>
+
   <!-- KPI globales -->
   <div class="section-label">Resumen global</div>
   <div class="kpi-grid">
@@ -123,29 +139,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="kpi-value" id="kpi-pals">&#8212;</div>
       <div class="kpi-sub">en todas las sesiones</div>
     </div>
-    <div class="kpi-card wide">
-      <div class="kpi-label">Penalizaci&#243;n media por tiempo v&#225;lido</div>
+    <div class="kpi-card">
+      <div class="kpi-label">Tiempos / sesi&#243;n</div>
+      <div class="kpi-value" id="kpi-avg-ents">&#8212;</div>
+      <div class="kpi-sub">media de registros</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Pen. media</div>
       <div class="kpi-value" id="kpi-pen">&#8212;</div>
-      <div class="kpi-sub">segundos promedio (sin DSQ)</div>
+      <div class="kpi-sub">por tiempo v&#225;lido</div>
     </div>
   </div>
 
-  <!-- Ranking palistas: mejor tiempo global -->
-  <div class="section-label">Ranking &#8212; mejor tiempo neto</div>
-  <div class="card" id="ranking-card"><div class="empty">Sin datos</div></div>
+  <!-- Actividad por fecha -->
+  <div class="section-label">Actividad de entrenamiento</div>
+  <div class="chart-card" id="activity-card"><div class="empty">Sin datos</div></div>
 
-  <!-- Distribución DSQ por tramo -->
-  <div class="section-label">Tasa de DSQ por tramo</div>
-  <div class="card" id="dsq-tramos-card"><div class="empty">Sin datos</div></div>
-
-  <!-- Penalización media por tramo -->
-  <div class="section-label">Penalizaci&#243;n media por tramo</div>
-  <div class="card" id="pen-tramos-card"><div class="empty">Sin datos</div></div>
-
-  <!-- Stats por palista -->
-  <div class="section-label">Detalle por palista</div>
-  <div class="chips-row" id="pal-chips"></div>
-  <div class="card" id="pal-detail-card"><div class="empty">Selecciona un palista</div></div>
+  <!-- Comparativa entre sesiones -->
+  <div class="section-label">Comparativa entre sesiones <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">&middot; m&#225;s recientes primero</span></div>
+  <div class="card" id="sessions-card"><div class="empty">Sin sesiones</div></div>
 
 </div>
 
@@ -155,21 +167,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
 let _tok=null,_uid=null;
-let _sessions=[],_entries=[];
+let _allSessions=[],_allEntries=[];   // datos completos sin filtrar
+let _filter='all';
 const $=id=>document.getElementById(id);
 let _tt;
 function toast(msg,err=false){const el=$('toast');el.textContent=msg;el.classList.toggle('err',err);el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3000);}
 function showLoad(){$('overlay').classList.add('show');}
 function hideLoad(){$('overlay').classList.remove('show');}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function fmtTime(ms){
-  if(ms===null||ms===undefined)return '—';
+  if(ms===null||ms===undefined)return '\u2014';
   const total=Math.floor(ms/100),dec=total%10,secs=Math.floor(total/10)%60,mins=Math.floor(total/600);
   return`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}.${dec}`;
 }
-function fmtPen(ms){return(ms/1000).toFixed(1)+'s';}
-function penColor(s){return s===0?'c-green':s<5?'c-blue':s<15?'c-orange':'c-red';}
-function dsqColor(p){return p===0?'c-green':p<10?'c-blue':p<25?'c-orange':'c-red';}
+function penColor(s){return s===0?'green':s<5?'':s<15?'orange':'red';}
+function penColorKpi(s){return s===0?'c-green':s<5?'c-blue':s<15?'c-orange':'c-red';}
+function dsqColorKpi(p){return p===0?'c-green':p<10?'c-blue':p<25?'c-orange':'c-red';}
 
 async function api(path){
   const r=await fetch(SB+path,{headers:{'apikey':KEY,'Authorization':'Bearer '+_tok}});
@@ -177,188 +191,164 @@ async function api(path){
   return r.json();
 }
 
+/* ── Tipo de sesión (compat: si no hay type, se asume slalom) ── */
+function sesType(s){return (s.type==='kxc')?'kxc':'slalom';}
+
+/* ── FILTRADO ── */
+function getFiltered(){
+  let sessions=_allSessions;
+  if(_filter!=='all')sessions=sessions.filter(s=>sesType(s)===_filter);
+  const sesIds=new Set(sessions.map(s=>s.id));
+  const entries=_allEntries.filter(e=>sesIds.has(e.session_id));
+  return {sessions,entries};
+}
+function setFilter(btn,val){
+  _filter=val;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
 /* ── KPI GLOBAL ── */
-function renderKPI(){
-  const nSes=_sessions.length;
-  const valid=_entries.filter(e=>!e.dsq);
-  const nEnts=_entries.length;
-  const nDsq=_entries.filter(e=>e.dsq).length;
+function renderKPI(sessions,entries){
+  const nSes=sessions.length;
+  const valid=entries.filter(e=>!e.dsq);
+  const nEnts=entries.length;
+  const nDsq=entries.filter(e=>e.dsq).length;
   const dsqPct=nEnts?Math.round(nDsq/nEnts*100):0;
-  const palSet=new Set(_entries.map(e=>e.pal_name));
-  const nPals=palSet.size;
-  const avgPen=valid.length?valid.reduce((s,e)=>s+e.pen,0)/valid.length:0;
-  const avgPenS=avgPen/1000;
+  const nPals=new Set(entries.map(e=>e.pal_name)).size;
+  const avgEnts=nSes?(nEnts/nSes):0;
+  const avgPenS=valid.length?valid.reduce((s,e)=>s+e.pen,0)/valid.length/1000:0;
 
   $('kpi-ses').textContent=nSes;
-  $('kpi-ses-sub').textContent=nSes===1?'sesión':nSes+' sesiones';
+  $('kpi-ses-sub').textContent=nSes===1?'sesi\u00f3n':nSes+' sesiones';
   $('kpi-ents').textContent=nEnts;
-  $('kpi-ents-sub').textContent=nDsq>0?nDsq+' DSQ incluídos':'todos válidos';
+  $('kpi-ents-sub').textContent=nDsq>0?nDsq+' DSQ inclu\u00eddos':'todos v\u00e1lidos';
   $('kpi-dsq').textContent=nDsq;
-  $('kpi-dsq').className='kpi-value '+dsqColor(dsqPct);
+  $('kpi-dsq').className='kpi-value '+dsqColorKpi(dsqPct);
   $('kpi-dsq-sub').textContent=dsqPct+'% del total';
   $('kpi-pals').textContent=nPals;
+  $('kpi-avg-ents').textContent=avgEnts.toFixed(1);
   $('kpi-pen').textContent=avgPenS.toFixed(1)+'s';
-  $('kpi-pen').className='kpi-value '+penColor(avgPenS);
+  $('kpi-pen').className='kpi-value '+penColorKpi(avgPenS);
 }
 
-/* ── RANKING ── */
-function renderRanking(){
-  const card=$('ranking-card');
-  const valid=_entries.filter(e=>!e.dsq&&e.ms>0);
-  if(!valid.length){card.innerHTML='<div class="empty">Sin tiempos válidos</div>';return;}
-  const byPal={};
-  for(const e of valid){
-    const net=e.ms+e.pen;
-    if(!(e.pal_name in byPal)||net<byPal[e.pal_name].net){
-      byPal[e.pal_name]={net,ms:e.ms,pen:e.pen,tramo:e.tramo,sesName:''};
-    }
+/* ── ACTIVIDAD POR FECHA (últimas ~10 semanas en barras) ── */
+function renderActivity(sessions){
+  const card=$('activity-card');
+  if(!sessions.length){card.innerHTML='<div class="empty">Sin datos</div>';return;}
+
+  // Agrupar por semana (lunes como inicio), últimas 10 semanas
+  const NWEEKS=10;
+  const now=new Date();
+  // lunes de la semana actual
+  const monday=new Date(now);
+  const dow=(monday.getDay()+6)%7;
+  monday.setDate(monday.getDate()-dow);
+  monday.setHours(0,0,0,0);
+
+  const weeks=[];
+  for(let i=NWEEKS-1;i>=0;i--){
+    const start=new Date(monday);start.setDate(start.getDate()-i*7);
+    weeks.push({start,count:0});
   }
-  for(const e of valid){
-    const net=e.ms+e.pen;
-    if(byPal[e.pal_name]&&byPal[e.pal_name].net===net){
-      const ses=_sessions.find(s=>s.id===e.session_id);
-      if(ses)byPal[e.pal_name].sesName=ses.name;
-    }
-  }
-  const sorted=Object.entries(byPal).sort((a,b)=>a[1].net-b[1].net);
-  const rankClasses=['gold','silver','bronze'];
-  let html='';
-  sorted.forEach(([name,d],i)=>{
-    const cls=rankClasses[i]||'';
-    const penStr=d.pen>0?` <span style="font-size:11px;font-weight:500;color:#aaa">(+${fmtPen(d.pen)})</span>`:'';
-    html+=`<div class="stat-row">
-      <span class="stat-name"><span class="rank-num ${cls}">${i+1}</span>${name}</span>
-      <span class="stat-val">${fmtTime(d.ms)}${penStr}<span class="stat-sub">T${d.tramo+1} · ${d.sesName}</span></span>
-    </div>`;
+  const firstStart=weeks[0].start;
+
+  sessions.forEach(s=>{
+    const ref=s.data?new Date(s.data+'T12:00:00'):(s.created_at?new Date(s.created_at):null);
+    if(!ref||ref<firstStart)return;
+    const diffDays=Math.floor((ref-firstStart)/(1000*60*60*24));
+    const wi=Math.floor(diffDays/7);
+    if(wi>=0&&wi<NWEEKS)weeks[wi].count++;
   });
-  card.innerHTML=html;
-}
 
-/* ── DSQ POR TRAMO ── */
-function renderDsqTramos(){
-  const card=$('dsq-tramos-card');
-  if(!_entries.length){card.innerHTML='<div class="empty">Sin datos</div>';return;}
-  const tramoMap={};
-  for(const e of _entries){
-    const k=e.tramo;
-    if(!(k in tramoMap))tramoMap[k]={total:0,dsq:0};
-    tramoMap[k].total++;
-    if(e.dsq)tramoMap[k].dsq++;
-  }
-  const sorted=Object.entries(tramoMap).sort((a,b)=>Number(a[0])-Number(b[0]));
-  const maxPct=Math.max(...sorted.map(([,v])=>v.total?v.dsq/v.total*100:0),1);
-  let html='';
-  for(const[idx,d] of sorted){
-    const p=d.total?Math.round(d.dsq/d.total*100):0;
-    const barW=Math.round(p/maxPct*100);
-    const col=p===0?'green':p<15?'':'orange';
-    html+=`<div class="progress-row">
-      <div class="progress-header">
-        <span class="progress-title">Tramo ${Number(idx)+1}</span>
-        <span class="progress-meta">${d.dsq} DSQ de ${d.total} &middot; <b>${p}%</b></span>
-      </div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill ${col}" style="width:${barW}%"></div></div>
-    </div>`;
-  }
-  card.innerHTML=html;
-}
+  const maxN=Math.max(...weeks.map(w=>w.count),1);
+  const totalRecent=weeks.reduce((a,w)=>a+w.count,0);
 
-/* ── PEN POR TRAMO ── */
-function renderPenTramos(){
-  const card=$('pen-tramos-card');
-  const valid=_entries.filter(e=>!e.dsq);
-  if(!valid.length){card.innerHTML='<div class="empty">Sin tiempos válidos</div>';return;}
-  const tramoMap={};
-  for(const e of valid){
-    const k=e.tramo;
-    if(!(k in tramoMap))tramoMap[k]={sum:0,cnt:0};
-    tramoMap[k].sum+=e.pen;
-    tramoMap[k].cnt++;
-  }
-  const sorted=Object.entries(tramoMap).sort((a,b)=>Number(a[0])-Number(b[0]));
-  const avgPens=sorted.map(([,v])=>v.cnt?v.sum/v.cnt/1000:0);
-  const maxAvg=Math.max(...avgPens,0.1);
-  let html='';
-  sorted.forEach(([idx,d],i)=>{
-    const avg=avgPens[i];
-    const barW=Math.round(avg/maxAvg*100);
-    const col=avg===0?'green':avg<3?'':'orange';
-    html+=`<div class="progress-row">
-      <div class="progress-header">
-        <span class="progress-title">Tramo ${Number(idx)+1}</span>
-        <span class="progress-meta">${d.cnt} tiempos &middot; <b>${avg.toFixed(1)}s media</b></span>
-      </div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill ${col}" style="width:${barW}%"></div></div>
-    </div>`;
+  const W=320,H=120,pL=8,pR=8,pT=20,pB=26,iW=W-pL-pR,iH=H-pT-pB;
+  const nn=weeks.length,gap=5;
+  const bW=Math.floor((iW-(nn-1)*gap)/nn);
+  const MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  let bars='',vals='',lbls='';
+  weeks.forEach((w,i)=>{
+    const x=pL+i*(bW+gap);
+    const bH=w.count>0?Math.max(4,Math.round(w.count/maxN*iH)):2;
+    const y=pT+iH-bH;
+    const cx=x+bW/2;
+    const col=w.count>0?'#185FA5':'#e4e4e4';
+    bars+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="${col}"/>`;
+    if(w.count>0)vals+=`<text x="${cx}" y="${y-4}" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A5C" font-family="-apple-system,sans-serif">${w.count}</text>`;
+    // etiqueta cada 2 semanas para no saturar
+    if(i%2===0||i===nn-1){
+      lbls+=`<text x="${cx}" y="${pT+iH+14}" text-anchor="middle" font-size="8" fill="#aaa" font-family="-apple-system,sans-serif">${w.start.getDate()}/${MESES[w.start.getMonth()]}</text>`;
+    }
   });
-  card.innerHTML=html;
-}
-
-/* ── CHIPS PALISTA ── */
-let _selPal=null;
-function renderPalChips(){
-  const row=$('pal-chips');
-  const pals=[...new Set(_entries.map(e=>e.pal_name))].sort();
-  if(!pals.length){row.innerHTML='<span style="font-size:13px;color:#bbb">Sin palistas</span>';return;}
-  row.innerHTML=pals.map(n=>`<button class="chip" data-pal="${n}" onclick="selectPal('${n.replace(/'/g,"\\'")}")">${n}</button>`).join('');
-  selectPal(pals[0]);
-}
-function selectPal(name){
-  _selPal=name;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.pal===name));
-  renderPalDetail(name);
-}
-
-/* ── DETALLE PALISTA ── */
-function renderPalDetail(name){
-  const card=$('pal-detail-card');
-  const mine=_entries.filter(e=>e.pal_name===name);
-  if(!mine.length){card.innerHTML='<div class="empty">Sin tiempos para este palista</div>';return;}
-  const valid=mine.filter(e=>!e.dsq&&e.ms>0);
-  const nTotal=mine.length,nDsq=mine.filter(e=>e.dsq).length;
-  const dsqPct=nTotal?Math.round(nDsq/nTotal*100):0;
-  const nets=valid.map(e=>e.ms+e.pen);
-  const bestNet=nets.length?Math.min(...nets):null;
-  const worstNet=nets.length?Math.max(...nets):null;
-  const avgNet=nets.length?nets.reduce((s,v)=>s+v,0)/nets.length:null;
-  const bestEntry=valid.find(e=>e.ms+e.pen===bestNet);
-  const avgPenS=valid.length?valid.reduce((s,e)=>s+e.pen,0)/valid.length/1000:0;
-  const sesList=[...new Set(mine.map(e=>e.session_id))].length;
-  const tramoSet=[...new Set(mine.map(e=>e.tramo))];
-
-  const sesOrder=_sessions.map(s=>s.id);
-  const sparkData=sesOrder.map(sid=>{
-    const sEnts=valid.filter(e=>e.session_id===sid);
-    if(!sEnts.length)return null;
-    return Math.min(...sEnts.map(e=>e.ms+e.pen));
-  }).filter(v=>v!==null);
-
-  let sparkHTML='';
-  if(sparkData.length>1){
-    const minV=Math.min(...sparkData),maxV=Math.max(...sparkData);
-    const range=maxV-minV||1;
-    const bestV=Math.min(...sparkData);
-    sparkHTML=`<div class="spark-wrap">${sparkData.map(v=>{
-      const h=Math.round(10+((maxV-v)/range)*22);
-      const isBest=v===bestV;
-      return`<div class="spark-bar${isBest?' best':''}" style="height:${h}px" title="${fmtTime(v)}"></div>`;
-    }).join('')}</div><div style="padding:0 16px 10px;display:flex;justify-content:space-between;font-size:11px;color:#aaa"><span>Sesión más antigua</span><span>Sesión más reciente</span></div>`;
-  }
-
-  const bEntSes=bestEntry?_sessions.find(s=>s.id===bestEntry.session_id):null;
-  const bestPenStr=bestEntry&&bestEntry.pen>0?` <span style="font-size:11px;color:#aaa">(+${fmtPen(bestEntry.pen)})</span>`:'';
 
   card.innerHTML=`
-    ${sparkData.length>1?'<div style="padding:14px 16px 0;font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.07em">Evolución mejor tiempo por sesión</div>'+sparkHTML:''}
-    <div class="stat-row"><span class="stat-name">Tiempos totales</span><span class="stat-val">${nTotal}</span></div>
-    <div class="stat-row"><span class="stat-name">Válidos / DSQ</span><span class="stat-val">${valid.length} / <span class="${dsqColor(dsqPct)}">${nDsq} (${dsqPct}%)</span></span></div>
-    <div class="stat-row"><span class="stat-name">Mejor tiempo neto</span><span class="stat-val c-green">${bestNet!==null?fmtTime(bestEntry.ms):'—'}${bestPenStr}<span class="stat-sub">${bEntSes?bEntSes.name+' · T'+(bestEntry.tramo+1):''}</span></span></div>
-    <div class="stat-row"><span class="stat-name">Peor tiempo neto</span><span class="stat-val">${worstNet!==null?fmtTime(worstNet):'—'}</span></div>
-    <div class="stat-row"><span class="stat-name">Tiempo medio neto</span><span class="stat-val">${avgNet!==null?fmtTime(Math.round(avgNet)):'—'}</span></div>
-    <div class="stat-row"><span class="stat-name">Pen. media</span><span class="stat-val ${penColor(avgPenS)}">${avgPenS.toFixed(1)}s</span></div>
-    <div class="stat-row"><span class="stat-name">Sesiones</span><span class="stat-val">${sesList}</span></div>
-    <div class="stat-row"><span class="stat-name">Tramos</span><span class="stat-val">${tramoSet.map(t=>'T'+(t+1)).join(', ')}</span></div>
-  `;
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+      <span style="font-size:12px;font-weight:600;color:#666">Sesiones por semana</span>
+      <span style="font-size:11px;color:#aaa">${totalRecent} en ${NWEEKS} sem.</span>
+    </div>
+    <svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}">
+      <line x1="${pL}" y1="${pT+iH}" x2="${W-pR}" y2="${pT+iH}" stroke="#f0f0f0" stroke-width="1"/>
+      ${bars}${vals}${lbls}
+    </svg>`;
+}
+
+/* ── COMPARATIVA ENTRE SESIONES ── */
+function renderSessions(sessions,entries){
+  const card=$('sessions-card');
+  if(!sessions.length){card.innerHTML='<div class="empty">Sin sesiones</div>';return;}
+
+  // ordenar por fecha desc (data o created_at), limitar a 15 para no saturar
+  const ordered=[...sessions].sort((a,b)=>{
+    const da=a.data||(a.created_at?a.created_at.slice(0,10):'');
+    const db=b.data||(b.created_at?b.created_at.slice(0,10):'');
+    return db.localeCompare(da);
+  }).slice(0,15);
+
+  const html=ordered.map(s=>{
+    const ents=entries.filter(e=>e.session_id===s.id);
+    const valid=ents.filter(e=>!e.dsq&&e.ms>0);
+    const nEnts=ents.length;
+    const nDsq=ents.filter(e=>e.dsq).length;
+    const dsqPct=nEnts?Math.round(nDsq/nEnts*100):0;
+    const bestNet=valid.length?Math.min(...valid.map(e=>e.ms+e.pen)):null;
+    const avgPenS=valid.length?valid.reduce((a,e)=>a+e.pen,0)/valid.length/1000:0;
+    const nPals=new Set(ents.map(e=>e.pal_name)).size;
+
+    const type=sesType(s);
+    const typeLbl=type==='kxc'?'KXC':'Esl\u00e1lom';
+    const fecha=s.data?new Date(s.data+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'}):'';
+
+    const dsqCol=dsqPct===0?'green':dsqPct<25?'':'red';
+    const penCol=penColor(avgPenS);
+
+    return `<div class="ses-row">
+      <div class="ses-row-head">
+        <span class="ses-row-name">${escHtml(s.name)}</span>
+        <span class="ses-type-chip ${type}">${typeLbl}</span>
+        <span class="ses-row-date">${fecha}</span>
+      </div>
+      <div class="ses-row-metrics">
+        <div class="ses-metric"><div class="ses-metric-val">${nPals}</div><div class="ses-metric-lbl">Palistas</div></div>
+        <div class="ses-metric"><div class="ses-metric-val">${nEnts}</div><div class="ses-metric-lbl">Tiempos</div></div>
+        <div class="ses-metric"><div class="ses-metric-val ${bestNet!==null?'green':''}">${bestNet!==null?fmtTime(bestNet):'\u2014'}</div><div class="ses-metric-lbl">Mejor</div></div>
+        <div class="ses-metric"><div class="ses-metric-val ${penCol}">${avgPenS.toFixed(1)}s</div><div class="ses-metric-lbl">Pen. med.</div></div>
+        <div class="ses-metric"><div class="ses-metric-val ${dsqCol}">${dsqPct}%</div><div class="ses-metric-lbl">DSQ</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  card.innerHTML=html;
+}
+
+/* ── RENDER TODO ── */
+function renderAll(){
+  const {sessions,entries}=getFiltered();
+  renderKPI(sessions,entries);
+  renderActivity(sessions);
+  renderSessions(sessions,entries);
 }
 
 /* ── INIT ── */
@@ -369,20 +359,15 @@ if(!_tok){window.location.href='index.html';}
 (async()=>{
   showLoad();
   try{
-    const [sessions,entries]=await Promise.all([
-      api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,data,created_at'),
-      api('/rest/v1/session_entries?session_id=in.('+
-        (await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id'))
-          .map(s=>s.id).join(',')
-        +')&select=id,session_id,pal_name,pal_cat,pal_index,tramo,manga,ms,pen,dsq')
-    ]);
-    _sessions=sessions||[];
-    _entries=entries||[];
-    renderKPI();
-    renderRanking();
-    renderDsqTramos();
-    renderPenTramos();
-    renderPalChips();
+    const sessions=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&order=created_at.asc&select=id,name,data,type,created_at');
+    let entries=[];
+    if(sessions&&sessions.length){
+      const ids=sessions.map(s=>s.id).join(',');
+      entries=await api('/rest/v1/session_entries?session_id=in.('+ids+')&select=id,session_id,pal_name,tramo,ms,pen,dsq');
+    }
+    _allSessions=sessions||[];
+    _allEntries=entries||[];
+    renderAll();
   }catch(e){
     console.error(e);
     toast('Error al cargar datos',true);
