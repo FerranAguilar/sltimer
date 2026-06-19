@@ -23,15 +23,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topbar-back{background:none;border:none;cursor:pointer;font-size:20px;color:#666;padding:0 4px;line-height:1;display:flex;align-items:center}
 .topbar-divider{width:0.5px;height:18px;background:rgba(0,0,0,0.12)}
 .topbar-title{font-size:15px;font-weight:600;color:#111;flex:1}
-.content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto}
+.content{padding:16px 16px 48px;display:flex;flex-direction:column;gap:20px;max-width:480px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;padding:0 2px}
+
+/* Tarjeta de invitación */
+.inv-card{background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.inv-head{display:flex;align-items:center;gap:12px}
+.inv-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.inv-icon svg{width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.inv-icon.group{background:#F0EBFB}.inv-icon.group svg{stroke:#6B21A8}
+.inv-icon.athlete{background:#E1F5EE}.inv-icon.athlete svg{stroke:#085041}
+.inv-info{flex:1;min-width:0}
+.inv-title{font-size:15px;font-weight:700;color:#111;line-height:1.25}
+.inv-sub{font-size:12px;color:#888;margin-top:2px;line-height:1.4}
+.inv-meta{font-size:11px;color:#bbb;margin-top:2px}
+.inv-cats{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.cat-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px}
+.cat-badge.K1{background:#E6F1FB;color:#0C447C}
+.cat-badge.C1{background:#E1F5EE;color:#085041}
+.cat-badge.KXC{background:#FAEEDA;color:#633806}
+.inv-actions{display:flex;gap:8px}
+.inv-btn{flex:1;padding:11px;border-radius:11px;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .12s;display:flex;align-items:center;justify-content:center;gap:6px}
+.inv-btn:active{opacity:.8}
+.inv-btn:disabled{opacity:.5;cursor:not-allowed}
+.inv-btn.accept{background:#0F6E56;color:#fff;flex:2}
+.inv-btn.reject{background:#f0f0f0;color:#666}
+.btn-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;gap:14px;text-align:center}
 .empty-icon{width:60px;height:60px;background:#F0EBFB;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .empty-icon svg{width:26px;height:26px;fill:none;stroke:#6B21A8;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .empty-title{font-size:16px;font-weight:700;color:#111}
 .empty-sub{font-size:13px;color:#aaa;line-height:1.5;max-width:280px}
+
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.overlay.show{display:flex}
+.spinner{width:22px;height:22px;border:2px solid #ddd;border-top-color:#185FA5;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p{font-size:14px;color:#666}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B3A5C;color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.ok{background:#0F6E56}
+.toast.err{background:#A32D2D}
 </style>
 </head>
 <body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p>Cargando...</p></div>
+<div class="toast" id="toast"></div>
 
 <div class="topbar">
   <button class="topbar-back" onclick="window.location.href='menu.html'">&#8592;</button>
@@ -43,20 +82,152 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <span class="topbar-title">Notificaciones</span>
 </div>
 
-<div class="content">
-  <div class="empty">
-    <div class="empty-icon">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </div>
-    <div class="empty-title">Sin notificaciones</div>
-    <div class="empty-sub">No tienes notificaciones pendientes</div>
+<div class="content" id="content">
+  <div class="empty" id="loading-empty">
+    <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+    <div class="empty-title">Cargando&#8230;</div>
   </div>
 </div>
 
 <script>
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+let _tok=null,_uid=null;
+let _teamInvites=[],_athleteInvites=[];
+const $=id=>document.getElementById(id);
+let _tt;
+function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3000);}
+function showLoad(){$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});}catch{return'';}}
+
+async function api(path,opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text();let j;try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok)throw new Error(j?.message||j?.hint||JSON.stringify(j));
+  return j;
+}
+
+async function loadNotifications(){
+  try{
+    const res=await api('/rest/v1/rpc/get_my_notifications',{method:'POST',body:JSON.stringify({})});
+    _teamInvites=(res&&res.team_invites)||[];
+    _athleteInvites=(res&&res.athlete_invites)||[];
+    render();
+  }catch(e){
+    $('content').innerHTML=`<div class="empty"><div class="empty-title">Error al cargar</div><div class="empty-sub">${escHtml(e.message)}</div></div>`;
+  }
+}
+
+function render(){
+  const wrap=$('content');
+  const total=_teamInvites.length+_athleteInvites.length;
+  if(total===0){
+    wrap.innerHTML=`<div class="empty">
+      <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div class="empty-title">Sin notificaciones</div>
+      <div class="empty-sub">No tienes invitaciones pendientes</div>
+    </div>`;
+    return;
+  }
+
+  let html='';
+
+  if(_teamInvites.length){
+    html+=`<div class="section-label">Invitaciones a grupos</div>`;
+    html+=_teamInvites.map(inv=>{
+      const by=inv.invited_by_name?escHtml(inv.invited_by_name):'Un entrenador';
+      const desc=inv.team_description?`<div class="inv-meta">${escHtml(inv.team_description)}</div>`:'';
+      return `<div class="inv-card" id="inv-team-${inv.id}">
+        <div class="inv-head">
+          <div class="inv-icon group"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="inv-info">
+            <div class="inv-title">${escHtml(inv.team_name||'Grupo')}</div>
+            <div class="inv-sub">${by} te ha invitado a unirte al grupo</div>
+            ${desc}
+            <div class="inv-meta">${fmtDate(inv.created_at)}</div>
+          </div>
+        </div>
+        <div class="inv-actions">
+          <button class="inv-btn reject" onclick="respondTeam('${inv.id}',false)">Rechazar</button>
+          <button class="inv-btn accept" onclick="respondTeam('${inv.id}',true)">Aceptar</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if(_athleteInvites.length){
+    html+=`<div class="section-label">Palistas compartidos</div>`;
+    html+=_athleteInvites.map(inv=>{
+      const by=inv.invited_by_name?escHtml(inv.invited_by_name):'Un entrenador';
+      const cats=(inv.athlete_categories||[]).filter(c=>['K1','C1','KXC'].includes(c)).map(c=>`<span class="cat-badge ${c}">${c}</span>`).join('');
+      const shareNote=inv.can_share?'<div class="inv-meta">Podr&#225;s tambi&#233;n compartir este palista</div>':'';
+      return `<div class="inv-card" id="inv-ath-${inv.id}">
+        <div class="inv-head">
+          <div class="inv-icon athlete"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          <div class="inv-info">
+            <div class="inv-title">${escHtml(inv.athlete_name||'Palista')}</div>
+            <div class="inv-sub">${by} quiere compartir este palista contigo</div>
+            ${cats?`<div class="inv-cats">${cats}</div>`:''}
+            ${shareNote}
+            <div class="inv-meta">${fmtDate(inv.created_at)}</div>
+          </div>
+        </div>
+        <div class="inv-actions">
+          <button class="inv-btn reject" onclick="respondAthlete('${inv.id}',false)">Rechazar</button>
+          <button class="inv-btn accept" onclick="respondAthlete('${inv.id}',true)">Aceptar</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  wrap.innerHTML=html;
+}
+
+function setCardLoading(cardId,on){
+  const card=$(cardId);if(!card)return;
+  card.querySelectorAll('.inv-btn').forEach(b=>b.disabled=on);
+  const acc=card.querySelector('.inv-btn.accept');
+  if(acc){if(on){acc.dataset.txt=acc.textContent;acc.innerHTML='<div class="btn-spinner"></div>';}else if(acc.dataset.txt){acc.textContent=acc.dataset.txt;}}
+}
+
+async function respondTeam(id,accept){
+  setCardLoading('inv-team-'+id,true);
+  try{
+    const fn=accept?'accept_team_invite':'reject_team_invite';
+    await api('/rest/v1/rpc/'+fn,{method:'POST',body:JSON.stringify({invite_id:id})});
+    _teamInvites=_teamInvites.filter(i=>i.id!==id);
+    toast(accept?'Te has unido al grupo \u2713':'Invitaci\u00f3n rechazada',accept?'ok':'');
+    render();
+  }catch(e){
+    setCardLoading('inv-team-'+id,false);
+    toast('Error: '+e.message,'err');
+  }
+}
+
+async function respondAthlete(id,accept){
+  setCardLoading('inv-ath-'+id,true);
+  try{
+    const fn=accept?'accept_athlete_share_invite':'reject_athlete_share_invite';
+    await api('/rest/v1/rpc/'+fn,{method:'POST',body:JSON.stringify({invite_id:id})});
+    _athleteInvites=_athleteInvites.filter(i=>i.id!==id);
+    toast(accept?'Palista a\u00f1adido \u2713':'Invitaci\u00f3n rechazada',accept?'ok':'');
+    render();
+  }catch(e){
+    setCardLoading('inv-ath-'+id,false);
+    toast('Error: '+e.message,'err');
+  }
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  if(!_tok){window.location.href='index.html';return;}
+  loadNotifications();
+});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-const tok=localStorage.getItem('slt_tok');
-if(!tok)window.location.href='index.html';
 </script>
 </body>
 </html>
