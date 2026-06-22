@@ -281,6 +281,10 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const ok=await refreshIfNeeded();
   if(!ok){window.location.href='index.html';return;}
   hideLoad();
+  try{
+  const prof=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id&limit=1');
+  if(!prof||!prof.length){window.location.href='onboarding.html';return;}
+}catch{}
   renderUser(_email);
   loadHistCount();
   loadAthletesCount();
