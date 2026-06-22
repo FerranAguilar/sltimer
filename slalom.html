@@ -547,7 +547,20 @@ function goToChrono(){
 /* ── CARGA INICIAL ── */
 async function loadAthletes(){
   try{
-    _athletes = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
+    const owned = await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id,name,surname,categories&order=name.asc') || [];
+    let sharedIds = [];
+    try{
+      const access = await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=athlete_id');
+      sharedIds = (access||[]).map(a => a.athlete_id);
+    }catch{}
+    let shared = [];
+    const notOwned = sharedIds.filter(id => !owned.find(a => a.id === id));
+    if(notOwned.length){
+      shared = await api('/rest/v1/athletes?id=in.('+notOwned.join(',')+')&select=id,name,surname,categories&order=name.asc') || [];
+    }
+    const all = [...owned, ...shared];
+    // Eslálom: solo palistas que compiten en K1 o C1 (KXC se excluye)
+    _athletes = all.filter(a => Array.isArray(a.categories) && (a.categories.includes('K1') || a.categories.includes('C1')));
   }catch(e){
     _athletes = [];
   }
