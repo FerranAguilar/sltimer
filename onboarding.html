@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Configura tu perfil · SLTimer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:#F3F5F8;color:#1B3A5C;
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap{
+    width:100%;max-width:440px;margin:0 auto;
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    padding:32px 22px;
+  }
+
+  /* Encabezado */
+  .head{text-align:center;margin-bottom:24px}
+  .head .step{
+    font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    color:#7d93ac;margin-bottom:10px;
+  }
+  .head h1{
+    font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.5px;
+    line-height:1;color:#1B3A5C;
+  }
+  .head p{font-size:14px;color:#7d8aa0;margin-top:8px;line-height:1.45}
+
+  /* Avatar de iniciales */
+  .avatar-wrap{display:flex;justify-content:center;margin-bottom:22px}
+  .avatar{
+    width:96px;height:96px;border-radius:50%;
+    background:linear-gradient(135deg,#1B3A5C,#3f6593);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;
+    box-shadow:0 8px 24px rgba(27,58,92,.22);
+    transition:transform .25s ease;
+  }
+  .avatar.pulse{transform:scale(1.06)}
+
+  /* Tarjeta de formulario */
+  .card{
+    background:#fff;border-radius:18px;padding:20px 18px;
+    box-shadow:0 2px 16px rgba(27,58,92,.06);
+  }
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label{
+    display:block;font-size:13px;font-weight:600;color:#4a5e76;margin-bottom:7px;
+  }
+  .field input{
+    width:100%;border:1.5px solid #e2e8f0;border-radius:12px;
+    padding:13px 14px;font-size:16px;font-family:inherit;color:#1B3A5C;
+    background:#fff;transition:border-color .15s ease;
+  }
+  .field input:focus{outline:none;border-color:#1B3A5C}
+  .field input::placeholder{color:#b6c0cd}
+
+  /* Campo username con prefijo @ */
+  .username-wrap{display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:12px;overflow:hidden;transition:border-color .15s ease}
+  .username-wrap.focus{border-color:#1B3A5C}
+  .username-prefix{
+    padding:13px 4px 13px 14px;font-size:16px;font-weight:600;color:#7d93ac;
+    background:#fff;
+  }
+  .username-wrap input{border:none;border-radius:0;padding-left:2px}
+  .username-wrap input:focus{outline:none}
+
+  .hint{font-size:12.5px;margin-top:7px;color:#9aa7b6;line-height:1.4;min-height:16px}
+  .hint.ok{color:#1a9b62}
+  .hint.error{color:#d64545}
+  .hint.checking{color:#7d93ac}
+
+  .btn{
+    width:100%;border:none;border-radius:13px;
+    padding:15px;font-size:16px;font-weight:600;font-family:inherit;
+    background:#1B3A5C;color:#fff;cursor:pointer;margin-top:24px;
+    transition:opacity .15s ease,transform .1s ease;
+  }
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn:not(:disabled):active{transform:scale(.98)}
+
+  .signout{
+    background:none;border:none;color:#9aa7b6;font-family:inherit;
+    font-size:13px;margin-top:18px;cursor:pointer;text-align:center;
+  }
+  .signout:hover{color:#7d8aa0}
+
+  /* Overlay de carga */
+  .overlay{
+    position:fixed;inset:0;background:rgba(243,245,248,.85);
+    display:none;align-items:center;justify-content:center;flex-direction:column;
+    z-index:50;backdrop-filter:blur(2px);
+  }
+  .overlay.show{display:flex}
+  .spinner{
+    width:38px;height:38px;border:3px solid #d3dce6;border-top-color:#1B3A5C;
+    border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .overlay p{margin-top:14px;font-size:14px;color:#5a6b80}
+
+  /* Toast */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:#1B3A5C;color:#fff;padding:12px 20px;border-radius:11px;
+    font-size:14px;opacity:0;pointer-events:none;transition:all .25s ease;
+    z-index:60;max-width:90%;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.18);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#d64545}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="step">Bienvenido a SLTimer</div>
+    <h1>Configura tu perfil</h1>
+    <p>Elige cómo te verán otros entrenadores cuando compartas palistas o grupos.</p>
+  </div>
+
+  <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
+
+  <div class="card">
+    <div class="field">
+      <label for="inp-name">Tu nombre</label>
+      <input id="inp-name" type="text" placeholder="Ej: Marta García" autocomplete="name" oninput="onNameInput()" maxlength="60">
+    </div>
+    <div class="field">
+      <label for="inp-username">Nombre de usuario</label>
+      <div class="username-wrap" id="username-wrap">
+        <span class="username-prefix">@</span>
+        <input id="inp-username" type="text" placeholder="marta_g" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="onUsernameInput()" maxlength="30">
+      </div>
+      <div class="hint" id="hint">Solo letras, números y _ · mínimo 3 caracteres</div>
+    </div>
+  </div>
+
+  <button class="btn" id="btn-save" onclick="saveProfile()" disabled>Empezar a usar SLTimer</button>
+  <button class="signout" onclick="doLogout()">Cerrar sesión</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+
+let _tok=null,_uid=null,_email=null;
+let _usernameValid=false,_checkTimer=null,_lastChecked=null;
+const $=id=>document.getElementById(id);
+
+function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+function hideLoad(){$('overlay').classList.remove('show');}
+
+let _tTimer;
+function toast(msg,err=false){
+  const el=$('toast');el.textContent=msg;
+  el.classList.toggle('err',err);el.classList.add('show');
+  clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+async function api(path,opts={}){
+  const h={'apikey':KEY,'Content-Type':'application/json','Authorization':'Bearer '+_tok,...(opts.headers||{})};
+  const r=await fetch(SB+path,{...opts,headers:h});
+  const t=await r.text();
+  let j;try{j=JSON.parse(t);}catch{j=t;}
+  if(!r.ok)throw new Error(j?.message||j?.hint||j?.error_description||JSON.stringify(j));
+  return j;
+}
+
+function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
+
+function initials(name){
+  if(!name||!name.trim())return'?';
+  const parts=name.trim().split(/\s+/);
+  const a=parts[0]?.[0]||'';
+  const b=parts[1]?.[0]||parts[0]?.[1]||'';
+  return(a+b).toUpperCase()||'?';
+}
+
+function onNameInput(){
+  const n=$('inp-name').value;
+  const av=$('avatar');
+  av.textContent=initials(n);
+  av.classList.add('pulse');
+  setTimeout(()=>av.classList.remove('pulse'),250);
+  refreshButton();
+}
+
+function setHint(text,cls){
+  const h=$('hint');h.textContent=text;h.className='hint'+(cls?' '+cls:'');
+}
+
+function onUsernameInput(){
+  // Normalizamos: minúsculas y caracteres permitidos
+  let v=$('inp-username').value.toLowerCase().replace(/[^a-z0-9_]/g,'');
+  $('inp-username').value=v;
+  _usernameValid=false;
+  clearTimeout(_checkTimer);
+
+  if(v===''){setHint('Solo letras, números y _ · mínimo 3 caracteres','');refreshButton();return;}
+  if(v.length<3){setHint('Mínimo 3 caracteres','error');refreshButton();return;}
+  if(v.length>30){setHint('Máximo 30 caracteres','error');refreshButton();return;}
+
+  setHint('Comprobando disponibilidad…','checking');
+  refreshButton();
+  _checkTimer=setTimeout(()=>checkAvailability(v),450);
+}
+
+async function checkAvailability(username){
+  try{
+    const rows=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username)+'&select=id&limit=1');
+    // Si el usuario sigue escribiendo, ignoramos respuestas viejas
+    if($('inp-username').value!==username)return;
+    if(rows&&rows.length>0){
+      _usernameValid=false;
+      setHint('Ese usuario ya está en uso, prueba otro','error');
+    }else{
+      _usernameValid=true;
+      setHint('@'+username+' está disponible','ok');
+    }
+  }catch(e){
+    _usernameValid=false;
+    setHint('No se pudo comprobar, inténtalo de nuevo','error');
+  }
+  refreshButton();
+}
+
+function refreshButton(){
+  const nameOk=$('inp-name').value.trim().length>0;
+  $('btn-save').disabled=!(nameOk&&_usernameValid);
+}
+
+async function saveProfile(){
+  const name=$('inp-name').value.trim();
+  const username=$('inp-username').value.trim().toLowerCase();
+  if(!name){toast('Escribe tu nombre',true);return;}
+  if(!_usernameValid){toast('Elige un nombre de usuario válido y disponible',true);return;}
+
+  $('btn-save').disabled=true;
+  showLoad('Creando tu perfil…');
+  try{
+    // Re-chequeo final por si alguien tomó el username mientras tanto
+    const existing=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username)+'&select=id&limit=1');
+    if(existing&&existing.length>0){
+      hideLoad();
+      _usernameValid=false;
+      setHint('Ese usuario ya está en uso, prueba otro','error');
+      toast('Ese usuario acaba de ser tomado, prueba otro',true);
+      return;
+    }
+    await api('/rest/v1/coaches',{
+      method:'POST',
+      headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify({name,username,owner_id:_uid})
+    });
+    hideLoad();
+    window.location.href='menu.html';
+  }catch(e){
+    hideLoad();
+    $('btn-save').disabled=false;
+    toast(e.message,true);
+  }
+}
+
+async function doLogout(){
+  showLoad('Cerrando sesión…');
+  try{await api('/auth/v1/logout',{method:'POST'});}catch{}
+  clearSession();
+  window.location.href='index.html';
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  _tok=localStorage.getItem('slt_tok');
+  _uid=localStorage.getItem('slt_uid');
+  _email=localStorage.getItem('slt_email');
+  if(!_tok||!_uid){window.location.href='index.html';return;}
+
+  // Si ya tiene perfil, no debería estar aquí → al menú
+  showLoad('Cargando…');
+  try{
+    const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id&limit=1');
+    if(rows&&rows.length>0){window.location.href='menu.html';return;}
+  }catch{}
+  hideLoad();
+
+  // Prerelleno amable del nombre a partir del email
+  if(_email){
+    const guess=_email.split('@')[0].replace(/[._\-]+/g,' ').trim();
+    if(guess){
+      const pretty=guess.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+      $('inp-name').value=pretty;
+      $('avatar').textContent=initials(pretty);
+    }
+  }
+  $('inp-name').focus();
+});
+
+// Resaltar el borde del wrap del username al enfocar
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=$('inp-username'),wrap=$('username-wrap');
+  inp.addEventListener('focus',()=>wrap.classList.add('focus'));
+  inp.addEventListener('blur',()=>wrap.classList.remove('focus'));
+});
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
