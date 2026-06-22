@@ -325,13 +325,14 @@ function renderPals(){
   });
 }
 
-/* Devuelve las categorías a ofrecer para una fila:
-   - palista existente → las que tenga (filtradas a K1/C1/KXC)
+
+/* Devuelve las categorías a ofrecer para una fila (pantalla eslálom: solo K1/C1):
+   - palista existente → sus categorías de eslálom (K1/C1)
    - temporal (nombre a mano) → K1 y C1 para elegir */
 function catsForRow(p){
   if(p.id && !p.isTemp){
     const ath = _athletes.find(a => a.id === p.id);
-    const cats = (ath?.categories || []).filter(c => ['K1','C1','KXC'].includes(c));
+    const cats = (ath?.categories || []).filter(c => ['K1','C1'].includes(c));
     return cats.length ? cats : ['K1','C1'];
   }
   return ['K1','C1'];
