@@ -513,7 +513,7 @@ async function startSession(){
     const sesRow = await api('/rest/v1/sessions?select=id',{
       method:'POST', headers:{'Prefer':'return=representation'},
       body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,
-        n_pal:cfg.nPal,n_tra:cfg.nTra,palistas:cfg.palistas,type:'slalom',shared:true})
+  n_pal:cfg.nPal,n_tra:cfg.nTra,palistas:cfg.palistas,type:'slalom',shared:true,is_live:true})
     });
     const sessionId = Array.isArray(sesRow) ? sesRow[0].id : sesRow.id;
 
