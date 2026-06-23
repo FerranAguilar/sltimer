@@ -855,6 +855,50 @@ window.addEventListener('DOMContentLoaded',async()=>{
 });
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  
+  /* ── SINCRONIZACIÓN EN VIVO (sesión compartida) ── */
+let _pollTimer = null, _pollBusy = false;
+
+function isSharedSession(){
+  try{
+    const st = JSON.parse(sessionStorage.getItem('slt_shared') || 'null');
+    return !!(st && st.code && (!st.sessionId || st.sessionId === _sessionId));
+  }catch{ return false; }
+}
+
+function _entriesFingerprint(arr){
+  return arr.map(e => e.id+':'+e.ms+':'+e.pen+':'+e.dsq+':'+e.cnt2+':'+e.cnt50)
+            .sort().join('|');
+}
+
+async function pollEntries(){
+  if(_pollBusy || !_sessionId) return;
+  if(_running) return;                                       // cronómetro en marcha
+  if(document.hidden) return;                                // pestaña en segundo plano
+  if(document.querySelector('#edit-sheet.open, #cfg-sheet.open')) return; // editando
+
+  _pollBusy = true;
+  try{
+    const fresh = await api('/rest/v1/session_entries?session_id=eq.'+_sessionId+
+      '&order=pal_index.asc,tramo.asc,manga.asc&select=*') || [];
+    if(_entriesFingerprint(fresh) !== _entriesFingerprint(_entries)){
+      _entries = fresh;
+      if(!_mangaManual) syncManga();
+      renderTimes();
+    }
+  }catch(e){ /* fallo transitorio: se reintenta en el siguiente ciclo */ }
+  finally{ _pollBusy = false; }
+}
+
+function startLiveSync(){
+  if(_pollTimer || !isSharedSession()) return;
+  _pollTimer = setInterval(pollEntries, 4000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) pollEntries(); });
+}
+function stopLiveSync(){ if(_pollTimer){ clearInterval(_pollTimer); _pollTimer = null; } }
+
+window.addEventListener('DOMContentLoaded', startLiveSync);
+window.addEventListener('beforeunload', stopLiveSync);
 </script>
 </body>
 </html>
