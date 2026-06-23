@@ -85,10 +85,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .join-input{padding:14px;border:1.5px solid #ddd;border-radius:12px;font-size:28px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#1B3A5C;text-align:center;-webkit-appearance:none}
 .join-input:focus{outline:none;border-color:#185FA5}
 .join-input.err{border-color:#A32D2D;background:#FEF2F2}
+/* Separador "o" */
+.join-or{display:flex;align-items:center;gap:10px;color:#bbb;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.join-or:before,.join-or:after{content:'';flex:1;height:0.5px;background:#e2e2e2}
+/* Botón escanear */
+.join-scan{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:12px;border:1.5px solid #185FA5;background:#f0f6fc;color:#185FA5;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.join-scan:active{background:#e3eefa}
+.join-scan svg{width:19px;height:19px;fill:none;stroke:#185FA5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .join-actions{display:flex;gap:8px}
 .join-cancel{flex:1;padding:13px;border-radius:12px;border:none;background:#f0f0f0;color:#555;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .join-go{flex:2;padding:13px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 .join-go:disabled{opacity:.45;cursor:not-allowed}
+/* Modal escáner QR */
+.scan-bd{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center}
+.scan-bd.open{display:flex}
+.scan-header{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top)) 16px 14px;text-align:center;color:#fff;font-size:16px;font-weight:600;background:linear-gradient(180deg,rgba(0,0,0,0.55),transparent);z-index:2}
+.scan-viewport{position:relative;width:100%;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.scan-viewport video{width:100%;height:100%;object-fit:cover}
+.scan-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(68vw,280px);height:min(68vw,280px);border:3px solid rgba(255,255,255,0.9);border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,0.45)}
+.scan-frame:before{content:'';position:absolute;inset:-3px;border-radius:24px;border:3px solid #0F6E56;clip-path:polygon(0 0,28% 0,28% 8%,8% 8%,8% 28%,0 28%, 0 0, 100% 0, 72% 0, 72% 8%, 92% 8%, 92% 28%, 100% 28%, 100% 100%, 72% 100%, 72% 92%, 92% 92%, 92% 72%, 100% 72%, 100% 100%, 0 100%, 28% 100%, 28% 92%, 8% 92%, 8% 72%, 0 72%);}
+.scan-status{position:absolute;bottom:calc(120px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#fff;font-size:14px;font-weight:500;padding:0 24px;z-index:2;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
+.scan-cancel{position:absolute;bottom:calc(36px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);padding:13px 32px;border-radius:100px;border:none;background:rgba(255,255,255,0.95);color:#111;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;z-index:2}
 </style>
 </head>
 <body>
@@ -137,7 +154,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="menu-primary-info">
         <div class="menu-primary-title">Unirme a sesión compartida</div>
-        <div class="menu-primary-desc">Introduce el código que te ha dado el entrenador principal</div>
+        <div class="menu-primary-desc">Escanea el QR o introduce el código del entrenador principal</div>
       </div>
       <span class="menu-primary-arrow">&#8250;</span>
     </button>
@@ -174,7 +191,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="join-bd" id="join-bd" onclick="if(event.target===this)closeJoinModal()">
   <div class="join-modal">
     <div class="join-title">Unirme a sesi&#243;n compartida</div>
-    <div class="join-sub">Introduce el c&#243;digo de 6 caracteres que te ha dado el entrenador principal</div>
+    <div class="join-sub">Escanea el QR del entrenador principal o introduce el c&#243;digo de 6 caracteres</div>
+    <button class="join-scan" onclick="openScanner()">
+      <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+      Escanear QR
+    </button>
+    <div class="join-or">o</div>
     <input class="join-input" id="join-code" type="text" maxlength="6" placeholder="ABC123"
       autocomplete="off" autocorrect="off" spellcheck="false" oninput="onJoinInput()">
     <div class="join-actions">
@@ -184,6 +206,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
+<!-- MODAL ESCÁNER QR -->
+<div class="scan-bd" id="scan-bd">
+  <div class="scan-header">Apunta al QR de la sesi&#243;n</div>
+  <div class="scan-viewport">
+    <video id="scan-video" playsinline muted></video>
+    <div class="scan-frame"></div>
+  </div>
+  <div class="scan-status" id="scan-status">Buscando c&#243;digo&#8230;</div>
+  <button class="scan-cancel" onclick="closeScanner()">Cancelar</button>
+</div>
+
+<script src="jsQR.min.js"></script>
 <script>
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
@@ -272,6 +306,96 @@ async function doJoin(){
   }catch(e){ hideLoad(); toast('Error: '+e.message,true); }
 }
 
+/* ── ESCÁNER QR (cámara) ── */
+let _scanStream=null,_scanRAF=null,_scanDetector=null,_scanBusy=false;
+
+function extractJoinCode(text){
+  // Acepta tanto la URL completa (menu.html?join=CODE) como un código suelto.
+  // El valor proviene de un QR externo: se sanea siempre.
+  try{
+    const u=new URL(text);
+    const j=u.searchParams.get('join');
+    if(j){ const c=j.replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,6); return c.length===6?c:null; }
+  }catch{}
+  const m=(text||'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  return m.length===6?m:null;
+}
+
+async function openScanner(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    toast('Tu navegador no permite usar la c\u00e1mara',true); return;
+  }
+  $('scan-bd').classList.add('open');
+  $('scan-status').textContent='Abriendo c\u00e1mara\u2026';
+  _scanBusy=false;
+  try{
+    _scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+    const video=$('scan-video');
+    video.srcObject=_scanStream;
+    video.setAttribute('playsinline','');
+    await video.play();
+    $('scan-status').textContent='Buscando c\u00f3digo\u2026';
+    if('BarcodeDetector' in window){
+      try{
+        const fmts=await window.BarcodeDetector.getSupportedFormats();
+        if(fmts.includes('qr_code')) _scanDetector=new window.BarcodeDetector({formats:['qr_code']});
+      }catch{ _scanDetector=null; }
+    }
+    _scanRAF=requestAnimationFrame(scanLoop);
+  }catch(e){
+    $('scan-status').textContent='No se pudo abrir la c\u00e1mara. Revisa los permisos del navegador.';
+  }
+}
+
+async function scanLoop(){
+  const video=$('scan-video');
+  if(_scanBusy||!video){ if(_scanStream)_scanRAF=requestAnimationFrame(scanLoop); return; }
+  if(video.readyState<2){ _scanRAF=requestAnimationFrame(scanLoop); return; }
+
+  let codeText=null;
+  try{
+    if(_scanDetector){
+      const codes=await _scanDetector.detect(video);
+      if(codes&&codes.length) codeText=codes[0].rawValue;
+    }else if(typeof jsQR!=='undefined'){
+      const canvas=document.createElement('canvas');
+      canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+      if(canvas.width&&canvas.height){
+        const ctx=canvas.getContext('2d',{willReadFrequently:true});
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+        const res=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+        if(res) codeText=res.data;
+      }
+    }
+  }catch{}
+
+  if(codeText){
+    const code=extractJoinCode(codeText);
+    if(code){
+      _scanBusy=true;
+      $('scan-status').textContent='\u00a1C\u00f3digo detectado!';
+      closeScanner();
+      $('join-code').value=code;
+      $('join-go').disabled=false;
+      doJoin();
+      return;
+    }else{
+      $('scan-status').textContent='Ese QR no es de una sesi\u00f3n SLTimer.';
+    }
+  }
+  if(_scanStream) _scanRAF=requestAnimationFrame(scanLoop);
+}
+
+function closeScanner(){
+  if(_scanRAF){ cancelAnimationFrame(_scanRAF); _scanRAF=null; }
+  if(_scanStream){ _scanStream.getTracks().forEach(t=>t.stop()); _scanStream=null; }
+  const video=$('scan-video');
+  if(video) video.srcObject=null;
+  _scanDetector=null;
+  $('scan-bd').classList.remove('open');
+}
+
 window.addEventListener('DOMContentLoaded',async()=>{
   const hash=window.location.hash.substring(1);
   if(hash.includes('access_token')){showLoad('Iniciando sesion...');const params=new URLSearchParams(hash);const access_token=params.get('access_token');const refresh_token=params.get('refresh_token');if(access_token){try{const user=await fetch(`${SB}/auth/v1/user`,{headers:{'apikey':KEY,'Authorization':'Bearer '+access_token}}).then(r=>r.json());localStorage.setItem('slt_tok',access_token);localStorage.setItem('slt_ref',refresh_token||'');localStorage.setItem('slt_uid',user.id);localStorage.setItem('slt_email',user.email);localStorage.setItem('slt_exp',Date.now()+(parseInt(params.get('expires_in')||'3600'))*1000);history.replaceState(null,'',window.location.pathname);}catch{hideLoad();toast('Error al iniciar sesion',true);setTimeout(()=>window.location.href='index.html',1500);return;}}}
@@ -290,6 +414,18 @@ window.addEventListener('DOMContentLoaded',async()=>{
   loadAthletesCount();
   loadNotifBadge();
   loadCoachProfile();
+
+  // Auto-unión desde QR/enlace: menu.html?join=CODIGO
+  const joinCode=new URLSearchParams(location.search).get('join');
+  if(joinCode){
+    history.replaceState(null,'',location.pathname);
+    const clean=joinCode.replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,6);
+    if(clean.length===6){
+      $('join-code').value=clean;
+      $('join-go').disabled=false;
+      doJoin();
+    }
+  }
 });
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
