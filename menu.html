@@ -307,7 +307,8 @@ async function doJoin(){
 }
 
 /* ── ESCÁNER QR (cámara) ── */
-let _scanStream=null,_scanRAF=null,_scanDetector=null,_scanBusy=false;
+let _scanStream=null,_scanTimer=null,_scanDetector=null,_scanBusy=false;
+let _scanCanvas=null,_scanCtx=null,_scanTick=0;
 
 function extractJoinCode(text){
   // Acepta tanto la URL completa (menu.html?join=CODE) como un código suelto.
@@ -325,70 +326,96 @@ async function openScanner(){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     toast('Tu navegador no permite usar la c\u00e1mara',true); return;
   }
+  // Si no hay BarcodeDetector (caso de Safari iOS) y tampoco jsQR cargado, no hay forma de leer.
+  if(!('BarcodeDetector' in window) && typeof jsQR==='undefined'){
+    toast('No se pudo cargar el lector de QR. Introduce el c\u00f3digo a mano.',true);
+    return;
+  }
   $('scan-bd').classList.add('open');
   $('scan-status').textContent='Abriendo c\u00e1mara\u2026';
   _scanBusy=false;
+  _scanTick=0;
+  _scanDetector=null;
   try{
-    _scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+    // Pedimos resolución alta para que el QR tenga detalle suficiente al acercar.
+    _scanStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
     const video=$('scan-video');
     video.srcObject=_scanStream;
-    video.setAttribute('playsinline','');
-    await video.play();
+    video.setAttribute('playsinline','');     // imprescindible en iOS
+    video.setAttribute('muted','');
+    video.muted=true;
+    // iOS a veces rechaza el primer play(); reintentamos una vez.
+    try{ await video.play(); }
+    catch{ await new Promise(r=>setTimeout(r,200)); try{ await video.play(); }catch{} }
+
     $('scan-status').textContent='Buscando c\u00f3digo\u2026';
+
+    // Detector nativo solo si soporta QR (Safari iOS NO lo tiene → usaremos jsQR).
     if('BarcodeDetector' in window){
       try{
         const fmts=await window.BarcodeDetector.getSupportedFormats();
         if(fmts.includes('qr_code')) _scanDetector=new window.BarcodeDetector({formats:['qr_code']});
       }catch{ _scanDetector=null; }
     }
-    _scanRAF=requestAnimationFrame(scanLoop);
+
+    // Bucle por temporizador (más fiable que requestAnimationFrame en iOS al abrir el panel).
+    _scanTimer=setInterval(scanTickFn,250);
   }catch(e){
-    $('scan-status').textContent='No se pudo abrir la c\u00e1mara. Revisa los permisos del navegador.';
+    const msg=(e&&e.name==='NotAllowedError')
+      ? 'Permiso de c\u00e1mara denegado. Act\u00edvalo en los ajustes del navegador.'
+      : 'No se pudo abrir la c\u00e1mara. Revisa los permisos del navegador.';
+    $('scan-status').textContent=msg;
   }
 }
 
-async function scanLoop(){
+async function scanTickFn(){
+  if(_scanBusy||!_scanStream) return;
   const video=$('scan-video');
-  if(_scanBusy||!video){ if(_scanStream)_scanRAF=requestAnimationFrame(scanLoop); return; }
-  if(video.readyState<2){ _scanRAF=requestAnimationFrame(scanLoop); return; }
+  if(!video||video.readyState<2||!video.videoWidth||!video.videoHeight) return;
 
-  let codeText=null;
+  _scanBusy=true;
   try{
+    let codeText=null;
+
     if(_scanDetector){
       const codes=await _scanDetector.detect(video);
       if(codes&&codes.length) codeText=codes[0].rawValue;
     }else if(typeof jsQR!=='undefined'){
-      const canvas=document.createElement('canvas');
-      canvas.width=video.videoWidth; canvas.height=video.videoHeight;
-      if(canvas.width&&canvas.height){
-        const ctx=canvas.getContext('2d',{willReadFrequently:true});
-        ctx.drawImage(video,0,0,canvas.width,canvas.height);
-        const img=ctx.getImageData(0,0,canvas.width,canvas.height);
-        const res=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
-        if(res) codeText=res.data;
+      // Submuestreo: limitamos el lado mayor a ~640px para que jsQR vaya rápido en móvil.
+      const vw=video.videoWidth, vh=video.videoHeight;
+      const scale=Math.min(1, 640/Math.max(vw,vh));
+      const w=Math.round(vw*scale), h=Math.round(vh*scale);
+      if(!_scanCanvas){ _scanCanvas=document.createElement('canvas'); _scanCtx=_scanCanvas.getContext('2d',{willReadFrequently:true}); }
+      if(_scanCanvas.width!==w||_scanCanvas.height!==h){ _scanCanvas.width=w; _scanCanvas.height=h; }
+      _scanCtx.drawImage(video,0,0,w,h);
+      const img=_scanCtx.getImageData(0,0,w,h);
+      // attemptBoth: detecta también QR claros sobre fondo oscuro (pantallas/impresos).
+      const res=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});
+      if(res&&res.data) codeText=res.data;
+    }
+
+    if(codeText){
+      const code=extractJoinCode(codeText);
+      if(code){
+        $('scan-status').textContent='\u00a1C\u00f3digo detectado!';
+        closeScanner();
+        $('join-code').value=code;
+        $('join-go').disabled=false;
+        doJoin();
+        return;   // _scanBusy queda true: ya cerramos
+      }else{
+        $('scan-status').textContent='Le\u00eddo, pero ese QR no es de una sesi\u00f3n SLTimer.';
       }
     }
-  }catch{}
-
-  if(codeText){
-    const code=extractJoinCode(codeText);
-    if(code){
-      _scanBusy=true;
-      $('scan-status').textContent='\u00a1C\u00f3digo detectado!';
-      closeScanner();
-      $('join-code').value=code;
-      $('join-go').disabled=false;
-      doJoin();
-      return;
-    }else{
-      $('scan-status').textContent='Ese QR no es de una sesi\u00f3n SLTimer.';
-    }
-  }
-  if(_scanStream) _scanRAF=requestAnimationFrame(scanLoop);
+  }catch{ /* frame fallido: el siguiente tick reintenta */ }
+  _scanBusy=false;
 }
 
 function closeScanner(){
-  if(_scanRAF){ cancelAnimationFrame(_scanRAF); _scanRAF=null; }
+  if(_scanTimer){ clearInterval(_scanTimer); _scanTimer=null; }
   if(_scanStream){ _scanStream.getTracks().forEach(t=>t.stop()); _scanStream=null; }
   const video=$('scan-video');
   if(video) video.srcObject=null;
