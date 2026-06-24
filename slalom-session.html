@@ -285,7 +285,7 @@
   <span class="topbar-title" id="topbar-title">Cron&#243;metro</span>
   <button class="btn-share-code" id="btn-share-code" onclick="openCodeModal()" title="C&#243;digo de sesi&#243;n compartida">&#128279;</button>
   <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
-  <button class="btn-finish" onclick="finishSession()">Finalizar</button>
+  <button class="btn-finish" id="btn-finish" onclick="finishSession()">Finalizar</button>
 </div>
 
 <div class="content">
@@ -791,9 +791,49 @@ function copyShareCode(){
     .catch(()=>toast('Copia manual: '+c));
 }
 
-function finishSession(){
+/* ── ROL: ANFITRIÓN / INVITADO ── */
+function _sharedState(){
+  try{ return JSON.parse(sessionStorage.getItem('slt_shared') || 'null'); }
+  catch{ return null; }
+}
+function isHost(){
+  const st=_sharedState();
+  return !!(st && st.isOwner);
+}
+/* Muestra u oculta el botón de finalizar según el rol.
+   En sesión compartida, solo el anfitrión lo ve. En sesión normal, siempre. */
+function applyRoleUI(){
+  const st=_sharedState();
+  const finishBtn=$('btn-finish');
+  if(finishBtn){
+    finishBtn.style.display=(st && !st.isOwner) ? 'none' : '';
+  }
+}
+
+async function finishSession(){
   if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
+  const st=_sharedState();
+  if(st && !st.isOwner){
+    toast('Solo el anfitri\u00f3n puede finalizar la sesi\u00f3n','err');
+    return;
+  }
   if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
+
+  // Si es compartida, cerrar en el servidor para que deje de aparecer como activa.
+  if(st && st.sessionId){
+    showLoad('Finalizando sesi\u00f3n...');
+    try{
+      await api('/rest/v1/sessions?id=eq.'+st.sessionId,
+        {method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({is_live:false})});
+      if(st.sharedSessionId){
+        await api('/rest/v1/shared_sessions?id=eq.'+st.sharedSessionId,
+          {method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({is_active:false})});
+      }
+    }catch(e){ /* aunque falle el cierre remoto, dejamos salir */ }
+    hideLoad();
+  }
+
+  if(typeof stopLiveSync==='function') stopLiveSync();
   sessionStorage.removeItem('slalom_cfg');
   sessionStorage.removeItem('slalom_resume');
   sessionStorage.removeItem('slt_shared');
@@ -801,6 +841,8 @@ function finishSession(){
 }
 function goBack(){
   if(_running){if(!confirm('El cron\u00f3metro est\u00e1 en marcha. \u00bfSalir igualmente?'))return;}
+  // NO borramos slt_shared: la sesión sigue activa y se podrá volver desde la barra del menú.
+  if(typeof stopLiveSync==='function') stopLiveSync();
   window.location.href='menu.html';
 }
 
@@ -852,10 +894,11 @@ window.addEventListener('DOMContentLoaded',async()=>{
   updatePenInfo();
   renderTimes();
   initSharedCode();
+  applyRoleUI();
 });
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-  
+
   /* ── SINCRONIZACIÓN EN VIVO (sesión compartida) ── */
 let _pollTimer = null, _pollBusy = false;
 

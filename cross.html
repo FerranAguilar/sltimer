@@ -589,7 +589,7 @@ async function startSession(){
     const sesRow = await api('/rest/v1/sessions?select=id',{
       method:'POST', headers:{'Prefer':'return=representation'},
       body:JSON.stringify({user_id:_uid,name:cfg.name,lugar:cfg.lugar||null,data:cfg.fecha,
-        n_pal:cfg.nPal,n_tra:cfg.nPuertas,palistas:cfg.palistas,type:'kxc',shared:true,
+        n_pal:cfg.nPal,n_tra:cfg.nPuertas,palistas:cfg.palistas,type:'kxc',shared:true,is_live:true,
         roll:!!cfg.roll,roll_pos:cfg.roll?cfg.rollPos:null})
     });
     const sessionId = Array.isArray(sesRow) ? sesRow[0].id : sesRow.id;
