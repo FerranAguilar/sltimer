@@ -111,9 +111,6 @@
     .code-modal-sub{font-size:13px;color:#888;text-align:center;line-height:1.45}
     .code-big{background:#1B3A5C;border-radius:14px;padding:18px;text-align:center}
     .code-big-val{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;letter-spacing:6px;line-height:1}
-    .code-qr{display:flex;justify-content:center;padding:6px 0}
-    .code-qr canvas{border-radius:10px}
-    .code-qr-hint{font-size:12px;color:#888;text-align:center;margin-top:-6px}
     .code-copy{padding:9px;border-radius:10px;border:1px solid #ddd;background:#f7f9fc;color:#185FA5;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
     .code-go{padding:14px;border-radius:12px;border:none;background:#0F6E56;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 
@@ -211,14 +208,11 @@
     <div class="code-modal-title">Sesi&#243;n compartida creada</div>
     <div class="code-modal-sub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
     <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
-    <div class="code-qr" id="code-qr"></div>
-    <div class="code-qr-hint">Escanea el QR para unirte directamente</div>
     <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
     <button class="code-go" onclick="goToChrono()">&#9654; Iniciar cron&#243;metro &#8594;</button>
   </div>
 </div>
 
-<script src="qrcode.min.js"></script>
 <script>
 const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
@@ -450,20 +444,6 @@ function generateCode(){
   const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
 }
-function renderJoinQR(code){
-  try{
-    const box = $('code-qr');
-    if(!box || typeof qrcode === 'undefined') return;
-    box.innerHTML = '';
-    const url = location.origin + '/menu.html?join=' + encodeURIComponent(code);
-    const qr = qrcode(0, 'Q');
-    qr.addData(url);
-    qr.make();
-    const canvas = document.createElement('canvas');
-    box.appendChild(canvas);
-    qr.renderTo(canvas, { size: 200, margin: 4, color: '#1B3A5C', background: '#ffffff' });
-  }catch(e){ /* si algo falla, el código numérico sigue disponible */ }
-}
 async function loadCoachName(){
   try{
     const rows = await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=name,username&limit=1');
@@ -548,7 +528,6 @@ async function startSession(){
     hideLoad();
     _pendingCode = code;
     $('code-big-val').textContent = code;
-    renderJoinQR(code);
     $('code-modal-bd').classList.add('open');
   }catch(e){
     hideLoad();

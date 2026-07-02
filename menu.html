@@ -85,27 +85,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .join-input{padding:14px;border:1.5px solid #ddd;border-radius:12px;font-size:28px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#1B3A5C;text-align:center;-webkit-appearance:none}
 .join-input:focus{outline:none;border-color:#185FA5}
 .join-input.err{border-color:#A32D2D;background:#FEF2F2}
-/* Separador "o" */
-.join-or{display:flex;align-items:center;gap:10px;color:#bbb;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
-.join-or:before,.join-or:after{content:'';flex:1;height:0.5px;background:#e2e2e2}
-/* Botón escanear */
-.join-scan{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:12px;border:1.5px solid #185FA5;background:#f0f6fc;color:#185FA5;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
-.join-scan:active{background:#e3eefa}
-.join-scan svg{width:19px;height:19px;fill:none;stroke:#185FA5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .join-actions{display:flex;gap:8px}
 .join-cancel{flex:1;padding:13px;border-radius:12px;border:none;background:#f0f0f0;color:#555;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .join-go{flex:2;padding:13px;border-radius:12px;border:none;background:#185FA5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 .join-go:disabled{opacity:.45;cursor:not-allowed}
-/* Modal escáner QR */
-.scan-bd{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center}
-.scan-bd.open{display:flex}
-.scan-header{position:absolute;top:0;left:0;right:0;padding:calc(14px + env(safe-area-inset-top)) 16px 14px;text-align:center;color:#fff;font-size:16px;font-weight:600;background:linear-gradient(180deg,rgba(0,0,0,0.55),transparent);z-index:2}
-.scan-viewport{position:relative;width:100%;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.scan-viewport video{width:100%;height:100%;object-fit:cover}
-.scan-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(68vw,280px);height:min(68vw,280px);border:3px solid rgba(255,255,255,0.9);border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,0.45)}
-.scan-frame:before{content:'';position:absolute;inset:-3px;border-radius:24px;border:3px solid #0F6E56;clip-path:polygon(0 0,28% 0,28% 8%,8% 8%,8% 28%,0 28%, 0 0, 100% 0, 72% 0, 72% 8%, 92% 8%, 92% 28%, 100% 28%, 100% 100%, 72% 100%, 72% 92%, 92% 92%, 92% 72%, 100% 72%, 100% 100%, 0 100%, 28% 100%, 28% 92%, 8% 92%, 8% 72%, 0 72%);}
-.scan-status{position:absolute;bottom:calc(120px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#fff;font-size:14px;font-weight:500;padding:0 24px;z-index:2;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
-.scan-cancel{position:absolute;bottom:calc(36px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);padding:13px 32px;border-radius:100px;border:none;background:rgba(255,255,255,0.95);color:#111;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;z-index:2}
 </style>
 </head>
 <body>
@@ -154,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="menu-primary-info">
         <div class="menu-primary-title">Unirme a sesión compartida</div>
-        <div class="menu-primary-desc">Escanea el QR o introduce el código del entrenador principal</div>
+        <div class="menu-primary-desc">Introduce el código del entrenador principal</div>
       </div>
       <span class="menu-primary-arrow">&#8250;</span>
     </button>
@@ -191,12 +174,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="join-bd" id="join-bd" onclick="if(event.target===this)closeJoinModal()">
   <div class="join-modal">
     <div class="join-title">Unirme a sesi&#243;n compartida</div>
-    <div class="join-sub">Escanea el QR del entrenador principal o introduce el c&#243;digo de 6 caracteres</div>
-    <button class="join-scan" onclick="openScanner()">
-      <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
-      Escanear QR
-    </button>
-    <div class="join-or">o</div>
+    <div class="join-sub">Introduce el c&#243;digo de 6 caracteres del entrenador principal</div>
     <input class="join-input" id="join-code" type="text" maxlength="6" placeholder="ABC123"
       autocomplete="off" autocorrect="off" spellcheck="false" oninput="onJoinInput()">
     <div class="join-actions">
@@ -206,18 +184,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- MODAL ESCÁNER QR -->
-<div class="scan-bd" id="scan-bd">
-  <div class="scan-header">Apunta al QR de la sesi&#243;n</div>
-  <div class="scan-viewport">
-    <video id="scan-video" playsinline muted></video>
-    <div class="scan-frame"></div>
-  </div>
-  <div class="scan-status" id="scan-status">Buscando c&#243;digo&#8230;</div>
-  <button class="scan-cancel" onclick="closeScanner()">Cancelar</button>
-</div>
-
-<script src="jsQR.min.js"></script>
 <script>
 const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
@@ -304,123 +270,6 @@ async function doJoin(){
       hideLoad(); window.location.href='slalom-session.html';
     }
   }catch(e){ hideLoad(); toast('Error: '+e.message,true); }
-}
-
-/* ── ESCÁNER QR (cámara) ── */
-let _scanStream=null,_scanTimer=null,_scanDetector=null,_scanBusy=false;
-let _scanCanvas=null,_scanCtx=null,_scanTick=0;
-
-function extractJoinCode(text){
-  // Acepta tanto la URL completa (menu.html?join=CODE) como un código suelto.
-  // El valor proviene de un QR externo: se sanea siempre.
-  try{
-    const u=new URL(text);
-    const j=u.searchParams.get('join');
-    if(j){ const c=j.replace(/[^a-zA-Z0-9]/g,'').toUpperCase().slice(0,6); return c.length===6?c:null; }
-  }catch{}
-  const m=(text||'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
-  return m.length===6?m:null;
-}
-
-async function openScanner(){
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    toast('Tu navegador no permite usar la c\u00e1mara',true); return;
-  }
-  // Si no hay BarcodeDetector (caso de Safari iOS) y tampoco jsQR cargado, no hay forma de leer.
-  if(!('BarcodeDetector' in window) && typeof jsQR==='undefined'){
-    toast('No se pudo cargar el lector de QR. Introduce el c\u00f3digo a mano.',true);
-    return;
-  }
-  $('scan-bd').classList.add('open');
-  $('scan-status').textContent='Abriendo c\u00e1mara\u2026';
-  _scanBusy=false;
-  _scanTick=0;
-  _scanDetector=null;
-  try{
-    // Pedimos resolución alta para que el QR tenga detalle suficiente al acercar.
-    _scanStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},
-      audio:false
-    });
-    const video=$('scan-video');
-    video.srcObject=_scanStream;
-    video.setAttribute('playsinline','');     // imprescindible en iOS
-    video.setAttribute('muted','');
-    video.muted=true;
-    // iOS a veces rechaza el primer play(); reintentamos una vez.
-    try{ await video.play(); }
-    catch{ await new Promise(r=>setTimeout(r,200)); try{ await video.play(); }catch{} }
-
-    $('scan-status').textContent='Buscando c\u00f3digo\u2026';
-
-    // Detector nativo solo si soporta QR (Safari iOS NO lo tiene → usaremos jsQR).
-    if('BarcodeDetector' in window){
-      try{
-        const fmts=await window.BarcodeDetector.getSupportedFormats();
-        if(fmts.includes('qr_code')) _scanDetector=new window.BarcodeDetector({formats:['qr_code']});
-      }catch{ _scanDetector=null; }
-    }
-
-    // Bucle por temporizador (más fiable que requestAnimationFrame en iOS al abrir el panel).
-    _scanTimer=setInterval(scanTickFn,250);
-  }catch(e){
-    const msg=(e&&e.name==='NotAllowedError')
-      ? 'Permiso de c\u00e1mara denegado. Act\u00edvalo en los ajustes del navegador.'
-      : 'No se pudo abrir la c\u00e1mara. Revisa los permisos del navegador.';
-    $('scan-status').textContent=msg;
-  }
-}
-
-async function scanTickFn(){
-  if(_scanBusy||!_scanStream) return;
-  const video=$('scan-video');
-  if(!video||video.readyState<2||!video.videoWidth||!video.videoHeight) return;
-
-  _scanBusy=true;
-  try{
-    let codeText=null;
-
-    if(_scanDetector){
-      const codes=await _scanDetector.detect(video);
-      if(codes&&codes.length) codeText=codes[0].rawValue;
-    }else if(typeof jsQR!=='undefined'){
-      // Submuestreo: limitamos el lado mayor a ~640px para que jsQR vaya rápido en móvil.
-      const vw=video.videoWidth, vh=video.videoHeight;
-      const scale=Math.min(1, 640/Math.max(vw,vh));
-      const w=Math.round(vw*scale), h=Math.round(vh*scale);
-      if(!_scanCanvas){ _scanCanvas=document.createElement('canvas'); _scanCtx=_scanCanvas.getContext('2d',{willReadFrequently:true}); }
-      if(_scanCanvas.width!==w||_scanCanvas.height!==h){ _scanCanvas.width=w; _scanCanvas.height=h; }
-      _scanCtx.drawImage(video,0,0,w,h);
-      const img=_scanCtx.getImageData(0,0,w,h);
-      // attemptBoth: detecta también QR claros sobre fondo oscuro (pantallas/impresos).
-      const res=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});
-      if(res&&res.data) codeText=res.data;
-    }
-
-    if(codeText){
-      const code=extractJoinCode(codeText);
-      if(code){
-        $('scan-status').textContent='\u00a1C\u00f3digo detectado!';
-        closeScanner();
-        $('join-code').value=code;
-        $('join-go').disabled=false;
-        doJoin();
-        return;   // _scanBusy queda true: ya cerramos
-      }else{
-        $('scan-status').textContent='Le\u00eddo, pero ese QR no es de una sesi\u00f3n SLTimer.';
-      }
-    }
-  }catch{ /* frame fallido: el siguiente tick reintenta */ }
-  _scanBusy=false;
-}
-
-function closeScanner(){
-  if(_scanTimer){ clearInterval(_scanTimer); _scanTimer=null; }
-  if(_scanStream){ _scanStream.getTracks().forEach(t=>t.stop()); _scanStream=null; }
-  const video=$('scan-video');
-  if(video) video.srcObject=null;
-  _scanDetector=null;
-  $('scan-bd').classList.remove('open');
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
