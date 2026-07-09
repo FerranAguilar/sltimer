@@ -1,11 +1,12 @@
-// SLTimer Service Worker v3
-const CACHE = 'sltimer-v3';
+// SLTimer Service Worker v4
+const CACHE = 'sltimer-v4';
 
 // Archivos que se guardan en caché para modo offline
 const PRECACHE = [
   '/app.html',
   '/index.html',
   '/slalom.html',
+  '/i18n.js',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',

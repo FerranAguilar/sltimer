@@ -1,0 +1,2330 @@
+diff --git a/ajustes.html b/ajustes.html
+index 22d1002..8d8534d 100644
+--- a/ajustes.html
++++ b/ajustes.html
+@@ -100,7 +100,7 @@ body.dark .overlay p{color:#aaa}
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ 
+ <div class="topbar">
+   <button class="topbar-back" onclick="goBack()">&#8592;</button>
+@@ -109,22 +109,22 @@ body.dark .overlay p{color:#aaa}
+     <span class="topbar-brand-name">SLTimer</span>
+   </div>
+   <div class="topbar-divider"></div>
+-  <span class="topbar-title">Ajustes</span>
++  <span class="topbar-title" data-i18n="settings.title">Ajustes</span>
+ </div>
+ 
+ <div class="content">
+ 
+   <!-- PREFERENCIAS -->
+   <div>
+-    <div class="section-label">Preferencias</div>
++    <div class="section-label" data-i18n="settings.sectionPrefs">Preferencias</div>
+     <div class="card">
+       <div class="row">
+         <div class="row-icon blue">
+           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18"/><path d="M3 12h18"/><path d="M3.6 8h16.8M3.6 16h16.8"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title">Idioma</div>
+-          <div class="row-sub">Idioma de la aplicacion</div>
++          <div class="row-title" data-i18n="settings.language">Idioma</div>
++          <div class="row-sub" data-i18n="settings.languageDesc">Idioma de la aplicacion</div>
+         </div>
+         <select class="lang-select" id="lang-select" onchange="changeLang(this.value)">
+           <option value="es">Español</option>
+@@ -137,8 +137,8 @@ body.dark .overlay p{color:#aaa}
+           <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title">Notificaciones</div>
+-          <div class="row-sub" id="notif-sub">Activadas</div>
++          <div class="row-title" data-i18n="settings.notifications">Notificaciones</div>
++          <div class="row-sub" id="notif-sub" data-i18n="settings.notifOn">Activadas</div>
+         </div>
+         <label class="toggle">
+           <input type="checkbox" id="notif-toggle" checked onchange="toggleNotif(this.checked)">
+@@ -151,8 +151,8 @@ body.dark .overlay p{color:#aaa}
+           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title">Tema oscuro</div>
+-          <div class="row-sub" id="theme-sub">Desactivado</div>
++          <div class="row-title" data-i18n="settings.darkTheme">Tema oscuro</div>
++          <div class="row-sub" id="theme-sub" data-i18n="settings.themeOff">Desactivado</div>
+         </div>
+         <label class="toggle">
+           <input type="checkbox" id="theme-toggle" onchange="toggleTheme(this.checked)">
+@@ -165,7 +165,7 @@ body.dark .overlay p{color:#aaa}
+ 
+   <!-- CUENTA -->
+   <div>
+-    <div class="section-label">Cuenta</div>
++    <div class="section-label" data-i18n="settings.sectionAccount">Cuenta</div>
+     <div class="card">
+       <!-- Cambiar contraseña -->
+       <button class="btn-row" onclick="openModal('pwd')">
+@@ -173,8 +173,8 @@ body.dark .overlay p{color:#aaa}
+           <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title">Cambiar contraseña</div>
+-          <div class="row-sub">Actualiza tu contraseña de acceso</div>
++          <div class="row-title" data-i18n="settings.changePwd">Cambiar contraseña</div>
++          <div class="row-sub" data-i18n="settings.changePwdDesc">Actualiza tu contraseña de acceso</div>
+         </div>
+         <span class="row-arrow">&#8250;</span>
+       </button>
+@@ -184,8 +184,8 @@ body.dark .overlay p{color:#aaa}
+           <svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title danger">Borrar cuenta</div>
+-          <div class="row-sub">Esta accion no se puede deshacer</div>
++          <div class="row-title danger" data-i18n="settings.deleteAccount">Borrar cuenta</div>
++          <div class="row-sub" data-i18n="settings.deleteAccountDesc">Esta accion no se puede deshacer</div>
+         </div>
+         <span class="row-arrow" style="color:#ffb3b3">&#8250;</span>
+       </button>
+@@ -194,14 +194,14 @@ body.dark .overlay p{color:#aaa}
+ 
+   <!-- SESION -->
+   <div>
+-    <div class="section-label">Sesión</div>
++    <div class="section-label" data-i18n="settings.sectionSession">Sesión</div>
+     <div class="card">
+       <button class="btn-row" onclick="doLogout()">
+         <div class="row-icon red">
+           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+         </div>
+         <div class="row-body">
+-          <div class="row-title danger">Cerrar sesión</div>
++          <div class="row-title danger" data-i18n="settings.logout">Cerrar sesión</div>
+           <div class="row-sub" id="logout-email"></div>
+         </div>
+       </button>
+@@ -213,13 +213,13 @@ body.dark .overlay p{color:#aaa}
+ <!-- MODAL CAMBIAR CONTRASENA -->
+ <div class="modal-backdrop" id="modal-pwd">
+   <div class="modal">
+-    <div class="modal-title">Cambiar contraseña</div>
+-    <div class="modal-sub">Introduce tu nueva contraseña. Debe tener al menos 8 caracteres.</div>
+-    <input class="modal-input" id="inp-pwd1" type="password" placeholder="Nueva contrasena" autocomplete="new-password">
+-    <input class="modal-input" id="inp-pwd2" type="password" placeholder="Repetir contrasena" autocomplete="new-password">
++    <div class="modal-title" data-i18n="settings.pwdModalTitle">Cambiar contraseña</div>
++    <div class="modal-sub" data-i18n="settings.pwdModalSub">Introduce tu nueva contraseña. Debe tener al menos 8 caracteres.</div>
++    <input class="modal-input" id="inp-pwd1" type="password" placeholder="Nueva contrasena" data-i18n-placeholder="settings.pwdNew" autocomplete="new-password">
++    <input class="modal-input" id="inp-pwd2" type="password" placeholder="Repetir contrasena" data-i18n-placeholder="settings.pwdRepeat" autocomplete="new-password">
+     <div class="modal-actions">
+-      <button class="btn-cancel" onclick="closeModal('pwd')">Cancelar</button>
+-      <button class="btn-confirm" id="btn-pwd-confirm" onclick="changePwd()">Guardar</button>
++      <button class="btn-cancel" onclick="closeModal('pwd')" data-i18n="common.cancel">Cancelar</button>
++      <button class="btn-confirm" id="btn-pwd-confirm" onclick="changePwd()" data-i18n="common.save">Guardar</button>
+     </div>
+   </div>
+ </div>
+@@ -227,18 +227,19 @@ body.dark .overlay p{color:#aaa}
+ <!-- MODAL BORRAR CUENTA -->
+ <div class="modal-backdrop" id="modal-delete">
+   <div class="modal">
+-    <div class="modal-title">Borrar cuenta</div>
+-    <div class="modal-sub">Escribe <strong>BORRAR</strong> para confirmar. Se eliminarán todos tus datos permanentemente.</div>
+-    <input class="modal-input" id="inp-delete" type="text" placeholder="BORRAR" autocomplete="off" oninput="checkDeleteInput()">
++    <div class="modal-title" data-i18n="settings.deleteAccount">Borrar cuenta</div>
++    <div class="modal-sub"><span data-i18n="settings.deleteModalSubPre">Escribe</span> <strong data-i18n="settings.deletePlaceholder">BORRAR</strong> <span data-i18n="settings.deleteModalSubPost">para confirmar. Se eliminarán todos tus datos permanentemente.</span></div>
++    <input class="modal-input" id="inp-delete" type="text" placeholder="BORRAR" data-i18n-placeholder="settings.deletePlaceholder" autocomplete="off" oninput="checkDeleteInput()">
+     <div class="modal-actions">
+-      <button class="btn-cancel" onclick="closeModal('delete')">Cancelar</button>
+-      <button class="btn-confirm danger" id="btn-delete-confirm" onclick="deleteAccount()" disabled>Borrar cuenta</button>
++      <button class="btn-cancel" onclick="closeModal('delete')" data-i18n="common.cancel">Cancelar</button>
++      <button class="btn-confirm danger" id="btn-delete-confirm" onclick="deleteAccount()" disabled data-i18n="settings.deleteAccount">Borrar cuenta</button>
+     </div>
+   </div>
+ </div>
+ 
+ <div class="toast" id="toast"></div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -254,17 +255,16 @@ async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_ex
+ function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
+ 
+ // Idioma
+-const LANG_LABELS={'es':'Idioma: Español','en':'Language: English','fr':'Langue : Francais'};
+-function changeLang(val){localStorage.setItem('slt_lang',val);toast(LANG_LABELS[val]||val,'ok');}
+-function loadLang(){const v=localStorage.getItem('slt_lang')||'es';$('lang-select').value=v;}
++function changeLang(val){SLTi18n.setLang(val);toast(t('lang.changed',{lang:SLTi18n.langName(val)}),'ok');}
++function loadLang(){$('lang-select').value=SLTi18n.getLang();}
+ 
+ // Notificaciones
+-function toggleNotif(on){localStorage.setItem('slt_notif',on?'1':'0');$('notif-sub').textContent=on?'Activadas':'Desactivadas';toast(on?'Notificaciones activadas':'Notificaciones desactivadas');}
+-function loadNotif(){const on=(localStorage.getItem('slt_notif')||'1')==='1';$('notif-toggle').checked=on;$('notif-sub').textContent=on?'Activadas':'Desactivadas';}
++function toggleNotif(on){localStorage.setItem('slt_notif',on?'1':'0');$('notif-sub').textContent=on?t('settings.notifOn'):t('settings.notifOff');toast(on?t('settings.notifEnabled'):t('settings.notifDisabled'));}
++function loadNotif(){const on=(localStorage.getItem('slt_notif')||'1')==='1';$('notif-toggle').checked=on;$('notif-sub').textContent=on?t('settings.notifOn'):t('settings.notifOff');}
+ 
+ // Tema
+-function toggleTheme(dark){localStorage.setItem('slt_dark',dark?'1':'0');document.body.classList.toggle('dark',dark);$('theme-sub').textContent=dark?'Activado':'Desactivado';toast(dark?'Tema oscuro activado':'Tema claro activado');}
+-function loadTheme(){const dark=(localStorage.getItem('slt_dark')||'0')==='1';$('theme-toggle').checked=dark;document.body.classList.toggle('dark',dark);$('theme-sub').textContent=dark?'Activado':'Desactivado';}
++function toggleTheme(dark){localStorage.setItem('slt_dark',dark?'1':'0');document.body.classList.toggle('dark',dark);$('theme-sub').textContent=dark?t('settings.themeOn'):t('settings.themeOff');toast(dark?t('settings.darkOn'):t('settings.darkOff'));}
++function loadTheme(){const dark=(localStorage.getItem('slt_dark')||'0')==='1';$('theme-toggle').checked=dark;document.body.classList.toggle('dark',dark);$('theme-sub').textContent=dark?t('settings.themeOn'):t('settings.themeOff');}
+ 
+ // Modales
+ function openModal(id){$('modal-'+id).classList.add('show');}
+diff --git a/app.html b/app.html
+index 1ac5e38..8081a9c 100644
+--- a/app.html
++++ b/app.html
+@@ -60,17 +60,17 @@
+ <div class="content">
+ 
+   <div>
+-    <div class="page-title">¿Qué tipo de sesión?</div>
+-    <div class="page-sub">Elige la modalidad para configurar la sesión</div>
++    <div class="page-title" data-i18n="app.whichType">¿Qué tipo de sesión?</div>
++    <div class="page-sub" data-i18n="app.whichTypeSub">Elige la modalidad para configurar la sesión</div>
+   </div>
+ 
+-  <div class="section-label">Modalidad</div>
++  <div class="section-label" data-i18n="app.modality">Modalidad</div>
+ 
+   <button class="session-btn slalom" onclick="window.location.href='slalom.html'">
+     <div class="session-btn-icon">🏁</div>
+     <div class="session-btn-info">
+-      <div class="session-btn-title">Eslálom</div>
+-      <div class="session-btn-desc">Registro de tiempos por tramos y mangas con cronómetro</div>
++      <div class="session-btn-title" data-i18n="app.slalom">Eslálom</div>
++      <div class="session-btn-desc" data-i18n="app.slalomDesc">Registro de tiempos por tramos y mangas con cronómetro</div>
+     </div>
+     <span class="session-btn-arrow">›</span>
+   </button>
+@@ -78,14 +78,15 @@
+   <button class="session-btn kxc" onclick="window.location.href='cross.html'">
+     <div class="session-btn-icon">⚡</div>
+     <div class="session-btn-info">
+-      <div class="session-btn-title">Kayak Cross</div>
+-      <div class="session-btn-desc">Registro de tiempos y faltas con cronómetro</div>
++      <div class="session-btn-title" data-i18n="app.kayakCross">Kayak Cross</div>
++      <div class="session-btn-desc" data-i18n="app.kayakCrossDesc">Registro de tiempos y faltas con cronómetro</div>
+     </div>
+     <span class="session-btn-arrow">›</span>
+   </button>
+ 
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+   function initials(str){
+     if(!str) return '?';
+diff --git a/cross.html b/cross.html
+index cc2d227..e4e1dca 100644
+--- a/cross.html
++++ b/cross.html
+@@ -136,7 +136,7 @@
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ <div class="toast" id="toast"></div>
+ 
+ <div class="topbar">
+@@ -146,36 +146,36 @@
+     <span class="topbar-brand-name">SLTimer</span>
+   </a>
+   <div class="topbar-divider"></div>
+-  <span class="topbar-title">Configurar Kayak Cross</span>
++  <span class="topbar-title" data-i18n="crcfg.topbar">Configurar Kayak Cross</span>
+   <div class="topbar-right"><div class="avatar" id="top-avatar"></div></div>
+ </div>
+ 
+ <div class="content">
+   <div>
+-    <div class="page-title">Nueva sesi&#243;n de Kayak Cross</div>
+-    <div class="page-sub">Configura los datos, las puertas y los palistas</div>
++    <div class="page-title" data-i18n="crcfg.pageTitle">Nueva sesi&#243;n de Kayak Cross</div>
++    <div class="page-sub" data-i18n="crcfg.pageSub">Configura los datos, las puertas y los palistas</div>
+     <div class="kx-badge">&#9889; Kayak Cross</div>
+   </div>
+ 
+   <!-- DATOS -->
+-  <div class="section-label">Datos de la sesi&#243;n</div>
++  <div class="section-label" data-i18n="slcfg.sectionData">Datos de la sesi&#243;n</div>
+   <div class="card">
+     <div>
+-      <label>Nombre de la sesi&#243;n</label>
+-      <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento ma&#241;ana" autocomplete="off">
++      <label data-i18n="cfg.sessionName">Nombre de la sesi&#243;n</label>
++      <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento ma&#241;ana" data-i18n-placeholder="slcfg.namePlaceholder" autocomplete="off">
+     </div>
+     <div>
+-      <label>Fecha</label>
++      <label data-i18n="common.date">Fecha</label>
+       <input id="cfg-fecha" type="date">
+     </div>
+   </div>
+ 
+   <!-- PUERTAS -->
+-  <div class="section-label">Puertas</div>
++  <div class="section-label" data-i18n="crcfg.sectionGates">Puertas</div>
+   <div class="counter-box">
+     <div class="counter-box-info">
+-      <div class="counter-box-title">N&#250;mero de puertas</div>
+-      <div class="counter-box-desc">Puertas del circuito de cross</div>
++      <div class="counter-box-title" data-i18n="crcfg.numGates">N&#250;mero de puertas</div>
++      <div class="counter-box-desc" data-i18n="crcfg.numGatesDesc">Puertas del circuito de cross</div>
+     </div>
+     <div class="counter-row">
+       <button class="counter-btn" id="puertas-minus" onclick="adjustPuertas(-1)">&#8722;</button>
+@@ -185,11 +185,11 @@
+   </div>
+ 
+   <!-- ROLL -->
+-  <div class="section-label">Circuito</div>
++  <div class="section-label" data-i18n="crcfg.circuit">Circuito</div>
+   <div class="toggle-row">
+     <div class="toggle-label">
+-      <div class="toggle-label-title">Zona de Roll</div>
+-      <div class="toggle-label-desc">El circuito incluye una zona de esquimotaje</div>
++      <div class="toggle-label-title" data-i18n="crcfg.rollZone">Zona de Roll</div>
++      <div class="toggle-label-desc" data-i18n="crcfg.rollZoneDesc">El circuito incluye una zona de esquimotaje</div>
+     </div>
+     <label class="toggle-switch">
+       <input type="checkbox" id="roll-toggle">
+@@ -199,18 +199,18 @@
+ 
+   <!-- POSICIÓN DEL ROLL (arrastre) -->
+   <div class="roll-pos-card" id="roll-pos-card">
+-    <div class="roll-pos-title">Posici&#243;n de la zona de Roll</div>
++    <div class="roll-pos-title" data-i18n="crcfg.rollPos">Posici&#243;n de la zona de Roll</div>
+     <div class="roll-pos-cur" id="roll-pos-cur">&#8212;</div>
+     <div class="gates-grid" id="roll-gates-grid"></div>
+-    <div class="roll-pos-hint">Arrastra la ficha <b>R</b> y su&#233;ltala entre las puertas donde est&#225; la zona de roll. Esta posici&#243;n ser&#225; fija durante toda la sesi&#243;n.</div>
++    <div class="roll-pos-hint"><span data-i18n="crcfg.rollHintPre">Arrastra la ficha</span> <b>R</b> <span data-i18n="crcfg.rollHintPost">y su&#233;ltala entre las puertas donde est&#225; la zona de roll. Esta posici&#243;n ser&#225; fija durante toda la sesi&#243;n.</span></div>
+   </div>
+ 
+   <!-- SESIÓN COMPARTIDA -->
+-  <div class="section-label">Sesi&#243;n compartida</div>
++  <div class="section-label" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
+   <div class="toggle-row">
+     <div class="toggle-label">
+-      <div class="toggle-label-title">Sesi&#243;n compartida</div>
+-      <div class="toggle-label-desc">Otros entrenadores podr&#225;n registrar tiempos con un c&#243;digo</div>
++      <div class="toggle-label-title" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
++      <div class="toggle-label-desc" data-i18n="crcfg.rollHintShared">Otros entrenadores podr&#225;n registrar tiempos con un c&#243;digo</div>
+     </div>
+     <label class="toggle-switch">
+       <input type="checkbox" id="shared-toggle">
+@@ -219,32 +219,33 @@
+   </div>
+ 
+   <!-- PALISTAS -->
+-  <div class="section-label">Palistas (KXC)</div>
++  <div class="section-label" data-i18n="crcfg.paddlersKxc">Palistas (KXC)</div>
+   <div class="pal-list" id="pal-list"></div>
+   <button class="add-pal-btn" id="add-pal-btn" onclick="addPalRow()">
+-    <span style="font-size:17px;line-height:1">+</span> A&#241;adir palista
++    <span style="font-size:17px;line-height:1">+</span> <span data-i18n="cfg.addPaddler">A&#241;adir palista</span>
+   </button>
+-  <div class="pal-empty-hint" id="pal-empty-hint" style="display:none">No tienes palistas con categor&#237;a KXC. Puedes escribir un nombre temporal.</div>
++  <div class="pal-empty-hint" id="pal-empty-hint" style="display:none" data-i18n="crcfg.noKxc">No tienes palistas con categor&#237;a KXC. Puedes escribir un nombre temporal.</div>
+ </div>
+ 
+ <!-- BARRA INFERIOR -->
+ <div class="bottom-bar">
+   <div class="bottom-bar-inner">
+-    <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; Iniciar sesión</button>
++    <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; <span data-i18n="slcfg.startSession">Iniciar sesión</span></button>
+   </div>
+ </div>
+ 
+ <!-- MODAL CÓDIGO COMPARTIDA -->
+ <div class="code-modal-bd" id="code-modal-bd">
+   <div class="code-modal">
+-    <div class="code-modal-title">Sesi&#243;n compartida creada</div>
+-    <div class="code-modal-sub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
++    <div class="code-modal-title" data-i18n="slcfg.codeCreated">Sesi&#243;n compartida creada</div>
++    <div class="code-modal-sub" data-i18n="slcfg.codeSub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
+     <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+-    <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+-    <button class="code-go" onclick="goToChrono()">&#9654; Iniciar cron&#243;metro &#8594;</button>
++    <button class="code-copy" onclick="copyShareCode()">&#128203; <span data-i18n="slcfg.copyCode">Copiar c&#243;digo</span></button>
++    <button class="code-go" onclick="goToChrono()">&#9654; <span data-i18n="slcfg.startChrono">Iniciar cron&#243;metro</span> &#8594;</button>
+   </div>
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -396,7 +397,7 @@ function onRollPointerUp(e){
+ 
+ /* ── PALISTAS ── */
+ function addPalRow(){
+-  if(_pals.length >= MAX_PAL){ toast('M\u00e1ximo '+MAX_PAL+' palistas', 'err'); return; }
++  if(_pals.length >= MAX_PAL){ toast(t('slcfg.maxPaddlers',{n:MAX_PAL}), 'err'); return; }
+   _pals.push({ rid: _rowSeq++, id:null, name:'', category:'KXC', isTemp:false });
+   renderPals();
+   setTimeout(() => {
+@@ -429,7 +430,7 @@ function renderPals(){
+         <div class="pal-num ${filled ? '' : 'empty'}">${i+1}</div>
+         <div class="pal-search-wrap">
+           <input class="${inputCls}" id="pal-input-${p.rid}" type="text"
+-            placeholder="Buscar o escribir nombre\u2026"
++            placeholder="${escHtml(t('slcfg.searchOrType'))}"
+             value="${escHtml(p.name)}"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             oninput="onPalInput(${p.rid})"
+@@ -438,7 +439,7 @@ function renderPals(){
+           <button class="pal-clear ${filled ? 'show' : ''}" id="pal-clear-${p.rid}" onclick="clearPal(${p.rid})">&#x2715;</button>
+           <div class="pal-dropdown" id="pal-dd-${p.rid}"></div>
+         </div>
+-        ${showRemove ? `<button class="pal-remove" onclick="removePalRow(${p.rid})" title="Quitar">&#x2715;</button>` : ''}
++        ${showRemove ? `<button class="pal-remove" onclick="removePalRow(${p.rid})" title="${escHtml(t('common.remove'))}">&#x2715;</button>` : ''}
+       </div>
+     `;
+     c.appendChild(row);
+@@ -533,11 +534,11 @@ async function loadCoachName(){
+ /* ── CONSTRUIR CONFIG ── */
+ function buildCfg(){
+   const name = $('cfg-name').value.trim();
+-  if(!name){ toast('Introduce un nombre para la sesi\u00f3n', 'err'); return null; }
++  if(!name){ toast(t('slcfg.needName'), 'err'); return null; }
+   const fecha = $('cfg-fecha').value || new Date().toISOString().slice(0,10);
+ 
+   const validPals = _pals.filter(p => p.name.trim().length > 0);
+-  if(validPals.length === 0){ toast('A\u00f1ade al menos un palista', 'err'); return null; }
++  if(validPals.length === 0){ toast(t('slcfg.needPaddler'), 'err'); return null; }
+ 
+   const palistas = validPals.map(p => ({
+     name: p.name.trim(),
+@@ -564,7 +565,7 @@ async function startSession(){
+     return;
+   }
+ 
+-  showLoad('Creando sesi\u00f3n compartida...');
++  showLoad(t('slcfg.creatingShared'));
+   try{
+     const sesRow = await api('/rest/v1/sessions?select=id',{
+       method:'POST', headers:{'Prefer':'return=representation'},
+@@ -607,15 +608,15 @@ async function startSession(){
+     $('code-modal-bd').classList.add('open');
+   }catch(e){
+     hideLoad();
+-    toast('Error al crear la sesi\u00f3n: ' + e.message, 'err');
++    toast(t('slcfg.createError',{msg:e.message}), 'err');
+   }
+ }
+ 
+ function copyShareCode(){
+   const code = _pendingCode || '';
+   navigator.clipboard?.writeText(code)
+-    .then(() => toast('C\u00f3digo copiado \u2713', 'ok'))
+-    .catch(() => toast('Copia manual: ' + code));
++    .then(() => toast(t('slcfg.codeCopied'), 'ok'))
++    .catch(() => toast(t('slcfg.copyManual',{code:code})));
+ }
+ function goToChrono(){
+   window.location.href = 'sessionkxc.html';
+@@ -659,7 +660,7 @@ window.addEventListener('DOMContentLoaded', async () => {
+   _pals.push({ rid:_rowSeq++, id:null, name:'', category:'KXC', isTemp:false });
+   renderPals();
+ 
+-  showLoad('Cargando palistas...');
++  showLoad(t('slcfg.loadingPaddlers'));
+   await loadAthletes();
+   await loadCoachName();
+   hideLoad();
+diff --git a/i18n.js b/i18n.js
+new file mode 100644
+index 0000000..513bd93
+--- /dev/null
++++ b/i18n.js
+@@ -0,0 +1,500 @@
++/* ============================================================================
++   SLTimer · i18n.js — Sistema de internacionalización (es / en / fr)
++   ----------------------------------------------------------------------------
++   Uso mínimo en cada página HTML, justo antes de </body>:
++
++       <script src="/i18n.js"></script>
++
++   Y marca los textos con atributos:
++       <span data-i18n="menu.settings">Ajustes</span>
++       <input data-i18n-placeholder="join.codePlaceholder" ...>
++       <img data-i18n-alt="brand.logoAlt" ...>
++       <button data-i18n-title="chrono.editCfg" ...>
++
++   Desde JS puedes traducir cadenas dinámicas:
++       toast(t('toast.saved'));
++       toast(t('lang.changed', {lang: 'English'}));   // interpolación {lang}
++
++   Cambiar idioma (persiste en localStorage y, si hay sesión, en Supabase):
++       SLTi18n.setLang('en');
++   ============================================================================ */
++(function (global) {
++  'use strict';
++
++  /* ── Config Supabase (mismos valores que el resto de la app) ────────────── */
++  const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
++  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
++
++  const LANGS = ['es', 'en', 'fr'];
++  const DEFAULT_LANG = 'es';
++  const STORAGE_KEY = 'slt_lang';
++
++  /* ── Nombres de idioma para el toast de confirmación ────────────────────── */
++  const LANG_NAMES = { es: 'Español', en: 'English', fr: 'Français' };
++
++  /* ========================================================================
++     DICCIONARIO
++     Claves en notación punteada agrupadas por área. Añade aquí lo que falte.
++     ======================================================================== */
++  const DICT = {
++    /* ── Comunes / genéricos ─────────────────────────────────────────────── */
++    'common.loading':      { es: 'Cargando...',   en: 'Loading...',   fr: 'Chargement...' },
++    'common.save':         { es: 'Guardar',       en: 'Save',         fr: 'Enregistrer' },
++    'common.cancel':       { es: 'Cancelar',      en: 'Cancel',       fr: 'Annuler' },
++    'common.confirm':      { es: 'Confirmar',     en: 'Confirm',      fr: 'Confirmer' },
++    'common.delete':       { es: 'Borrar',        en: 'Delete',       fr: 'Supprimer' },
++    'common.remove':       { es: 'Quitar',        en: 'Remove',       fr: 'Retirer' },
++    'common.edit':         { es: 'Editar',        en: 'Edit',         fr: 'Modifier' },
++    'common.close':        { es: 'Cerrar',        en: 'Close',        fr: 'Fermer' },
++    'common.back':         { es: 'Volver',        en: 'Back',         fr: 'Retour' },
++    'common.next':         { es: 'Siguiente',     en: 'Next',         fr: 'Suivant' },
++    'common.search':       { es: 'Buscar',        en: 'Search',       fr: 'Rechercher' },
++    'common.name':         { es: 'Nombre',        en: 'Name',         fr: 'Nom' },
++    'common.surname':      { es: 'Apellidos',     en: 'Surname',      fr: 'Nom de famille' },
++    'common.category':     { es: 'Categoría',     en: 'Category',     fr: 'Catégorie' },
++    'common.date':         { es: 'Fecha',         en: 'Date',         fr: 'Date' },
++    'common.place':        { es: 'Lugar',         en: 'Place',        fr: 'Lieu' },
++    'common.description':  { es: 'Descripción',   en: 'Description',   fr: 'Description' },
++    'common.errorPrefix':  { es: 'Error: ',       en: 'Error: ',      fr: 'Erreur : ' },
++
++    /* ── Barra superior / marca ──────────────────────────────────────────── */
++    'brand.logoAlt':       { es: 'SLTimer',       en: 'SLTimer',      fr: 'SLTimer' },
++
++    /* ── Menú principal (menu.html) ──────────────────────────────────────── */
++    'menu.welcomeBack':          { es: 'Bienvenido/a de nuevo',                    en: 'Welcome back',                         fr: 'Bon retour' },
++    'menu.whatToday':            { es: '¿Qué hacemos hoy?',                        en: 'What shall we do today?',              fr: 'Que faisons-nous aujourd\u2019hui ?' },
++    'menu.helloName':            { es: 'Hola, {name}',                             en: 'Hello, {name}',                        fr: 'Bonjour, {name}' },
++    'menu.sectionMain':          { es: 'Principal',                                en: 'Main',                                 fr: 'Principal' },
++    'menu.sectionUnavailable':   { es: 'Sección no disponible aún',                en: 'Section not available yet',            fr: 'Section pas encore disponible' },
++    'menu.createSession':        { es: 'Crear Sesión',                             en: 'Create Session',                       fr: 'Créer une session' },
++    'menu.createSessionDesc':    { es: 'Configura palistas, tramos y cronómetro',  en: 'Set up paddlers, sections and timer',  fr: 'Configurez pagayeurs, sections et chrono' },
++    'menu.joinShared':           { es: 'Unirme a sesión compartida',               en: 'Join shared session',                  fr: 'Rejoindre une session partagée' },
++    'menu.joinSharedDesc':       { es: 'Introduce el código del entrenador principal', en: 'Enter the head coach\u2019s code',  fr: 'Saisissez le code de l\u2019entraîneur principal' },
++    'menu.sectionMyData':        { es: 'Mis datos',                                en: 'My data',                              fr: 'Mes données' },
++    'menu.sectionConfig':        { es: 'Configuración',                            en: 'Settings',                             fr: 'Paramètres' },
++    'menu.history':              { es: 'Historial de Sesiones',                    en: 'Session History',                      fr: 'Historique des sessions' },
++    'menu.myAthletes':           { es: 'Mis palistas',                             en: 'My paddlers',                          fr: 'Mes pagayeurs' },
++    'menu.groups':               { es: 'Grupos',                                   en: 'Groups',                               fr: 'Groupes' },
++    'menu.stats':                { es: 'Estadísticas',                             en: 'Statistics',                           fr: 'Statistiques' },
++    'menu.notifications':        { es: 'Notificaciones',                           en: 'Notifications',                        fr: 'Notifications' },
++    'menu.settings':             { es: 'Ajustes',                                  en: 'Settings',                             fr: 'Réglages' },
++    'menu.myProfile':            { es: 'Mi perfil',                                en: 'My profile',                           fr: 'Mon profil' },
++    'menu.logout':               { es: 'Cerrar sesión',                            en: 'Log out',                              fr: 'Se déconnecter' },
++
++    /* ── Modal unirse a sesión compartida ────────────────────────────────── */
++    'join.title':          { es: 'Unirme a sesión compartida',                             en: 'Join shared session',                          fr: 'Rejoindre une session partagée' },
++    'join.subtitle':       { es: 'Introduce el código de 6 caracteres del entrenador principal', en: 'Enter the head coach\u2019s 6-character code', fr: 'Saisissez le code à 6 caractères de l\u2019entraîneur' },
++    'join.codePlaceholder':{ es: 'ABC123',                                                 en: 'ABC123',                                       fr: 'ABC123' },
++    'join.submit':         { es: 'Unirme',                                                 en: 'Join',                                         fr: 'Rejoindre' },
++
++    /* ── Ajustes (ajustes.html) ──────────────────────────────────────────── */
++    'settings.title':          { es: 'Ajustes',                       en: 'Settings',                    fr: 'Réglages' },
++    'settings.sectionPrefs':   { es: 'Preferencias',                  en: 'Preferences',                 fr: 'Préférences' },
++    'settings.language':       { es: 'Idioma',                        en: 'Language',                    fr: 'Langue' },
++    'settings.languageDesc':   { es: 'Idioma de la aplicación',       en: 'App language',                fr: 'Langue de l\u2019application' },
++    'settings.notifications':  { es: 'Notificaciones',                en: 'Notifications',               fr: 'Notifications' },
++    'settings.notifOn':        { es: 'Activadas',                     en: 'Enabled',                     fr: 'Activées' },
++    'settings.notifOff':       { es: 'Desactivadas',                  en: 'Disabled',                    fr: 'Désactivées' },
++    'settings.notifEnabled':   { es: 'Notificaciones activadas',      en: 'Notifications enabled',       fr: 'Notifications activées' },
++    'settings.notifDisabled':  { es: 'Notificaciones desactivadas',   en: 'Notifications disabled',      fr: 'Notifications désactivées' },
++    'settings.darkOn':         { es: 'Tema oscuro activado',          en: 'Dark theme on',               fr: 'Thème sombre activé' },
++    'settings.darkOff':        { es: 'Tema claro activado',           en: 'Light theme on',              fr: 'Thème clair activé' },
++    'settings.darkTheme':      { es: 'Tema oscuro',                   en: 'Dark theme',                  fr: 'Thème sombre' },
++    'settings.themeOn':        { es: 'Activado',                      en: 'Enabled',                     fr: 'Activé' },
++    'settings.themeOff':       { es: 'Desactivado',                   en: 'Disabled',                    fr: 'Désactivé' },
++    'settings.sectionAccount': { es: 'Cuenta',                        en: 'Account',                     fr: 'Compte' },
++    'settings.sectionSession': { es: 'Sesión',                        en: 'Session',                     fr: 'Session' },
++    'settings.changePwd':      { es: 'Cambiar contraseña',            en: 'Change password',             fr: 'Changer le mot de passe' },
++    'settings.changePwdDesc':  { es: 'Actualiza tu contraseña de acceso', en: 'Update your login password', fr: 'Mettez à jour votre mot de passe' },
++    'settings.deleteAccount':  { es: 'Borrar cuenta',                 en: 'Delete account',              fr: 'Supprimer le compte' },
++    'settings.deleteAccountDesc': { es: 'Esta acción no se puede deshacer', en: 'This action cannot be undone', fr: 'Cette action est irréversible' },
++    'settings.logout':         { es: 'Cerrar sesión',                 en: 'Log out',                     fr: 'Se déconnecter' },
++    'settings.deleteWarn':     { es: 'Se eliminarán todos tus datos permanentemente.', en: 'All your data will be permanently deleted.', fr: 'Toutes vos données seront supprimées définitivement.' },
++    'settings.deletePlaceholder': { es: 'BORRAR',                     en: 'DELETE',                      fr: 'SUPPRIMER' },
++    'settings.pwdModalTitle':  { es: 'Cambiar contraseña',            en: 'Change password',             fr: 'Changer le mot de passe' },
++    'settings.pwdModalSub':    { es: 'Introduce tu nueva contraseña. Debe tener al menos 8 caracteres.', en: 'Enter your new password. It must be at least 8 characters.', fr: 'Saisissez votre nouveau mot de passe. Au moins 8 caractères.' },
++    'settings.pwdNew':         { es: 'Nueva contraseña',              en: 'New password',                fr: 'Nouveau mot de passe' },
++    'settings.pwdRepeat':      { es: 'Repetir contraseña',            en: 'Repeat password',             fr: 'Répéter le mot de passe' },
++    'settings.deleteModalSubPre':  { es: 'Escribe',                   en: 'Type',                        fr: 'Tapez' },
++    'settings.deleteModalSubPost': { es: 'para confirmar. Se eliminarán todos tus datos permanentemente.', en: 'to confirm. All your data will be permanently deleted.', fr: 'pour confirmer. Toutes vos données seront supprimées définitivement.' },
++
++    /* ── Nueva sesión / configuración (app.html, cross.html) ─────────────── */
++    'app.whichType':       { es: '¿Qué tipo de sesión?',   en: 'What type of session?', fr: 'Quel type de session ?' },
++    'app.whichTypeSub':    { es: 'Elige la modalidad para configurar la sesión', en: 'Choose the discipline to set up the session', fr: 'Choisissez la discipline pour configurer la session' },
++    'app.modality':        { es: 'Modalidad',              en: 'Discipline',          fr: 'Discipline' },
++    'app.slalom':          { es: 'Eslálom',                en: 'Slalom',              fr: 'Slalom' },
++    'app.slalomDesc':      { es: 'Registro de tiempos por tramos y mangas con cronómetro', en: 'Record times by sections and runs with a timer', fr: 'Enregistrement des temps par sections et manches au chrono' },
++    'app.kayakCross':      { es: 'Kayak Cross',            en: 'Kayak Cross',         fr: 'Kayak Cross' },
++    'app.kayakCrossDesc':  { es: 'Registro de tiempos y faltas con cronómetro', en: 'Record times and penalties with a timer', fr: 'Enregistrement des temps et pénalités au chrono' },
++    'crcfg.topbar':        { es: 'Configurar Kayak Cross',                    en: 'Set up Kayak Cross',                   fr: 'Configurer le Kayak Cross' },
++    'crcfg.pageTitle':     { es: 'Nueva sesión de Kayak Cross',               en: 'New Kayak Cross session',              fr: 'Nouvelle session de Kayak Cross' },
++    'crcfg.pageSub':       { es: 'Configura los datos, las puertas y los palistas', en: 'Set up the details, gates and paddlers', fr: 'Configurez les détails, portes et pagayeurs' },
++    'crcfg.sectionGates':  { es: 'Puertas',                                   en: 'Gates',                                fr: 'Portes' },
++    'crcfg.numGates':      { es: 'Número de puertas',                         en: 'Number of gates',                      fr: 'Nombre de portes' },
++    'crcfg.numGatesDesc':  { es: 'Puertas del circuito de cross',             en: 'Gates on the cross course',            fr: 'Portes du circuit de cross' },
++    'crcfg.circuit':       { es: 'Circuito',                                  en: 'Course',                               fr: 'Circuit' },
++    'crcfg.rollZone':      { es: 'Zona de Roll',                              en: 'Roll zone',                            fr: 'Zone d\u2019esquimautage' },
++    'crcfg.rollZoneDesc':  { es: 'El circuito incluye una zona de esquimotaje', en: 'The course includes a roll zone',    fr: 'Le circuit inclut une zone d\u2019esquimautage' },
++    'crcfg.rollPos':       { es: 'Posición de la zona de Roll',               en: 'Roll zone position',                   fr: 'Position de la zone d\u2019esquimautage' },
++    'crcfg.rollHintPre':   { es: 'Arrastra la ficha',                         en: 'Drag the marker',                      fr: 'Faites glisser le repère' },
++    'crcfg.rollHintPost':  { es: 'y suéltala entre las puertas donde está la zona de roll. Esta posición será fija durante toda la sesión.', en: 'and drop it between the gates where the roll zone is. This position stays fixed for the whole session.', fr: 'et déposez-le entre les portes où se trouve la zone d\u2019esquimautage. Cette position reste fixe pendant toute la session.' },
++    'crcfg.paddlersKxc':   { es: 'Palistas (KXC)',                            en: 'Paddlers (KXC)',                       fr: 'Pagayeurs (KXC)' },
++    'crcfg.noKxc':         { es: 'No tienes palistas con categoría KXC. Puedes escribir un nombre temporal.', en: 'You have no paddlers in the KXC category. You can type a temporary name.', fr: 'Vous n\u2019avez aucun pagayeur en catégorie KXC. Vous pouvez saisir un nom temporaire.' },
++    'crcfg.rollHintShared': { es: 'Otros entrenadores podrán registrar tiempos con un código', en: 'Other coaches can record times using a code', fr: 'D\u2019autres entraîneurs peuvent enregistrer des temps avec un code' },
++    'cfg.sessionName':     { es: 'Nombre de la sesión',   en: 'Session name',        fr: 'Nom de la session' },
++    'slcfg.topbar':        { es: 'Configurar eslálom',                       en: 'Set up slalom',                        fr: 'Configurer le slalom' },
++    'slcfg.pageTitle':     { es: 'Nueva sesión de eslálom',                  en: 'New slalom session',                   fr: 'Nouvelle session de slalom' },
++    'slcfg.pageSub':       { es: 'Configura los datos, los tramos y los palistas', en: 'Set up the details, sections and paddlers', fr: 'Configurez les détails, sections et pagayeurs' },
++    'slcfg.sectionData':   { es: 'Datos de la sesión',                       en: 'Session details',                      fr: 'Détails de la session' },
++    'slcfg.namePlaceholder': { es: 'Ej: Entrenamiento mañana',              en: 'e.g. Morning training',                fr: 'ex. Entraînement matin' },
++    'slcfg.sectionSections': { es: 'Tramos',                                 en: 'Sections',                             fr: 'Sections' },
++    'slcfg.numSections':   { es: 'Número de tramos',                         en: 'Number of sections',                   fr: 'Nombre de sections' },
++    'slcfg.numSectionsDesc': { es: 'Secciones cronometradas del recorrido',  en: 'Timed sections of the course',         fr: 'Sections chronométrées du parcours' },
++    'slcfg.sharedLabel':   { es: 'Sesión compartida',                        en: 'Shared session',                       fr: 'Session partagée' },
++    'slcfg.sharedDesc':    { es: 'Otros entrenadores podrán registrar tiempos a la vez con un código', en: 'Other coaches can record times at the same time using a code', fr: 'D\u2019autres entraîneurs peuvent enregistrer des temps en même temps avec un code' },
++    'slcfg.startSession':  { es: 'Iniciar sesión',                           en: 'Start session',                        fr: 'Démarrer la session' },
++    'slcfg.codeCreated':   { es: 'Sesión compartida creada',                 en: 'Shared session created',               fr: 'Session partagée créée' },
++    'slcfg.codeSub':       { es: 'Comparte este código con los demás entrenadores para que se unan desde el menú', en: 'Share this code with the other coaches so they can join from the menu', fr: 'Partagez ce code avec les autres entraîneurs pour qu\u2019ils rejoignent depuis le menu' },
++    'slcfg.copyCode':      { es: 'Copiar código',                            en: 'Copy code',                            fr: 'Copier le code' },
++    'slcfg.startChrono':   { es: 'Iniciar cronómetro',                       en: 'Start timer',                          fr: 'Démarrer le chrono' },
++    'slcfg.searchOrType':  { es: 'Buscar o escribir nombre…',                en: 'Search or type a name…',               fr: 'Rechercher ou saisir un nom…' },
++    'slcfg.maxPaddlers':   { es: 'Máximo {n} palistas',                      en: 'Maximum {n} paddlers',                 fr: 'Maximum {n} pagayeurs' },
++    'slcfg.needName':      { es: 'Introduce un nombre para la sesión',        en: 'Enter a name for the session',         fr: 'Saisissez un nom pour la session' },
++    'slcfg.needPaddler':   { es: 'Añade al menos un palista',                 en: 'Add at least one paddler',             fr: 'Ajoutez au moins un pagayeur' },
++    'slcfg.creatingShared': { es: 'Creando sesión compartida...',            en: 'Creating shared session...',           fr: 'Création de la session partagée...' },
++    'slcfg.createError':   { es: 'Error al crear la sesión: {msg}',           en: 'Error creating the session: {msg}',    fr: 'Erreur lors de la création : {msg}' },
++    'slcfg.codeCopied':    { es: 'Código copiado ✓',                          en: 'Code copied ✓',                        fr: 'Code copié ✓' },
++    'slcfg.copyManual':    { es: 'Copia manual: {code}',                      en: 'Copy manually: {code}',                fr: 'Copie manuelle : {code}' },
++    'slcfg.loadingPaddlers': { es: 'Cargando palistas...',                    en: 'Loading paddlers...',                  fr: 'Chargement des pagayeurs...' },
++    'cfg.namePlaceholder': { es: 'Ej. Entreno mañana',    en: 'e.g. Morning training', fr: 'ex. Entraînement matin' },
++    'cfg.sections':        { es: 'Tramos',                en: 'Sections',            fr: 'Sections' },
++    'cfg.gates':           { es: 'Puertas',               en: 'Gates',               fr: 'Portes' },
++    'cfg.paddlers':        { es: 'Palistas',              en: 'Paddlers',            fr: 'Pagayeurs' },
++    'cfg.addPaddler':      { es: 'Añadir palista',        en: 'Add paddler',         fr: 'Ajouter un pagayeur' },
++    'cfg.addGroup':        { es: 'Añadir grupo',          en: 'Add group',           fr: 'Ajouter un groupe' },
++    'cfg.roll':            { es: 'Con roll',              en: 'With roll',           fr: 'Avec esquimautage' },
++    'cfg.start':           { es: 'Empezar',               en: 'Start',               fr: 'Commencer' },
++    'cfg.searchOrType':    { es: 'Buscar o escribir nombre…', en: 'Search or type a name…', fr: 'Rechercher ou saisir un nom…' },
++
++    /* ── Cronómetro / sesión (slalom.html, sessionkxc.html) ──────────────── */
++    'slsess.editTime':     { es: 'Editar tiempo',                            en: 'Edit time',                            fr: 'Modifier le temps' },
++    'slsess.paddlerSectionRun': { es: 'Palista / Tramo / Manga',            en: 'Paddler / Section / Run',              fr: 'Pagayeur / Section / Manche' },
++    'slsess.rawTime':      { es: 'Tiempo bruto (MM:SS.d)',                    en: 'Raw time (MM:SS.d)',                   fr: 'Temps brut (MM:SS.d)' },
++    'slsess.penalties':    { es: 'Penalizaciones',                           en: 'Penalties',                            fr: 'Pénalités' },
++    'slsess.pen2':         { es: '+2 seg · Toque',                           en: '+2 sec · Touch',                       fr: '+2 s · Touche' },
++    'slsess.pen50':        { es: '+50 seg · Error',                          en: '+50 sec · Miss',                       fr: '+50 s · Faute' },
++    'slsess.status':       { es: 'Estado',                                   en: 'Status',                               fr: 'Statut' },
++    'slsess.markDsq':      { es: 'Marcar como DSQ',                           en: 'Mark as DSQ',                          fr: 'Marquer DSQ' },
++    'slsess.saveChanges':  { es: 'Guardar cambios',                          en: 'Save changes',                         fr: 'Enregistrer les modifications' },
++    'slsess.editCfg':      { es: 'Editar configuración',                     en: 'Edit configuration',                   fr: 'Modifier la configuration' },
++    'slsess.editCfgDesc':  { es: 'Cambia los datos de la sesión durante el registro', en: 'Change session details during recording', fr: 'Modifiez les détails pendant l\u2019enregistrement' },
++    'slsess.applyChanges': { es: 'Aplicar cambios',                          en: 'Apply changes',                        fr: 'Appliquer les modifications' },
++    'slsess.sharedDesc':   { es: 'Comparte este código para que otro entrenador se una desde el menú', en: 'Share this code so another coach can join from the menu', fr: 'Partagez ce code pour qu\u2019un autre entraîneur rejoigne depuis le menu' },
++    'slsess.chrono':       { es: 'Cronómetro',                               en: 'Timer',                                fr: 'Chrono' },
++    'slsess.finish':       { es: 'Finalizar',                                en: 'Finish',                               fr: 'Terminer' },
++    'slsess.session':      { es: 'Sesión',                                   en: 'Session',                              fr: 'Session' },
++    'slsess.currentEntry': { es: 'Registro actual',                          en: 'Current entry',                        fr: 'Enregistrement actuel' },
++    'slsess.paddler':      { es: 'Palista',                                  en: 'Paddler',                              fr: 'Pagayeur' },
++    'slsess.section':      { es: 'Tramo',                                    en: 'Section',                              fr: 'Section' },
++    'slsess.run':          { es: 'Manga',                                    en: 'Run',                                  fr: 'Manche' },
++    'slsess.autoRun':      { es: 'Manga automática según lo guardado',        en: 'Automatic run based on what\u2019s saved', fr: 'Manche automatique selon l\u2019enregistré' },
++    'slsess.start':        { es: 'Iniciar',                                  en: 'Start',                                fr: 'Départ' },
++    'slsess.reset':        { es: 'Reiniciar',                                en: 'Reset',                                fr: 'Réinitialiser' },
++    'slsess.penBeforeStop': { es: 'Penalizaciones (antes de parar)',         en: 'Penalties (before stopping)',          fr: 'Pénalités (avant l\u2019arrêt)' },
++    'slsess.savedTimes':   { es: 'Tiempos guardados',                        en: 'Saved times',                          fr: 'Temps enregistrés' },
++    'slsess.tapToEdit':    { es: '· toca para editar',                       en: '· tap to edit',                        fr: '· touchez pour modifier' },
++    'slsess.noTimes':      { es: 'Aún no hay tiempos registrados',           en: 'No times recorded yet',                fr: 'Aucun temps enregistré' },
++    'kxc.chrono':          { es: 'Cronómetro KXC',                           en: 'KXC Timer',                            fr: 'Chrono KXC' },
++    'kxc.paddlerRun':      { es: 'Palista / Manga',                          en: 'Paddler / Run',                        fr: 'Pagayeur / Manche' },
++    'kxc.gatesMissed':     { es: 'Puertas falladas',                         en: 'Missed gates',                         fr: 'Portes manquées' },
++    'kxc.roll':            { es: 'Roll',                                     en: 'Roll',                                 fr: 'Esquimautage' },
++    'kxc.rollOk':          { es: 'Roll OK',                                  en: 'Roll OK',                              fr: 'Esquimautage OK' },
++    'kxc.rollFail':        { es: 'Roll fallido',                             en: 'Roll failed',                          fr: 'Esquimautage raté' },
++    'kxc.currentPaddler':  { es: 'Palista actual',                           en: 'Current paddler',                      fr: 'Pagayeur actuel' },
++    'kxc.gatesTapHint':    { es: 'Puertas · toca para marcar falta',          en: 'Gates · tap to mark a miss',           fr: 'Portes · touchez pour marquer une faute' },
++    'kxc.rollZoneHintPre': { es: 'La zona de',                               en: 'The',                                  fr: 'La zone de' },
++    'kxc.rollZoneHintPost': { es: 'oll está fijada en la configuración. Tócala para alternar OK / fallido. Para cambiar su posición, usa la edición de un tiempo o el botón de configuración.', en: 'oll zone is fixed in the configuration. Tap it to toggle OK / failed. To change its position, use time editing or the configuration button.', fr: 'esquimautage est fixée dans la configuration. Touchez-la pour alterner OK / raté. Pour changer sa position, utilisez l\u2019édition d\u2019un temps ou le bouton de configuration.' },
++    'kxc.ok':              { es: 'OK',                                       en: 'OK',                                   fr: 'OK' },
++    'kxc.failed':          { es: 'Fallada',                                  en: 'Missed',                               fr: 'Manquée' },
++    'kxc.editRollHintPre': { es: 'Arrastra la',                              en: 'Drag the',                             fr: 'Faites glisser le' },
++    'kxc.editRollHintPost': { es: 'para mover la zona de roll. Es fija para toda la sesión.', en: 'to move the roll zone. It is fixed for the whole session.', fr: 'pour déplacer la zone d\u2019esquimautage. Elle est fixe pour toute la session.' },
++    'kxc.mangas':          { es: 'Mangas',                                  en: 'Runs',                                 fr: 'Manches' },
++    'kxc.time0':           { es: 'El tiempo es 0, no se guarda',             en: 'Time is 0, not saved',                 fr: 'Le temps est 0, non enregistré' },
++    'kxc.savingTime':      { es: 'Guardando tiempo...',                      en: 'Saving time...',                       fr: 'Enregistrement du temps...' },
++    'kxc.timeSaved':       { es: 'Tiempo guardado ✓',                        en: 'Time saved ✓',                         fr: 'Temps enregistré ✓' },
++    'kxc.saveError':       { es: 'Error al guardar: {msg}',                  en: 'Error saving: {msg}',                  fr: 'Erreur d\u2019enregistrement : {msg}' },
++    'kxc.invalidFormat':   { es: 'Formato inválido. Usa MM:SS.d',            en: 'Invalid format. Use MM:SS.d',          fr: 'Format invalide. Utilisez MM:SS.d' },
++    'kxc.entryNotFound':   { es: 'Entrada no encontrada',                    en: 'Entry not found',                      fr: 'Entrée introuvable' },
++    'kxc.changesSaved':    { es: 'Cambios guardados ✓',                      en: 'Changes saved ✓',                      fr: 'Modifications enregistrées ✓' },
++    'kxc.timeDeleted':     { es: 'Tiempo eliminado',                         en: 'Time deleted',                         fr: 'Temps supprimé' },
++    'kxc.max30':           { es: 'Máximo 30 palistas',                       en: 'Maximum 30 paddlers',                  fr: 'Maximum 30 pagayeurs' },
++    'kxc.syncFail':        { es: 'No se pudo sincronizar: {msg}',            en: 'Could not sync: {msg}',                fr: 'Synchronisation impossible : {msg}' },
++    'kxc.cfgUpdated':      { es: 'Configuración actualizada ✓',              en: 'Configuration updated ✓',              fr: 'Configuration mise à jour ✓' },
++    'kxc.stopBeforeFinish': { es: 'Para el cronómetro antes de finalizar',   en: 'Stop the timer before finishing',      fr: 'Arrêtez le chrono avant de terminer' },
++    'kxc.onlyHostFinish':  { es: 'Solo el anfitrión puede finalizar la sesión', en: 'Only the host can finish the session', fr: 'Seul l\u2019hôte peut terminer la session' },
++    'kxc.finishing':       { es: 'Finalizando sesión...',                    en: 'Finishing session...',                 fr: 'Fin de la session...' },
++    'kxc.noCfg':           { es: 'No hay configuración de sesión',           en: 'No session configuration',             fr: 'Aucune configuration de session' },
++    'kxc.loadingTimes':    { es: 'Cargando tiempos...',                      en: 'Loading times...',                     fr: 'Chargement des temps...' },
++    'kxc.dsqOn':           { es: 'Descalificado (toca para quitar)',          en: 'Disqualified (tap to remove)',         fr: 'Disqualifié (touchez pour retirer)' },
++    'slsess.mangaManual':  { es: 'Manga ajustada manualmente',               en: 'Run set manually',                     fr: 'Manche ajustée manuellement' },
++    'slsess.dsqOn':        { es: 'Descalificado (toca para quitar)',          en: 'Disqualified (tap to remove)',         fr: 'Disqualifié (touchez pour retirer)' },
++    'slsess.stop':         { es: 'Parar',                                    en: 'Stop',                                 fr: 'Arrêt' },
++    'slsess.confirmExit':  { es: 'El cronómetro está en marcha. ¿Salir igualmente?', en: 'The timer is running. Leave anyway?', fr: 'Le chrono tourne. Quitter quand même ?' },
++    'slsess.confirmDeleteTime': { es: '¿Eliminar este tiempo?',              en: 'Delete this time?',                    fr: 'Supprimer ce temps ?' },
++    'slsess.confirmFinishFull': { es: '¿Finalizar la sesión? Los tiempos ya están guardados y podrás consultarlos en el historial.', en: 'Finish the session? Times are already saved and available in the history.', fr: 'Terminer la session ? Les temps sont déjà enregistrés et consultables dans l\u2019historique.' },
++    'slsess.confirmFinish': { es: 'Los tiempos ya están guardados y podrás consultarlos en el historial.', en: 'Times are saved and available in the history.', fr: 'Les temps sont enregistrés et consultables dans l\u2019historique.' },
++    'chrono.editCfg':      { es: 'Editar configuración de sesión', en: 'Edit session settings', fr: 'Modifier les réglages de session' },
++    'chrono.start':        { es: 'Iniciar',               en: 'Start',               fr: 'Départ' },
++    'chrono.stop':         { es: 'Parar',                 en: 'Stop',                fr: 'Arrêt' },
++    'chrono.reset':        { es: 'Reiniciar',             en: 'Reset',               fr: 'Réinitialiser' },
++    'chrono.penalty':      { es: 'Penalización',          en: 'Penalty',             fr: 'Pénalité' },
++    'chrono.dsq':          { es: 'DSQ',                   en: 'DSQ',                 fr: 'DSQ' },
++    'chrono.run':          { es: 'Manga',                 en: 'Run',                 fr: 'Manche' },
++    'chrono.finish':       { es: 'Finalizar sesión',      en: 'Finish session',      fr: 'Terminer la session' },
++    'chrono.finishing':    { es: 'Finalizando sesión...', en: 'Finishing session...', fr: 'Fin de session...' },
++    'chrono.loadingTimes': { es: 'Cargando tiempos...',   en: 'Loading times...',    fr: 'Chargement des temps...' },
++    'chrono.gates_n':      { es: '{n} puertas',           en: '{n} gates',           fr: '{n} portes' },
++    'chrono.withRoll':     { es: 'con roll',              en: 'with roll',           fr: 'avec esquimautage' },
++    'chrono.confirmExitRunning': { es: 'El cronómetro está en marcha. ¿Salir igualmente?', en: 'The timer is running. Leave anyway?', fr: 'Le chrono tourne. Quitter quand même ?' },
++    'chrono.confirmFinish':      { es: 'Los tiempos ya están guardados y podrás consultarlos en el historial.', en: 'Times are saved and available in the history.', fr: 'Les temps sont enregistrés et consultables dans l\u2019historique.' },
++    'chrono.noCfg':        { es: 'No hay configuración de sesión', en: 'No session configuration', fr: 'Aucune configuration de session' },
++
++    /* ── Historial (historial.html) ──────────────────────────────────────── */
++    'history.title':       { es: 'Historial de Sesiones', en: 'Session History',     fr: 'Historique des sessions' },
++    'history.empty':       { es: 'Aún no tienes sesiones', en: 'No sessions yet',     fr: 'Aucune session pour l\u2019instant' },
++    'history.openSession': { es: 'Abrir sesión',          en: 'Open session',        fr: 'Ouvrir la session' },
++
++    /* ── Palistas (athletes.html) ────────────────────────────────────────── */
++    'athletes.title':      { es: 'Mis palistas',          en: 'My paddlers',         fr: 'Mes pagayeurs' },
++    'athletes.add':        { es: 'Añadir palista',        en: 'Add paddler',         fr: 'Ajouter un pagayeur' },
++    'athletes.empty':      { es: 'Aún no tienes palistas', en: 'No paddlers yet',    fr: 'Aucun pagayeur pour l\u2019instant' },
++    'athletes.deleteConfirm': { es: '¿Eliminar este palista?', en: 'Delete this paddler?', fr: 'Supprimer ce pagayeur ?' },
++
++    /* ── Grupos (teams.html, team.html) ──────────────────────────────────── */
++    'teams.title':         { es: 'Grupos',                en: 'Groups',              fr: 'Groupes' },
++    'teams.create':        { es: 'Crear grupo',           en: 'Create group',        fr: 'Créer un groupe' },
++    'teams.creating':      { es: 'Creando...',            en: 'Creating...',         fr: 'Création...' },
++    'teams.created':       { es: 'Grupo creado',          en: 'Group created',       fr: 'Groupe créé' },
++    'teams.namePlaceholder': { es: 'Nombre del grupo',    en: 'Group name',          fr: 'Nom du groupe' },
++    'teams.needName':      { es: 'Introduce un nombre para el grupo', en: 'Enter a group name', fr: 'Saisissez un nom de groupe' },
++    'teams.empty':         { es: 'No perteneces a ningún equipo.', en: 'You don\u2019t belong to any team.', fr: 'Vous n\u2019appartenez à aucune équipe.' },
++    'teams.members':       { es: 'Miembros',              en: 'Members',             fr: 'Membres' },
++    'teams.coach':         { es: 'Entrenador',            en: 'Coach',               fr: 'Entraîneur' },
++    'teams.coaches':       { es: 'Entrenadores',          en: 'Coaches',             fr: 'Entraîneurs' },
++    'teams.paddler':       { es: 'Palista',               en: 'Paddler',             fr: 'Pagayeur' },
++    'teams.paddlers':      { es: 'Palistas',              en: 'Paddlers',            fr: 'Pagayeurs' },
++    'teams.deleteConfirm': { es: '¿Eliminar el grupo permanentemente? Esta acción no se puede deshacer.', en: 'Permanently delete the group? This cannot be undone.', fr: 'Supprimer définitivement le groupe ? Action irréversible.' },
++    'teams.deleted':       { es: 'Grupo eliminado',       en: 'Group deleted',       fr: 'Groupe supprimé' },
++    'teams.loadingTeams':  { es: 'Cargando equipos…',     en: 'Loading teams…',      fr: 'Chargement des équipes…' },
++    'teams.notFound':      { es: 'No se encontraron equipos.', en: 'No teams found.', fr: 'Aucune équipe trouvée.' },
++
++    /* ── Estadísticas (stats.html) ───────────────────────────────────────── */
++    'stats.title':         { es: 'Estadísticas',          en: 'Statistics',          fr: 'Statistiques' },
++    'stats.empty':         { es: 'No hay datos suficientes', en: 'Not enough data',   fr: 'Données insuffisantes' },
++
++    /* ── Notificaciones (notifications.html) ─────────────────────────────── */
++    'notif.title':         { es: 'Notificaciones',        en: 'Notifications',       fr: 'Notifications' },
++    'notif.empty':         { es: 'No tienes notificaciones', en: 'No notifications', fr: 'Aucune notification' },
++    'notif.markRead':      { es: 'Marcar como leídas',    en: 'Mark as read',        fr: 'Marquer comme lues' },
++
++    /* ── Perfil (profile.html) ───────────────────────────────────────────── */
++    'profile.title':       { es: 'Mi perfil',             en: 'My profile',          fr: 'Mon profil' },
++    'profile.username':    { es: 'Nombre de usuario',     en: 'Username',            fr: 'Nom d\u2019utilisateur' },
++    'profile.email':       { es: 'Correo electrónico',    en: 'Email',               fr: 'E-mail' },
++    'profile.saved':       { es: 'Perfil guardado',       en: 'Profile saved',       fr: 'Profil enregistré' },
++
++    /* ── Toasts frecuentes ───────────────────────────────────────────────── */
++    'toast.saved':         { es: 'Guardado',              en: 'Saved',               fr: 'Enregistré' },
++    'toast.deleted':       { es: 'Eliminado',             en: 'Deleted',             fr: 'Supprimé' },
++    'toast.copied':        { es: 'Copiado',               en: 'Copied',              fr: 'Copié' },
++    'lang.changed':        { es: 'Idioma: {lang}',        en: 'Language: {lang}',    fr: 'Langue : {lang}' },
++
++    /* ── Login / registro (index.html) ───────────────────────────────────── */
++    'auth.subLogin':       { es: 'Inicia sesión para continuar',             en: 'Sign in to continue',                  fr: 'Connectez-vous pour continuer' },
++    'auth.subRegister':    { es: 'Crea tu cuenta',                           en: 'Create your account',                  fr: 'Créez votre compte' },
++    'auth.google':         { es: 'Continuar con Google',                     en: 'Continue with Google',                 fr: 'Continuer avec Google' },
++    'auth.orEmail':        { es: 'o con email',                              en: 'or with email',                        fr: 'ou par e-mail' },
++    'auth.email':          { es: 'Email',                                    en: 'Email',                                fr: 'E-mail' },
++    'auth.password':       { es: 'Contraseña',                               en: 'Password',                             fr: 'Mot de passe' },
++    'auth.repeatPassword': { es: 'Repite la contraseña',                     en: 'Repeat password',                      fr: 'Répétez le mot de passe' },
++    'auth.enter':          { es: 'Entrar',                                   en: 'Sign in',                              fr: 'Se connecter' },
++    'auth.register':       { es: 'Registrarse',                              en: 'Sign up',                              fr: 'S\u2019inscrire' },
++    'auth.noAccount':      { es: '¿No tienes cuenta?',                       en: 'Don\u2019t have an account?',          fr: 'Pas encore de compte ?' },
++    'auth.hasAccount':     { es: '¿Ya tienes cuenta?',                       en: 'Already have an account?',             fr: 'Vous avez déjà un compte ?' },
++    'auth.linkRegister':   { es: 'Regístrate',                               en: 'Sign up',                              fr: 'Inscrivez-vous' },
++    'auth.linkLogin':      { es: 'Inicia sesión',                            en: 'Sign in',                              fr: 'Connectez-vous' },
++    'auth.needEmailPass':  { es: 'Introduce email y contraseña',             en: 'Enter email and password',             fr: 'Saisissez e-mail et mot de passe' },
++    'auth.passMin':        { es: 'La contraseña debe tener al menos 6 caracteres', en: 'Password must be at least 6 characters', fr: 'Le mot de passe doit contenir au moins 6 caractères' },
++    'auth.passMismatch':   { es: 'Las contraseñas no coinciden',             en: 'Passwords don\u2019t match',           fr: 'Les mots de passe ne correspondent pas' },
++    'auth.signingIn':      { es: 'Iniciando sesión...',                      en: 'Signing in...',                        fr: 'Connexion...' },
++    'auth.creatingAccount': { es: 'Creando cuenta...',                       en: 'Creating account...',                  fr: 'Création du compte...' },
++    'auth.checkEmail':     { es: 'Revisa tu email para confirmar la cuenta', en: 'Check your email to confirm the account', fr: 'Vérifiez votre e-mail pour confirmer le compte' },
++    'auth.authError':      { es: 'Error de autenticación: {msg}',            en: 'Authentication error: {msg}',          fr: 'Erreur d\u2019authentification : {msg}' },
++    'auth.redirectingGoogle': { es: 'Redirigiendo a Google...',              en: 'Redirecting to Google...',             fr: 'Redirection vers Google...' },
++    'auth.fillEmailPass':  { es: 'Rellena email y contraseña',               en: 'Fill in email and password',           fr: 'Remplissez e-mail et mot de passe' },
++    'auth.accountCreated': { es: 'Cuenta creada. Revisa tu email y luego inicia sesión.', en: 'Account created. Check your email, then sign in.', fr: 'Compte créé. Vérifiez votre e-mail, puis connectez-vous.' },
++    'auth.googleError':    { es: 'Error al iniciar sesión con Google',        en: 'Error signing in with Google',         fr: 'Erreur de connexion avec Google' },
++    'auth.checkingSession': { es: 'Comprobando sesión...',                    en: 'Checking session...',                  fr: 'Vérification de la session...' },
++
++    /* ── Onboarding (onboarding.html) ────────────────────────────────────── */
++    'onb.welcome':         { es: 'Bienvenido a SLTimer',                     en: 'Welcome to SLTimer',                   fr: 'Bienvenue sur SLTimer' },
++    'onb.setupProfile':    { es: 'Configura tu perfil',                      en: 'Set up your profile',                  fr: 'Configurez votre profil' },
++    'onb.intro':           { es: 'Elige cómo te verán otros entrenadores cuando compartas palistas o grupos.', en: 'Choose how other coaches will see you when you share paddlers or groups.', fr: 'Choisissez comment les autres entraîneurs vous verront lorsque vous partagez des pagayeurs ou des groupes.' },
++    'onb.yourName':        { es: 'Tu nombre',                                en: 'Your name',                            fr: 'Votre nom' },
++    'onb.namePlaceholder': { es: 'Ej: Marta García',                        en: 'e.g. Marta García',                    fr: 'ex. Marta García' },
++    'onb.username':        { es: 'Nombre de usuario',                        en: 'Username',                             fr: 'Nom d\u2019utilisateur' },
++    'onb.usernameHint':    { es: 'Solo letras, números y _ · mínimo 3 caracteres', en: 'Letters, numbers and _ only · minimum 3 characters', fr: 'Lettres, chiffres et _ uniquement · minimum 3 caractères' },
++    'onb.start':           { es: 'Empezar a usar SLTimer',                   en: 'Start using SLTimer',                  fr: 'Commencer à utiliser SLTimer' },
++    'onb.min3':            { es: 'Mínimo 3 caracteres',                      en: 'Minimum 3 characters',                 fr: 'Minimum 3 caractères' },
++    'onb.max30':           { es: 'Máximo 30 caracteres',                     en: 'Maximum 30 characters',                fr: 'Maximum 30 caractères' },
++    'onb.checking':        { es: 'Comprobando disponibilidad…',              en: 'Checking availability…',               fr: 'Vérification de la disponibilité…' },
++    'onb.taken':           { es: 'Ese usuario ya está en uso, prueba otro',  en: 'That username is taken, try another',  fr: 'Ce nom d\u2019utilisateur est pris, essayez-en un autre' },
++    'onb.available':       { es: '@{username} está disponible',              en: '@{username} is available',             fr: '@{username} est disponible' },
++    'onb.checkError':      { es: 'No se pudo comprobar, inténtalo de nuevo',  en: 'Couldn\u2019t check, please try again', fr: 'Vérification impossible, réessayez' },
++    'onb.needName':        { es: 'Escribe tu nombre',                        en: 'Enter your name',                      fr: 'Saisissez votre nom' },
++    'onb.needValidUsername': { es: 'Elige un nombre de usuario válido y disponible', en: 'Choose a valid, available username', fr: 'Choisissez un nom d\u2019utilisateur valide et disponible' },
++    'onb.creatingProfile': { es: 'Creando tu perfil…',                       en: 'Creating your profile…',               fr: 'Création de votre profil…' },
++    'onb.justTaken':       { es: 'Ese usuario acaba de ser tomado, prueba otro', en: 'That username was just taken, try another', fr: 'Ce nom d\u2019utilisateur vient d\u2019être pris, essayez-en un autre' },
++    'onb.loggingOut':      { es: 'Cerrando sesión…',                         en: 'Logging out…',                         fr: 'Déconnexion…' },
++  };
++
++  /* ========================================================================
++     MOTOR
++     ======================================================================== */
++
++  function normalizeLang(l) {
++    if (!l) return DEFAULT_LANG;
++    l = String(l).toLowerCase().slice(0, 2);
++    return LANGS.indexOf(l) >= 0 ? l : DEFAULT_LANG;
++  }
++
++  function getLang() {
++    return normalizeLang(localStorage.getItem(STORAGE_KEY) || navigator.language || DEFAULT_LANG);
++  }
++
++  /* Traduce una clave. `vars` permite interpolar {placeholders}. */
++  function t(key, vars) {
++    const entry = DICT[key];
++    let str = entry ? (entry[getLang()] || entry[DEFAULT_LANG] || key) : key;
++    if (vars) {
++      str = str.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
++    }
++    return str;
++  }
++
++  /* Aplica traducciones a todo el DOM (o a un subárbol dado). */
++  function apply(root) {
++    root = root || document;
++
++    // Texto interno
++    root.querySelectorAll('[data-i18n]').forEach(el => {
++      const key = el.getAttribute('data-i18n');
++      const val = t(key);
++      // Si el elemento tiene hijos-elemento (p.ej. un badge dentro), solo
++      // reemplaza el primer nodo de texto para no destruir la estructura.
++      if (el.children.length && el.hasAttribute('data-i18n-textnode')) {
++        const node = [...el.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
++        if (node) node.textContent = val;
++      } else if (!el.children.length) {
++        el.textContent = val;
++      } else {
++        // Con hijos pero sin marca especial: intenta el primer nodo de texto.
++        const node = [...el.childNodes].find(n => n.nodeType === 3);
++        if (node) node.textContent = val; else el.setAttribute('data-i18n-skipped', '1');
++      }
++    });
++
++    // Atributos concretos
++    const ATTRS = [
++      ['data-i18n-placeholder', 'placeholder'],
++      ['data-i18n-title', 'title'],
++      ['data-i18n-alt', 'alt'],
++      ['data-i18n-aria-label', 'aria-label'],
++      ['data-i18n-value', 'value'],
++    ];
++    ATTRS.forEach(([dataAttr, targetAttr]) => {
++      root.querySelectorAll('[' + dataAttr + ']').forEach(el => {
++        el.setAttribute(targetAttr, t(el.getAttribute(dataAttr)));
++      });
++    });
++
++    // Atributo lang del <html>
++    document.documentElement.setAttribute('lang', getLang());
++
++    // Evento para que las páginas re-rendericen contenido dinámico
++    document.dispatchEvent(new CustomEvent('i18n:applied', { detail: { lang: getLang() } }));
++  }
++
++  /* Guarda idioma en Supabase (perfil) si hay sesión activa. Silencioso. */
++  async function syncToSupabase(lang) {
++    try {
++      const tok = localStorage.getItem('slt_tok');
++      const uid = localStorage.getItem('slt_uid');
++      if (!tok || !uid) return;
++      await fetch(SB + '/rest/v1/profiles?id=eq.' + uid, {
++        method: 'PATCH',
++        headers: {
++          apikey: KEY,
++          Authorization: 'Bearer ' + tok,
++          'Content-Type': 'application/json',
++          Prefer: 'return=minimal',
++        },
++        body: JSON.stringify({ lang: lang }),
++      });
++    } catch (_) { /* sin conexión o sin columna: se ignora */ }
++  }
++
++  /* Lee el idioma del perfil de Supabase y lo adopta si difiere. */
++  async function syncFromSupabase() {
++    try {
++      const tok = localStorage.getItem('slt_tok');
++      const uid = localStorage.getItem('slt_uid');
++      if (!tok || !uid) return;
++      const r = await fetch(SB + '/rest/v1/profiles?id=eq.' + uid + '&select=lang', {
++        headers: { apikey: KEY, Authorization: 'Bearer ' + tok },
++      });
++      const rows = await r.json();
++      const remote = rows && rows[0] && rows[0].lang;
++      if (remote && LANGS.indexOf(remote) >= 0 && remote !== getLang()) {
++        localStorage.setItem(STORAGE_KEY, remote);
++        apply();
++      }
++    } catch (_) { /* se ignora */ }
++  }
++
++  /* Cambia el idioma: persiste, aplica y sincroniza. */
++  function setLang(lang) {
++    lang = normalizeLang(lang);
++    localStorage.setItem(STORAGE_KEY, lang);
++    apply();
++    syncToSupabase(lang);
++    return lang;
++  }
++
++  /* ── Arranque ────────────────────────────────────────────────────────── */
++  function boot() {
++    apply();
++    // Intenta traer preferencia remota (por si cambió en otro dispositivo)
++    syncFromSupabase();
++  }
++
++  if (document.readyState === 'loading') {
++    document.addEventListener('DOMContentLoaded', boot);
++  } else {
++    boot();
++  }
++
++  /* ── API pública ─────────────────────────────────────────────────────── */
++  global.SLTi18n = {
++    t: t,
++    apply: apply,
++    setLang: setLang,
++    getLang: getLang,
++    langName: (l) => LANG_NAMES[normalizeLang(l)],
++    LANGS: LANGS.slice(),
++    DICT: DICT,
++  };
++  // Atajo global cómodo para usar en el HTML/JS existente
++  global.t = t;
++
++})(window);
+diff --git a/index.html b/index.html
+index 8a61ec6..69d6626 100644
+--- a/index.html
++++ b/index.html
+@@ -59,46 +59,47 @@ label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:600;
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ 
+ <div class="wrap">
+   <!-- Logo -->
+   <div style="text-align:center;margin-bottom:24px">
+     <img src="icons/icon-192x192.png" style="width:90px;height:90px;border-radius:20px" alt="SLTimer">
+     <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#1B3A5C;letter-spacing:1px;margin-top:8px">SLTimer</div>
+-    <div style="font-size:14px;color:#888;margin-top:2px" id="auth-sub">Inicia sesión para continuar</div>
++    <div style="font-size:14px;color:#888;margin-top:2px" id="auth-sub" data-i18n="auth.subLogin">Inicia sesión para continuar</div>
+   </div>
+ 
+   <div class="card">
+     <!-- Botón Google -->
+     <button class="btn-google" id="btn-google" onclick="loginGoogle()">
+       <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+-      Continuar con Google
++      <span data-i18n="auth.google">Continuar con Google</span>
+     </button>
+ 
+-    <div class="divider">o con email</div>
++    <div class="divider" data-i18n="auth.orEmail">o con email</div>
+ 
+     <!-- Email + contraseña -->
+-    <div class="ig"><label>Email</label><input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+-    <div class="ig"><label>Contraseña</label><input id="auth-pass" type="password" placeholder="••••••••"></div>
+-    <div class="ig" id="auth-p2w" style="display:none"><label>Repite la contraseña</label><input id="auth-pass2" type="password" placeholder="••••••••"></div>
+-    <button class="btn primary" id="auth-btn" onclick="doAuth()">Entrar</button>
++    <div class="ig"><label data-i18n="auth.email">Email</label><input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email"></div>
++    <div class="ig"><label data-i18n="auth.password">Contraseña</label><input id="auth-pass" type="password" placeholder="••••••••"></div>
++    <div class="ig" id="auth-p2w" style="display:none"><label data-i18n="auth.repeatPassword">Repite la contraseña</label><input id="auth-pass2" type="password" placeholder="••••••••"></div>
++    <button class="btn primary" id="auth-btn" onclick="doAuth()" data-i18n="auth.enter">Entrar</button>
+     <div class="auth-toggle">
+-      <span id="auth-ttxt">¿No tienes cuenta?</span>
+-      <button onclick="toggleAuthMode()">Regístrate</button>
++      <span id="auth-ttxt" data-i18n="auth.noAccount">¿No tienes cuenta?</span>
++      <button onclick="toggleAuthMode()" data-i18n="auth.linkRegister">Regístrate</button>
+     </div>
+   </div>
+ </div>
+ 
+ <div class="toast" id="toast"></div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+ 
+ const $ = id => document.getElementById(id);
+ 
+-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
++function showLoad(msg){msg=msg||t('common.loading');$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+ function hideLoad(){$('overlay').classList.remove('show');}
+ 
+ let _tTimer;
+@@ -150,7 +151,7 @@ function clearSession(){
+ 
+ function loginGoogle(){
+   $('btn-google').disabled=true;
+-  showLoad('Redirigiendo a Google...');
++  showLoad(t('auth.redirectingGoogle'));
+   const redirectTo = encodeURIComponent(window.location.origin + '/menu.html');
+   window.location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
+ }
+@@ -159,25 +160,25 @@ let _mode = 'login';
+ function toggleAuthMode(){
+   _mode = _mode==='login' ? 'register' : 'login';
+   const r = _mode==='register';
+-  $('auth-sub').textContent = r ? 'Crea tu cuenta' : 'Inicia sesión para continuar';
+-  $('auth-btn').textContent = r ? 'Registrarse' : 'Entrar';
+-  $('auth-ttxt').textContent = r ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
++  $('auth-sub').textContent = r ? t('auth.subRegister') : t('auth.subLogin');
++  $('auth-btn').textContent = r ? t('auth.register') : t('auth.enter');
++  $('auth-ttxt').textContent = r ? t('auth.hasAccount') : t('auth.noAccount');
+   $('auth-p2w').style.display = r ? 'block' : 'none';
+-  document.querySelector('.auth-toggle button').textContent = r ? 'Inicia sesión' : 'Regístrate';
++  document.querySelector('.auth-toggle button').textContent = r ? t('auth.linkLogin') : t('auth.linkRegister');
+ }
+ 
+ async function doAuth(){
+   const email=$('auth-email').value.trim(), pass=$('auth-pass').value;
+-  if(!email||!pass){toast('Rellena email y contraseña',true);return;}
+-  if(_mode==='register'&&$('auth-pass2').value!==pass){toast('Las contraseñas no coinciden',true);return;}
+-  showLoad(_mode==='login'?'Iniciando sesión...':'Creando cuenta...');
++  if(!email||!pass){toast(t('auth.fillEmailPass'),true);return;}
++  if(_mode==='register'&&$('auth-pass2').value!==pass){toast(t('auth.passMismatch'),true);return;}
++  showLoad(_mode==='login'?t('auth.signingIn'):t('auth.creatingAccount'));
+   $('auth-btn').disabled=true;
+   try{
+     const ep = _mode==='login' ? '/token?grant_type=password' : '/signup';
+     const d = await api('/auth/v1'+ep,{method:'POST',body:JSON.stringify({email,password:pass})});
+     if(_mode==='register'&&!d.access_token){
+       hideLoad();$('auth-btn').disabled=false;
+-      toast('Cuenta creada. Revisa tu email y luego inicia sesión.');
++      toast(t('auth.accountCreated'));
+       toggleAuthMode();return;
+     }
+     saveSession(d);
+@@ -189,7 +190,7 @@ async function doAuth(){
+ window.addEventListener('DOMContentLoaded', async ()=>{
+   const hash=window.location.hash.substring(1);
+   if(hash.includes('access_token')){
+-    showLoad('Iniciando sesión...');
++    showLoad(t('auth.signingIn'));
+     const params=new URLSearchParams(hash);
+     const access_token=params.get('access_token');
+     const refresh_token=params.get('refresh_token');
+@@ -207,13 +208,13 @@ window.addEventListener('DOMContentLoaded', async ()=>{
+         return;
+       }catch(e){
+         hideLoad();
+-        toast('Error al iniciar sesión con Google',true);
++        toast(t('auth.googleError'),true);
+         return;
+       }
+     }
+   }
+   if(localStorage.getItem('slt_tok')){
+-    showLoad('Comprobando sesión...');
++    showLoad(t('auth.checkingSession'));
+     const ok=await refreshIfNeeded();
+     if(ok){ window.location.href='menu.html'; return; }
+     hideLoad();
+diff --git a/menu.html b/menu.html
+index 305f212..998f5f6 100644
+--- a/menu.html
++++ b/menu.html
+@@ -93,7 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ 
+ <div class="topbar">
+   <a class="topbar-brand" href="menu.html">
+@@ -101,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+     <span class="topbar-brand-name">SLTimer</span>
+   </a>
+   <div class="topbar-right">
+-    <button class="bell-btn" onclick="window.location.href='notifications.html'" title="Notificaciones">
++    <button class="bell-btn" onclick="window.location.href='notifications.html'" data-i18n-title="menu.notifications" title="Notificaciones">
+       <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+       <div class="bell-dot" id="bell-dot"></div>
+     </button>
+@@ -111,12 +111,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+ 
+ <div class="content">
+   <div>
+-    <div class="greeting-sub">Bienvenido/a de nuevo</div>
+-    <div class="greeting-name" id="greeting-name">&#191;Qu&#233; hacemos hoy?</div>
++    <div class="greeting-sub" data-i18n="menu.welcomeBack">Bienvenido/a de nuevo</div>
++    <div class="greeting-name" id="greeting-name" data-i18n="menu.whatToday">&#191;Qu&#233; hacemos hoy?</div>
+   </div>
+ 
+   <div style="display:flex;flex-direction:column;gap:8px">
+-    <div class="section-label">Principal</div>
++    <div class="section-label" data-i18n="menu.sectionMain">Principal</div>
+ 
+     <!-- Crear sesión -->
+     <button class="menu-primary" onclick="goToApp('nueva-sesion')">
+@@ -124,8 +124,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+         <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+       </div>
+       <div class="menu-primary-info">
+-        <div class="menu-primary-title">Crear Sesión</div>
+-        <div class="menu-primary-desc">Configura palistas, tramos y cronómetro</div>
++        <div class="menu-primary-title" data-i18n="menu.createSession">Crear Sesión</div>
++        <div class="menu-primary-desc" data-i18n="menu.createSessionDesc">Configura palistas, tramos y cronómetro</div>
+       </div>
+       <span class="menu-primary-arrow">&#8250;</span>
+     </button>
+@@ -136,34 +136,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+         &#128279;
+       </div>
+       <div class="menu-primary-info">
+-        <div class="menu-primary-title">Unirme a sesión compartida</div>
+-        <div class="menu-primary-desc">Introduce el código del entrenador principal</div>
++        <div class="menu-primary-title" data-i18n="menu.joinShared">Unirme a sesión compartida</div>
++        <div class="menu-primary-desc" data-i18n="menu.joinSharedDesc">Introduce el código del entrenador principal</div>
+       </div>
+       <span class="menu-primary-arrow">&#8250;</span>
+     </button>
+   </div>
+ 
+   <div style="display:flex;flex-direction:column;gap:8px">
+-    <div class="section-label">Mis datos</div>
++    <div class="section-label" data-i18n="menu.sectionMyData">Mis datos</div>
+     <div class="list-group">
+-      <button class="list-item" onclick="goToApp('historial')"><div class="list-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg></div><span class="list-title">Historial de Sesiones <span class="list-badge" id="hist-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
+-      <button class="list-item" onclick="goToApp('palistas')"><div class="list-icon" style="background:#EAF3DE"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#3B6D11;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><span class="list-title">Mis palistas <span class="list-badge" id="athletes-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
+-      <button class="list-item" onclick="goToApp('grupos')"><div class="list-icon purple"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="list-title">Grupos <span class="list-badge amber" id="groups-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
+-      <button class="list-item" onclick="goToApp('estadisticas')"><div class="list-icon teal"><svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg></div><span class="list-title">Estad&#237;sticas</span><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="goToApp('historial')"><div class="list-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/></svg></div><span class="list-title" data-i18n="menu.history" data-i18n-textnode>Historial de Sesiones <span class="list-badge" id="hist-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="goToApp('palistas')"><div class="list-icon" style="background:#EAF3DE"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#3B6D11;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></div><span class="list-title" data-i18n="menu.myAthletes" data-i18n-textnode>Mis palistas <span class="list-badge" id="athletes-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="goToApp('grupos')"><div class="list-icon purple"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.85"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="list-title" data-i18n="menu.groups" data-i18n-textnode>Grupos <span class="list-badge amber" id="groups-badge" style="display:none"></span></span><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="goToApp('estadisticas')"><div class="list-icon teal"><svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg></div><span class="list-title" data-i18n="menu.stats">Estad&#237;sticas</span><span class="list-arrow">&#8250;</span></button>
+       <button class="list-item" onclick="window.location.href='notifications.html'">
+         <div class="list-icon amber"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+-        <span class="list-title">Notificaciones <span class="list-badge red" id="notif-badge" style="display:none"></span></span>
++        <span class="list-title" data-i18n="menu.notifications" data-i18n-textnode>Notificaciones <span class="list-badge red" id="notif-badge" style="display:none"></span></span>
+         <span class="list-arrow">&#8250;</span>
+       </button>
+     </div>
+   </div>
+ 
+   <div style="display:flex;flex-direction:column;gap:8px">
+-    <div class="section-label">Configuraci&#243;n</div>
++    <div class="section-label" data-i18n="menu.sectionConfig">Configuraci&#243;n</div>
+     <div class="list-group">
+-      <button class="list-item" onclick="goToApp('ajustes')"><div class="list-icon gray"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><span class="list-title">Ajustes</span><span class="list-arrow">&#8250;</span></button>
+-      <button class="list-item" onclick="goToProfile()"><div class="list-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div style="flex:1;min-width:0"><div class="list-title" style="flex:none">Mi perfil</div><div class="list-sub" id="profile-username" style="display:none"></div></div><span class="list-arrow">&#8250;</span></button>
+-      <button class="list-item" onclick="doLogout()"><div class="list-icon red"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><span class="list-title danger">Cerrar sesi&#243;n</span></button>
++      <button class="list-item" onclick="goToApp('ajustes')"><div class="list-icon gray"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><span class="list-title" data-i18n="menu.settings">Ajustes</span><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="goToProfile()"><div class="list-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div style="flex:1;min-width:0"><div class="list-title" style="flex:none" data-i18n="menu.myProfile">Mi perfil</div><div class="list-sub" id="profile-username" style="display:none"></div></div><span class="list-arrow">&#8250;</span></button>
++      <button class="list-item" onclick="doLogout()"><div class="list-icon red"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><span class="list-title danger" data-i18n="menu.logout">Cerrar sesi&#243;n</span></button>
+     </div>
+   </div>
+ </div>
+@@ -173,17 +173,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
+ <!-- MODAL UNIRSE A SESIÓN COMPARTIDA -->
+ <div class="join-bd" id="join-bd" onclick="if(event.target===this)closeJoinModal()">
+   <div class="join-modal">
+-    <div class="join-title">Unirme a sesi&#243;n compartida</div>
+-    <div class="join-sub">Introduce el c&#243;digo de 6 caracteres del entrenador principal</div>
++    <div class="join-title" data-i18n="join.title">Unirme a sesi&#243;n compartida</div>
++    <div class="join-sub" data-i18n="join.subtitle">Introduce el c&#243;digo de 6 caracteres del entrenador principal</div>
+     <input class="join-input" id="join-code" type="text" maxlength="6" placeholder="ABC123"
+       autocomplete="off" autocorrect="off" spellcheck="false" oninput="onJoinInput()">
+     <div class="join-actions">
+-      <button class="join-cancel" onclick="closeJoinModal()">Cancelar</button>
+-      <button class="join-go" id="join-go" disabled onclick="doJoin()">Unirme &#8594;</button>
++      <button class="join-cancel" onclick="closeJoinModal()" data-i18n="common.cancel">Cancelar</button>
++      <button class="join-go" id="join-go" disabled onclick="doJoin()" data-i18n="join.submit" data-i18n-textnode>Unirme &#8594;</button>
+     </div>
+   </div>
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -206,13 +207,13 @@ async function api(path,opts={}){const h={'apikey':KEY,'Content-Type':'applicati
+ async function refreshIfNeeded(){const exp=parseInt(localStorage.getItem('slt_exp')||'0');const ref=localStorage.getItem('slt_ref');if(!ref)return false;if(Date.now()<exp-10*60*1000)return true;try{const d=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:ref})});_tok=d.access_token;localStorage.setItem('slt_tok',d.access_token);localStorage.setItem('slt_ref',d.refresh_token);localStorage.setItem('slt_exp',Date.now()+(d.expires_in||3600)*1000);return true;}catch{clearSession();return false;}}
+ function clearSession(){['slt_tok','slt_ref','slt_uid','slt_email','slt_exp'].forEach(k=>localStorage.removeItem(k));}
+ async function doLogout(){showLoad('Cerrando sesion...');try{await api('/auth/v1/logout',{method:'POST'});}catch{}_tok=null;_uid=null;_email=null;clearSession();window.location.href='index.html';}
+-function goToApp(section){const dest=ROUTES[section];if(dest)window.location.href=dest;else toast('Seccion no disponible aun',true);}
++function goToApp(section){const dest=ROUTES[section];if(dest)window.location.href=dest;else toast(t('menu.sectionUnavailable'),true);}
+ function goToProfile(){window.location.href=_coachId?'coach.html?id='+_coachId:'coach.html';}
+ async function loadHistCount(){try{const rows=await api('/rest/v1/sessions?user_id=eq.'+_uid+'&select=id');const badge=$('hist-badge');if(rows&&rows.length>0){badge.textContent=rows.length;badge.style.display='inline';}}catch{}}
+ async function loadAthletesCount(){try{const owned=await api('/rest/v1/athletes?owner_id=eq.'+_uid+'&select=id');const shared=await api('/rest/v1/athlete_access?trainer_id=eq.'+_uid+'&select=id');const total=(owned?.length||0)+(shared?.length||0);const badge=$('athletes-badge');if(total>0){badge.textContent=total;badge.style.display='inline';}}catch{}}
+ async function loadNotifBadge(){try{const res=await api('/rest/v1/rpc/get_my_notifications',{method:'POST',body:JSON.stringify({})});const nTeam=(res&&res.team_invites?res.team_invites.length:0);const nAth=(res&&res.athlete_invites?res.athlete_invites.length:0);const total=nTeam+nAth;const badge=$('notif-badge');const dot=$('bell-dot');if(total>0){badge.textContent=total;badge.style.display='inline';dot.classList.add('show');}const groupsBadge=$('groups-badge');if(nTeam>0){groupsBadge.textContent=nTeam;groupsBadge.style.display='inline';}}catch{}}
+-async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;_coachName=rows[0].name||rows[0].username||null;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent='Hola, '+displayName+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
+-function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent='Hola, '+name.charAt(0).toUpperCase()+name.slice(1)+' \uD83D\uDC4B';}
++async function loadCoachProfile(){try{const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id,username,name&limit=1');if(rows&&rows.length>0){_coachId=rows[0].id;_coachName=rows[0].name||rows[0].username||null;const usernameEl=$('profile-username');usernameEl.textContent='@'+rows[0].username;usernameEl.style.display='block';const displayName=rows[0].name||rows[0].username;if(displayName){$('greeting-name').textContent=t('menu.helloName',{name:displayName})+' \uD83D\uDC4B';$('top-avatar').textContent=initials(displayName);}}}catch{}}
++function renderUser(email){const ini=initials(email.split('@')[0]);$('top-avatar').textContent=ini;const name=email.split('@')[0];$('greeting-name').textContent=t('menu.helloName',{name:name.charAt(0).toUpperCase()+name.slice(1)})+' \uD83D\uDC4B';}
+ 
+ /* ── UNIRSE A SESIÓN COMPARTIDA ── */
+ function openJoinModal(){
+diff --git a/onboarding.html b/onboarding.html
+index 2d374f6..76ccae9 100644
+--- a/onboarding.html
++++ b/onboarding.html
+@@ -123,38 +123,39 @@
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ 
+ <div class="wrap">
+   <div class="head">
+-    <div class="step">Bienvenido a SLTimer</div>
+-    <h1>Configura tu perfil</h1>
+-    <p>Elige cómo te verán otros entrenadores cuando compartas palistas o grupos.</p>
++    <div class="step" data-i18n="onb.welcome">Bienvenido a SLTimer</div>
++    <h1 data-i18n="onb.setupProfile">Configura tu perfil</h1>
++    <p data-i18n="onb.intro">Elige cómo te verán otros entrenadores cuando compartas palistas o grupos.</p>
+   </div>
+ 
+   <div class="avatar-wrap"><div class="avatar" id="avatar">?</div></div>
+ 
+   <div class="card">
+     <div class="field">
+-      <label for="inp-name">Tu nombre</label>
+-      <input id="inp-name" type="text" placeholder="Ej: Marta García" autocomplete="name" oninput="onNameInput()" maxlength="60">
++      <label for="inp-name" data-i18n="onb.yourName">Tu nombre</label>
++      <input id="inp-name" type="text" placeholder="Ej: Marta García" data-i18n-placeholder="onb.namePlaceholder" autocomplete="name" oninput="onNameInput()" maxlength="60">
+     </div>
+     <div class="field">
+-      <label for="inp-username">Nombre de usuario</label>
++      <label for="inp-username" data-i18n="onb.username">Nombre de usuario</label>
+       <div class="username-wrap" id="username-wrap">
+         <span class="username-prefix">@</span>
+         <input id="inp-username" type="text" placeholder="marta_g" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="onUsernameInput()" maxlength="30">
+       </div>
+-      <div class="hint" id="hint">Solo letras, números y _ · mínimo 3 caracteres</div>
++      <div class="hint" id="hint" data-i18n="onb.usernameHint">Solo letras, números y _ · mínimo 3 caracteres</div>
+     </div>
+   </div>
+ 
+-  <button class="btn" id="btn-save" onclick="saveProfile()" disabled>Empezar a usar SLTimer</button>
+-  <button class="signout" onclick="doLogout()">Cerrar sesión</button>
++  <button class="btn" id="btn-save" onclick="saveProfile()" disabled data-i18n="onb.start">Empezar a usar SLTimer</button>
++  <button class="signout" onclick="doLogout()" data-i18n="menu.logout">Cerrar sesión</button>
+ </div>
+ 
+ <div class="toast" id="toast"></div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB='https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -163,7 +164,7 @@ let _tok=null,_uid=null,_email=null;
+ let _usernameValid=false,_checkTimer=null,_lastChecked=null;
+ const $=id=>document.getElementById(id);
+ 
+-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
++function showLoad(msg){msg=msg||t('common.loading');$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+ function hideLoad(){$('overlay').classList.remove('show');}
+ 
+ let _tTimer;
+@@ -212,11 +213,11 @@ function onUsernameInput(){
+   _usernameValid=false;
+   clearTimeout(_checkTimer);
+ 
+-  if(v===''){setHint('Solo letras, números y _ · mínimo 3 caracteres','');refreshButton();return;}
+-  if(v.length<3){setHint('Mínimo 3 caracteres','error');refreshButton();return;}
+-  if(v.length>30){setHint('Máximo 30 caracteres','error');refreshButton();return;}
++  if(v===''){setHint(t('onb.usernameHint'),'');refreshButton();return;}
++  if(v.length<3){setHint(t('onb.min3'),'error');refreshButton();return;}
++  if(v.length>30){setHint(t('onb.max30'),'error');refreshButton();return;}
+ 
+-  setHint('Comprobando disponibilidad…','checking');
++  setHint(t('onb.checking'),'checking');
+   refreshButton();
+   _checkTimer=setTimeout(()=>checkAvailability(v),450);
+ }
+@@ -228,14 +229,14 @@ async function checkAvailability(username){
+     if($('inp-username').value!==username)return;
+     if(rows&&rows.length>0){
+       _usernameValid=false;
+-      setHint('Ese usuario ya está en uso, prueba otro','error');
++      setHint(t('onb.taken'),'error');
+     }else{
+       _usernameValid=true;
+-      setHint('@'+username+' está disponible','ok');
++      setHint(t('onb.available',{username:username}),'ok');
+     }
+   }catch(e){
+     _usernameValid=false;
+-    setHint('No se pudo comprobar, inténtalo de nuevo','error');
++    setHint(t('onb.checkError'),'error');
+   }
+   refreshButton();
+ }
+@@ -248,19 +249,19 @@ function refreshButton(){
+ async function saveProfile(){
+   const name=$('inp-name').value.trim();
+   const username=$('inp-username').value.trim().toLowerCase();
+-  if(!name){toast('Escribe tu nombre',true);return;}
+-  if(!_usernameValid){toast('Elige un nombre de usuario válido y disponible',true);return;}
++  if(!name){toast(t('onb.needName'),true);return;}
++  if(!_usernameValid){toast(t('onb.needValidUsername'),true);return;}
+ 
+   $('btn-save').disabled=true;
+-  showLoad('Creando tu perfil…');
++  showLoad(t('onb.creatingProfile'));
+   try{
+     // Re-chequeo final por si alguien tomó el username mientras tanto
+     const existing=await api('/rest/v1/coaches?username=eq.'+encodeURIComponent(username)+'&select=id&limit=1');
+     if(existing&&existing.length>0){
+       hideLoad();
+       _usernameValid=false;
+-      setHint('Ese usuario ya está en uso, prueba otro','error');
+-      toast('Ese usuario acaba de ser tomado, prueba otro',true);
++      setHint(t('onb.taken'),'error');
++      toast(t('onb.justTaken'),true);
+       return;
+     }
+     await api('/rest/v1/coaches',{
+@@ -278,7 +279,7 @@ async function saveProfile(){
+ }
+ 
+ async function doLogout(){
+-  showLoad('Cerrando sesión…');
++  showLoad(t('onb.loggingOut'));
+   try{await api('/auth/v1/logout',{method:'POST'});}catch{}
+   clearSession();
+   window.location.href='index.html';
+@@ -291,7 +292,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
+   if(!_tok||!_uid){window.location.href='index.html';return;}
+ 
+   // Si ya tiene perfil, no debería estar aquí → al menú
+-  showLoad('Cargando…');
++  showLoad(t('common.loading'));
+   try{
+     const rows=await api('/rest/v1/coaches?owner_id=eq.'+_uid+'&select=id&limit=1');
+     if(rows&&rows.length>0){window.location.href='menu.html';return;}
+diff --git a/sessionkxc.html b/sessionkxc.html
+index 2a91cc5..2f6ea0c 100644
+--- a/sessionkxc.html
++++ b/sessionkxc.html
+@@ -212,41 +212,41 @@
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ <div class="toast" id="toast"></div>
+ 
+ <!-- SHEET EDICIÓN -->
+ <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+ <div class="sheet" id="edit-sheet">
+   <div class="sheet-handle"></div>
+-  <div class="sheet-title">Editar tiempo</div>
++  <div class="sheet-title" data-i18n="slsess.editTime">Editar tiempo</div>
+   <div class="sheet-sub" id="sh-sub"></div>
+-  <div class="sheet-section">Palista / Manga</div>
++  <div class="sheet-section" data-i18n="kxc.paddlerRun">Palista / Manga</div>
+   <div class="sheet-row">
+     <select class="sheet-select" id="sh-pal"></select>
+     <select class="sheet-select" id="sh-manga" style="flex:0 0 80px"></select>
+   </div>
+-  <div class="sheet-section">Tiempo bruto (MM:SS.d)</div>
++  <div class="sheet-section" data-i18n="slsess.rawTime">Tiempo bruto (MM:SS.d)</div>
+   <input class="sheet-time-input" id="sh-time" type="text" placeholder="00:00.0" maxlength="8">
+-  <div class="sheet-section">Puertas falladas</div>
++  <div class="sheet-section" data-i18n="kxc.gatesMissed">Puertas falladas</div>
+   <div class="sheet-gates-grid" id="sh-gates"></div>
+-  <div class="sheet-section" id="sh-roll-section">Roll</div>
++  <div class="sheet-section" id="sh-roll-section" data-i18n="kxc.roll">Roll</div>
+   <div class="sheet-row" id="sh-roll-row">
+-    <button class="roll-state-btn ok" id="sh-roll-ok" onclick="shSetRoll('ok')">Roll OK</button>
+-    <button class="roll-state-btn fail" id="sh-roll-fail" onclick="shSetRoll('fail')">Roll fallido</button>
++    <button class="roll-state-btn ok" id="sh-roll-ok" onclick="shSetRoll('ok')" data-i18n="kxc.rollOk">Roll OK</button>
++    <button class="roll-state-btn fail" id="sh-roll-fail" onclick="shSetRoll('fail')" data-i18n="kxc.rollFail">Roll fallido</button>
+   </div>
+   <div class="roll-pos-stepper" id="sh-roll-pos-row" style="margin-bottom:6px">
+     <button class="roll-pos-btn" onclick="shAdjRollPos(-1)">&#8722;</button>
+     <div class="roll-pos-val" id="sh-roll-pos">&#8212;</div>
+     <button class="roll-pos-btn" onclick="shAdjRollPos(1)">+</button>
+   </div>
+-  <div class="sheet-section">Estado</div>
++  <div class="sheet-section" data-i18n="slsess.status">Estado</div>
+   <button class="sheet-dsq-btn" id="sh-dsq-btn" onclick="shToggleDsq()">
+-    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt">Marcar como DSQ</span>
++    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt" data-i18n="slsess.markDsq">Marcar como DSQ</span>
+   </button>
+   <div class="sheet-actions">
+     <button class="sheet-btn-del" id="sh-del-btn" onclick="shDelete()" title="Eliminar">&#128465;</button>
+-    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()">Guardar cambios</button>
++    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()" data-i18n="slsess.saveChanges">Guardar cambios</button>
+   </div>
+ </div>
+ 
+@@ -254,22 +254,22 @@
+ <div class="sheet-backdrop" id="cfg-backdrop" onclick="closeCfgSheet()"></div>
+ <div class="sheet" id="cfg-sheet">
+   <div class="sheet-handle"></div>
+-  <div class="sheet-title">Editar configuraci&#243;n</div>
+-  <div class="sheet-sub">Cambia los datos de la sesi&#243;n durante el registro</div>
++  <div class="sheet-title" data-i18n="slsess.editCfg">Editar configuraci&#243;n</div>
++  <div class="sheet-sub" data-i18n="slsess.editCfgDesc">Cambia los datos de la sesi&#243;n durante el registro</div>
+   <div class="cfg-field">
+-    <label>Nombre de la sesi&#243;n</label>
++    <label data-i18n="cfg.sessionName">Nombre de la sesi&#243;n</label>
+     <input id="cfg-edit-name" type="text" placeholder="Nombre de la sesi&#243;n" autocomplete="off">
+   </div>
+   <div class="cfg-field">
+-    <label>Lugar</label>
++    <label data-i18n="common.place">Lugar</label>
+     <input id="cfg-edit-lugar" type="text" placeholder="Lugar (opcional)" autocomplete="off">
+   </div>
+   <div class="cfg-field">
+-    <label>Fecha</label>
++    <label data-i18n="common.date">Fecha</label>
+     <input id="cfg-edit-fecha" type="date">
+   </div>
+   <div class="cfg-field">
+-    <label>N&#250;mero de puertas</label>
++    <label data-i18n="crcfg.numGates">N&#250;mero de puertas</label>
+     <div class="cfg-counter">
+       <button class="cfg-counter-btn" id="cfg-pue-minus" onclick="cfgAdjPuertas(-1)">&#8722;</button>
+       <div class="cfg-counter-val" id="cfg-edit-val-pue">6</div>
+@@ -278,8 +278,8 @@
+   </div>
+   <div class="cfg-toggle-row">
+     <div class="cfg-toggle-label">
+-      <div class="cfg-toggle-title">Zona de Roll</div>
+-      <div class="cfg-toggle-desc">El circuito incluye una zona de esquimotaje</div>
++      <div class="cfg-toggle-title" data-i18n="crcfg.rollZone">Zona de Roll</div>
++      <div class="cfg-toggle-desc" data-i18n="crcfg.rollZoneDesc">El circuito incluye una zona de esquimotaje</div>
+     </div>
+     <label class="cfg-switch">
+       <input type="checkbox" id="cfg-edit-roll" onchange="cfgOnRollToggle(this.checked)">
+@@ -287,27 +287,27 @@
+     </label>
+   </div>
+   <div class="cfg-roll-pos" id="cfg-roll-pos">
+-    <label style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px">Posici&#243;n de la zona de Roll</label>
++    <label style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px" data-i18n="crcfg.rollPos">Posici&#243;n de la zona de Roll</label>
+     <div class="cfg-roll-pos-cur" id="cfg-roll-pos-cur">&#8212;</div>
+     <div class="cfg-gates-grid" id="cfg-roll-gates"></div>
+-    <div style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.4">Arrastra la <b>R</b> para mover la zona de roll. Es fija para toda la sesi&#243;n.</div>
++    <div style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.4"><span data-i18n="kxc.editRollHintPre">Arrastra la</span> <b>R</b> <span data-i18n="kxc.editRollHintPost">para mover la zona de roll. Es fija para toda la sesi&#243;n.</span></div>
+   </div>
+-  <div class="sheet-section">Palistas (KXC)</div>
++  <div class="sheet-section" data-i18n="crcfg.paddlersKxc">Palistas (KXC)</div>
+   <div class="cfg-pal-list" id="cfg-edit-pal-list"></div>
+-  <button class="cfg-add-pal" onclick="cfgAddPal()"><span style="font-size:16px;line-height:1">+</span> A&#241;adir palista</button>
++  <button class="cfg-add-pal" onclick="cfgAddPal()"><span style="font-size:16px;line-height:1">+</span> <span data-i18n="cfg.addPaddler">A&#241;adir palista</span></button>
+   <div class="sheet-actions">
+-    <button class="sheet-btn-save" id="cfg-save-btn" onclick="applyCfgEdit()">Aplicar cambios</button>
++    <button class="sheet-btn-save" id="cfg-save-btn" onclick="applyCfgEdit()" data-i18n="slsess.applyChanges">Aplicar cambios</button>
+   </div>
+ </div>
+ 
+ <!-- MODAL CÓDIGO COMPARTIDA -->
+ <div class="code-modal-bd" id="code-modal-bd" onclick="if(event.target===this)closeCodeModal()">
+   <div class="code-modal">
+-    <div class="code-modal-title">Sesi&#243;n compartida</div>
+-    <div class="code-modal-sub">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
++    <div class="code-modal-title" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
++    <div class="code-modal-sub" data-i18n="slsess.sharedDesc">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
+     <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+     <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+-    <button class="code-close" onclick="closeCodeModal()">Cerrar</button>
++    <button class="code-close" onclick="closeCodeModal()" data-i18n="common.close">Cerrar</button>
+   </div>
+ </div>
+ 
+@@ -318,10 +318,10 @@
+     <span class="topbar-brand-name">SLTimer</span>
+   </a>
+   <div class="topbar-divider"></div>
+-  <span class="topbar-title" id="topbar-title">Cron&#243;metro KXC</span>
++  <span class="topbar-title" id="topbar-title" data-i18n="kxc.chrono">Cron&#243;metro KXC</span>
+   <button class="btn-share-code" id="btn-share-code" onclick="openCodeModal()" title="C&#243;digo de sesi&#243;n compartida">&#128279;</button>
+   <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
+-  <button class="btn-finish" id="btn-finish" onclick="finishSession()">Finalizar</button>
++  <button class="btn-finish" id="btn-finish" onclick="finishSession()" data-i18n="slsess.finish">Finalizar</button>
+ </div>
+ 
+ <div class="content">
+@@ -332,13 +332,13 @@
+   </div>
+ 
+   <!-- CONTEXTO -->
+-  <div class="section-label">Palista actual</div>
++  <div class="section-label" data-i18n="kxc.currentPaddler">Palista actual</div>
+   <div class="ctx-card">
+-    <div class="ctx-label">Palista</div>
++    <div class="ctx-label" data-i18n="slsess.paddler">Palista</div>
+     <select class="ctx-select" id="sel-pal" onchange="onCtxChange()"></select>
+     <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+       <div style="flex:1">
+-        <div class="ctx-label" style="margin-bottom:4px">Manga</div>
++        <div class="ctx-label" style="margin-bottom:4px" data-i18n="slsess.run">Manga</div>
+         <div style="display:flex;align-items:center;gap:8px">
+           <button class="roll-pos-btn" id="manga-minus" onclick="adjManga(-1)">&#8722;</button>
+           <div class="roll-pos-val" id="manga-val" style="padding:9px 4px">1</div>
+@@ -346,7 +346,7 @@
+         </div>
+       </div>
+     </div>
+-    <div class="ctx-label" id="manga-hint" style="margin-top:2px;text-transform:none;font-weight:400;color:#bbb">Manga autom&#225;tica seg&#250;n lo guardado</div>
++    <div class="ctx-label" id="manga-hint" style="margin-top:2px;text-transform:none;font-weight:400;color:#bbb" data-i18n="slsess.autoRun">Manga autom&#225;tica seg&#250;n lo guardado</div>
+   </div>
+ 
+   <!-- CRONÓMETRO -->
+@@ -354,33 +354,34 @@
+     <div class="chrono-display" id="chrono-display">00:00.0</div>
+     <div class="chrono-pen-info" id="chrono-pen-info"></div>
+     <div class="chrono-controls">
+-      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()">Iniciar</button>
+-      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()">Reiniciar</button>
++      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()" data-i18n="slsess.start">Iniciar</button>
++      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()" data-i18n="slsess.reset">Reiniciar</button>
+     </div>
+   </div>
+ 
+   <!-- PUERTAS + ROLL -->
+-  <div class="section-label">Puertas &middot; toca para marcar falta</div>
++  <div class="section-label" data-i18n="kxc.gatesTapHint">Puertas &middot; toca para marcar falta</div>
+   <div class="gates-card">
+     <div class="gates-grid" id="gates-grid"></div>
+-    <div class="roll-hint" id="roll-hint" style="display:none">La zona de <b>R</b>oll est&#225; fijada en la configuraci&#243;n. T&#243;cala para alternar OK / fallido. Para cambiar su posici&#243;n, usa la edici&#243;n de un tiempo o el bot&#243;n de configuraci&#243;n.</div>
++    <div class="roll-hint" id="roll-hint" style="display:none"><span data-i18n="kxc.rollZoneHintPre">La zona de</span> <b>R</b><span data-i18n="kxc.rollZoneHintPost">oll est&#225; fijada en la configuraci&#243;n. T&#243;cala para alternar OK / fallido. Para cambiar su posici&#243;n, usa la edici&#243;n de un tiempo o el bot&#243;n de configuraci&#243;n.</span></div>
+     <div class="gates-legend">
+       <span><span class="legend-dot"></span>OK</span>
+       <span><span class="legend-dot failed"></span>Fallada</span>
+-      <span id="legend-roll" style="display:none"><span class="legend-dot roll"></span>Roll</span>
++      <span id="legend-roll" style="display:none"><span class="legend-dot roll"></span><span data-i18n="kxc.roll">Roll</span></span>
+     </div>
+   </div>
+ 
+   <!-- DSQ -->
+   <button class="dsq-btn" id="dsq-btn" onclick="toggleDsq()">
+-    <span id="dsq-icon">&#9634;</span><span id="dsq-txt">Marcar como DSQ</span>
++    <span id="dsq-icon">&#9634;</span><span id="dsq-txt" data-i18n="slsess.markDsq">Marcar como DSQ</span>
+   </button>
+ 
+   <!-- TIEMPOS GUARDADOS -->
+-  <div class="section-label">Tiempos guardados <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">&middot; toca para editar</span></div>
+-  <div id="times-wrap"><div class="empty-times">A&#250;n no hay tiempos registrados</div></div>
++  <div class="section-label"><span data-i18n="slsess.savedTimes">Tiempos guardados</span> <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0" data-i18n="slsess.tapToEdit">&middot; toca para editar</span></div>
++  <div id="times-wrap"><div class="empty-times" data-i18n="slsess.noTimes">A&#250;n no hay tiempos registrados</div></div>
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -409,7 +410,7 @@ let _sharedCode=null;
+ const $=id=>document.getElementById(id);
+ let _tTimer;
+ function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
++function showLoad(msg){msg=msg||t('common.loading');$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+ function hideLoad(){$('overlay').classList.remove('show');}
+ function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+ 
+@@ -453,7 +454,7 @@ function syncManga(){
+   if(!_mangaManual)_manga=nextManga(_selPal);
+   $('manga-val').textContent=_manga;
+   $('manga-minus').disabled=_manga<=1;
+-  $('manga-hint').textContent=_mangaManual?'Manga ajustada manualmente':'Manga autom\u00e1tica seg\u00fan lo guardado';
++  $('manga-hint').textContent=_mangaManual?t('slsess.mangaManual'):t('slsess.autoRun');
+ }
+ function adjManga(d){
+   _manga=Math.max(1,_manga+d);_mangaManual=true;syncManga();
+@@ -512,7 +513,7 @@ function toggleDsq(){
+   _dsq=!_dsq;
+   $('dsq-btn').classList.toggle('on',_dsq);
+   $('dsq-icon').textContent=_dsq?'\u26d4':'\u25a1';
+-  $('dsq-txt').textContent=_dsq?'Descalificado (toca para quitar)':'Marcar como DSQ';
++  $('dsq-txt').textContent=_dsq?t('kxc.dsqOn'):t('slsess.markDsq');
+   if(_dsq){clearGatesUI();}
+   updatePenInfo();
+ }
+@@ -536,7 +537,7 @@ function toggleChrono(){if(_running)stopChrono();else startChrono();}
+ function startChrono(){
+   _running=true;_startTs=Date.now()-_elapsed;
+   $('chrono-display').classList.add('running');
+-  const b=$('btn-startstop');b.textContent='Parar';b.classList.remove('start');b.classList.add('stop');
++  const b=$('btn-startstop');b.textContent=t('slsess.stop');b.classList.remove('start');b.classList.add('stop');
+   _raf=requestAnimationFrame(tick);
+ }
+ async function stopChrono(){
+@@ -553,7 +554,7 @@ function resetChrono(){
+   _elapsed=0;renderChrono();
+   clearGatesUI();
+   if(_cfg.roll){_rollState='ok';buildGates();}
+-  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent='Marcar como DSQ';}
++  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent=t('slsess.markDsq');}
+   updatePenInfo();
+ }
+ 
+@@ -588,8 +589,8 @@ function buildPayloadFromState(){
+ }
+ 
+ async function saveCurrentTime(){
+-  if(!_dsq&&_elapsed<=0){toast('El tiempo es 0, no se guarda','err');return;}
+-  showLoad('Guardando tiempo...');
++  if(!_dsq&&_elapsed<=0){toast(t('kxc.time0'),'err');return;}
++  showLoad(t('kxc.savingTime'));
+   try{
+     await ensureSession();
+     const row={session_id:_sessionId,...buildPayloadFromState()};
+@@ -597,14 +598,14 @@ async function saveCurrentTime(){
+     const saved=Array.isArray(inserted)?inserted[0]:inserted;
+     _entries.push(saved);
+     hideLoad();
+-    toast('Tiempo guardado \u2713','ok');
++    toast(t('kxc.timeSaved'),'ok');
+     _mangaManual=false;
+     resetChrono();
+     syncManga();
+     renderTimes();
+   }catch(e){
+     hideLoad();
+-    toast('Error al guardar: '+e.message,'err');
++    toast(t('kxc.saveError',{msg:e.message}),'err');
+   }
+ }
+ 
+@@ -617,7 +618,7 @@ function renderTimes(){
+   _cfg.palistas.forEach((p,i)=>{palNames[i]={name:p.name};});
+   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name};});
+ 
+-  let html='<table class="times-table"><thead><tr><th>Palista</th><th>Mangas</th></tr></thead><tbody>';
++  let html='<table class="times-table"><thead><tr><th>'+t('slsess.paddler')+'</th><th>'+t('kxc.mangas')+'</th></tr></thead><tbody>';
+   for(let pi=0;pi<nPal;pi++){
+     const pn=palNames[pi]||{name:'Palista '+(pi+1)};
+     const ents=_entries.filter(e=>e.pal_index===pi).sort((a,b)=>a.manga-b.manga);
+@@ -692,7 +693,7 @@ function openEditSheet(entryId){
+ function openSheet(){$('sheet-backdrop').classList.add('open');setTimeout(()=>$('edit-sheet').classList.add('open'),10);}
+ function closeSheet(){$('edit-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');}
+ function shToggleDsq(){_shDsq=!_shDsq;if(_shDsq){_shGateFails.clear();buildSheetGates();}updateShDsq();}
+-function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';}
++function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?t('kxc.dsqOn'):t('slsess.markDsq');}
+ function shSetLoading(on){const s=$('sh-save-btn'),d=$('sh-del-btn');if(on){s.disabled=true;s.innerHTML='<div class="sh-spinner"></div> Guardando...';if(d)d.disabled=true;}else{s.disabled=false;s.textContent='Guardar cambios';if(d)d.disabled=false;}}
+ 
+ async function shSave(){
+@@ -700,7 +701,7 @@ async function shSave(){
+   const newManga=parseInt($('sh-manga').value);
+   const timeStr=$('sh-time').value.trim();
+   let newMs=0;
+-  if(!_shDsq){newMs=msFromStr(timeStr);if(newMs===null){toast('Formato inv\u00e1lido. Usa MM:SS.d','err');return;}}
++  if(!_shDsq){newMs=msFromStr(timeStr);if(newMs===null){toast(t('kxc.invalidFormat'),'err');return;}}
+   const nFaults=_shGateFails.size;
+   const rollFail=(_cfg.roll&&_shRollState==='fail')?1:0;
+   let pInfo=null;
+@@ -710,23 +711,23 @@ async function shSave(){
+   shSetLoading(true);
+   try{
+     const idx=_entries.findIndex(e=>e.id===_shEntryId);
+-    if(idx===-1)throw new Error('Entrada no encontrada');
++    if(idx===-1)throw new Error(t('kxc.entryNotFound'));
+     const patch={pal_index:newPi,pal_name:pInfo.name,pal_cat:'KXC',athlete_id:pInfo.aid,tramo:_cfg.roll?_shRollPos:-1,manga:newManga,ms:newMs,pen:nFaults*1000,dsq:_shDsq,cnt2:nFaults,cnt50:rollFail};
+     await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(patch)});
+     _entries[idx]={..._entries[idx],...patch};
+     closeSheet();syncManga();renderTimes();
+-    toast('Cambios guardados \u2713','ok');
+-  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
++    toast(t('kxc.changesSaved'),'ok');
++  }catch(e){shSetLoading(false);toast(t('common.errorPrefix')+e.message,'err');}
+ }
+ async function shDelete(){
+-  if(!confirm('\u00bfEliminar este tiempo?'))return;
++  if(!confirm(t('slsess.confirmDeleteTime')))return;
+   shSetLoading(true);
+   try{
+     await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
+     _entries=_entries.filter(e=>e.id!==_shEntryId);
+     closeSheet();syncManga();renderTimes();
+-    toast('Tiempo eliminado','ok');
+-  }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
++    toast(t('kxc.timeDeleted'),'ok');
++  }catch(e){shSetLoading(false);toast(t('common.errorPrefix')+e.message,'err');}
+ }
+ 
+ /* ───────────────────────── EDITAR CONFIGURACIÓN ───────────────────────── */
+@@ -854,7 +855,7 @@ function cfgRenderPals(){
+   });
+ }
+ function cfgAddPal(){
+-  if(_cfgPals.length>=30){toast('M\u00e1ximo 30 palistas','err');return;}
++  if(_cfgPals.length>=30){toast(t('kxc.max30'),'err');return;}
+   _cfgPals.push({rid:_cfgSeq++,id:null,name:'',isTemp:false});
+   cfgRenderPals();
+   setTimeout(()=>{const last=_cfgPals[_cfgPals.length-1];const inp=$('cfgpal-input-'+last.rid);if(inp)inp.focus();},40);
+@@ -908,9 +909,9 @@ function cfgClearPal(rid){
+ 
+ function applyCfgEdit(){
+   const newName=$('cfg-edit-name').value.trim();
+-  if(!newName){toast('Introduce un nombre para la sesi\u00f3n','err');return;}
++  if(!newName){toast(t('slcfg.needName'),'err');return;}
+   const validPals=_cfgPals.filter(p=>p.name.trim().length>0);
+-  if(validPals.length===0){toast('A\u00f1ade al menos un palista','err');return;}
++  if(validPals.length===0){toast(t('slcfg.needPaddler'),'err');return;}
+   const newLugar=$('cfg-edit-lugar').value.trim();
+   const newFecha=$('cfg-edit-fecha').value||_cfg.fecha;
+   const newPue=_cfgPue;
+@@ -938,7 +939,7 @@ function applyCfgEdit(){
+   if(resume){try{const r=JSON.parse(resume);r.cfg=_cfg;sessionStorage.setItem('kxc_resume',JSON.stringify(r));}catch{}}
+ 
+   if(_sessionId){
+-    api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,roll:!!_cfg.roll,roll_pos:_cfg.roll?_cfg.rollPos:null})}).catch(e=>toast('No se pudo sincronizar: '+e.message,'err'));
++    api('/rest/v1/sessions?id=eq.'+_sessionId,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:newName,lugar:newLugar||null,data:newFecha,n_pal:_cfg.nPal,n_tra:_cfg.nPuertas,palistas:_cfg.palistas,roll:!!_cfg.roll,roll_pos:_cfg.roll?_cfg.rollPos:null})}).catch(e=>toast(t('kxc.syncFail',{msg:e.message}),'err'));
+   }
+ 
+   $('topbar-title').textContent=newName;
+@@ -964,7 +965,7 @@ function applyCfgEdit(){
+   renderTimes();
+ 
+   closeCfgSheet();
+-  toast('Configuraci\u00f3n actualizada \u2713','ok');
++  toast(t('kxc.cfgUpdated'),'ok');
+ }
+ 
+ /* ── CÓDIGO SESIÓN COMPARTIDA ── */
+@@ -988,8 +989,8 @@ function closeCodeModal(){$('code-modal-bd').classList.remove('open');}
+ function copyShareCode(){
+   const c=_sharedCode||'';
+   navigator.clipboard?.writeText(c)
+-    .then(()=>toast('C\u00f3digo copiado \u2713','ok'))
+-    .catch(()=>toast('Copia manual: '+c));
++    .then(()=>toast(t('slcfg.codeCopied'),'ok'))
++    .catch(()=>toast(t('slcfg.copyManual',{code:c})));
+ }
+ 
+ /* ── ROL: ANFITRIÓN / INVITADO ── */
+@@ -1013,17 +1014,17 @@ function applyRoleUI(){
+ 
+ /* ── FINALIZAR ── */
+ async function finishSession(){
+-  if(_running){toast('Para el cron\u00f3metro antes de finalizar','err');return;}
++  if(_running){toast(t('kxc.stopBeforeFinish'),'err');return;}
+   const st=_sharedState();
+   if(st && !st.isOwner){
+-    toast('Solo el anfitri\u00f3n puede finalizar la sesi\u00f3n','err');
++    toast(t('kxc.onlyHostFinish'),'err');
+     return;
+   }
+-  if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
++  if(!confirm(t('slsess.confirmFinishFull')))return;
+ 
+   // Si es compartida, cerrar en el servidor para que deje de aparecer como activa.
+   if(st && st.sessionId){
+-    showLoad('Finalizando sesi\u00f3n...');
++    showLoad(t('kxc.finishing'));
+     try{
+       await api('/rest/v1/sessions?id=eq.'+st.sessionId,
+         {method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({is_live:false})});
+@@ -1042,7 +1043,7 @@ async function finishSession(){
+   window.location.href='historial.html';
+ }
+ function goBack(){
+-  if(_running){if(!confirm('El cron\u00f3metro est\u00e1 en marcha. \u00bfSalir igualmente?'))return;}
++  if(_running){if(!confirm(t('slsess.confirmExit')))return;}
+   // NO borramos slt_shared: la sesión sigue activa y se podrá volver desde la barra del menú.
+   if(typeof stopLiveSync==='function') stopLiveSync();
+   window.location.href='menu.html';
+@@ -1076,7 +1077,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
+   if(!_tok){window.location.href='index.html';return;}
+ 
+   if(!loadConfig()){
+-    toast('No hay configuraci\u00f3n de sesi\u00f3n','err');
++    toast(t('kxc.noCfg'),'err');
+     setTimeout(()=>window.location.href='cross.html',1200);
+     return;
+   }
+@@ -1111,7 +1112,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
+ 
+   loadAthletes();
+ 
+-  if(_sessionId){showLoad('Cargando tiempos...');await loadExistingEntries();hideLoad();}
++  if(_sessionId){showLoad(t('kxc.loadingTimes'));await loadExistingEntries();hideLoad();}
+ 
+   renderChrono();
+   syncManga();
+diff --git a/slalom-session.html b/slalom-session.html
+index cb2e95c..bfb323e 100644
+--- a/slalom-session.html
++++ b/slalom-session.html
+@@ -184,27 +184,27 @@
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ <div class="toast" id="toast"></div>
+ 
+ <!-- SHEET EDICIÓN DE TIEMPO -->
+ <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+ <div class="sheet" id="edit-sheet">
+   <div class="sheet-handle"></div>
+-  <div class="sheet-title">Editar tiempo</div>
++  <div class="sheet-title" data-i18n="slsess.editTime">Editar tiempo</div>
+   <div class="sheet-sub" id="sh-sub"></div>
+-  <div class="sheet-section">Palista / Tramo / Manga</div>
++  <div class="sheet-section" data-i18n="slsess.paddlerSectionRun">Palista / Tramo / Manga</div>
+   <div class="sheet-row">
+     <select class="sheet-select" id="sh-pal"></select>
+     <select class="sheet-select" id="sh-tra"></select>
+     <select class="sheet-select" id="sh-manga" style="flex:0 0 80px"></select>
+   </div>
+-  <div class="sheet-section">Tiempo bruto (MM:SS.d)</div>
++  <div class="sheet-section" data-i18n="slsess.rawTime">Tiempo bruto (MM:SS.d)</div>
+   <input class="sheet-time-input" id="sh-time" type="text" placeholder="00:00.0" maxlength="8">
+-  <div class="sheet-section">Penalizaciones</div>
++  <div class="sheet-section" data-i18n="slsess.penalties">Penalizaciones</div>
+   <div class="pen-stepper-sheet">
+     <div class="pen-step-box">
+-      <div class="pen-step-label">+2 seg &middot; Toque</div>
++      <div class="pen-step-label" data-i18n="slsess.pen2">+2 seg &middot; Toque</div>
+       <div class="pen-step-row">
+         <button class="pen-step-btn" onclick="shAdjPen(2,-1)">&minus;</button>
+         <div class="pen-step-val" id="sh-cnt2">0</div>
+@@ -212,7 +212,7 @@
+       </div>
+     </div>
+     <div class="pen-step-box">
+-      <div class="pen-step-label">+50 seg &middot; Error</div>
++      <div class="pen-step-label" data-i18n="slsess.pen50">+50 seg &middot; Error</div>
+       <div class="pen-step-row">
+         <button class="pen-step-btn" onclick="shAdjPen(50,-1)">&minus;</button>
+         <div class="pen-step-val" id="sh-cnt50">0</div>
+@@ -220,13 +220,13 @@
+       </div>
+     </div>
+   </div>
+-  <div class="sheet-section">Estado</div>
++  <div class="sheet-section" data-i18n="slsess.status">Estado</div>
+   <button class="sheet-dsq-btn" id="sh-dsq-btn" onclick="shToggleDsq()">
+-    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt">Marcar como DSQ</span>
++    <span id="sh-dsq-icon">&#9634;</span><span id="sh-dsq-txt" data-i18n="slsess.markDsq">Marcar como DSQ</span>
+   </button>
+   <div class="sheet-actions">
+     <button class="sheet-btn-del" id="sh-del-btn" onclick="shDelete()" title="Eliminar">&#128465;</button>
+-    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()">Guardar cambios</button>
++    <button class="sheet-btn-save" id="sh-save-btn" onclick="shSave()" data-i18n="slsess.saveChanges">Guardar cambios</button>
+   </div>
+ </div>
+ 
+@@ -234,44 +234,44 @@
+ <div class="sheet-backdrop" id="cfg-backdrop" onclick="closeCfgSheet()"></div>
+ <div class="sheet" id="cfg-sheet">
+   <div class="sheet-handle"></div>
+-  <div class="sheet-title">Editar configuraci&#243;n</div>
+-  <div class="sheet-sub">Cambia los datos de la sesi&#243;n durante el registro</div>
++  <div class="sheet-title" data-i18n="slsess.editCfg">Editar configuraci&#243;n</div>
++  <div class="sheet-sub" data-i18n="slsess.editCfgDesc">Cambia los datos de la sesi&#243;n durante el registro</div>
+   <div class="cfg-field">
+-    <label>Nombre de la sesi&#243;n</label>
++    <label data-i18n="cfg.sessionName">Nombre de la sesi&#243;n</label>
+     <input id="cfg-edit-name" type="text" placeholder="Nombre de la sesi&#243;n" autocomplete="off">
+   </div>
+   <div class="cfg-field">
+-    <label>Lugar</label>
++    <label data-i18n="common.place">Lugar</label>
+     <input id="cfg-edit-lugar" type="text" placeholder="Lugar (opcional)" autocomplete="off">
+   </div>
+   <div class="cfg-field">
+-    <label>Fecha</label>
++    <label data-i18n="common.date">Fecha</label>
+     <input id="cfg-edit-fecha" type="date">
+   </div>
+   <div class="cfg-field">
+-    <label>N&#250;mero de tramos</label>
++    <label data-i18n="slcfg.numSections">N&#250;mero de tramos</label>
+     <div class="cfg-counter">
+       <button class="cfg-counter-btn" id="cfg-tra-minus" onclick="cfgAdjTra(-1)">&#8722;</button>
+       <div class="cfg-counter-val" id="cfg-edit-val-tra">3</div>
+       <button class="cfg-counter-btn" id="cfg-tra-plus" onclick="cfgAdjTra(1)">+</button>
+     </div>
+   </div>
+-  <div class="sheet-section">Palistas</div>
++  <div class="sheet-section" data-i18n="cfg.paddlers">Palistas</div>
+   <div class="cfg-pal-list" id="cfg-edit-pal-list"></div>
+   <button class="cfg-add-pal" onclick="cfgAddPal()"><span style="font-size:16px;line-height:1">+</span> A&#241;adir palista</button>
+   <div class="sheet-actions">
+-    <button class="sheet-btn-save" id="cfg-save-btn" onclick="applyCfgEdit()">Aplicar cambios</button>
++    <button class="sheet-btn-save" id="cfg-save-btn" onclick="applyCfgEdit()" data-i18n="slsess.applyChanges">Aplicar cambios</button>
+   </div>
+ </div>
+ 
+ <!-- MODAL CÓDIGO COMPARTIDA -->
+ <div class="code-modal-bd" id="code-modal-bd" onclick="if(event.target===this)closeCodeModal()">
+   <div class="code-modal">
+-    <div class="code-modal-title">Sesi&#243;n compartida</div>
+-    <div class="code-modal-sub">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
++    <div class="code-modal-title" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
++    <div class="code-modal-sub" data-i18n="slsess.sharedDesc">Comparte este c&#243;digo para que otro entrenador se una desde el men&#250;</div>
+     <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+     <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+-    <button class="code-close" onclick="closeCodeModal()">Cerrar</button>
++    <button class="code-close" onclick="closeCodeModal()" data-i18n="common.close">Cerrar</button>
+   </div>
+ </div>
+ 
+@@ -282,10 +282,10 @@
+     <span class="topbar-brand-name">SLTimer</span>
+   </a>
+   <div class="topbar-divider"></div>
+-  <span class="topbar-title" id="topbar-title">Cron&#243;metro</span>
++  <span class="topbar-title" id="topbar-title" data-i18n="slsess.chrono">Cron&#243;metro</span>
+   <button class="btn-share-code" id="btn-share-code" onclick="openCodeModal()" title="C&#243;digo de sesi&#243;n compartida">&#128279;</button>
+   <button class="btn-edit-cfg" id="btn-edit-cfg" onclick="openCfgSheet()" title="Editar configuraci&#243;n">&#9881;</button>
+-  <button class="btn-finish" id="btn-finish" onclick="finishSession()">Finalizar</button>
++  <button class="btn-finish" id="btn-finish" onclick="finishSession()" data-i18n="slsess.finish">Finalizar</button>
+ </div>
+ 
+ <div class="content">
+@@ -294,20 +294,20 @@
+     <div class="ses-meta" id="ses-meta"></div>
+   </div>
+ 
+-  <div class="section-label">Registro actual</div>
++  <div class="section-label" data-i18n="slsess.currentEntry">Registro actual</div>
+   <div class="ctx-card">
+     <div class="ctx-row">
+       <div class="ctx-field">
+-        <div class="ctx-label">Palista</div>
++        <div class="ctx-label" data-i18n="slsess.paddler">Palista</div>
+         <select class="ctx-select" id="sel-pal" onchange="onCtxChange()"></select>
+       </div>
+       <div class="ctx-field">
+-        <div class="ctx-label">Tramo</div>
++        <div class="ctx-label" data-i18n="slsess.section">Tramo</div>
+         <select class="ctx-select" id="sel-tra" onchange="onCtxChange()"></select>
+       </div>
+     </div>
+     <div class="ctx-field">
+-      <div class="ctx-label">Manga</div>
++      <div class="ctx-label" data-i18n="slsess.run">Manga</div>
+       <div class="manga-row">
+         <div class="manga-stepper">
+           <button class="manga-btn" id="manga-minus" onclick="adjManga(-1)">&#8722;</button>
+@@ -315,7 +315,7 @@
+           <button class="manga-btn" id="manga-plus" onclick="adjManga(1)">+</button>
+         </div>
+       </div>
+-      <div class="manga-hint" id="manga-hint">Manga autom&#225;tica seg&#250;n lo guardado</div>
++      <div class="manga-hint" id="manga-hint" data-i18n="slsess.autoRun">Manga autom&#225;tica seg&#250;n lo guardado</div>
+     </div>
+   </div>
+ 
+@@ -323,15 +323,15 @@
+     <div class="chrono-display" id="chrono-display">00:00.0</div>
+     <div class="chrono-pen-info" id="chrono-pen-info"></div>
+     <div class="chrono-controls">
+-      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()">Iniciar</button>
+-      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()">Reiniciar</button>
++      <button class="chrono-btn start" id="btn-startstop" onclick="toggleChrono()" data-i18n="slsess.start">Iniciar</button>
++      <button class="chrono-btn reset" id="btn-reset" onclick="resetChrono()" data-i18n="slsess.reset">Reiniciar</button>
+     </div>
+   </div>
+ 
+-  <div class="section-label">Penalizaciones (antes de parar)</div>
++  <div class="section-label" data-i18n="slsess.penBeforeStop">Penalizaciones (antes de parar)</div>
+   <div class="pen-row">
+     <div class="pen-box">
+-      <div class="pen-title">+2 seg &middot; Toque</div>
++      <div class="pen-title" data-i18n="slsess.pen2">+2 seg &middot; Toque</div>
+       <div class="pen-stepper">
+         <button class="pen-btn" onclick="adjPen(2,-1)">&minus;</button>
+         <div class="pen-val" id="cnt2">0</div>
+@@ -339,7 +339,7 @@
+       </div>
+     </div>
+     <div class="pen-box">
+-      <div class="pen-title">+50 seg &middot; Error</div>
++      <div class="pen-title" data-i18n="slsess.pen50">+50 seg &middot; Error</div>
+       <div class="pen-stepper">
+         <button class="pen-btn" onclick="adjPen(50,-1)">&minus;</button>
+         <div class="pen-val" id="cnt50">0</div>
+@@ -348,13 +348,14 @@
+     </div>
+   </div>
+   <button class="dsq-btn" id="dsq-btn" onclick="toggleDsq()">
+-    <span id="dsq-icon">&#9634;</span><span id="dsq-txt">Marcar como DSQ</span>
++    <span id="dsq-icon">&#9634;</span><span id="dsq-txt" data-i18n="slsess.markDsq">Marcar como DSQ</span>
+   </button>
+ 
+-  <div class="section-label">Tiempos guardados <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">&middot; toca para editar</span></div>
+-  <div id="times-wrap"><div class="empty-times">A&#250;n no hay tiempos registrados</div></div>
++  <div class="section-label"><span data-i18n="slsess.savedTimes">Tiempos guardados</span> <span style="font-size:10px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0" data-i18n="slsess.tapToEdit">&middot; toca para editar</span></div>
++  <div id="times-wrap"><div class="empty-times" data-i18n="slsess.noTimes">A&#250;n no hay tiempos registrados</div></div>
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -376,7 +377,7 @@ let _sharedCode=null;
+ const $=id=>document.getElementById(id);
+ let _tTimer;
+ function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+-function showLoad(msg='Cargando...'){$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
++function showLoad(msg){msg=msg||t('common.loading');$('overlay-msg').textContent=msg;$('overlay').classList.add('show');}
+ function hideLoad(){$('overlay').classList.remove('show');}
+ function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+ 
+@@ -415,7 +416,7 @@ function syncManga(){
+   if(!_mangaManual)_manga=nextManga(_selPal,_selTramo);
+   $('manga-val').textContent=_manga;
+   $('manga-minus').disabled=_manga<=1;
+-  $('manga-hint').textContent=_mangaManual?'Manga ajustada manualmente':'Manga autom\u00e1tica seg\u00fan lo guardado';
++  $('manga-hint').textContent=_mangaManual?t('slsess.mangaManual'):t('slsess.autoRun');
+ }
+ function adjManga(d){const v=Math.max(1,_manga+d);_manga=v;_mangaManual=true;syncManga();}
+ 
+@@ -430,7 +431,7 @@ function toggleDsq(){
+   if(_dsq){_cnt2=0;_cnt50=0;$('cnt2').textContent=0;$('cnt50').textContent=0;}
+   $('dsq-btn').classList.toggle('on',_dsq);
+   $('dsq-icon').textContent=_dsq?'\u26d4':'\u25a1';
+-  $('dsq-txt').textContent=_dsq?'Descalificado (toca para quitar)':'Marcar como DSQ';
++  $('dsq-txt').textContent=_dsq?t('slsess.dsqOn'):t('slsess.markDsq');
+   document.querySelectorAll('.pen-btn').forEach(b=>b.disabled=_dsq);
+   updatePenInfo();
+ }
+@@ -449,23 +450,23 @@ function toggleChrono(){if(_running)stopChrono();else startChrono();}
+ function startChrono(){
+   _running=true;_startTs=Date.now()-_elapsed;
+   $('chrono-display').classList.add('running');
+-  const b=$('btn-startstop');b.textContent='Parar';b.classList.remove('start');b.classList.add('stop');
++  const b=$('btn-startstop');b.textContent=t('slsess.stop');b.classList.remove('start');b.classList.add('stop');
+   _raf=requestAnimationFrame(tick);
+ }
+ async function stopChrono(){
+   _running=false;if(_raf)cancelAnimationFrame(_raf);
+   _elapsed=Date.now()-_startTs;renderChrono();
+   $('chrono-display').classList.remove('running');
+-  const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');
++  const b=$('btn-startstop');b.textContent=t('slsess.start');b.classList.remove('stop');b.classList.add('start');
+   await saveCurrentTime();
+ }
+ function resetChrono(){
+   if(_running){_running=false;if(_raf)cancelAnimationFrame(_raf);
+     $('chrono-display').classList.remove('running');
+-    const b=$('btn-startstop');b.textContent='Iniciar';b.classList.remove('stop');b.classList.add('start');}
++    const b=$('btn-startstop');b.textContent=t('slsess.start');b.classList.remove('stop');b.classList.add('start');}
+   _elapsed=0;renderChrono();
+   _cnt2=0;_cnt50=0;$('cnt2').textContent=0;$('cnt50').textContent=0;
+-  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent='Marcar como DSQ';document.querySelectorAll('.pen-btn').forEach(b=>b.disabled=false);}
++  if(_dsq){_dsq=false;$('dsq-btn').classList.remove('on');$('dsq-icon').textContent='\u25a1';$('dsq-txt').textContent=t('slsess.markDsq');document.querySelectorAll('.pen-btn').forEach(b=>b.disabled=false);}
+   updatePenInfo();
+ }
+ 
+@@ -508,7 +509,7 @@ function renderTimes(){
+   _cfg.palistas.forEach((p,i)=>{palNames[i]={name:p.name,cat:p.category};});
+   _entries.forEach(e=>{if(!palNames[e.pal_index])palNames[e.pal_index]={name:e.pal_name,cat:e.pal_cat};});
+ 
+-  let html='<table class="times-table"><thead><tr><th>Palista</th>';
++  let html='<table class="times-table"><thead><tr><th>'+t('slsess.paddler')+'</th>';
+   for(let ti=0;ti<nTra;ti++)html+=`<th>T${ti+1}</th>`;
+   html+='</tr></thead><tbody>';
+   for(let pi=0;pi<nPal;pi++){
+@@ -565,7 +566,7 @@ function openSheet(){$('sheet-backdrop').classList.add('open');setTimeout(()=>$(
+ function closeSheet(){$('edit-sheet').classList.remove('open');$('sheet-backdrop').classList.remove('open');}
+ function shAdjPen(seg,d){if(_shDsq)return;if(seg===2)_shCnt2=Math.max(0,_shCnt2+d);else _shCnt50=Math.max(0,_shCnt50+d);$('sh-cnt2').textContent=_shCnt2;$('sh-cnt50').textContent=_shCnt50;}
+ function shToggleDsq(){_shDsq=!_shDsq;if(_shDsq){_shCnt2=0;_shCnt50=0;$('sh-cnt2').textContent=0;$('sh-cnt50').textContent=0;}updateShDsq();}
+-function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?'Descalificado (toca para quitar)':'Marcar como DSQ';document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=_shDsq);}
++function updateShDsq(){const b=$('sh-dsq-btn');b.classList.toggle('on',_shDsq);$('sh-dsq-icon').textContent=_shDsq?'\u26d4':'\u25a1';$('sh-dsq-txt').textContent=_shDsq?t('slsess.dsqOn'):t('slsess.markDsq');document.querySelectorAll('.pen-step-btn').forEach(b=>b.disabled=_shDsq);}
+ function shSetLoading(on){const s=$('sh-save-btn'),d=$('sh-del-btn');if(on){s.disabled=true;s.innerHTML='<div class="sh-spinner"></div> Guardando...';if(d)d.disabled=true;}else{s.disabled=false;s.textContent='Guardar cambios';if(d)d.disabled=false;}}
+ 
+ async function shSave(){
+@@ -591,7 +592,7 @@ async function shSave(){
+   }catch(e){shSetLoading(false);toast('Error: '+e.message,'err');}
+ }
+ async function shDelete(){
+-  if(!confirm('\u00bfEliminar este tiempo?'))return;
++  if(!confirm(t('slsess.confirmDeleteTime')))return;
+   shSetLoading(true);
+   try{
+     await api('/rest/v1/session_entries?id=eq.'+_shEntryId,{method:'DELETE'});
+@@ -817,7 +818,7 @@ async function finishSession(){
+     toast('Solo el anfitri\u00f3n puede finalizar la sesi\u00f3n','err');
+     return;
+   }
+-  if(!confirm('\u00bfFinalizar la sesi\u00f3n? Los tiempos ya est\u00e1n guardados y podr\u00e1s consultarlos en el historial.'))return;
++  if(!confirm(t('slsess.confirmFinishFull')))return;
+ 
+   // Si es compartida, cerrar en el servidor para que deje de aparecer como activa.
+   if(st && st.sessionId){
+@@ -840,7 +841,7 @@ async function finishSession(){
+   window.location.href='historial.html';
+ }
+ function goBack(){
+-  if(_running){if(!confirm('El cron\u00f3metro est\u00e1 en marcha. \u00bfSalir igualmente?'))return;}
++  if(_running){if(!confirm(t('slsess.confirmExit')))return;}
+   // NO borramos slt_shared: la sesión sigue activa y se podrá volver desde la barra del menú.
+   if(typeof stopLiveSync==='function') stopLiveSync();
+   window.location.href='menu.html';
+diff --git a/slalom.html b/slalom.html
+index 724fa3c..27ca6e6 100644
+--- a/slalom.html
++++ b/slalom.html
+@@ -127,7 +127,7 @@
+ </head>
+ <body>
+ 
+-<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg">Cargando...</p></div>
++<div class="overlay" id="overlay"><div class="spinner"></div><p id="overlay-msg" data-i18n="common.loading">Cargando...</p></div>
+ <div class="toast" id="toast"></div>
+ 
+ <div class="topbar">
+@@ -137,35 +137,35 @@
+     <span class="topbar-brand-name">SLTimer</span>
+   </a>
+   <div class="topbar-divider"></div>
+-  <span class="topbar-title">Configurar es&#769;lalom</span>
++  <span class="topbar-title" data-i18n="slcfg.topbar">Configurar es&#769;lalom</span>
+   <div class="topbar-right"><div class="avatar" id="top-avatar"></div></div>
+ </div>
+ 
+ <div class="content">
+   <div>
+-    <div class="page-title">Nueva sesi&#243;n de es&#769;lalom</div>
+-    <div class="page-sub">Configura los datos, los tramos y los palistas</div>
++    <div class="page-title" data-i18n="slcfg.pageTitle">Nueva sesi&#243;n de es&#769;lalom</div>
++    <div class="page-sub" data-i18n="slcfg.pageSub">Configura los datos, los tramos y los palistas</div>
+   </div>
+ 
+   <!-- DATOS -->
+-  <div class="section-label">Datos de la sesi&#243;n</div>
++  <div class="section-label" data-i18n="slcfg.sectionData">Datos de la sesi&#243;n</div>
+   <div class="card">
+     <div>
+-      <label>Nombre de la sesi&#243;n</label>
+-      <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento ma&#241;ana" autocomplete="off">
++      <label data-i18n="cfg.sessionName">Nombre de la sesi&#243;n</label>
++      <input id="cfg-name" type="text" placeholder="Ej: Entrenamiento ma&#241;ana" data-i18n-placeholder="slcfg.namePlaceholder" autocomplete="off">
+     </div>
+     <div>
+-      <label>Fecha</label>
++      <label data-i18n="common.date">Fecha</label>
+       <input id="cfg-fecha" type="date">
+     </div>
+   </div>
+ 
+   <!-- TRAMOS -->
+-  <div class="section-label">Tramos</div>
++  <div class="section-label" data-i18n="slcfg.sectionSections">Tramos</div>
+   <div class="counter-box">
+     <div class="counter-box-info">
+-      <div class="counter-box-title">N&#250;mero de tramos</div>
+-      <div class="counter-box-desc">Secciones cronometradas del recorrido</div>
++      <div class="counter-box-title" data-i18n="slcfg.numSections">N&#250;mero de tramos</div>
++      <div class="counter-box-desc" data-i18n="slcfg.numSectionsDesc">Secciones cronometradas del recorrido</div>
+     </div>
+     <div class="counter-row">
+       <button class="counter-btn" id="tra-minus" onclick="adjustTramos(-1)">&#8722;</button>
+@@ -175,11 +175,11 @@
+   </div>
+ 
+   <!-- SESIÓN COMPARTIDA -->
+-  <div class="section-label">Sesi&#243;n compartida</div>
++  <div class="section-label" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
+   <div class="counter-box">
+     <div class="counter-box-info">
+-      <div class="counter-box-title">Sesi&#243;n compartida</div>
+-      <div class="counter-box-desc">Otros entrenadores podr&#225;n registrar tiempos a la vez con un c&#243;digo</div>
++      <div class="counter-box-title" data-i18n="slcfg.sharedLabel">Sesi&#243;n compartida</div>
++      <div class="counter-box-desc" data-i18n="slcfg.sharedDesc">Otros entrenadores podr&#225;n registrar tiempos a la vez con un c&#243;digo</div>
+     </div>
+     <label class="toggle-switch">
+       <input type="checkbox" id="shared-toggle">
+@@ -188,31 +188,32 @@
+   </div>
+ 
+   <!-- PALISTAS -->
+-  <div class="section-label">Palistas</div>
++  <div class="section-label" data-i18n="cfg.paddlers">Palistas</div>
+   <div class="pal-list" id="pal-list"></div>
+   <button class="add-pal-btn" id="add-pal-btn" onclick="addPalRow()">
+-    <span style="font-size:17px;line-height:1">+</span> A&#241;adir palista
++    <span style="font-size:17px;line-height:1">+</span> <span data-i18n="cfg.addPaddler">A&#241;adir palista</span>
+   </button>
+ </div>
+ 
+ <!-- BARRA INFERIOR -->
+ <div class="bottom-bar">
+   <div class="bottom-bar-inner">
+-    <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; Iniciar sesi&#243;n</button>
++    <button class="btn-start" id="btn-start" onclick="startSession()">&#9654; <span data-i18n="slcfg.startSession">Iniciar sesi&#243;n</span></button>
+   </div>
+ </div>
+ 
+ <!-- MODAL CÓDIGO COMPARTIDA -->
+ <div class="code-modal-bd" id="code-modal-bd">
+   <div class="code-modal">
+-    <div class="code-modal-title">Sesi&#243;n compartida creada</div>
+-    <div class="code-modal-sub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
++    <div class="code-modal-title" data-i18n="slcfg.codeCreated">Sesi&#243;n compartida creada</div>
++    <div class="code-modal-sub" data-i18n="slcfg.codeSub">Comparte este c&#243;digo con los dem&#225;s entrenadores para que se unan desde el men&#250;</div>
+     <div class="code-big"><div class="code-big-val" id="code-big-val">&#8212;&#8212;</div></div>
+-    <button class="code-copy" onclick="copyShareCode()">&#128203; Copiar c&#243;digo</button>
+-    <button class="code-go" onclick="goToChrono()">&#9654; Iniciar cron&#243;metro &#8594;</button>
++    <button class="code-copy" onclick="copyShareCode()">&#128203; <span data-i18n="slcfg.copyCode">Copiar c&#243;digo</span></button>
++    <button class="code-go" onclick="goToChrono()">&#9654; <span data-i18n="slcfg.startChrono">Iniciar cron&#243;metro</span> &#8594;</button>
+   </div>
+ </div>
+ 
++<script src="/i18n.js"></script>
+ <script>
+ const SB  = 'https://duwmhatcqxlwtqdnzhle.supabase.co';
+ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1d21oYXRjcXhsd3RxZG56aGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MzIwMDMsImV4cCI6MjA5MzMwODAwM30.CkvnBvuo8rS2cv1Uts6dmUATUMbW9Dgjg4L29HE9Wdo';
+@@ -270,7 +271,7 @@ function adjustTramos(delta){
+ 
+ /* ── PALISTAS ── */
+ function addPalRow(){
+-  if(_pals.length >= MAX_PAL){ toast('M\u00e1ximo '+MAX_PAL+' palistas', 'err'); return; }
++  if(_pals.length >= MAX_PAL){ toast(t('slcfg.maxPaddlers',{n:MAX_PAL}), 'err'); return; }
+   _pals.push({ rid: _rowSeq++, id:null, name:'', category:null, isTemp:false });
+   renderPals();
+   // foco en el nuevo input
+@@ -304,7 +305,7 @@ function renderPals(){
+         <div class="pal-num ${filled ? '' : 'empty'}">${i+1}</div>
+         <div class="pal-search-wrap">
+           <input class="${inputCls}" id="pal-input-${p.rid}" type="text"
+-            placeholder="Buscar o escribir nombre\u2026"
++            placeholder="${escHtml(t('slcfg.searchOrType'))}"
+             value="${escHtml(p.name)}"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             oninput="onPalInput(${p.rid})"
+@@ -313,10 +314,10 @@ function renderPals(){
+           <button class="pal-clear ${filled ? 'show' : ''}" id="pal-clear-${p.rid}" onclick="clearPal(${p.rid})">&#x2715;</button>
+           <div class="pal-dropdown" id="pal-dd-${p.rid}"></div>
+         </div>
+-        ${showRemove ? `<button class="pal-remove" onclick="removePalRow(${p.rid})" title="Quitar">&#x2715;</button>` : ''}
++        ${showRemove ? `<button class="pal-remove" onclick="removePalRow(${p.rid})" title="${escHtml(t('common.remove'))}">&#x2715;</button>` : ''}
+       </div>
+       <div class="cat-wrap" id="pal-cat-wrap-${p.rid}" style="display:${filled ? 'flex' : 'none'}">
+-        <div class="cat-label">Categor\u00eda</div>
++        <div class="cat-label">${escHtml(t('common.category'))}</div>
+         <div class="cat-selector" id="pal-cat-sel-${p.rid}"></div>
+       </div>
+     `;
+@@ -454,12 +455,12 @@ async function loadCoachName(){
+ /* ── CONSTRUIR CONFIG ── */
+ function buildCfg(){
+   const name = $('cfg-name').value.trim();
+-  if(!name){ toast('Introduce un nombre para la sesi\u00f3n', 'err'); return null; }
++  if(!name){ toast(t('slcfg.needName'), 'err'); return null; }
+   const fecha = $('cfg-fecha').value || new Date().toISOString().slice(0,10);
+ 
+   // Sólo se guardan los recuadros con un palista introducido
+   const validPals = _pals.filter(p => p.name.trim().length > 0);
+-  if(validPals.length === 0){ toast('A\u00f1ade al menos un palista', 'err'); return null; }
++  if(validPals.length === 0){ toast(t('slcfg.needPaddler'), 'err'); return null; }
+ 
+   const palistas = validPals.map(p => ({
+     name: p.name.trim(),
+@@ -488,7 +489,7 @@ async function startSession(){
+   }
+ 
+   // Flujo compartido: crear la sesión y generar el código ahora
+-  showLoad('Creando sesi\u00f3n compartida...');
++  showLoad(t('slcfg.creatingShared'));
+   try{
+     const sesRow = await api('/rest/v1/sessions?select=id',{
+       method:'POST', headers:{'Prefer':'return=representation'},
+@@ -531,15 +532,15 @@ async function startSession(){
+     $('code-modal-bd').classList.add('open');
+   }catch(e){
+     hideLoad();
+-    toast('Error al crear la sesi\u00f3n: ' + e.message, 'err');
++    toast(t('slcfg.createError',{msg:e.message}), 'err');
+   }
+ }
+ 
+ function copyShareCode(){
+   const code = _pendingCode || '';
+   navigator.clipboard?.writeText(code)
+-    .then(() => toast('C\u00f3digo copiado \u2713', 'ok'))
+-    .catch(() => toast('Copia manual: ' + code));
++    .then(() => toast(t('slcfg.codeCopied'), 'ok'))
++    .catch(() => toast(t('slcfg.copyManual',{code:code})));
+ }
+ function goToChrono(){
+   window.location.href = 'slalom-session.html';
+@@ -580,7 +581,7 @@ window.addEventListener('DOMContentLoaded', async () => {
+   _pals.push({ rid:_rowSeq++, id:null, name:'', category:null, isTemp:false });
+   renderPals();
+ 
+-  showLoad('Cargando palistas...');
++  showLoad(t('slcfg.loadingPaddlers'));
+   await loadAthletes();
+   await loadCoachName();
+   hideLoad();
+diff --git a/sw.js b/sw.js
+index a34fbce..5c7c6ad 100644
+--- a/sw.js
++++ b/sw.js
+@@ -1,11 +1,12 @@
+-// SLTimer Service Worker v3
+-const CACHE = 'sltimer-v3';
++// SLTimer Service Worker v4
++const CACHE = 'sltimer-v4';
+ 
+ // Archivos que se guardan en caché para modo offline
+ const PRECACHE = [
+   '/app.html',
+   '/index.html',
+   '/slalom.html',
++  '/i18n.js',
+   '/manifest.json',
+   '/icons/icon-192x192.png',
+   '/icons/icon-512x512.png',
